@@ -7,7 +7,7 @@ fn main() {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 
-    // vector to sore data
+    // vector to store data
     let mut vec: Vec<i32> = Vec::new();
 
     // read line into vector
