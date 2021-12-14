@@ -1,59 +1,60 @@
 use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
+use std::io::{BufRead, BufReader};
 
 fn main() {
+    // file
+    let filename = "input.txt";
+    let file = File::open(filename).unwrap();
+    let reader = BufReader::new(file);
 
-    let mut prev_num = 999999999u32;
-    let mut result = 0;
+    // vector to sore data
+    let mut vec: Vec<i32> = Vec::new();
 
-    let mut data = vec![];
+    // read line into vector
+    for (_index, line) in reader.lines().enumerate() {
+        let line = line.unwrap();
 
-    // lecture du fichier et step 1
-    if let Ok(lines) = read_lines("input.txt") {
+        let val: i32 = line.parse().unwrap();
+        vec.push(val);
 
-        // Consumes the iterator, returns an (Optional) String
-        for line in lines {
-            if let Ok(line_ok) = line {
-                // convertit string -> u32
-                let num: u32 = line_ok.parse().unwrap();
-
-                // step 1
-                // est-ce que on est en "increase" ?
-                if prev_num < num {
-                    result += 1;
-                }
-                prev_num = num;
-
-                // pour le step 2
-                data.push(num)
-            }
-        }
+        //println!("{}: {}", _index + 1, line);
     }
-    println!("{}", result);
 
+    // ----------
+    // step1
 
-    // step 2
-    prev_num = 999999999u32;
-    result = 0;
-
-    for i in 0..data.len()-2 {
-        let num = data[i]+data[i+1]+data[i+2];
-
-        if prev_num < num {
-            result += 1;
+    // not optimal loop for vector
+    let mut index = 0;
+    let mut count = 0;
+    println!("0: {} (N/A)", vec[0]);
+    while index < vec.len() - 1 {
+        if vec[index] < vec[index + 1] {
+            count += 1;
+            println!("{}: {} (increased)", index + 1, vec[index + 1]);
         }
-        prev_num = num;
-
+        if vec[index] > vec[index + 1] {
+            println!("{}: {} (decreased)", index + 1, vec[index + 1]);
+        }
+        if vec[index] == vec[index + 1] {
+            println!("{}: {} (no change)", index + 1, vec[index + 1]);
+        }
+        index += 1;
     }
-    println!("{}", result);
+    println!("{} ", count);
 
-}
+    // ----------
+    // step2
 
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
+    let mut prev = 0;
+    index = 0;
+    count = 0;
+    while index < vec.len() - 3 {
+        let sum = vec[index] + vec[index + 1] + vec[index + 2];
+        if sum > prev {
+            count += 1;
+        }
+        index += 1;
+        prev = sum;
+    }
+    println!("{} ", count);
 }
