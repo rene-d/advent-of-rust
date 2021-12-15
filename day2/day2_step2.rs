@@ -8,7 +8,6 @@ fn main() {
     let mut vpos = 0;
     let mut aim = 0;
 
-    // lecture du fichier et step 1
     if let Ok(lines) = read_lines("input.txt") {
 
         for line in lines {
@@ -26,16 +25,11 @@ fn main() {
                         hpos += step;
                         vpos += aim * step;
                     }
-
-
-
                 }
             }
-        }
     }
+
     println!("{}", hpos * vpos);
-
-
 }
 
 // The output is wrapped in a Result to allow matching on errors
