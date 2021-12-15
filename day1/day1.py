@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# https://adventofcode.com/2021/day/1
+
 # read the input
 data = open("input.txt").readlines()
 data = list(map(int, data))
