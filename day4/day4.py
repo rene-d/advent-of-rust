@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Day 4: Giant Squid
+# https://adventofcode.com/2021/day/4
+
 data = open("input.txt").read().splitlines()
 
 drawn = list(map(int, data[0].split(",")))
