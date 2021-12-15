@@ -9,7 +9,7 @@ Puzzle                          | Stars | Languages
 Day 1: Sonar Sweep              | ⭐⭐   | Rust Python
 Day 2: Dive!                    | ⭐⭐   | Rust
 Day 3: Binary Diagnostic        | ⭐⭐   | Rust Python
-Day 4: Giant Squid              | ⭐⭐   | Python
-Day 5: Hydrothermal Venture     | ⭐⭐   | Python
+Day 4: Giant Squid              | ⭐⭐   | Rust Python
+Day 5: Hydrothermal Venture     | ⭐⭐   | Rust Python
 Day 6: Lanternfish              | ⭐⭐   | Python
 Day 14: Lanternfish              | ⭐⭐   | Python
