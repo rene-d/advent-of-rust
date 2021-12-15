@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Day 5: Hydrothermal Venture
+# https://adventofcode.com/2021/day/5
+
 import re
 
 data = open("input.txt").read().splitlines()
