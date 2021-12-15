@@ -12,4 +12,5 @@ Day 3: Binary Diagnostic        | ⭐⭐   | Rust Python
 Day 4: Giant Squid              | ⭐⭐   | Rust Python
 Day 5: Hydrothermal Venture     | ⭐⭐   | Rust Python
 Day 6: Lanternfish              | ⭐⭐   | Python
+Day 7: The Treachery of Whales  | ⭐⭐   | Rust
 Day 14: Lanternfish              | ⭐⭐   | Python
