@@ -1,45 +1,39 @@
 use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
+use std::io::{BufRead, BufReader};
 
 fn main() {
-
-    let mut hpos = 0;
-    let mut vpos = 0;
-
-    // lecture du fichier et step 1
-    if let Ok(lines) = read_lines("input.txt") {
-
-        for line in lines {
-            if let Ok(line_ok) = line {
-
-                if let Some((direction, _step)) = line_ok.rsplit_once(' ') {
-
-                    let step = _step.parse::<i32>().unwrap();
-
-                    if direction == "forward" {
-                        hpos += step;
-                    } else if direction == "down" {
-                        vpos += step;
-                    } else if direction == "up" {
-                        vpos -= step;
-                    }
-
-                }
-            }
-        }
-    }
-    println!("{}", hpos * vpos);
-
-
+    day_2_step1();
 }
 
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
+fn day_2_step1() {
+    // file
+    let filename = "input.txt";
+    let file = File::open(filename).unwrap();
+    let reader = BufReader::new(file);
+    // pos
+    let mut h_pos: i32 = 0;
+    let mut depth: i32 = 0;
+
+    // step 1
+    for (_index, line) in reader.lines().enumerate() {
+        let line = line.unwrap();
+
+        let mut splitted = line.split(' ');
+        let direction = splitted.next().unwrap();
+        let value: i32 = splitted.next().unwrap().parse().unwrap();
+
+        match &direction as &str {
+            "up" => {
+                depth -= value;
+            }
+            "down" => {
+                depth += value;
+            }
+            "forward" => {
+                h_pos += value;
+            }
+            _ => {}
+        }
+    }
+    println!("aoc2021 day2/step1 = {}", h_pos * depth);
 }
