@@ -13,7 +13,6 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-
 /// main function
 fn main() {
     let args = Cli::from_args();
@@ -53,7 +52,6 @@ fn main() {
     println!("{}", min_sum2);
 }
 
-
 // The output is wrapped in a Result to allow matching on errors
 // Returns an Iterator to the Reader of the lines of the file.
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
@@ -64,12 +62,10 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let mut data = vec![];
 
     if let Ok(lines) = read_lines(path) {
-
         for line in lines {
             if let Ok(bits) = line {
                 data.push(bits);
