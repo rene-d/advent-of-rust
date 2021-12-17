@@ -29,7 +29,6 @@ fn main() {
     let mut flashes = 0;
 
     for turn in 1..1000 {
-
         // First, the energy level of each octopus increases by 1.
         for y in 0..n {
             for x in 0..n {
@@ -42,11 +41,13 @@ fn main() {
             if y == n {
                 break;
             }
-            grid[y][x] = 0;
+
             flashes += 1;
 
-            // println!("flashing {} at ({},{})", flashes, y, x);
+            //any octopus that flashed during this step has its energy level set to 0
+            grid[y][x] = 0;
 
+            // increases the energy level of all adjacent octopuses by 1
             for dy in -1..=1 {
                 for dx in -1..=1 {
                     if dy == 0 && dx == 0 {
@@ -54,11 +55,11 @@ fn main() {
                     }
                     let nx = x as isize + dx;
                     let ny = y as isize + dy;
-                    if 0<=nx && nx < n as isize {
-                        if 0<=ny && ny < n as isize {
+                    if 0 <= nx && nx < n as isize {
+                        if 0 <= ny && ny < n as isize {
                             let v = grid[ny as usize][nx as usize];
                             if v != 0 && v <= 9 {
-                                grid[ny as usize][nx as usize]= v + 1;
+                                grid[ny as usize][nx as usize] = v + 1;
                             }
                         }
                     }
@@ -74,20 +75,15 @@ fn main() {
         // }
 
         if all_flashing(&grid) {
-            println!("part2: {}",turn);
+            println!("part2: {}", turn);
             break;
         }
 
-        if turn==100 {
-            println!("part1: {}",flashes);
+        if turn == 100 {
+            println!("part1: {}", flashes);
         }
     }
-
 }
-
-
-
-
 
 fn all_flashing(grid: &Vec<Vec<i8>>) -> bool {
     let n = grid.len();
