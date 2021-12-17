@@ -86,14 +86,18 @@ fn min_cost(grid: &Vec<Vec<i32>>) -> i32 {
 
     let mut heap = BinaryHeap::new();
 
-    heap.push(Cost { cost: 0, x: 0, y: 0, });
+    heap.push(Cost {
+        cost: 0,
+        x: 0,
+        y: 0,
+    });
 
     while !heap.is_empty() {
         let cur = heap.pop().unwrap();
 
         let new_cost = cur.cost + grid[cur.y][cur.x];
 
-        if  new_cost >= d[cur.y][cur.x] && d[cur.y][cur.x] != 0 {
+        if new_cost >= d[cur.y][cur.x] && d[cur.y][cur.x] != 0 {
             continue;
         }
 
@@ -104,16 +108,32 @@ fn min_cost(grid: &Vec<Vec<i32>>) -> i32 {
         }
 
         if cur.x + 1 < n {
-            heap.push(Cost { cost: new_cost, x: cur.x + 1, y: cur.y, });
+            heap.push(Cost {
+                cost: new_cost,
+                x: cur.x + 1,
+                y: cur.y,
+            });
         }
         if cur.y + 1 < n {
-            heap.push(Cost { cost: new_cost, x: cur.x, y: cur.y + 1, });
+            heap.push(Cost {
+                cost: new_cost,
+                x: cur.x,
+                y: cur.y + 1,
+            });
         }
         if cur.x > 0 {
-            heap.push(Cost { cost: new_cost, x: cur.x - 1, y: cur.y, });
+            heap.push(Cost {
+                cost: new_cost,
+                x: cur.x - 1,
+                y: cur.y,
+            });
         }
         if cur.y > 0 {
-            heap.push(Cost { cost: new_cost, x: cur.x, y: cur.y - 1, });
+            heap.push(Cost {
+                cost: new_cost,
+                x: cur.x,
+                y: cur.y - 1,
+            });
         }
     }
 
@@ -142,7 +162,11 @@ fn min_cost_dp(grid: &Vec<Vec<i32>>) -> i32 {
 }
 
 fn min(a: i32, b: i32) -> i32 {
-    if a < b { a } else { b }
+    if a < b {
+        a
+    } else {
+        b
+    }
 }
 
 // The output is wrapped in a Result to allow matching on errors
