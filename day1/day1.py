@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# Day 1: Sonar Sweep
 # https://adventofcode.com/2021/day/1
 
 # read the input
