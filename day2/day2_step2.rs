@@ -1,3 +1,4 @@
+// Day 2: Dive!
 // https://adventofcode.com/2021/day/2
 
 use std::fs::File;
@@ -5,18 +6,14 @@ use std::io::{self, BufRead};
 use std::path::Path;
 
 fn main() {
-
     let mut hpos = 0;
     let mut vpos = 0;
     let mut aim = 0;
 
     if let Ok(lines) = read_lines("input.txt") {
-
         for line in lines {
             if let Ok(line_ok) = line {
-
                 if let Some((direction, _step)) = line_ok.rsplit_once(' ') {
-
                     let step = _step.parse::<i32>().unwrap();
 
                     if direction == "down" {
@@ -29,6 +26,7 @@ fn main() {
                     }
                 }
             }
+        }
     }
 
     println!("{}", hpos * vpos);
