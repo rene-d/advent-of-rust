@@ -13,7 +13,6 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-
 /// main function
 fn main() {
     let args = Cli::from_args();
@@ -53,9 +52,6 @@ fn main() {
 
     for draw in drawn {
         for k in 0..grids.len() {
-
-
-
             if grids[k][0][0] == -2 {
                 // grid invalidated
                 continue;
@@ -81,7 +77,6 @@ fn main() {
     }
 
     println!("{}", last_draw);
-
 }
 
 /// sum computes the sum of non-cleared cases
@@ -100,15 +95,20 @@ fn sum(grid: &[[i32; 5]; 5]) -> i32 {
 /// has_win returns true if the grid has an cleared row or column
 fn win(grid: &[[i32; 5]; 5]) -> bool {
     for i in 0..5 {
-
-        if grid[i][0] == -1 && grid[i][1] == -1 && grid[i][2] == -1 && grid[i][3] == -1 &&
-            grid[i][4] == -1
+        if grid[i][0] == -1
+            && grid[i][1] == -1
+            && grid[i][2] == -1
+            && grid[i][3] == -1
+            && grid[i][4] == -1
         {
             return true;
         }
 
-        if grid[0][i] == -1 && grid[1][i] == -1 && grid[2][i] == -1 && grid[3][i] == -1 &&
-            grid[4][i] == -1
+        if grid[0][i] == -1
+            && grid[1][i] == -1
+            && grid[2][i] == -1
+            && grid[3][i] == -1
+            && grid[4][i] == -1
         {
             return true;
         }
@@ -116,7 +116,6 @@ fn win(grid: &[[i32; 5]; 5]) -> bool {
 
     return false;
 }
-
 
 // The output is wrapped in a Result to allow matching on errors
 // Returns an Iterator to the Reader of the lines of the file.
@@ -128,12 +127,10 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let mut data = vec![];
 
     if let Ok(lines) = read_lines(path) {
-
         for line in lines {
             if let Ok(bits) = line {
                 data.push(bits);
