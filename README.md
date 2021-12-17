@@ -17,7 +17,7 @@ Day 8: Seven Segment Search     | ⭐⭐   | Python
 Day 9: Smoke Basin              | ⭐⭐   | Rust Python
 Day 10: Syntax Scoring          | ⭐⭐   | Rust Python
 Day 11: Dumbo Octopus           | ⭐⭐   | Rust
-Day 12: Passage Pathing         |         |
+Day 12: Passage Pathing         | ⭐⭐   | Python
 Day 13: Transparent Origami     | ⭐⭐   | Python
 Day 14: Lanternfish             | ⭐⭐   | Python
 Day 15: Chiton                  | ⭐⭐   | Rust
