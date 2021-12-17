@@ -13,7 +13,6 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-
 /// main function
 fn main() {
     let args = Cli::from_args();
@@ -25,13 +24,10 @@ fn main() {
     // println!("{:?}", data);
     step1(&data);
     step2(&data);
-
 }
-
 
 /// step 2
 fn step2(data: &Vec<String>) {
-
     let nb_bits = data[0].len();
     // println!("nb_bits: {}", nb_bits);
 
@@ -40,18 +36,15 @@ fn step2(data: &Vec<String>) {
     let mut o2_start = "".to_owned();
 
     for bit in 0..nb_bits {
-
         let mut one = 0;
         let mut nb = 0;
 
         for value in data.iter() {
             if value.starts_with(&o2_start) {
-
                 let c = value.chars().nth(bit).unwrap();
                 if c == '1' {
                     one += 1;
                     o2_rate = isize::from_str_radix(&value, 2).unwrap();
-
                 }
                 nb += 1;
             }
@@ -64,19 +57,16 @@ fn step2(data: &Vec<String>) {
         }
     }
 
-
     // CO2 scrubber rating
     let mut co2_rate = 0;
     let mut co2_start = "".to_owned();
 
     for bit in 0..nb_bits {
-
         let mut one = 0;
         let mut nb = 0;
 
         for value in data.iter() {
             if value.starts_with(&co2_start) {
-
                 let c = value.chars().nth(bit).unwrap();
                 if c == '1' {
                     one += 1;
@@ -93,12 +83,10 @@ fn step2(data: &Vec<String>) {
         }
     }
     println!("{}", o2_rate * co2_rate);
-
 }
 
 /// step 1: compute gamma_rate * espilon_rate
 fn step1(data: &Vec<String>) {
-
     let mut gamma_rate = 0;
     let mut freq: [i32; 12] = [0; 12];
     let mut nb = 0;
@@ -134,12 +122,10 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let mut data = vec![];
 
     if let Ok(lines) = read_lines(path) {
-
         for line in lines {
             if let Ok(bits) = line {
                 data.push(bits);
