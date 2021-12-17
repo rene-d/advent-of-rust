@@ -1,12 +1,11 @@
 // Day 5: Hydrothermal Venture
 // https://adventofcode.com/2021/day/5
 
+use regex::Regex;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 use structopt::StructOpt;
-use regex::Regex;
-
 
 /// parse command line arguments
 #[derive(StructOpt)]
@@ -14,7 +13,6 @@ struct Cli {
     #[structopt(default_value = "input.txt", parse(from_os_str))]
     path: std::path::PathBuf,
 }
-
 
 /// main function
 fn main() {
@@ -30,7 +28,6 @@ fn main() {
     let mut grid = [[0i16; 1000]; 1000];
 
     for line in &data {
-
         let drawn = re.captures(&line).unwrap();
 
         let mut x1 = drawn[1].parse::<i32>().unwrap();
@@ -71,7 +68,6 @@ fn main() {
 
     // --- Part Two ---
     for line in &data {
-
         let drawn = re.captures(&line).unwrap();
 
         let mut x1 = drawn[1].parse::<i32>().unwrap();
@@ -92,13 +88,11 @@ fn main() {
             if y1 < y2 {
                 for x in x1..x2 + 1 {
                     grid[x as usize][(y1 + (x - x1)) as usize] += 1;
-
                 }
             } else {
                 for x in x1..x2 + 1 {
                     grid[x as usize][(y1 - (x - x1)) as usize] += 1;
                 }
-
             }
         }
     }
@@ -114,7 +108,6 @@ fn main() {
     println!("{:?}", sum2);
 }
 
-
 // The output is wrapped in a Result to allow matching on errors
 // Returns an Iterator to the Reader of the lines of the file.
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
@@ -125,12 +118,10 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let mut data = vec![];
 
     if let Ok(lines) = read_lines(path) {
-
         for line in lines {
             if let Ok(bits) = line {
                 data.push(bits);
