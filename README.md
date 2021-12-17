@@ -16,8 +16,10 @@ Day 7: The Treachery of Whales  | ⭐⭐   | Rust
 Day 8: Seven Segment Search     | ⭐⭐   | Python
 Day 9: Smoke Basin              | ⭐⭐   | Rust Python
 Day 10: Syntax Scoring          | ⭐⭐   | Python
-Day 11: Dumbo Octopus           |       |
-Day 12: Passage Pathing         |       |
-Day 13: Transparent Origami     |       |
+Day 11: Dumbo Octopus           |         |
+Day 12: Passage Pathing         |         |
+Day 13: Transparent Origami     |         |
 Day 14: Lanternfish             | ⭐⭐   | Python
 Day 15: Chiton                  | ⭐⭐   | Rust
+Day 16: Packet Decoder          |         | 
+Day 17: Trick Shot              | ⭐⭐   | Rust
