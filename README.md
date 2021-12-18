@@ -11,7 +11,7 @@ Day 2: Dive!                    | ⭐⭐   | Rust
 Day 3: Binary Diagnostic        | ⭐⭐   | Rust Python
 Day 4: Giant Squid              | ⭐⭐   | Rust Python
 Day 5: Hydrothermal Venture     | ⭐⭐   | Rust Python
-Day 6: Lanternfish              | ⭐⭐   | Python
+Day 6: Lanternfish              | ⭐⭐   | Rust Python
 Day 7: The Treachery of Whales  | ⭐⭐   | Rust
 Day 8: Seven Segment Search     | ⭐⭐   | Python
 Day 9: Smoke Basin              | ⭐⭐   | Rust Python
