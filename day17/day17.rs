@@ -1,16 +1,36 @@
 // Day 17: Trick Shot
 // https://adventofcode.com/2021/day/17
 
+use std::env;
+
 /// main function
 fn main() {
     // target area: x=269..292, y=-68..-44
     // part1: 2278
     // part2: 996
 
-    let target_x1 = 269;
-    let target_x2 = 292;
-    let target_y1 = -68;
-    let target_y2 = -44;
+    let mut target_x1 = 269;
+    let mut target_x2 = 292;
+    let mut target_y1 = -68;
+    let mut target_y2 = -44;
+
+
+    let args: Vec<String> = env::args().collect();
+    println!("{:?}", args);
+    match args.len() {
+        5 => {
+            target_x1 = args[1].parse::<i32>().unwrap();
+            target_x2 = args[2].parse::<i32>().unwrap();
+            target_y1 = args[3].parse::<i32>().unwrap();
+            target_y2 = args[4].parse::<i32>().unwrap();
+        }
+        _ => {}
+    }
+
+    println!(
+        "target area: x={}..{}, y={}..{}",
+        target_x1, target_x2, target_y1, target_y2
+    );
 
     let mut part1 = 0;
     let mut part2 = 0;
