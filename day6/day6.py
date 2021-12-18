@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Day 6: Lanternfish
+# https://adventofcode.com/2021/day/6
+
 data = open("input.txt").read().splitlines()
 
 timers = list(map(int, data[0].split(",")))

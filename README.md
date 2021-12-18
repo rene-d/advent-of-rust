@@ -19,7 +19,7 @@ Day 10: Syntax Scoring          | ⭐⭐   | Rust Python
 Day 11: Dumbo Octopus           | ⭐⭐   | Rust
 Day 12: Passage Pathing         | ⭐⭐   | Python
 Day 13: Transparent Origami     | ⭐⭐   | Rust Python
-Day 14: Lanternfish             | ⭐⭐   | Python
+Day 14: Extended Polymerization | ⭐⭐   | Python
 Day 15: Chiton                  | ⭐⭐   | Rust
 Day 16: Packet Decoder          | ⭐⭐   | Python
 Day 17: Trick Shot              | ⭐⭐   | Rust
