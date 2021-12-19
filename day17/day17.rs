@@ -2,21 +2,18 @@
 // https://adventofcode.com/2021/day/17
 
 use std::env;
+use std::fs;
+use text_io::scan;
 
 /// main function
 fn main() {
-    // target area: x=269..292, y=-68..-44
-    // part1: 2278
-    // part2: 996
-
-    let mut target_x1 = 269;
-    let mut target_x2 = 292;
-    let mut target_y1 = -68;
-    let mut target_y2 = -44;
-
+    let target_x1: i32;
+    let target_x2: i32;
+    let target_y1: i32;
+    let target_y2: i32;
 
     let args: Vec<String> = env::args().collect();
-    println!("{:?}", args);
+    println!("args: {:?}", args);
     match args.len() {
         5 => {
             target_x1 = args[1].parse::<i32>().unwrap();
@@ -24,7 +21,19 @@ fn main() {
             target_y1 = args[3].parse::<i32>().unwrap();
             target_y2 = args[4].parse::<i32>().unwrap();
         }
-        _ => {}
+        2 => {
+            let data = fs::read_to_string(args[1].to_string()).unwrap();
+            scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
+                  target_x1, target_x2, target_y1, target_y2);
+        }
+        1 => {
+            let data = fs::read_to_string("input.txt").unwrap();
+            scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
+                  target_x1, target_x2, target_y1, target_y2);
+        }
+        _ => {
+            panic!("Invalid number of arguments");
+        }
     }
 
     println!(
