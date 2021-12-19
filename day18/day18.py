@@ -19,7 +19,9 @@ class RegularNumber:
 
 
 def to_snailfish(number):
-    """Ensure the nested list is a list of RegularNumber elements."""
+    """
+    Ensure the nested list is a list of RegularNumber elements.
+    """
     if isinstance(number, int):
         return RegularNumber(number)
     if isinstance(number, RegularNumber):
@@ -33,6 +35,8 @@ def explode(number):
     def _flatten(l):
         return (l,) if isinstance(l, RegularNumber) else sum(map(_flatten, l), ())
 
+    # flatten the nested list to get right and left numbers of number to explode
+    # /!\ the RegularNumber are the same objects in the flattened and nested lists
     flat = _flatten(number)
     i_flat = 0
     exploded = False
@@ -40,14 +44,22 @@ def explode(number):
     def _explode(number, depth):
         nonlocal i_flat, flat, exploded
 
+        if exploded:
+            # no more action to perform
+            return number
+
         if isinstance(number, RegularNumber):
+            # since we traverse the nested list left to right,
+            # each time we find a regular number
+            # we increment the index of the flat list
             i_flat += 1
             return number
 
         left, right = number
+
         if isinstance(left, RegularNumber) and isinstance(right, RegularNumber):
 
-            # If any pair is nested inside four pairs, the leftmost such pair explodes
+            # If any pair of regular numbers is nested inside four pairs, the leftmost such pair explodes
             if depth >= 4 and not exploded:
 
                 # the pair's left value is added to the first regular number to the left of the exploding pair (if any)
@@ -58,7 +70,7 @@ def explode(number):
                 if i_flat + 1 < len(flat) - 1:
                     flat[i_flat + 2].value += flat[i_flat + 1].value
 
-                exploded = True
+                exploded = True  # just one explode action per turn
                 return RegularNumber(0)
 
         return (_explode(left, depth + 1), _explode(right, depth + 1))
@@ -72,6 +84,7 @@ def split(number):
     def _split(number, splitted):
         if isinstance(number, RegularNumber):
             if number.value >= 10 and not splitted:
+                # split the number and terminate the recursion (one split per turn)
                 return (RegularNumber(number.value // 2), RegularNumber(number.value - number.value // 2)), True
             return number, splitted
 
