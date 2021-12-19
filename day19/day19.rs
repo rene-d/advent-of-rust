@@ -1,0 +1,238 @@
+// Day 19: Beacon Scanner
+// http://adventofcode.com/2021/day/19
+
+use std::collections::HashMap;
+use std::collections::HashSet;
+use std::fmt;
+use std::fs;
+use std::time::Instant;
+use structopt::StructOpt;
+
+/// parse command line arguments
+#[derive(StructOpt)]
+struct Cli {
+    #[structopt(default_value = "input.txt", parse(from_os_str))]
+    path: std::path::PathBuf,
+}
+
+#[derive(Hash, Eq, PartialEq, Clone)]
+struct Point {
+    x: i32,
+    y: i32,
+    z: i32,
+}
+
+/// implement fmt::Debug for Point
+impl fmt::Debug for Point {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("")
+            .field(&self.x)
+            .field(&self.y)
+            .field(&self.z)
+            .finish()
+    }
+}
+
+/// main function
+fn main() {
+    let args = Cli::from_args();
+    println!("reading data from: {}", args.path.display());
+    let data = load_data(args.path);
+
+    // load puzzle data
+    let scanners = load_scanners(data);
+
+    let now = Instant::now();
+    solve(scanners);
+    println!("elapsed: {} s", (now.elapsed().as_millis() as f64) / 1000.);
+}
+
+fn solve(scanners: Vec<Vec<Point>>) {
+    // the list of different beacons
+    let mut beacons: HashSet<Point> = HashSet::new();
+    for p in &scanners[0] {
+        // add beacons from scanner 0
+        beacons.insert(p.clone());
+    }
+
+    // relative coordinates to scanner 0 of other scanners
+    let mut scanner_coords = vec![Point { x: 0, y: 0, z: 0 }; scanners.len()];
+
+    // pending scanner analysis
+    let mut pending: HashSet<usize> = HashSet::new();
+    for i in 1..scanners.len() {
+        // add beacons from all other scanners
+        pending.insert(i);
+    }
+
+    // compute all rotated coordinates of beacons
+    let mut scanners_rotated: Vec<Vec<Vec<Point>>> = Vec::new();
+    for i in 0..scanners.len() {
+        let mut scanner_rotated: Vec<Vec<Point>> = Vec::new();
+
+        for rotation in 0..24 {
+            let r: Vec<Point> = scanners[i]
+                .iter()
+                .map(|point| rotate(point, rotation))
+                .collect();
+            scanner_rotated.push(r);
+        }
+        scanners_rotated.push(scanner_rotated);
+    }
+
+    while !pending.is_empty() {
+        let mut found = usize::MAX;
+
+        for scanner_id in &pending {
+            let mut g_scan: Vec<Point> = Vec::new();
+            for p in &beacons {
+                let point = Point {
+                    x: p.x + scanner_coords[0].x,
+                    y: p.y + scanner_coords[0].y,
+                    z: p.z + scanner_coords[0].z,
+                };
+                g_scan.push(point);
+            }
+
+            for rotation in 0..24 {
+                let b_scan = scanners_rotated[*scanner_id][rotation].clone();
+
+                let mut match_points: HashMap<Point, i32> = HashMap::new();
+
+                for bi in 0..scanners[*scanner_id].len() {
+                    for gi in 0..g_scan.len() {
+                        let dx = -b_scan[bi].x + g_scan[gi].x;
+                        let dy = -b_scan[bi].y + g_scan[gi].y;
+                        let dz = -b_scan[bi].z + g_scan[gi].z;
+
+                        let p = Point {
+                            x: dx,
+                            y: dy,
+                            z: dz,
+                        };
+
+                        let mut n = 0;
+                        if match_points.contains_key(&p) {
+                            n = match_points[&p];
+                        }
+                        match_points.insert(p, n + 1);
+                    }
+                }
+
+                for (point, count) in match_points {
+                    if count >= 12 {
+                        scanner_coords[*scanner_id] = point.clone();
+
+                        for p in &b_scan {
+                            let q = Point {
+                                x: point.x + p.x,
+                                y: point.y + p.y,
+                                z: point.z + p.z,
+                            };
+                            beacons.insert(q);
+                        }
+
+                        found = *scanner_id;
+                    }
+                }
+            }
+
+            if found != usize::MAX {
+                break;
+            }
+        }
+
+        if found == usize::MAX {
+            panic!("no beacon found");
+        }
+
+        pending.remove(&found);
+    }
+
+    println!("part1: {}", beacons.len());
+
+    let mut manhattan = 0;
+    for p1 in &scanner_coords {
+        for p2 in &scanner_coords {
+            let distance = (p1.x - p2.x).abs() + (p1.y - p2.y).abs() + (p1.z - p2.z).abs();
+            if distance > manhattan {
+                manhattan = distance;
+            }
+        }
+    }
+
+    println!("part2: {}", manhattan);
+}
+
+fn load_scanners(data: Vec<String>) -> Vec<Vec<Point>> {
+    let mut scanners: Vec<Vec<Point>> = Vec::new();
+    let mut beacons: Vec<Point> = Vec::new();
+
+    for line in data {
+        let id = sscanf::scanf!(line, "--- scanner {} ---", i32);
+        if id != None {
+            if beacons.len() > 0 {
+                scanners.push(beacons);
+                beacons = Vec::new();
+            }
+        }
+        let xyz = sscanf::scanf!(line, "{},{},{}", i32, i32, i32);
+        if xyz != None {
+            let (x, y, z) = xyz.unwrap();
+            let p = Point { x: x, y: y, z: z };
+
+            beacons.push(p);
+        }
+    }
+    if beacons.len() > 0 {
+        scanners.push(beacons);
+    }
+
+    scanners
+}
+
+fn rotate(point: &Point, rotation: usize) -> Point {
+    let x = point.x;
+    let y = point.y;
+    let z = point.z;
+
+    let points = [
+        (-x, -y, z),
+        (-x, -z, -y),
+        (-x, y, -z),
+        (-x, z, y),
+        (-y, -x, -z),
+        (-y, -z, x),
+        (-y, x, z),
+        (-y, z, -x),
+        (-z, -x, y),
+        (-z, -y, -x),
+        (-z, x, -y),
+        (-z, y, x),
+        (x, -y, -z),
+        (x, -z, y),
+        (x, y, z),
+        (x, z, -y),
+        (y, -x, z),
+        (y, -z, -x),
+        (y, x, -z),
+        (y, z, x),
+        (z, -x, -y),
+        (z, -y, x),
+        (z, x, y),
+        (z, y, -x),
+    ];
+
+    let p = points[rotation];
+    Point {
+        x: p.0,
+        y: p.1,
+        z: p.2,
+    }
+}
+
+/// load data from file
+fn load_data(path: std::path::PathBuf) -> Vec<String> {
+    let data = fs::read_to_string(path).unwrap();
+    data.lines().map(|x| x.to_string()).collect()
+}
