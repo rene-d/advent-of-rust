@@ -1,0 +1,12 @@
+[package]
+name = "day4"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+structopt = "0.3"
+md5 = "0.7.0"
+
+[[bin]]
+name = "day4"
+path = "day4.rs"
