@@ -70,7 +70,7 @@ def explode(number):
                 if i_flat + 1 < len(flat) - 1:
                     flat[i_flat + 2].value += flat[i_flat + 1].value
 
-                exploded = True  # just one explode action per turn
+                exploded = True  # just one explode operation per turn
                 return RegularNumber(0)
 
         return (_explode(left, depth + 1), _explode(right, depth + 1))
@@ -81,21 +81,27 @@ def explode(number):
 def split(number):
     """If any regular number is 10 or greater, the leftmost such regular number splits."""
 
-    def _split(number, splitted):
+    splitted = False
+
+    def _split(number):
+        nonlocal splitted
+
+        if splitted:
+            # one split operation per turn
+            return number
+
         if isinstance(number, RegularNumber):
             if number.value >= 10 and not splitted:
-                # split the number and terminate the recursion (one split per turn)
-                return (RegularNumber(number.value // 2), RegularNumber(number.value - number.value // 2)), True
-            return number, splitted
+                # split the number and terminate the recursion
+                splitted = True
+                return (RegularNumber(number.value // 2), RegularNumber(number.value - number.value // 2))
+            return number
 
         left, right = number
 
-        new_left, splitted = _split(left, splitted)
-        new_right, splitted = _split(right, splitted)
+        return (_split(left), _split(right))
 
-        return (new_left, new_right), splitted
-
-    return _split(number, False)[0]
+    return _split(number)
 
 
 def addition(a, b):
@@ -110,10 +116,10 @@ def reduced_addition(a, b):
     """
 
     # create new objects to avoid modifying the original ones
-    a = to_snailfish(a)
-    b = to_snailfish(b)
+    new_a = to_snailfish(a)
+    new_b = to_snailfish(b)
 
-    result = addition(a, b)
+    result = addition(new_a, new_b)
 
     while True:
         new = explode(result)
