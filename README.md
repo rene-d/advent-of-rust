@@ -23,3 +23,4 @@ Day 14: Extended Polymerization | ⭐⭐   | Python
 Day 15: Chiton                  | ⭐⭐   | Rust
 Day 16: Packet Decoder          | ⭐⭐   | Python
 Day 17: Trick Shot              | ⭐⭐   | Rust
+Day 19: Beacon Scanner          | ⭐⭐   | Rust
