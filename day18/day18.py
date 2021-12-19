@@ -6,58 +6,60 @@
 import sys
 
 
-class Node:
+class RegularNumber:
+    """Represent a regular number."""
+
     def __init__(self, value):
         self.value = value
 
     def __eq__(self, other):
-        if not isinstance(other, Node):
+        if not isinstance(other, RegularNumber):
             return False
         return self.value == other.value
 
 
-def to_nodes(number):
+def to_snailfish(number):
+    """Ensure the nested list is a list of RegularNumber elements."""
     if isinstance(number, int):
-        return Node(number)
-    if isinstance(number, Node):
-        return Node(number.value)
-    return (to_nodes(number[0]), to_nodes(number[1]))
-
-
-def addition(a, b):
-    return (a, b)
+        return RegularNumber(number)
+    if isinstance(number, RegularNumber):
+        return RegularNumber(number.value)
+    return (to_snailfish(number[0]), to_snailfish(number[1]))
 
 
 def explode(number):
-    flatten = lambda l: sum(map(flatten, l), ()) if isinstance(l, tuple) else (l,)
-    flat = flatten(number)
+    """If any pair is nested inside four pairs, the leftmost such pair explodes."""
 
-    i = 0
+    def _flatten(l):
+        return (l,) if isinstance(l, RegularNumber) else sum(map(_flatten, l), ())
+
+    flat = _flatten(number)
+    i_flat = 0
     exploded = False
 
     def _explode(number, depth):
-        nonlocal i, flat, exploded
+        nonlocal i_flat, flat, exploded
 
-        if isinstance(number, Node):
-            i += 1
+        if isinstance(number, RegularNumber):
+            i_flat += 1
             return number
 
         left, right = number
-        if isinstance(left, Node) and isinstance(right, Node):
+        if isinstance(left, RegularNumber) and isinstance(right, RegularNumber):
 
             # If any pair is nested inside four pairs, the leftmost such pair explodes
             if depth >= 4 and not exploded:
 
                 # the pair's left value is added to the first regular number to the left of the exploding pair (if any)
-                if i > 0:
-                    flat[i - 1].value += flat[i].value
+                if i_flat > 0:
+                    flat[i_flat - 1].value += flat[i_flat].value
 
                 # the pair's right value is added to the first regular number to the right of the exploding pair (if any)
-                if i + 1 < len(flat) - 1:
-                    flat[i + 2].value += flat[i + 1].value
+                if i_flat + 1 < len(flat) - 1:
+                    flat[i_flat + 2].value += flat[i_flat + 1].value
 
                 exploded = True
-                return Node(0)
+                return RegularNumber(0)
 
         return (_explode(left, depth + 1), _explode(right, depth + 1))
 
@@ -65,25 +67,38 @@ def explode(number):
 
 
 def split(number):
-    def _split(a, splitted):
-        if isinstance(a, Node):
-            if a.value >= 10 and not splitted:
-                return (Node(a.value // 2), Node(a.value - a.value // 2)), True
-            return a, splitted
+    """If any regular number is 10 or greater, the leftmost such regular number splits."""
 
-        left, splitted = _split(a[0], splitted)
-        right, splitted = _split(a[1], splitted)
+    def _split(number, splitted):
+        if isinstance(number, RegularNumber):
+            if number.value >= 10 and not splitted:
+                return (RegularNumber(number.value // 2), RegularNumber(number.value - number.value // 2)), True
+            return number, splitted
 
-        return (left, right), splitted
+        left, right = number
+
+        new_left, splitted = _split(left, splitted)
+        new_right, splitted = _split(right, splitted)
+
+        return (new_left, new_right), splitted
 
     return _split(number, False)[0]
 
 
+def addition(a, b):
+    """Basic addition, not reduced."""
+    return (a, b)
+
+
 def reduced_addition(a, b):
+    """
+    Perform addition, then reduce the snailfish number.
+    To reduce a snailfish number, you must repeatedly explode/reduce until no action applies.
+    """
 
     # create new objects to avoid modifying the original ones
-    a = to_nodes(a)
-    b = to_nodes(b)
+    a = to_snailfish(a)
+    b = to_snailfish(b)
 
     result = addition(a, b)
 
@@ -101,15 +116,19 @@ def reduced_addition(a, b):
 
 
 def magnitude(number):
-    if isinstance(number, Node):
+    """The magnitude of a pair is 3 times the magnitude of its left element plus 2 times the magnitude of its right element."""
+
+    if isinstance(number, RegularNumber):
         return number.value
     left, right = number
     return 3 * magnitude(left) + 2 * magnitude(right)
 
 
 def main():
+    """Solve the puzzle."""
+
     data = open("input.txt" if len(sys.argv) == 1 else sys.argv[1]).read().splitlines()
-    numbers = [to_nodes(eval(line)) for line in data]
+    numbers = [to_snailfish(eval(line)) for line in data]
 
     # part 1
     total = numbers[0]
