@@ -15,7 +15,7 @@ Puzzle                                                                  | Stars 
 [Day 5: Hydrothermal Venture](https://adventofcode.com/2021/day/5)      | ⭐⭐   | Rust Python
 [Day 6: Lanternfish](https://adventofcode.com/2021/day/6)               | ⭐⭐   | Rust Python
 [Day 7: The Treachery of Whales](https://adventofcode.com/2021/day/7)   | ⭐⭐   | Rust
-[Day 8: Seven Segment Search](https://adventofcode.com/2021/day/8)      | ⭐⭐   | Python
+[Day 8: Seven Segment Search](https://adventofcode.com/2021/day/8)      | ⭐⭐   | Rust Python
 [Day 9: Smoke Basin](https://adventofcode.com/2021/day/9)               | ⭐⭐   | Rust Python
 [Day 10: Syntax Scoring](https://adventofcode.com/2021/day/10)          | ⭐⭐   | Rust Python
 [Day 11: Dumbo Octopus](https://adventofcode.com/2021/day/11)           | ⭐⭐   | Rust
