@@ -28,9 +28,9 @@ Puzzle                                                                  | Stars 
 [Day 18: Snailfish](https://adventofcode.com/2021/day/18)               | ⭐⭐   | Python
 [Day 19: Beacon Scanner](https://adventofcode.com/2021/day/19)          | ⭐⭐   | Rust
 [Day 20: Trench Map](https://adventofcode.com/2021/day/20)              | ⭐⭐   | Rust
-[Day 21: Dirac Dice](https://adventofcode.com/2021/day/21)              |       |
+[Day 21: Dirac Dice](https://adventofcode.com/2021/day/21)              | ⭐⭐   | Rust
 
-## Pase years
+## Paste years
 
 Year                                  | Stars | Languages
 ------------------------------------- | ----- | ----------
