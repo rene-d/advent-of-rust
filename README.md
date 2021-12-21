@@ -25,3 +25,5 @@ Day 16: Packet Decoder          | ⭐⭐   | Python
 Day 17: Trick Shot              | ⭐⭐   | Rust
 Day 18: Snailfish               | ⭐⭐   | Python
 Day 19: Beacon Scanner          | ⭐⭐   | Rust
+Day 20: Trench Map              | ⭐⭐   | Rust
+Day 21: Dirac Dice              |       |

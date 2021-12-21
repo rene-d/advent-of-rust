@@ -1,3 +1,6 @@
+// Day 20: Trench Map
+// https://adventofcode.com/2021/day/20
+
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
