@@ -18,99 +18,116 @@ fn main() {
     println!("reading data from: {}", args.path.display());
     let data = load_data(args.path);
 
-    let mut registers: HashMap<String, u16> = HashMap::new();
-
-    let re_num = Regex::new(r"^(\d+) \-> (\w+)$").unwrap();
-    let re_copy = Regex::new(r"^(\w+) \-> (\w+)$").unwrap();
-    let re_binary = Regex::new(r"^(\w+) (AND|OR) (\w+) \-> (\w+)$").unwrap();
-    let re_unary = Regex::new(r"^(NOT) (\w+) \-> (\w+)$").unwrap();
-    let re_shift = Regex::new(r"^(\w+) (RSHIFT|LSHIFT) (\d+) \-> (\w+)$").unwrap();
-
+    let mut opcodes: HashMap<String, String> = HashMap::new();
+    let re_opcode = Regex::new(r"^(.+) \-> (\w+)$").unwrap();
     for line in &data {
-        if let Some(op) = re_num.captures(&line) {
-            // 123 -> x
-
-            let value = op[1].parse::<u16>().unwrap();
-            let dst = op[2].to_string();
-            registers.insert(dst, value);
-
-
-        } else if let Some(op) = re_copy.captures(&line) {
-            let src = op[1].to_string();
-            let dst = op[2].to_string();
-
-            let v = registers.get(&src).cloned().unwrap_or(0);
-            registers.insert(dst, v);
-
-
-        } else if let Some(op) = re_binary.captures(&line) {
-            // println!("opbinary {}", line);
-
-            let src1 = op[1].to_string();
-            let opx = op[2].to_string();
-            let src2 = op[3].to_string();
-            let dst = op[4].to_string();
-
-            let v1 = registers.get(&src1).cloned().unwrap_or(0);
-            let v2 = registers.get(&src2).cloned().unwrap_or(0);
-
-            let v;
-            if opx == "AND" {
-                v = v1 & v2;
-            } else {
-                v = v1 | v2;
-            }
-
-            registers.insert(dst, v);
-
-
-        } else if let Some(op) = re_unary.captures(&line) {
-            // println!("opunary {}", line);
-
-            let src = op[2].to_string();
-            let dst = op[3].to_string();
-
-            let v = registers.get(&src).cloned().unwrap_or(0);
-
-            registers.insert(dst, ! v );
-
-
-        } else if let Some(op) = re_shift.captures(&line) {
-            // println!("opshift {}", line);
-
-            let src = op[1].to_string();
-            let opx = op[2].to_string();
-            let shift = op[3].parse::<u8>().unwrap();
-            let dst = op[4].to_string();
-
-            let v = registers.get(&src).cloned().unwrap_or(0);
-            if v != 0 {
-                println!("shift by zero {} {} {}", v, v << shift, v >> shift);
-            }
-            match opx.as_ref() {
-                "RSHIFT" => {
-                    registers.insert(dst, v >> shift);
-                }
-                "LSHIFT" => {
-                    registers.insert(dst, v << shift);
-                }
-                _ => {
-                    panic!("unknown shift operation");
-                }
-            }
-        } else {
-            println!("{}", line);
-            panic!("unknown operation");
+        if let Some(op) = re_opcode.captures(&line) {
+            opcodes.insert(op[2].to_string(), op[1].to_string());
         }
-        //println!("{}", line);
     }
 
-    // println!("{:?}", registers);
-    for (k,v) in &registers {
-        println!("{} = {}", k, v);
+    // part 1
+    let wire_a = wires(&opcodes, "a");
+    println!("{}", wire_a);
+
+    // part 2
+    opcodes.insert("b".to_string(), "956".to_string());
+    let wire_a_bis = wires(&opcodes, "a");
+    println!("{}", wire_a_bis);
+}
+
+fn wires(opcodes: &HashMap<String, String>, wire: &str) -> u16 {
+    let mut values: HashMap<String, u16> = HashMap::new();
+
+    fn run(
+        opcodes: &HashMap<String, String>,
+        cache: &mut HashMap<String, u16>,
+        reg: &str,
+        level: u32,
+    ) -> u16 {
+        if level > 70 {
+            panic!("too deep");
+        }
+
+        if cache.contains_key(reg) {
+            return cache[reg];
+        }
+
+        let is_value = reg.parse::<u16>();
+        if is_value.is_ok() {
+            let v = is_value.unwrap();
+            return v;
+        }
+
+        if opcodes.contains_key(reg) {
+            let re_num = Regex::new(r"^(\d+)$").unwrap();
+            let re_copy = Regex::new(r"^(\w+)$").unwrap();
+            let re_binary = Regex::new(r"^(\w+) (AND|OR) (\w+)$").unwrap();
+            let re_unary = Regex::new(r"^(NOT) (\w+)$").unwrap();
+            let re_shift = Regex::new(r"^(\w+) (RSHIFT|LSHIFT) (\d+)$").unwrap();
+
+            let op = opcodes.get(reg).unwrap();
+
+            // let indent = (0..level).map(|_| " ").collect::<String>();
+            // println!("{} reg: {} = {}", indent, reg, op);
+
+            let value: u16;
+
+            if let Some(op) = re_num.captures(&op) {
+                // 123 -> x
+                value = op[1].parse::<u16>().unwrap();
+            } else if let Some(op) = re_copy.captures(&op) {
+                // lx -> a
+                let src = op[1].to_string();
+                return run(opcodes, cache, &src, level + 1);
+            } else if let Some(op) = re_binary.captures(&op) {
+                // a AND b -> d
+                let src1 = op[1].to_string();
+                let opx = op[2].to_string();
+                let src2 = op[3].to_string();
+
+                let v1 = run(opcodes, cache, &src1, level + 1);
+                let v2 = run(opcodes, cache, &src2, level + 1);
+                if opx == "AND" {
+                    value = v1 & v2;
+                } else {
+                    value = v1 | v2;
+                }
+            } else if let Some(op) = re_unary.captures(&op) {
+                // NOT a -> b
+                let src = op[2].to_string();
+                value = !run(opcodes, cache, &src, level + 1);
+            } else if let Some(op) = re_shift.captures(&op) {
+                // a RSHIFT 2 -> c
+                let src = op[1].to_string();
+                let opx = op[2].to_string();
+                let shift = op[3].parse::<u8>().unwrap();
+
+                let v = run(opcodes, cache, &src, level + 1);
+
+                match opx.as_ref() {
+                    "RSHIFT" => {
+                        value = v >> shift;
+                    }
+                    "LSHIFT" => {
+                        value = v << shift;
+                    }
+                    _ => {
+                        panic!("unknown shift operation");
+                    }
+                }
+            } else {
+                panic!("unknown opcode <{}>", op);
+            }
+
+            cache.insert(reg.to_string(), value);
+            return value;
+        } else {
+            panic!("unknown register {} ", reg);
+        }
     }
 
-    println!("{:?}", registers.get("a").cloned().unwrap_or(0));
+    run(&opcodes, &mut values, wire, 0)
 }
 
 // The output is wrapped in a Result to allow matching on errors

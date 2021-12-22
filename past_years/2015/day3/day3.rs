@@ -74,7 +74,7 @@ fn part1(line: &String) {
         visited.insert(position);
     }
 
-    println!("{}", visited.len());
+    println!("{}", 1+visited.len());
 }
 
 // The output is wrapped in a Result to allow matching on errors
