@@ -1,0 +1,12 @@
+[package]
+name = "day14"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+structopt = "0.3"
+regex = "1"
+
+[[bin]]
+name = "day14"
+path = "day14.rs"
