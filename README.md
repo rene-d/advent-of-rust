@@ -2,7 +2,7 @@
 
 Solutions of [Advent of Code 2021](https://adventofcode.com/2021/) in [Rust](https://www.rust-lang.org), and sometimes in Python.
 
-Made for fun 😎 and exercise in Rust.
+Made for fun 😎 and to exercise in Rust.
 
 ## Puzzles
 
@@ -30,10 +30,13 @@ Puzzle                                                                  | Stars 
 [Day 20: Trench Map](https://adventofcode.com/2021/day/20)              | ⭐⭐   | Rust
 [Day 21: Dirac Dice](https://adventofcode.com/2021/day/21)              | ⭐⭐   | Rust
 [Day 22: Reactor Reboot](https://adventofcode.com/2021/day/22)          | ⭐⭐   | Rust
+[Day 23: Amphipod](https://adventofcode.com/2021/day/23)                | ⭐⭐   | Rust
+[Day 24: Arithmetic Logic Unit](https://adventofcode.com/2021/day/24)   | ⭐⭐   | Rust
+[Day 25: Sea Cucumber](https://adventofcode.com/2021/day/25)            | ⭐⭐   | Rust Python
 
 ## Paste years
 
 Year                                  | Stars | Languages
 ------------------------------------- | ----- | ----------
-[2015](https://adventofcode.com/2015) | 15⭐  | Rust
-[2016](https://dventofcode.com/2016)  | 2⭐   | Rust
+[2015](https://adventofcode.com/2015) | 37⭐  | Rust
+[2016](https://adventofcode.com/2016) | 2⭐   | Rust

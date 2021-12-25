@@ -25,7 +25,7 @@ fn main() {
     let re = Regex::new(r"^(.+) to (.+) = (\d+)$").unwrap();
 
     for line in &data {
-        if let Some(op) = re.captures(&line) {
+        if let Some(op) = re.captures(line) {
             places.insert(op[1].to_string());
             places.insert(op[2].to_string());
 
