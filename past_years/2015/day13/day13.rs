@@ -27,7 +27,7 @@ fn main() {
             .unwrap();
 
     for line in &data {
-        if let Some(op) = re.captures(&line) {
+        if let Some(op) = re.captures(line) {
             names.insert(op[1].to_string());
             names.insert(op[4].to_string());
 
