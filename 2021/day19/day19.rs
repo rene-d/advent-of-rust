@@ -1,6 +1,7 @@
 // Day 19: Beacon Scanner
 // http://adventofcode.com/2021/day/19
 
+use scan_fmt::{scan_fmt, scan_fmt_some};
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
@@ -169,18 +170,15 @@ fn load_scanners(data: Vec<String>) -> Vec<Vec<Point>> {
     let mut beacons: Vec<Point> = Vec::new();
 
     for line in data {
-        let id = sscanf::scanf!(line, "--- scanner {} ---", i32);
-        if id != None {
+        if let Ok(_id) = scan_fmt!(&line, "--- scanner {} ---", i32) {
             if beacons.len() > 0 {
                 scanners.push(beacons);
                 beacons = Vec::new();
             }
         }
-        let xyz = sscanf::scanf!(line, "{},{},{}", i32, i32, i32);
-        if xyz != None {
-            let (x, y, z) = xyz.unwrap();
-            let p = Point { x: x, y: y, z: z };
 
+        if let Ok((x, y, z)) = scan_fmt!(&line, "{},{},{}", i32, i32, i32) {
+            let p = Point { x: x, y: y, z: z };
             beacons.push(p);
         }
     }
