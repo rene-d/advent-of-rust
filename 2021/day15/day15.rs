@@ -182,10 +182,8 @@ where
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let mut data = vec![];
     if let Ok(lines) = read_lines(path) {
-        for line in lines {
-            if let Ok(bits) = line {
-                data.push(bits);
-            }
+        for line in lines.flatten() {
+            data.push(line);
         }
     }
     data

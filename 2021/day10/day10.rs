@@ -21,7 +21,8 @@ fn main() {
         }
     }
 
-    part2.sort_by(|a, b| a.cmp(b));
+    // part2.sort_by(|a, b| a.cmp(b));
+    part2.sort_unstable();
 
     println!("{}", part1);
     println!("{:?}", part2[part2.len() / 2]);
@@ -59,7 +60,7 @@ fn check(line: String) -> (u64, u64) {
             ']' => score = score * 5 + 2,
             '}' => score = score * 5 + 3,
             '>' => score = score * 5 + 4,
-            _ => score = score * 5,
+            _ => score *= 5,
         }
     }
 
@@ -83,10 +84,8 @@ where
 {
     let mut data = vec![];
     if let Ok(lines) = read_lines(path) {
-        for line in lines {
-            if let Ok(bits) = line {
-                data.push(bits);
-            }
+        for line in lines.flatten() {
+            data.push(line);
         }
     }
     data

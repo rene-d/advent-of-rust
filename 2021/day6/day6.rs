@@ -2,11 +2,11 @@
 // https://adventofcode.com/2021/day/6
 
 #![allow(unused_imports)]
+use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 use structopt::StructOpt;
-use std::fs;
 
 /// parse command line arguments
 #[derive(StructOpt)]
@@ -23,7 +23,7 @@ fn main() {
     let data = fs::read_to_string(args.path).unwrap();
 
     let mut timers = [0u64; 9];
-    for timer in data.split(",").map(|s| s.parse::<u64>().unwrap()) {
+    for timer in data.split(',').map(|s| s.parse::<u64>().unwrap()) {
         timers[timer as usize] += 1;
     }
 
