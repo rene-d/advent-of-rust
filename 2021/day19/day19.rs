@@ -1,7 +1,7 @@
 // Day 19: Beacon Scanner
 // http://adventofcode.com/2021/day/19
 
-use scan_fmt::{scan_fmt, scan_fmt_some};
+use scan_fmt::scan_fmt;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;

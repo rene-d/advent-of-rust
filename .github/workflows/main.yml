@@ -1,0 +1,34 @@
+name: CI
+on: [push, pull_request]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # Check Code style quickly by running `rustfmt` over all code
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup update stable && rustup default stable
+      - run: rustup component add rustfmt
+      - run: |
+          for manifest in `find . -name Cargo.toml`
+          do
+            echo check fmt for $manifest
+            cargo fmt --all --manifest-path $manifest -- --check
+          done
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup update stable && rustup default stable
+
+      - run: |
+          for manifest in `find . -name Cargo.toml`
+          do
+            echo test for $manifest
+            cargo test --manifest-path $manifest --
+          done

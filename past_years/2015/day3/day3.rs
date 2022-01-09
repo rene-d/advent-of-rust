@@ -24,7 +24,7 @@ fn main() {
     part2(&data[0]);
 }
 
-fn part2(line: &String) {
+fn part2(line: &str) {
     let mut visited = std::collections::HashSet::new();
 
     let mut position_santa = (0, 0);
@@ -57,7 +57,7 @@ fn part2(line: &String) {
     println!("{}", visited.len());
 }
 
-fn part1(line: &String) {
+fn part1(line: &str) {
     let mut visited = std::collections::HashSet::new();
 
     let mut position = (0, 0);
@@ -91,10 +91,8 @@ where
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let mut data = vec![];
     if let Ok(lines) = read_lines(path) {
-        for line in lines {
-            if let Ok(bits) = line {
-                data.push(bits);
-            }
+        for line in lines.flatten() {
+            data.push(line);
         }
     }
     data

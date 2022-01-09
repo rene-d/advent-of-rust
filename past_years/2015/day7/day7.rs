@@ -21,7 +21,7 @@ fn main() {
     let mut opcodes: HashMap<String, String> = HashMap::new();
     let re_opcode = Regex::new(r"^(.+) \-> (\w+)$").unwrap();
     for line in &data {
-        if let Some(op) = re_opcode.captures(&line) {
+        if let Some(op) = re_opcode.captures(line) {
             opcodes.insert(op[2].to_string(), op[1].to_string());
         }
     }
@@ -53,10 +53,8 @@ fn wires(opcodes: &HashMap<String, String>, wire: &str) -> u16 {
             return cache[reg];
         }
 
-        let is_value = reg.parse::<u16>();
-        if is_value.is_ok() {
-            let v = is_value.unwrap();
-            return v;
+        if let Ok(value) = reg.parse::<u16>() {
+            return value;
         }
 
         if opcodes.contains_key(reg) {
@@ -73,14 +71,14 @@ fn wires(opcodes: &HashMap<String, String>, wire: &str) -> u16 {
 
             let value: u16;
 
-            if let Some(op) = re_num.captures(&op) {
+            if let Some(op) = re_num.captures(op) {
                 // 123 -> x
                 value = op[1].parse::<u16>().unwrap();
-            } else if let Some(op) = re_copy.captures(&op) {
+            } else if let Some(op) = re_copy.captures(op) {
                 // lx -> a
                 let src = op[1].to_string();
                 return run(opcodes, cache, &src, level + 1);
-            } else if let Some(op) = re_binary.captures(&op) {
+            } else if let Some(op) = re_binary.captures(op) {
                 // a AND b -> d
                 let src1 = op[1].to_string();
                 let opx = op[2].to_string();
@@ -93,11 +91,11 @@ fn wires(opcodes: &HashMap<String, String>, wire: &str) -> u16 {
                 } else {
                     value = v1 | v2;
                 }
-            } else if let Some(op) = re_unary.captures(&op) {
+            } else if let Some(op) = re_unary.captures(op) {
                 // NOT a -> b
                 let src = op[2].to_string();
                 value = !run(opcodes, cache, &src, level + 1);
-            } else if let Some(op) = re_shift.captures(&op) {
+            } else if let Some(op) = re_shift.captures(op) {
                 // a RSHIFT 2 -> c
                 let src = op[1].to_string();
                 let opx = op[2].to_string();
@@ -121,13 +119,13 @@ fn wires(opcodes: &HashMap<String, String>, wire: &str) -> u16 {
             }
 
             cache.insert(reg.to_string(), value);
-            return value;
+            value
         } else {
             panic!("unknown register {} ", reg);
         }
     }
 
-    run(&opcodes, &mut values, wire, 0)
+    run(opcodes, &mut values, wire, 0)
 }
 
 // The output is wrapped in a Result to allow matching on errors

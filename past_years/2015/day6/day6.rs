@@ -1,5 +1,4 @@
 use regex::Regex;
-
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -28,7 +27,7 @@ fn part2(data: &[String]) {
     let re = Regex::new(r"^(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)$").unwrap();
 
     for line in data {
-        let drawn = re.captures(&line).unwrap();
+        let drawn = re.captures(line).unwrap();
 
         let op = drawn[1].to_string();
         let x1 = drawn[2].parse::<usize>().unwrap();

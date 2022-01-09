@@ -101,7 +101,7 @@ fn step1(data: &Vec<String>) {
     }
 
     for i in 0..12 {
-        gamma_rate = gamma_rate * 2;
+        gamma_rate *= 2;
         if freq[i] >= nb / 2 {
             gamma_rate += 1;
         }
@@ -124,13 +124,10 @@ where
 
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let mut data = vec![];
-
     if let Ok(lines) = read_lines(path) {
-        for line in lines {
-            if let Ok(bits) = line {
-                data.push(bits);
-            }
+        for line in lines.flatten() {
+            data.push(line);
         }
     }
-    return data;
+    data
 }

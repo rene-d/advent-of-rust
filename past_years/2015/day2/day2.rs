@@ -1,4 +1,6 @@
-#![allow(unused_imports)]
+// Day 2: I Was Told There Would Be No Math
+// https://adventofcode.com/2015/day/2
+
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -22,11 +24,11 @@ fn main() {
 
     for line in data {
         let mut dimensions = line
-            .split("x")
+            .split('x')
             .map(|s| s.parse::<u32>().unwrap())
             .collect::<Vec<_>>();
 
-        dimensions.sort(); // trick for rubbon computation (no matter order of l,w,h)
+        dimensions.sort_unstable(); // trick for rubbon computation (no matter order of l,w,h)
 
         if dimensions.len() != 3 {
             continue;
@@ -73,10 +75,8 @@ where
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let mut data = vec![];
     if let Ok(lines) = read_lines(path) {
-        for line in lines {
-            if let Ok(bits) = line {
-                data.push(bits);
-            }
+        for line in lines.flatten() {
+            data.push(line);
         }
     }
     data

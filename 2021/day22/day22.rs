@@ -53,9 +53,9 @@ fn part2(data: &[String]) {
         let z1 = cube[6].parse::<i32>().unwrap();
         let z2 = cube[7].parse::<i32>().unwrap();
 
-        assert_eq!(x1 <= x2, true);
-        assert_eq!(y1 <= y2, true);
-        assert_eq!(z1 <= z2, true);
+        assert!(x1 <= x2);
+        assert!(y1 <= y2);
+        assert!(z1 <= z2);
 
         cubes.push((x1, x2, y1, y2, z1, z2, flag_on));
 
@@ -71,9 +71,9 @@ fn part2(data: &[String]) {
     let mut yy: Vec<i32> = y_slices.iter().cloned().collect();
     let mut zz: Vec<i32> = z_slices.iter().cloned().collect();
 
-    xx.sort();
-    yy.sort();
-    zz.sort();
+    xx.sort_unstable();
+    yy.sort_unstable();
+    zz.sort_unstable();
 
     let mut size: i64 = 0;
 
