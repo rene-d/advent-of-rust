@@ -1,6 +1,9 @@
 // Day 4: Giant Squid
 // https://adventofcode.com/2021/day/4
 
+#![allow(clippy::needless_range_loop)]
+#![allow(clippy::manual_memcpy)]
+
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -67,7 +70,7 @@ fn main() {
 
             if win(&grids[k]) {
                 last_draw = draw * sum(&grids[k]);
-                if first_win == false {
+                if !first_win  {
                     first_win = true;
                     println!("{}", last_draw);
                 }
@@ -89,7 +92,7 @@ fn sum(grid: &[[i32; 5]; 5]) -> i32 {
             }
         }
     }
-    return s;
+    s
 }
 
 /// has_win returns true if the grid has an cleared row or column
@@ -114,7 +117,7 @@ fn win(grid: &[[i32; 5]; 5]) -> bool {
         }
     }
 
-    return false;
+    false
 }
 
 // The output is wrapped in a Result to allow matching on errors
