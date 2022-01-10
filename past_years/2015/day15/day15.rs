@@ -1,3 +1,6 @@
+// Day 15: Science for Hungry People
+// https://adventofcode.com/2015/day/15
+
 use regex::Regex;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -43,6 +46,7 @@ fn main() {
             };
             println!("{:?}", ingredient);
             ingredients.push(ingredient);
+            0
         });
     }
 

@@ -76,7 +76,12 @@ impl Password {
 
 impl fmt::Display for Password {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} [loops: {}]", self.pwd.iter().collect::<String>(), self.loops)
+        write!(
+            f,
+            "{} [loops: {}]",
+            self.pwd.iter().collect::<String>(),
+            self.loops
+        )
     }
 }
 

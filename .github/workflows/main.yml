@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: rustup update stable && rustup default stable
-      - run: rustup component add rustfmt
+      - run: rustup component add rustfmt --toolchain nightly
       - run: |
           for manifest in `find . -name Cargo.toml`
           do

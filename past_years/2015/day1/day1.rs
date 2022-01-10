@@ -35,7 +35,6 @@ fn main() {
         println!("{}", floor);
         println!("{}", enter);
     }
-
 }
 
 // The output is wrapped in a Result to allow matching on errors
