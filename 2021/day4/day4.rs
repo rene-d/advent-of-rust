@@ -70,7 +70,7 @@ fn main() {
 
             if win(&grids[k]) {
                 last_draw = draw * sum(&grids[k]);
-                if !first_win  {
+                if !first_win {
                     first_win = true;
                     println!("{}", last_draw);
                 }
