@@ -21,7 +21,7 @@ fn main() {
     let mut total_encoded = 0;
 
     for line in &data {
-        assert_eq!(line.chars().nth(0).unwrap(), '"');
+        assert_eq!(line.chars().next().unwrap(), '"');
         assert_eq!(line.chars().last().unwrap(), '"');
 
         let mut len_decoded = line.len() - 2;

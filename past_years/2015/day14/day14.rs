@@ -44,6 +44,7 @@ fn main() {
             };
             // println!("{:?}", reinder);
             reinders.push(reinder);
+            0
         });
     }
 
