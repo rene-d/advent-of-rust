@@ -7,16 +7,14 @@ use std::io::{self, BufRead};
 use std::path::Path;
 
 /// main function
-fn main()
-{
+fn main() {
     let data = load_data("input.txt");
 
     // Map containing each cave and its neighbors as a list
     let mut map: HashMap<String, Vec<String>> = HashMap::new();
 
     // Fill the map with caves
-    for entry in data
-    {
+    for entry in data {
         // Split line between "left" cave and "right" cave
         let mut split = entry.split('-');
         let left = split.next().unwrap();
@@ -34,36 +32,27 @@ fn main()
     let mut path_list = vec![(String::from("start"), vec![String::from("start")])];
     let mut path_count = 0;
 
-    while !path_list.is_empty()
-    {
+    while !path_list.is_empty() {
         let path = path_list.pop().unwrap();
         let node = path.0;
 
-        if node == "end"
-        {
+        if node == "end" {
             // Count this path and let it be removed from the paths list
             path_count += 1;
-        }
-        else
-        {
+        } else {
             // Get neighbors from last node
             let neighbor_list = map.get(&node).unwrap();
 
-            for neighbor in neighbor_list
-            {
-                if neighbor.to_uppercase() == String::from(neighbor)
-                {
+            for neighbor in neighbor_list {
+                if neighbor.to_uppercase() == String::from(neighbor) {
                     // We add this new path
                     let mut path_new = path.1.clone();
 
                     path_new.push(String::from(neighbor));
                     path_list.push((String::from(neighbor), path_new));
-                }
-                else
-                {
+                } else {
                     // Check wether this small cave was visited
-                    if !path.1.contains(neighbor)
-                    {
+                    if !path.1.contains(neighbor) {
                         // We add this new path
                         let mut path_new = path.1.clone();
 
