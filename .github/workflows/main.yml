@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: rustup update stable && rustup default stable
-      - run: rustup update nightly && rustup +nightly component add rustfmt
+      - run: rustup update nightly && rustup default nightly
+      - run: rustup +nightly component add rustfmt
       - run: |
           for manifest in `find . -name Cargo.toml`
           do
