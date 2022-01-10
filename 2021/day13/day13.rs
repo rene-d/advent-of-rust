@@ -1,6 +1,8 @@
 // Day 13: Transparent Origami
 // https://adventofcode.com/2021/day/13
 
+#![allow(clippy::needless_range_loop)]
+
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
