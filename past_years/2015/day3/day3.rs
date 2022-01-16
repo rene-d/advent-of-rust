@@ -1,7 +1,6 @@
 // Day 3: Perfectly Spherical Houses in a Vacuum
 // https://adventofcode.com/2015/day/3
 
-#![allow(unused_imports)]
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;

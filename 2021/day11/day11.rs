@@ -1,10 +1,6 @@
 // Day 11: Dumbo Octopus
 // https://adventofcode.com/2021/day/11
 
-#![allow(clippy::needless_range_loop)]
-#![allow(clippy::collapsible_if)]
-#![allow(unused_imports)]
-
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -36,9 +32,9 @@ fn main() {
 
     for turn in 1..1000 {
         // First, the energy level of each octopus increases by 1.
-        for y in 0..n {
-            for x in 0..n {
-                grid[y][x] += 1;
+        for line in grid.iter_mut() {
+            for val in line {
+                *val += 1;
             }
         }
 
@@ -61,12 +57,10 @@ fn main() {
                     }
                     let nx = x as isize + dx;
                     let ny = y as isize + dy;
-                    if 0 <= nx && nx < n as isize {
-                        if 0 <= ny && ny < n as isize {
-                            let v = grid[ny as usize][nx as usize];
-                            if v != 0 && v <= 9 {
-                                grid[ny as usize][nx as usize] = v + 1;
-                            }
+                    if 0 <= nx && nx < n as isize && 0 <= ny && ny < n as isize {
+                        let v = grid[ny as usize][nx as usize];
+                        if v != 0 && v <= 9 {
+                            grid[ny as usize][nx as usize] = v + 1;
                         }
                     }
                 }
@@ -92,10 +86,9 @@ fn main() {
 }
 
 fn all_flashing(grid: &[Vec<i8>]) -> bool {
-    let n = grid.len();
-    for y in 0..n {
-        for x in 0..n {
-            if grid[y][x] != 0 {
+    for line in grid {
+        for val in line {
+            if *val != 0 {
                 return false;
             }
         }
@@ -104,15 +97,14 @@ fn all_flashing(grid: &[Vec<i8>]) -> bool {
 }
 
 fn find_flash(grid: &[Vec<i8>]) -> (usize, usize) {
-    let n = grid.len();
-    for y in 0..n {
-        for x in 0..n {
-            if grid[y][x] == 10 {
+    for (y, line) in grid.iter().enumerate() {
+        for (x, val) in line.iter().enumerate() {
+            if *val == 10 {
                 return (y, x);
             }
         }
     }
-    (n, n)
+    (grid.len(), grid.len())
 }
 
 // The output is wrapped in a Result to allow matching on errors
