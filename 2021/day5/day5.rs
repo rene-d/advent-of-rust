@@ -28,7 +28,7 @@ fn main() {
     let mut grid = [[0i16; 1000]; 1000];
 
     for line in &data {
-        let drawn = re.captures(&line).unwrap();
+        let drawn = re.captures(line).unwrap();
 
         let mut x1 = drawn[1].parse::<i32>().unwrap();
         let mut y1 = drawn[2].parse::<i32>().unwrap();
@@ -37,18 +37,14 @@ fn main() {
 
         if x1 == x2 {
             if y1 > y2 {
-                let tmp = y1;
-                y1 = y2;
-                y2 = tmp;
+                std::mem::swap(&mut y1, &mut y2);
             }
             for y in y1..y2 + 1 {
                 grid[x1 as usize][y as usize] += 1;
             }
         } else if y1 == y2 {
             if x1 > x2 {
-                let tmp = x1;
-                x1 = x2;
-                x2 = tmp;
+                std::mem::swap(&mut x1, &mut x2);
             }
             for x in x1..x2 + 1 {
                 grid[x as usize][y1 as usize] += 1;
@@ -57,9 +53,9 @@ fn main() {
     }
 
     let mut sum = 0;
-    for x in 0..1000 {
-        for y in 0..1000 {
-            if grid[x][y] > 1 {
+    for line in &grid {
+        for val in line {
+            if *val > 1 {
                 sum += 1;
             }
         }
@@ -68,7 +64,7 @@ fn main() {
 
     // --- Part Two ---
     for line in &data {
-        let drawn = re.captures(&line).unwrap();
+        let drawn = re.captures(line).unwrap();
 
         let mut x1 = drawn[1].parse::<i32>().unwrap();
         let mut y1 = drawn[2].parse::<i32>().unwrap();
@@ -77,13 +73,8 @@ fn main() {
 
         if x1 != x2 && y1 != y2 {
             if x1 > x2 {
-                let tmpx = x1;
-                x1 = x2;
-                x2 = tmpx;
-
-                let tmpy = y1;
-                y1 = y2;
-                y2 = tmpy;
+                std::mem::swap(&mut x1, &mut x2);
+                std::mem::swap(&mut y1, &mut y2);
             }
             if y1 < y2 {
                 for x in x1..x2 + 1 {
@@ -98,9 +89,9 @@ fn main() {
     }
 
     let mut sum2 = 0;
-    for x in 0..1000 {
-        for y in 0..1000 {
-            if grid[x][y] > 1 {
+    for line in &grid {
+        for val in line {
+            if *val > 1 {
                 sum2 += 1;
             }
         }

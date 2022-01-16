@@ -15,18 +15,16 @@ fn part1() {
     let mut vpos = 0;
 
     if let Ok(lines) = read_lines("input.txt") {
-        for line in lines {
-            if let Ok(line_ok) = line {
-                if let Some((direction, _step)) = line_ok.rsplit_once(' ') {
-                    let step = _step.parse::<i32>().unwrap();
+        for line in lines.flatten() {
+            if let Some((direction, _step)) = line.rsplit_once(' ') {
+                let step = _step.parse::<i32>().unwrap();
 
-                    if direction == "forward" {
-                        hpos += step;
-                    } else if direction == "down" {
-                        vpos += step;
-                    } else if direction == "up" {
-                        vpos -= step;
-                    }
+                if direction == "forward" {
+                    hpos += step;
+                } else if direction == "down" {
+                    vpos += step;
+                } else if direction == "up" {
+                    vpos -= step;
                 }
             }
         }
@@ -41,19 +39,17 @@ fn part2() {
     let mut aim = 0;
 
     if let Ok(lines) = read_lines("input.txt") {
-        for line in lines {
-            if let Ok(line_ok) = line {
-                if let Some((direction, _step)) = line_ok.rsplit_once(' ') {
-                    let step = _step.parse::<i32>().unwrap();
+        for line in lines.flatten() {
+            if let Some((direction, _step)) = line.rsplit_once(' ') {
+                let step = _step.parse::<i32>().unwrap();
 
-                    if direction == "down" {
-                        aim += step;
-                    } else if direction == "up" {
-                        aim -= step;
-                    } else if direction == "forward" {
-                        hpos += step;
-                        vpos += aim * step;
-                    }
+                if direction == "down" {
+                    aim += step;
+                } else if direction == "up" {
+                    aim -= step;
+                } else if direction == "forward" {
+                    hpos += step;
+                    vpos += aim * step;
                 }
             }
         }
