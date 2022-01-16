@@ -1,6 +1,8 @@
 // Day 20: Trench Map
 // https://adventofcode.com/2021/day/20
 
+#![allow(clippy::needless_range_loop)]
+
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -74,7 +76,7 @@ fn main() {
 }
 
 fn display(grid: &Grid) {
-    let extense = range(&grid);
+    let extense = range(grid);
 
     if grid.len() > 10 {
         return;
@@ -153,7 +155,7 @@ fn enhance(grid: &mut Grid, decoder: &[u8], default_pixel: u8) -> u8 {
                         pixel = default_pixel;
                     }
                     match pixel {
-                        PIXEL_OFF => sum = sum * 2,    // pixel off
+                        PIXEL_OFF => sum *= 2,         // pixel off
                         PIXEL_ON => sum = sum * 2 + 1, // pixel on
                         _ => panic!("unknown pixel"),
                     }
