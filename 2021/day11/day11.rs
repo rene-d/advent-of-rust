@@ -1,4 +1,10 @@
+// Day 11: Dumbo Octopus
+// https://adventofcode.com/2021/day/11
+
+#![allow(clippy::needless_range_loop)]
+#![allow(clippy::collapsible_if)]
 #![allow(unused_imports)]
+
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -85,7 +91,7 @@ fn main() {
     }
 }
 
-fn all_flashing(grid: &Vec<Vec<i8>>) -> bool {
+fn all_flashing(grid: &[Vec<i8>]) -> bool {
     let n = grid.len();
     for y in 0..n {
         for x in 0..n {
@@ -97,7 +103,7 @@ fn all_flashing(grid: &Vec<Vec<i8>>) -> bool {
     true
 }
 
-fn find_flash(grid: &Vec<Vec<i8>>) -> (usize, usize) {
+fn find_flash(grid: &[Vec<i8>]) -> (usize, usize) {
     let n = grid.len();
     for y in 0..n {
         for x in 0..n {

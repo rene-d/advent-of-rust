@@ -81,7 +81,7 @@ fn load_program(data: &[String]) -> Vec<Instruction> {
 
     for line in data {
         for (opcode, target, re) in re_stmt {
-            if let Some(a) = re.captures(&line) {
+            if let Some(a) = re.captures(line) {
                 let dest = match a[1].as_ref() {
                     "w" => Register::W,
                     "x" => Register::X,
@@ -94,7 +94,7 @@ fn load_program(data: &[String]) -> Vec<Instruction> {
                     Register::Input => {
                         program.push(Instruction {
                             opcode: *opcode,
-                            dest: dest,
+                            dest,
                             src: Register::Input,
                             immediate: 0,
                         });
@@ -102,7 +102,7 @@ fn load_program(data: &[String]) -> Vec<Instruction> {
                     Register::Immediate => {
                         program.push(Instruction {
                             opcode: *opcode,
-                            dest: dest,
+                            dest,
                             src: Register::Immediate,
                             immediate: a[2].parse().unwrap(),
                         });
@@ -110,7 +110,7 @@ fn load_program(data: &[String]) -> Vec<Instruction> {
                     _ => {
                         program.push(Instruction {
                             opcode: *opcode,
-                            dest: dest,
+                            dest,
                             src: match a[2].as_ref() {
                                 "w" => Register::W,
                                 "x" => Register::X,
@@ -264,7 +264,7 @@ fn solve(data: &[String]) {
                 _ => panic!("bad divisor"),
             };
 
-            if w < 1 || w > 9 {
+            if !(1..=9).contains(&w) {
                 z = 1;
                 break;
             }
@@ -310,7 +310,7 @@ fn main() {
 
     let program = load_program(&data);
 
-    if data.len() == 252 && args.input == "" {
+    if data.len() == 252 && args.input.is_empty() {
         solve(&data);
     } else {
         let mut monad = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
