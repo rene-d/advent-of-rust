@@ -1,10 +1,10 @@
 # advent-of-rust
 
-Solutions of [Advent of Code 2021](https://adventofcode.com/2021/) in [Rust](https://www.rust-lang.org), and sometimes in Python.
+Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/).
 
-Made for fun 😎 and to exercise in Rust.
+Made for fun 😎 and to practice Rust.
 
-## Puzzles
+## 2021
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | ----------
@@ -19,7 +19,7 @@ Puzzle                                                                  | Stars 
 [Day 9: Smoke Basin](https://adventofcode.com/2021/day/9)               | ⭐⭐   | Rust Python
 [Day 10: Syntax Scoring](https://adventofcode.com/2021/day/10)          | ⭐⭐   | Rust Python
 [Day 11: Dumbo Octopus](https://adventofcode.com/2021/day/11)           | ⭐⭐   | Rust
-[Day 12: Passage Pathing](https://adventofcode.com/2021/day/12)         | ⭐⭐   | Python
+[Day 12: Passage Pathing](https://adventofcode.com/2021/day/12)         | ⭐⭐   | Rust Python
 [Day 13: Transparent Origami](https://adventofcode.com/2021/day/13)     | ⭐⭐   | Rust Python
 [Day 14: Extended Polymerization](https://adventofcode.com/2021/day/14) | ⭐⭐   | Python
 [Day 15: Chiton](https://adventofcode.com/2021/day/15)                  | ⭐⭐   | Rust
@@ -34,7 +34,7 @@ Puzzle                                                                  | Stars 
 [Day 24: Arithmetic Logic Unit](https://adventofcode.com/2021/day/24)   | ⭐⭐   | Rust
 [Day 25: Sea Cucumber](https://adventofcode.com/2021/day/25)            | ⭐⭐   | Rust Python
 
-## Paste years
+## Past years
 
 Year                                  | Stars | Languages
 ------------------------------------- | ----- | ----------
