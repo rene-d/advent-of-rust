@@ -1,4 +1,4 @@
-// Day 10: Passage Pathing
+// Day 12: Passage Pathing
 // https://adventofcode.com/2021/day/12
 
 use std::collections::HashMap;
@@ -6,10 +6,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 
-/// main function
-fn main() {
-    let data = load_data("input.txt");
-
+fn compute_paths(data: &[std::string::String], small_twice: bool) -> u32 {
     // Map containing each cave and its neighbors as a list
     let mut map: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -21,20 +18,19 @@ fn main() {
         let right = split.next().unwrap();
 
         // Update map with eventual new caves and neighbors
-        let left_cave = map.entry(String::from(left)).or_insert(Vec::new());
+        let left_cave = map.entry(String::from(left)).or_default();
         left_cave.push(String::from(right));
 
-        let right_cave = map.entry(String::from(right)).or_insert(Vec::new());
+        let right_cave = map.entry(String::from(right)).or_default();
         right_cave.push(String::from(left));
     }
 
     // Initialize paths list
-    let mut path_list = vec![(String::from("start"), vec![String::from("start")])];
+    let mut path_list = vec![(String::from("start"), vec![String::from("start")], false)];
     let mut path_count = 0;
 
     while !path_list.is_empty() {
-        let path = path_list.pop().unwrap();
-        let node = path.0;
+        let (node, path, twice) = path_list.pop().unwrap();
 
         if node == "end" {
             // Count this path and let it be removed from the paths list
@@ -44,27 +40,46 @@ fn main() {
             let neighbor_list = map.get(&node).unwrap();
 
             for neighbor in neighbor_list {
-                if neighbor.to_uppercase() == String::from(neighbor) {
+                if neighbor.to_uppercase() == *neighbor {
                     // We add this new path
-                    let mut path_new = path.1.clone();
+                    let mut path_new = path.clone();
 
                     path_new.push(String::from(neighbor));
-                    path_list.push((String::from(neighbor), path_new));
+                    path_list.push((String::from(neighbor), path_new, twice));
                 } else {
                     // Check wether this small cave was visited
-                    if !path.1.contains(neighbor) {
+                    if !path.contains(neighbor) {
                         // We add this new path
-                        let mut path_new = path.1.clone();
+                        let mut path_new = path.clone();
 
                         path_new.push(String::from(neighbor));
-                        path_list.push((String::from(neighbor), path_new));
+                        path_list.push((String::from(neighbor), path_new, twice));
+                    }
+                    // Check wether we already visited twice a small cave
+                    else if small_twice && !twice && neighbor != "start" && neighbor != "end" {
+                        // We add this new path
+                        let mut path_new = path.clone();
+
+                        path_new.push(String::from(neighbor));
+                        path_list.push((String::from(neighbor), path_new, true));
                     }
                 }
             }
         }
     }
 
-    println!("{}", path_count);
+    path_count
+}
+
+/// main function
+fn main() {
+    let data = load_data("input.txt");
+
+    let small_once = compute_paths(&data, false);
+    let small_twice = compute_paths(&data, true);
+
+    println!("{}", small_once);
+    println!("{}", small_twice);
 }
 
 // The output is wrapped in a Result to allow matching on errors
