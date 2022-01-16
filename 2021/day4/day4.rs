@@ -1,9 +1,6 @@
 // Day 4: Giant Squid
 // https://adventofcode.com/2021/day/4
 
-#![allow(clippy::needless_range_loop)]
-#![allow(clippy::manual_memcpy)]
-
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -40,9 +37,8 @@ fn main() {
                 .split_whitespace()
                 .filter_map(|s| s.parse::<i32>().ok())
                 .collect::<Vec<i32>>();
-            for x in 0..5 {
-                grid[y][x] = line[x];
-            }
+
+            grid[y][..5].clone_from_slice(&line[..5]);
         }
 
         grids.push(grid);
@@ -54,27 +50,27 @@ fn main() {
     let mut last_draw = 0;
 
     for draw in drawn {
-        for k in 0..grids.len() {
-            if grids[k][0][0] == -2 {
+        for grid in grids.iter_mut() {
+            if grid[0][0] == -2 {
                 // grid invalidated
                 continue;
             }
 
-            for x in 0..5 {
-                for y in 0..5 {
-                    if grids[k][y][x] == draw {
-                        grids[k][y][x] = -1; // clear the case
+            for line in grid.iter_mut() {
+                for val in line {
+                    if *val == draw {
+                        *val = -1; // clear the case
                     }
                 }
             }
 
-            if win(&grids[k]) {
-                last_draw = draw * sum(&grids[k]);
+            if win(grid) {
+                last_draw = draw * sum(grid);
                 if !first_win {
                     first_win = true;
                     println!("{}", last_draw);
                 }
-                grids[k][0][0] = -2; // invalidate the grid
+                grid[0][0] = -2; // invalidate the grid
             }
         }
     }
@@ -85,10 +81,10 @@ fn main() {
 /// sum computes the sum of non-cleared cases
 fn sum(grid: &[[i32; 5]; 5]) -> i32 {
     let mut s = 0;
-    for x in 0..5 {
-        for y in 0..5 {
-            if grid[y][x] != -1 {
-                s += grid[y][x];
+    for line in grid {
+        for val in line {
+            if *val != -1 {
+                s += *val;
             }
         }
     }

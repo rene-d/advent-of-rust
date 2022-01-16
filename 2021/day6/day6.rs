@@ -1,11 +1,7 @@
 // Day 6: Lanternfish
 // https://adventofcode.com/2021/day/6
 
-#![allow(unused_imports)]
 use std::fs;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
 use structopt::StructOpt;
 
 /// parse command line arguments

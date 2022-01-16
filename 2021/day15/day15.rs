@@ -80,7 +80,7 @@ impl PartialEq for Cost {
 
 impl Eq for Cost {}
 
-fn min_cost(grid: &Vec<Vec<i32>>) -> i32 {
+fn min_cost(grid: &[Vec<i32>]) -> i32 {
     let n = grid.len();
     let mut d = vec![vec![0i32; n]; n];
 
@@ -140,7 +140,7 @@ fn min_cost(grid: &Vec<Vec<i32>>) -> i32 {
     d[n - 1][n - 1]
 }
 
-fn min_cost_dp(grid: &Vec<Vec<i32>>) -> i32 {
+fn min_cost_dp(grid: &[Vec<i32>]) -> i32 {
     let n = grid.len();
     let mut cost = vec![vec![0i32; n]; n];
 

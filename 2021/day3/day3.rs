@@ -27,7 +27,7 @@ fn main() {
 }
 
 /// step 2
-fn step2(data: &Vec<String>) {
+fn step2(data: &[String]) {
     let nb_bits = data[0].len();
     // println!("nb_bits: {}", nb_bits);
 
@@ -44,16 +44,16 @@ fn step2(data: &Vec<String>) {
                 let c = value.chars().nth(bit).unwrap();
                 if c == '1' {
                     one += 1;
-                    o2_rate = isize::from_str_radix(&value, 2).unwrap();
+                    o2_rate = isize::from_str_radix(value, 2).unwrap();
                 }
                 nb += 1;
             }
         }
 
         if one >= nb - one {
-            o2_start.push_str("1");
+            o2_start.push('1');
         } else {
-            o2_start.push_str("0");
+            o2_start.push('0');
         }
     }
 
@@ -70,39 +70,39 @@ fn step2(data: &Vec<String>) {
                 let c = value.chars().nth(bit).unwrap();
                 if c == '1' {
                     one += 1;
-                    co2_rate = isize::from_str_radix(&value, 2).unwrap();
+                    co2_rate = isize::from_str_radix(value, 2).unwrap();
                 }
                 nb += 1;
             }
         }
 
         if one >= nb - one {
-            co2_start.push_str("0");
+            co2_start.push('0');
         } else {
-            co2_start.push_str("1");
+            co2_start.push('1');
         }
     }
     println!("{}", o2_rate * co2_rate);
 }
 
 /// step 1: compute gamma_rate * espilon_rate
-fn step1(data: &Vec<String>) {
+fn step1(data: &[String]) {
     let mut gamma_rate = 0;
-    let mut freq: [i32; 12] = [0; 12];
+    let mut freq_list: [i32; 12] = [0; 12];
     let mut nb = 0;
 
     for bits in data {
         for (i, bit) in bits.chars().enumerate() {
             if bit == '1' {
-                freq[i] += 1i32;
+                freq_list[i] += 1i32;
             }
         }
         nb += 1;
     }
 
-    for i in 0..12 {
+    for freq in freq_list {
         gamma_rate *= 2;
-        if freq[i] >= nb / 2 {
+        if freq >= nb / 2 {
             gamma_rate += 1;
         }
     }
