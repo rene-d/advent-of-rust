@@ -68,11 +68,11 @@ fn solve(scanners: Vec<Vec<Point>>) {
 
     // compute all rotated coordinates of beacons
     let mut scanners_rotated: Vec<Vec<Vec<Point>>> = Vec::new();
-    for i in 0..scanners.len() {
+    for scanner in &scanners {
         let mut scanner_rotated: Vec<Vec<Point>> = Vec::new();
 
         for rotation in 0..24 {
-            let r: Vec<Point> = scanners[i]
+            let r: Vec<Point> = scanner
                 .iter()
                 .map(|point| rotate(point, rotation))
                 .collect();
@@ -100,11 +100,11 @@ fn solve(scanners: Vec<Vec<Point>>) {
 
                 let mut match_points: HashMap<Point, i32> = HashMap::new();
 
-                for bi in 0..scanners[*scanner_id].len() {
-                    for gi in 0..g_scan.len() {
-                        let dx = -b_scan[bi].x + g_scan[gi].x;
-                        let dy = -b_scan[bi].y + g_scan[gi].y;
-                        let dz = -b_scan[bi].z + g_scan[gi].z;
+                for bi in b_scan.iter().take(scanners[*scanner_id].len()) {
+                    for gi in &g_scan {
+                        let dx = -bi.x + gi.x;
+                        let dy = -bi.y + gi.y;
+                        let dz = -bi.z + gi.z;
 
                         let p = Point {
                             x: dx,
@@ -171,18 +171,18 @@ fn load_scanners(data: Vec<String>) -> Vec<Vec<Point>> {
 
     for line in data {
         if let Ok(_id) = scan_fmt!(&line, "--- scanner {} ---", i32) {
-            if beacons.len() > 0 {
+            if !beacons.is_empty() {
                 scanners.push(beacons);
                 beacons = Vec::new();
             }
         }
 
         if let Ok((x, y, z)) = scan_fmt!(&line, "{},{},{}", i32, i32, i32) {
-            let p = Point { x: x, y: y, z: z };
+            let p = Point { x, y, z };
             beacons.push(p);
         }
     }
-    if beacons.len() > 0 {
+    if !beacons.is_empty() {
         scanners.push(beacons);
     }
 

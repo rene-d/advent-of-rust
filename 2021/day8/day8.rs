@@ -31,10 +31,10 @@ fn contains(a: &str, b: &str) -> bool {
             return false;
         }
     }
-    return true;
+    true
 }
 
-fn part2(data: &Vec<String>) {
+fn part2(data: &[String]) {
     // Nota: the Python version is much more readable...
     let mut total = 0;
     for line in data {
@@ -47,9 +47,11 @@ fn part2(data: &Vec<String>) {
 
         for c in notes {
             let mut s: Vec<char> = c.chars().collect();
-            s.sort_by(|a, b| a.cmp(b));
+            s.sort_unstable();
             let s_sorted = String::from_iter(s);
-            d.entry(c.len()).or_insert(HashSet::new()).insert(s_sorted);
+            d.entry(c.len())
+                .or_insert_with(HashSet::new)
+                .insert(s_sorted);
         }
 
         let mut map: HashMap<String, u8> = HashMap::new();
@@ -110,7 +112,7 @@ fn part2(data: &Vec<String>) {
         let mut r = 0;
         for d in code {
             let mut s: Vec<char> = d.chars().collect();
-            s.sort_by(|a, b| a.cmp(b));
+            s.sort_unstable();
             let s_sorted = String::from_iter(s);
 
             let v = *map.entry(s_sorted).or_insert(0) as u32;
@@ -118,13 +120,13 @@ fn part2(data: &Vec<String>) {
         }
         total += r;
 
-        println!("{:?}", d);
-        println!("{:?}", map);
+        // println!("{:?}", d);
+        // println!("{:?}", map);
     }
     println!("{:?}", total);
 }
 
-fn part1(data: &Vec<String>) {
+fn part1(data: &[String]) {
     let mut digit_one = 0;
     let mut digit_four = 0;
     let mut digit_seven = 0;

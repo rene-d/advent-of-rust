@@ -20,6 +20,19 @@ jobs:
             cargo fmt --all --manifest-path $manifest -- --check
           done
 
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: rustup update nightly && rustup default nightly
+      - run: rustup component add clippy
+      - run: |
+          for manifest in `find . ! -path '*/day*' -name Cargo.toml`
+          do
+            echo check clippy for $manifest
+            cargo clippy --manifest-path $manifest
+          done
+
   test:
     runs-on: ubuntu-latest
     steps:

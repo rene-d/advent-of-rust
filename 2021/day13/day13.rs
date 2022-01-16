@@ -1,8 +1,6 @@
 // Day 13: Transparent Origami
 // https://adventofcode.com/2021/day/13
 
-#![allow(clippy::needless_range_loop)]
-
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -43,15 +41,15 @@ fn main() {
         if line.starts_with("fold along x=") {
             let (_, s) = line.split_once("=").unwrap();
             let fold = s.parse::<usize>().unwrap();
-            for y in 0..grid.len() {
+            for line in &mut grid {
                 for x in 0..fold {
-                    if grid[y][fold + 1 + x] == 1 {
-                        grid[y][fold - 1 - x] = 1;
+                    if line[fold + 1 + x] == 1 {
+                        line[fold - 1 - x] = 1;
                     }
                 }
             }
-            for y in 0..grid.len() {
-                grid[y].resize(fold, 0);
+            for line in &mut grid {
+                line.resize(fold, 0);
             }
         } else if line.starts_with("fold along y=") {
             let (_, s) = line.split_once("=").unwrap();
