@@ -1,4 +1,5 @@
-#![allow(clippy::needless_range_loop)]
+// Day 6: Probably a Fire Hazard
+// https://adventofcode.com/2015/day/6
 
 use regex::Regex;
 use std::fs::File;
@@ -38,23 +39,23 @@ fn part2(data: &[String]) {
         let y2 = drawn[5].parse::<usize>().unwrap();
 
         if op == "turn on" {
-            for x in x1..=x2 {
-                for y in y1..=y2 {
-                    grid[x][y] += 1;
+            for line in grid.iter_mut().take(x2 + 1).skip(x1) {
+                for val in line.iter_mut().take(y2 + 1).skip(y1) {
+                    *val += 1;
                 }
             }
         } else if op == "turn off" {
-            for x in x1..=x2 {
-                for y in y1..=y2 {
-                    if grid[x][y] > 0 {
-                        grid[x][y] -= 1;
+            for line in grid.iter_mut().take(x2 + 1).skip(x1) {
+                for val in line.iter_mut().take(y2 + 1).skip(y1) {
+                    if *val > 0 {
+                        *val -= 1;
                     }
                 }
             }
         } else if op == "toggle" {
-            for x in x1..=x2 {
-                for y in y1..=y2 {
-                    grid[x][y] += 2;
+            for line in grid.iter_mut().take(x2 + 1).skip(x1) {
+                for val in line.iter_mut().take(y2 + 1).skip(y1) {
+                    *val += 2;
                 }
             }
         }
@@ -84,21 +85,21 @@ fn part1(data: &[String]) {
         let y2 = drawn[5].parse::<usize>().unwrap();
 
         if op == "turn on" {
-            for x in x1..=x2 {
-                for y in y1..=y2 {
-                    grid[x][y] = 1;
+            for line in grid.iter_mut().take(x2 + 1).skip(x1) {
+                for val in line.iter_mut().take(y2 + 1).skip(y1) {
+                    *val = 1;
                 }
             }
         } else if op == "turn off" {
-            for x in x1..=x2 {
-                for y in y1..=y2 {
-                    grid[x][y] = 0;
+            for line in grid.iter_mut().take(x2 + 1).skip(x1) {
+                for val in line.iter_mut().take(y2 + 1).skip(y1) {
+                    *val = 0;
                 }
             }
         } else if op == "toggle" {
-            for x in x1..=x2 {
-                for y in y1..=y2 {
-                    grid[x][y] = 1 - grid[x][y];
+            for line in grid.iter_mut().take(x2 + 1).skip(x1) {
+                for val in line.iter_mut().take(y2 + 1).skip(y1) {
+                    *val = 1 - *val;
                 }
             }
         }

@@ -1,8 +1,6 @@
 // Day 20: Trench Map
 // https://adventofcode.com/2021/day/20
 
-#![allow(clippy::needless_range_loop)]
-
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -90,11 +88,11 @@ fn display(grid: &Grid) {
     );
     println!("lit pixels: {}", count_lit(grid));
 
-    for y in extense.1..=extense.3 {
-        for x in extense.0..=extense.2 {
+    for line in grid.iter().take(extense.3 + 1).skip(extense.1) {
+        for val in line.iter().take(extense.2 + 1).skip(extense.0) {
             print!(
                 "{}",
-                match grid[y][x] {
+                match *val {
                     PIXEL_OFF => '.',
                     PIXEL_ON => '#',
                     _ => panic!("unknown pixel"),
@@ -108,10 +106,9 @@ fn display(grid: &Grid) {
 
 fn count_lit(grid: &Grid) -> usize {
     let mut lit = 0;
-    for y in 0..grid.len() {
-        for x in 0..grid[y].len() {
-            let pixel = grid[y][x];
-            if pixel == PIXEL_ON {
+    for line in grid {
+        for val in line {
+            if *val == PIXEL_ON {
                 lit += 1;
             }
         }
@@ -125,10 +122,9 @@ fn range(grid: &Grid) -> (usize, usize, usize, usize) {
     let mut miny = usize::MAX;
     let mut maxy = usize::MIN;
 
-    for y in 0..grid.len() {
-        for x in 0..grid[y].len() {
-            let pixel = grid[y][x];
-            if pixel != PIXEL_UNKNOWN {
+    for (y, line) in grid.iter().enumerate() {
+        for (x, val) in line.iter().enumerate() {
+            if *val != PIXEL_UNKNOWN {
                 minx = minx.min(x);
                 maxx = maxx.max(x);
                 miny = miny.min(y);
@@ -143,8 +139,18 @@ fn enhance(grid: &mut Grid, decoder: &[u8], default_pixel: u8) -> u8 {
     let mut new_grid: Grid = [[PIXEL_UNKNOWN; 1000]; 1000];
     let extense = range(grid);
 
-    for y in extense.1 - 1..=extense.3 + 1 {
-        for x in extense.0 - 1..=extense.2 + 1 {
+    for (y, line) in new_grid
+        .iter_mut()
+        .enumerate()
+        .take(extense.3 + 2)
+        .skip(extense.1 - 1)
+    {
+        for (x, val) in line
+            .iter_mut()
+            .enumerate()
+            .take(extense.2 + 2)
+            .skip(extense.0 - 1)
+        {
             let mut sum: usize = 0;
             for dy in -1..=1 {
                 for dx in -1..=1 {
@@ -161,7 +167,7 @@ fn enhance(grid: &mut Grid, decoder: &[u8], default_pixel: u8) -> u8 {
                     }
                 }
             }
-            new_grid[y][x] = decoder[sum];
+            *val = decoder[sum];
         }
     }
     for y in 0..grid.len() {
