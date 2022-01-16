@@ -13,22 +13,20 @@ fn main() {
 
     // lecture du fichier et step 1
     if let Ok(lines) = read_lines("input.txt") {
-        // Consumes the iterator, returns an (Optional) String
-        for line in lines {
-            if let Ok(line_ok) = line {
-                // convertit string -> u32
-                let num: u32 = line_ok.parse().unwrap();
+        // Consumes the iterator, returns a String
+        for line in lines.flatten() {
+            // convertit string -> u32
+            let num: u32 = line.parse().unwrap();
 
-                // step 1
-                // est-ce que on est en "increase" ?
-                if prev_num < num {
-                    result += 1;
-                }
-                prev_num = num;
-
-                // pour le step 2
-                data.push(num)
+            // step 1
+            // est-ce que on est en "increase" ?
+            if prev_num < num {
+                result += 1;
             }
+            prev_num = num;
+
+            // pour le step 2
+            data.push(num)
         }
     }
     println!("{}", result);

@@ -1,6 +1,7 @@
 // Day 17: Trick Shot
 // https://adventofcode.com/2021/day/17
 
+use std::cmp::Ordering;
 use std::env;
 use std::fs;
 use text_io::scan;
@@ -63,14 +64,11 @@ fn main() {
                     y_max = y; // the highest y position
                 }
 
-                if vx > 0 {
-                    // the probe's x velocity changes by 1 toward the value 0
-                    vx -= 1;
-                } else if vx < 0 {
-                    // increases by 1 if it is less than 0
-                    vx += 1;
-                } else {
-                    // does not change if it is already 0
+                // Decrement the velocity of the probe
+                match vx.cmp(&0) {
+                    Ordering::Greater => vx -= 1,
+                    Ordering::Less => vx += 1,
+                    Ordering::Equal => {}
                 }
 
                 vy -= 1; // the probe's y velocity decreases by 1.
