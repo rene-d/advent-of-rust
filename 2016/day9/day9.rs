@@ -37,6 +37,7 @@ another way** to get its decompressed length.
 What is the **decompressed length** of the file using this improved format?
 */
 
+/// Solve the puzzle with the given input.
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
@@ -44,11 +45,13 @@ fn main() {
     println!("{}", part2(&data));
 }
 
+/// Do part 1 of the puzzle
 fn part1(data: &str) -> usize {
     data.split('\n')
         .fold(0, |acc, line| acc + expand_v1(line).len())
 }
 
+/// Do part 2 of the puzzle
 fn part2(data: &str) -> usize {
     data.split('\n').fold(0, |acc, line| acc + expand_v2(line))
 }
@@ -174,7 +177,9 @@ fn test_expand_v2() {
 #[test]
 fn test_part2() {
     let data = "(3x3)XYZ
-X(8x2)(3x3)ABCY";
+X(8x2)(3x3)ABCY
+(27x12)(20x12)(13x14)(7x10)(1x12)A
+(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN";
 
-    assert_eq!(part2(data), 9 + 20);
+    assert_eq!(part2(data), 9 + 20 + 241920 + 445);
 }
