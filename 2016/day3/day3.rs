@@ -1,8 +1,48 @@
-// Day 3: Squares With Three Sides
-// https://adventofcode.com/2016/day/3
+/*!
+[Day 3: Squares With Three Sides](https://adventofcode.com/2016/day/3)
+
+Now that you can think clearly, you move deeper into the labyrinth of
+hallways and office furniture that makes up this part of Easter Bunny HQ.
+This must be a graphic design department; the walls are covered in
+specifications for triangles.
+
+Or are they?
+
+The design document gives the side lengths of each triangle it describes,
+but... `5 10 25`? Some of these aren't triangles. You can't help but mark
+the impossible ones.
+
+In a valid triangle, the sum of any two sides must be larger than the
+remaining side. For example, the "triangle" given above is impossible,
+because `5 + 10` is not larger than `25`.
+
+In your puzzle input, **how many** of the listed triangles are **possible**?
+
+--- Part Two ---
+
+Now that you've helpfully marked up their design documents, it occurs to
+you that triangles are specified in groups of three **vertically**. Each set
+of three numbers in a column specifies a triangle. Rows are unrelated.
+
+For example, given the following specification, numbers with the same
+hundreds digit would be part of the same triangle:
+
+```text
+101 301 501
+102 302 502
+103 303 503
+201 401 601
+202 402 602
+203 403 603
+````
+
+In your puzzle input, and instead reading by columns, **how many** of the
+listed triangles are **possible**?
+*/
 
 use scan_fmt::scan_fmt;
 
+/// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
@@ -10,7 +50,7 @@ fn main() {
     println!("{}", part2(&data));
 }
 
-/// part 1
+/// ``part`` counts the triangles in the input with the three sides on the same line.
 fn part1(data: &str) -> u32 {
     let mut triangles = 0;
 
@@ -23,16 +63,7 @@ fn part1(data: &str) -> u32 {
     triangles
 }
 
-/// ``is_triangle`` returns 1 if the given sides form a triangle, 0 otherwise
-fn is_triangle(x: i32, y: i32, z: i32) -> u32 {
-    if x + y > z && x + z > y && y + z > x {
-        1
-    } else {
-        0
-    }
-}
-
-/// part 2
+/// ``part2`` counts the triangles in the input with the three sides on three successive lines, one triangle per column.
 fn part2(data: &str) -> u32 {
     let mut triangles = 0;
     let lines = data.split('\n').collect::<Vec<_>>();
@@ -50,6 +81,15 @@ fn part2(data: &str) -> u32 {
     }
 
     triangles
+}
+
+/// ``is_triangle`` returns 1 if the given sides form a triangle, 0 otherwise
+fn is_triangle(x: i32, y: i32, z: i32) -> u32 {
+    if x + y > z && x + z > y && y + z > x {
+        1
+    } else {
+        0
+    }
 }
 
 #[cfg(test)]
