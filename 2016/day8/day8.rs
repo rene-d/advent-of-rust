@@ -80,7 +80,7 @@ After you swipe your card, **what code is the screen trying to display**?
 */
 
 #![allow(clippy::manual_memcpy)]
-#![allow(clippy::needless_range_loop)] // assumed. code is much comprehensible
+#![allow(clippy::needless_range_loop)] // assumed. code is much clearer
 
 use regex::Regex;
 
