@@ -53,7 +53,6 @@ fn part2(data: &str) -> u32 {
 }
 
 #[cfg(test)]
-
 #[test]
 fn test_part1() {
     assert_eq!(part1("5 10 25"), 0);
@@ -62,7 +61,7 @@ fn test_part1() {
 
 #[test]
 fn test_part2() {
-    let data="101 301 501
+    let data = "101 301 501
 102 302 502
 103 303 503
 201 401 601
