@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 md5 = "0.7.0"
 num-traits = "0.2.14"
+indicatif = "0.16.2"
 
 [[bin]]
 name = "day5"
