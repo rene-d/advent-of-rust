@@ -1,7 +1,50 @@
-// Day 4: Security Through Obscurity
-// https://adventofcode.com/2016/day/4
+/*!
+[Day 4: Security Through Obscurity](https://adventofcode.com/2016/day/4)
 
-// cargo rustdoc --open -- --no-defaults --passes collapse-docs --passes unindent-comments --passes strip-priv-imports
+Finally, you come across an information kiosk with a list of rooms. Of
+course, the list is encrypted and full of decoy data, but the
+instructions to decode the list are barely hidden nearby. Better remove
+the decoy data first.
+
+Each room consists of an encrypted name (lowercase letters separated by
+dashes) followed by a dash, a sector ID, and a checksum in square brackets.
+
+A room is real (not a decoy) if the checksum is the five most common
+letters in the encrypted name, in order, with ties broken by
+alphabetization. For example:
+
+- `aaaaa-bbb-z-y-x-123[abxyz]` is a real room because the most common
+  letters are `a` (5), `b` (3), and then a tie between `x`, `y`, and `z`,
+  which are listed alphabetically.
+- `a-b-c-d-e-f-g-h-987[abcde]` is a real room because although the
+  letters are all tied (1 of each), the first five are listed
+  alphabetically.
+- `not-a-real-room-404[oarel]` is a real room.
+- `totally-real-room-200[decoy]` is not.
+
+Of the real rooms from the list above, the sum of their sector IDs is `1514`.
+
+What is the **sum of the sector IDs of the real rooms**?
+
+-- Part Two --
+
+With all the decoy data out of the way, it's time to decrypt this list
+and get moving.
+
+The room names are encrypted by a state-of-the-art
+[shift cipher](https://en.wikipedia.org/wiki/Caesar_cipher),
+which is nearly unbreakable without the right software. However, the
+information kiosk designers at Easter Bunny HQ were not expecting to
+deal with a master cryptographer like yourself.
+
+To decrypt a room name, rotate each letter forward through the alphabet a
+number of times equal to the room's sector ID. `A` becomes `B`, `B`
+becomes `C`, `Z` becomes `A`, and so on. Dashes become spaces.
+
+For example, the real name for `qzmt-zixmtkozy-ivhz-343` is `very encrypted name`.
+
+**What is the sector ID** of the room where North Pole objects are stored?
+*/
 
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -9,9 +52,10 @@ use std::convert::TryFrom;
 
 lazy_static! {
     /// Regex that mtches a line of input
-    static ref RE: Regex = Regex::new(r"([\w-]+)\-(\d+)\[(\w+)\]").unwrap();
+    static ref RE_INPUT: Regex = Regex::new(r"([\w-]+)\-(\d+)\[(\w+)\]").unwrap();
 }
 
+/// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
@@ -39,6 +83,8 @@ fn part2(data: &str) -> u32 {
     for line in data.split('\n') {
         let (name, _, sector_id) = extract(line);
 
+        //  Nota: the full decrypted name of the room is "northpole object storage"
+        // and there is only one room with that name.
         if decrypt(&name, sector_id).contains("northpole object") {
             return sector_id;
         }
@@ -64,7 +110,7 @@ fn decrypt(name: &str, sector_id: u32) -> String {
 
 /// ``extract`` extracts the name, checksum and sector id from a line of data.
 fn extract(line: &str) -> (String, String, u32) {
-    let caps = RE.captures(line).unwrap();
+    let caps = RE_INPUT.captures(line).unwrap();
 
     let name = caps.get(1).unwrap().as_str().to_string();
     let sector_id = caps.get(2).unwrap().as_str().parse::<u32>().unwrap();
@@ -76,15 +122,17 @@ fn extract(line: &str) -> (String, String, u32) {
 /// ``is_real_room`` checks if the room is real by comparing the checksum.
 fn is_real_room(name: &str, checksum: &str) -> bool {
     let mut counts = [0; 26];
+
+    // compute the counts of each letter
     for c in name.chars() {
         if ('a'..='z').contains(&c) {
             counts[(c as u8 - b'a') as usize] += 1;
         }
     }
 
-    let mut current = 0;
     let max = counts.iter().max().unwrap();
-    let mut current_max = *max;
+    let mut current_max = *max; // first max count to look for
+    let mut current_pos = 0;
 
     for _ in 0..5 {
         let mut next_max = 0;
@@ -94,19 +142,22 @@ fn is_real_room(name: &str, checksum: &str) -> bool {
             if *count == current_max {
                 let c_u8 = u8::try_from(c).unwrap();
                 let letter = (b'a' + c_u8) as char;
-                if checksum.chars().nth(current).unwrap() == letter {
-                    current += 1;
-                    if current == 5 {
+                if checksum.chars().nth(current_pos).unwrap() == letter {
+                    current_pos += 1;
+                    if current_pos == 5 {
+                        // we have checked all checksum letters
                         return true;
                     }
                     max_found = true;
                 }
             } else if *count < current_max && *count > next_max {
+                // the next max count is highest value below the current one
                 next_max = *count;
             }
         }
 
         if !max_found {
+            // the checksum does not have the letter for the current max count
             break;
         }
 
