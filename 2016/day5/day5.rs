@@ -66,6 +66,11 @@ Be extra proud of your solution if it uses a cinematic "decrypting" animation.
 use num_traits::cast::FromPrimitive;
 use std::time::Instant;
 
+use indicatif::{ProgressBar, ProgressStyle};
+
+const TICK_CHARS: &str = r"⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ "; // r"⠁⠂⠄⡀⢀⠠⠐⠈ "
+
+/// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
     let door_id = std::fs::read_to_string("input.txt").unwrap();
     let door_id = door_id.trim();
@@ -79,8 +84,19 @@ fn main() {
     println!("elapsed: {} s", micros / 1_000_000.);
 }
 
+/// ``part1`` solves part 1 of the puzzle
 fn part1(door_id: &str) -> String {
-    let mut password = String::new();
+    let mut password = ['_'; 8];
+    let mut found = 0;
+
+    let pb = ProgressBar::new_spinner();
+    pb.enable_steady_tick(200);
+    pb.set_style(
+        ProgressStyle::default_spinner()
+            .tick_chars(TICK_CHARS)
+            .template("  {prefix:.bold.dim} {spinner} {wide_msg}"),
+    );
+    pb.set_prefix("cracking password");
 
     let mut index = 0;
     loop {
@@ -89,26 +105,38 @@ fn part1(door_id: &str) -> String {
         let hex = format!("{:x}", digest);
 
         if hex.starts_with("00000") {
-            password.push(hex.chars().nth(5).unwrap());
-            if password.len() == 8 {
+            password[found] = hex.chars().nth(6).unwrap();
+            found += 1;
+            if found == 8 {
                 break;
             }
         }
         index += 1;
 
-        if index % 100 == 0 {
-            print!("{:10} {}\r", index, password);
+        if index % 1000 == 0 {
+            pb.set_message(password.iter().collect::<String>());
+            pb.tick();
         }
     }
 
-    println!("found password: {} in {} iterations", password, index);
+    pb.finish_and_clear();
 
-    password
+    password.iter().collect::<String>()
 }
 
+/// ``part2`` solves part 2 of the puzzle
 fn part2(door_id: &str) -> String {
     let mut password = ['_'; 8];
     let mut remaining = 8;
+
+    let pb = ProgressBar::new_spinner();
+    pb.enable_steady_tick(200);
+    pb.set_style(
+        ProgressStyle::default_spinner()
+            .tick_chars(TICK_CHARS)
+            .template("  {prefix:.bold.dim} {spinner} {wide_msg}"),
+    );
+    pb.set_prefix("cracking password");
 
     let mut index = 0;
     loop {
@@ -129,16 +157,13 @@ fn part2(door_id: &str) -> String {
         }
         index += 1;
 
-        if index % 100 == 0 {
-            print!("{:10} {}\r", index, password.iter().collect::<String>());
+        if index % 1000 == 0 {
+            pb.set_message(password.iter().collect::<String>());
+            pb.tick();
         }
     }
 
-    println!(
-        "found password: {} in {} iterations",
-        password.iter().collect::<String>(),
-        index
-    );
+    pb.finish_and_clear();
 
     password.iter().collect()
 }
