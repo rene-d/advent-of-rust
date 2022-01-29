@@ -5,6 +5,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
+use std::convert::TryFrom;
 
 lazy_static! {
     /// Regex that mtches a line of input
@@ -36,7 +37,7 @@ fn part1(data: &str) -> u32 {
 /// if no such room is found, returns ``0``.
 fn part2(data: &str) -> u32 {
     for line in data.split('\n') {
-        let (name, checksum, sector_id) = extract(line);
+        let (name, _, sector_id) = extract(line);
 
         if decrypt(&name, sector_id).contains("northpole object") {
             return sector_id;
@@ -53,8 +54,8 @@ fn decrypt(name: &str, sector_id: u32) -> String {
         if c == '-' {
             decrypted_name.push(' ');
         } else {
-            let c = ((c as u32 - 'a' as u32 + sector_id) % 26 + 'a' as u32) as u8;
-            decrypted_name.push(c as char);
+            let c = (c as u32 - 'a' as u32 + sector_id) % 26 + 'a' as u32;
+            decrypted_name.push(char::try_from(c).unwrap());
         }
     }
 
@@ -91,7 +92,8 @@ fn is_real_room(name: &str, checksum: &str) -> bool {
 
         for (c, count) in counts.iter().enumerate() {
             if *count == current_max {
-                let letter = (b'a' + c as u8) as char;
+                let c_u8 = u8::try_from(c).unwrap();
+                let letter = (b'a' + c_u8) as char;
                 if checksum.chars().nth(current).unwrap() == letter {
                     current += 1;
                     if current == 5 {
