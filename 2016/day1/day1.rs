@@ -35,7 +35,7 @@ fn main() {
             }
 
             if !twice && visited.contains(&(x, y)) {
-                println!("twice: {}", x.abs() + y.abs());
+                println!("twice: {} (part 2)", x.abs() + y.abs());
                 twice = true;
             } else {
                 visited.insert((x, y));
@@ -43,5 +43,5 @@ fn main() {
         }
     }
 
-    println!("Easter Bunny HQ: {}", x.abs() + y.abs());
+    println!("Easter Bunny HQ: {} (part 1)", x.abs() + y.abs());
 }
