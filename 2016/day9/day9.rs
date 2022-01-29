@@ -135,15 +135,18 @@ fn expand(s: &str, version: u8) -> usize {
     new_len
 }
 
-#[cfg(test)]
 #[test]
 fn test_expand_v1() {
-    assert_eq!(expand_v1("ADVENT"), "ADVENT");
-    assert_eq!(expand_v1("A(1x5)BC"), "ABBBBBC");
-    assert_eq!(expand_v1("(3x3)XYZ"), "XYZXYZXYZ");
-    assert_eq!(expand_v1("A(2x2)BCD(2x2)EFG"), "ABCBCDEFEFG");
-    assert_eq!(expand_v1("(6x1)(1x3)A"), "(1x3)A");
-    assert_eq!(expand_v1("X(8x2)(3x3)ABCY"), "X(3x3)ABC(3x3)ABCY");
+    fn test_v1(s: &str, expected: &str) {
+        assert_eq!(expand_v1(s), expected);
+        assert_eq!(expand(s, 1), expected.len());
+    }
+    test_v1("ADVENT", "ADVENT");
+    test_v1("A(1x5)BC", "ABBBBBC");
+    test_v1("(3x3)XYZ", "XYZXYZXYZ");
+    test_v1("A(2x2)BCD(2x2)EFG", "ABCBCDEFEFG");
+    test_v1("(6x1)(1x3)A", "(1x3)A");
+    test_v1("X(8x2)(3x3)ABCY", "X(3x3)ABC(3x3)ABCY");
 }
 
 #[test]
