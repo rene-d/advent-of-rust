@@ -22,46 +22,46 @@ capable of three somewhat peculiar operations:
 - `rect AxB` turns on all of the pixels in a rectangle at the top-left of
    the screen which is A wide and B tall.
 - `rotate row y=A by B` shifts all of the pixels in row `A` (`0` is the top
-  row) *right* by `B` pixels. Pixels that would fall off the right end appear
+  row) **right** by `B` pixels. Pixels that would fall off the right end appear
   at the left end of the row.
 - `rotate column x=A by B` shifts all of the pixels in column `A` (`0` is the
-  left column) *down* by `B` pixels. Pixels that would fall off the bottom appear
+  left column) **down** by `B` pixels. Pixels that would fall off the bottom appear
   at the top of the column.
 
 For example, here is a simple sequence on a smaller screen:
 
 - `rect 3x2` creates a small rectangle in the top-left corner:
 
-```text
+<pre>
 ###....
 ###....
 .......
-````
+</pre>
 
 - `rotate column x=1 by 1` rotates the second column down by one pixel:
 
-```text
-#.#....
-###....
-.#.....
-```
+<pre>
+ #.#....
+ ###....
+ .#.....
+</pre>
 
 - `rotate row y=0 by 4` rotates the top row right by four pixels:
 
-```text
+<pre>
 ....#.#
 ###....
 .#.....
-```
+</pre>
 
 - `rotate column x=1 by 1` again rotates the second column down by one
   pixel, causing the bottom pixel to wrap back to the top:
 
-```text
+<pre>
 .#..#.#
 #.#....
 .#.....
-```
+</pre>
 
 As you can see, this display technology is extremely powerful, and will
 soon dominate the tiny-code-displaying-screen market. That's what the
@@ -71,15 +71,12 @@ There seems to be an intermediate check of the voltage used by the
 display: after you swipe your card, if the screen did work, **how many
 pixels should be lit**?
 
-Your puzzle answer was 116.
-
-The first half of this puzzle is complete! It provides one gold star: *
-
 --- Part Two ---
 
-You notice that the screen is only capable of displaying capital letters; in the font it uses, each letter is 5 pixels wide and 6 tall.
+You notice that the screen is only capable of displaying capital letters;
+in the font it uses, each letter is `5` pixels wide and `6` tall.
 
-After you swipe your card, what code is the screen trying to display?
+After you swipe your card, **what code is the screen trying to display**?
 */
 
 #![allow(clippy::manual_memcpy)]
