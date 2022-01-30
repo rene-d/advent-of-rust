@@ -59,7 +59,12 @@ use std::collections::{HashMap, HashSet};
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
-    solve(&data);
+    let data = data.split('\n').collect::<Vec<&str>>();
+
+    let (part1, part2) = solve(data);
+
+    println!("part1: {}", part1);
+    println!("part2: {}", part2);
 }
 
 /// `BotOutput`represents the output of a bot
@@ -88,14 +93,14 @@ struct BotInstruction {
 /// `solve` solves part 1 and part 2 of the puzzle.
 /// First, it loads the move instructions and initializes the bots.
 /// Then, it runs the instructions until the puzzle is done.
-fn solve(data: &str) {
+fn solve(data: Vec<&str>) -> (u32, u32) {
     let re_init = Regex::new(r"value ([\d]+) goes to bot (\d+)").unwrap();
     let re_move = Regex::new(r"bot (\d+) gives low to (bot|output) (\d+) and high to (bot|output) (\d+)").unwrap();
 
     let mut bots: HashMap<u32, HashSet<u32>> = HashMap::new();
     let mut moves: Vec<BotInstruction> = Vec::new();
 
-    for line in data.split('\n') {
+    for line in data {
         if let Some(caps) = re_init.captures(line) {
             //
             let value = caps[1].parse::<u32>().unwrap();
@@ -127,38 +132,37 @@ fn solve(data: &str) {
         }
     }
 
-    let mut found_first = false; // part1 completed (found first bot)
+    let mut found_first: Option<u32> = Option::None; // part1 completed (found first bot)
 
     let mut output_bin0 = 0; // count of values received by bin 0
     let mut output_bin1 = 0; // count of values received by bin 1
     let mut output_bin2 = 0; // count of values received by bin 2
     let mut output_values = Vec::new(); // values received by output bins 0,1,2
-    let mut found_output = false; // part2 completed (found first matching output)
+    let mut found_output: Option<u32> = Option::None; // part2 completed (found first matching output)
+
+    let mut max_iterations = 10000;
 
     'main_loop: loop {
         // loop until we have completed both parts of the puzzle
 
         // iterate over all bot instructions
         for m in &moves {
-            //
-            if let Some(v) = bots.get(&m.from) {
-                // to process, the bot must have at least two chips
+            assert!(max_iterations > 0, "too many iterations");
+            max_iterations -= 1;
+
+            // has the bot been initialized?
+            if let Some(v) = bots.get_mut(&m.from) {
+                // to process, the bot must also have two chips or more
                 if v.len() >= 2 {
-                    let low_value: u32; // declare values out of the get_mut scope
-                    let high_value: u32; // because the closure below needs to borrow the ownership of bots too
+                    // find lower and higher values chips
+                    let low_value = *v.iter().min().unwrap();
+                    let high_value = *v.iter().max().unwrap();
 
-                    if let Some(values) = bots.get_mut(&m.from) {
-                        low_value = *values.iter().min().unwrap();
-                        high_value = *values.iter().max().unwrap();
+                    // remove them from the bot
+                    v.remove(&low_value);
+                    v.remove(&high_value);
 
-                        values.remove(&low_value);
-                        values.remove(&high_value);
-                    } else {
-                        low_value = 0; // value not possible
-                        high_value = 0;
-                    }
-
-                    // move a microchip to a bot or a bin
+                    // closure to move a microchip to a bot or a bin
                     let mut move_microchip = |to: BotOutput, to_id: u32, value: u32| match to {
                         BotOutput::Bot => {
                             bots.entry(to_id).or_insert_with(HashSet::new).insert(value);
@@ -185,23 +189,43 @@ fn solve(data: &str) {
                     move_microchip(m.high_to, m.high_to_id, high_value);
 
                     // part 1 of the puzzle
-                    if !found_first && low_value == 17 && high_value == 61 {
-                        found_first = true;
-                        println!("part1: {}", m.from);
+                    if found_first.is_none() && low_value == 17 && high_value == 61 {
+                        found_first = Some(m.from);
                     }
 
                     // part 2 of the puzzle
-                    if !found_output && output_bin0 != 0 && output_bin1 != 0 && output_bin2 != 0 {
-                        found_output = true;
-                        println!("part2: {}", output_values.iter().product::<u32>());
+                    if found_output.is_none() && output_bin0 != 0 && output_bin1 != 0 && output_bin2 != 0 {
+                        found_output = Some(output_values.iter().product::<u32>());
                     }
                 }
             }
         }
 
-        if found_first && found_output {
-            // the both parts of the puzzle have been completed
-            break 'main_loop;
+        if let Some(part1) = found_first {
+            if let Some(part2) = found_output {
+                // the both parts of the puzzle have been completed
+                break 'main_loop (part1, part2);
+            }
         }
     }
+}
+
+#[test]
+fn test_solve() {
+    let instructions = [
+        // verify part 1
+        "value 17 goes to bot 20",                     // add value-17 chip to bot 20
+        "value 61 goes to bot 20",                     // add value-61 chip to bot 20
+        "bot 20 gives low to bot 1 and high to bot 1", // should complete part 1 with bot id = 20
+        // verify part 2
+        "bot 1 gives low to output 0 and high to output 1", // bin 0: 17, bin 1: 61
+        "value 29 goes to bot 2",
+        "value 56 goes to bot 2",
+        "bot 2 gives low to output 2 and high to bot 0", // bin 2: 29, part 2 should be completed with 17*61*29=30073
+    ];
+
+    let (part1, part2) = solve(instructions.to_vec());
+
+    assert_eq!(part1, 20);
+    assert_eq!(part2, 30073);
 }
