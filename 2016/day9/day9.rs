@@ -47,8 +47,7 @@ fn main() {
 
 /// Do part 1 of the puzzle
 fn part1(data: &str) -> usize {
-    data.split('\n')
-        .fold(0, |acc, line| acc + expand_v1(line).len())
+    data.split('\n').fold(0, |acc, line| acc + expand_v1(line).len())
 }
 
 /// Do part 2 of the puzzle
