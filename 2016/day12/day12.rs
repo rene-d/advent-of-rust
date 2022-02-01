@@ -28,158 +28,24 @@ As you head down the fire escape to the monorail, you notice it didn't start; re
 If you instead **initialize register `c` to be `1`**, what value is now left in register `a`?
 */
 
-use std::convert::TryFrom;
+use assembunny::{Program, REG_A, REG_C};
 
-/// index of a register
-type Register = usize;
+fn solve(program: &mut Program, c: i32) -> i32 {
+    program.reset();
+    program.registers[REG_C] = c;
 
-/// `to_reg` returns the index of a register, or panics if the string is not a valid register name.
-fn to_reg(name: &str) -> Register {
-    let name = name.chars().next().unwrap();
-    match name {
-        'a' => 0,
-        'b' => 1,
-        'c' => 2,
-        'd' => 3,
-        _ => panic!("Invalid register name: {}", name),
-    }
-}
-
-/// instruction set of the processor
-enum Instruction {
-    Cpy(Register, Register),
-    CpyValue(i32, Register),
-    Inc(Register),
-    Dec(Register),
-    Jnz(Register, i32),
-    Jmp(i32),
-}
-
-/// a program, the registers, with loader and executor
-struct Program {
-    instructions: Vec<Instruction>,
-    registers: [i32; 4],
-}
-
-impl Program {
-    /// `new` initializes a new program
-    fn new() -> Program {
-        Program {
-            instructions: Vec::new(),
-            registers: [0; 4],
-        }
+    while program.ip < program.len() {
+        program.step();
     }
 
-    /// `load` loads the program from a sequence of instructions
-    fn load(&mut self, input: &str) {
-        self.instructions = input
-            .lines()
-            .map(|line| {
-                let mut words = line.split_whitespace();
-                let instruction = words.next().unwrap();
-                let source = words.next().unwrap();
-                match instruction {
-                    "cpy" => {
-                        let dest = to_reg(words.next().unwrap());
-                        if let Ok(value) = source.parse::<i32>() {
-                            Instruction::CpyValue(value, dest)
-                        } else {
-                            Instruction::Cpy(to_reg(source), dest)
-                        }
-                    }
-                    "inc" => Instruction::Inc(to_reg(source)),
-                    "dec" => Instruction::Dec(to_reg(source)),
-                    "jnz" => {
-                        let offset = words.next().unwrap().parse::<i32>().unwrap();
-                        if source == "1" {
-                            Instruction::Jmp(offset)
-                        } else {
-                            Instruction::Jnz(to_reg(source), offset)
-                        }
-                    }
-                    _ => panic!("Unknown instruction: {}", instruction),
-                }
-            })
-            .collect();
-    }
-
-    /// run the program and returns the value of register `a`
-    fn run(&mut self, c: i32) -> i32 {
-        self.registers = [0, 0, 0, 0];
-
-        self.registers[to_reg("c")] = c;
-
-        let mut ip = 0;
-
-        while ip < self.instructions.len() {
-
-            match &self.instructions[ip] {
-                Instruction::Cpy(src, dest) => {
-                    self.registers[*dest] = self.registers[*src];
-                }
-                Instruction::CpyValue(value, dest) => {
-                    self.registers[*dest] = *value;
-                }
-                Instruction::Inc(reg) => {
-                    self.registers[*reg] += 1;
-                }
-                Instruction::Dec(reg) => {
-                    self.registers[*reg] -= 1;
-                }
-                Instruction::Jnz(reg, offset) => {
-                    if self.registers[*reg] != 0 {
-                        ip = Program::jump(ip, *offset);
-                        continue;
-                    }
-                }
-                Instruction::Jmp(offset) => {
-                    ip = Program::jump(ip, *offset);
-                    continue;
-                }
-            }
-            ip += 1;
-        }
-
-        self.registers[to_reg("a")]
-    }
-
-    /// `jump` returns the new instruction pointer after jumping `offset` instructions
-    fn jump(ip: usize, offset: i32) -> usize {
-        if offset >= 0 {
-            ip.checked_add(usize::try_from(offset).unwrap()).unwrap()
-        } else {
-            ip.checked_sub(usize::try_from(-offset).unwrap()).unwrap()
-        }
-    }
+    program.registers[REG_A]
 }
 
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
-    let mut program = Program::new();
+    let mut program = Program::new(&data);
 
-    program.load(&data);
-
-    println!("{}", program.run(0));
-    println!("{}", program.run(1));
-}
-
-#[test]
-fn test_program() {
-    let demo = "cpy 41 a
-inc a
-inc a
-dec a
-jnz a 2
-dec a";
-
-    let mut program = Program::new();
-    program.load(demo);
-    assert_eq!(program.run(0), 42);
-}
-
-#[test]
-fn test_jnz() {
-    assert_eq!(Program::jump(10, 2), 12);
-    assert_eq!(Program::jump(10, -2), 8);
+    println!("{}", solve(&mut program, 0));
+    println!("{}", solve(&mut program, 1));
 }
