@@ -71,9 +71,20 @@ fn main() {
 #[derive(Copy, Clone)]
 enum BotOutput {
     /// Destination is another bot
-    Bot,
+    Bot(u32),
     /// Destination is an output bin
-    Bin,
+    Bin(u32),
+}
+
+impl BotOutput {
+    /// `new` creates a new `BotOutput` from string and id
+    fn new(dest: &str, id: u32) -> BotOutput {
+        match dest {
+            "bot" => BotOutput::Bot(id),
+            "output" => BotOutput::Bin(id),
+            _ => panic!("invalid destination"),
+        }
+    }
 }
 
 /// `BotInstruction` represents a bot move instruction
@@ -82,12 +93,8 @@ struct BotInstruction {
     from: u32,
     /// Destination of the lower value chip
     low_to: BotOutput,
-    /// ID of the bin or bot to move to the lower value chip
-    low_to_id: u32,
     /// Destination of the higher value chip
     high_to: BotOutput,
-    /// ID of the bin or bot to move to the higher value chip
-    high_to_id: u32,
 }
 
 /// `solve` solves part 1 and part 2 of the puzzle.
@@ -109,23 +116,16 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
             bots.entry(bot).or_insert_with(HashSet::new).insert(value);
         } else if let Some(caps) = re_move.captures(line) {
             //
-            let low_to = caps[2].parse::<String>().unwrap();
-            let high_to = caps[4].parse::<String>().unwrap();
-
             moves.push(BotInstruction {
                 from: caps[1].parse::<u32>().unwrap(),
-                low_to: if low_to == "bot" {
-                    BotOutput::Bot
-                } else {
-                    BotOutput::Bin
-                },
-                low_to_id: caps[3].parse::<u32>().unwrap(),
-                high_to: if high_to == "bot" {
-                    BotOutput::Bot
-                } else {
-                    BotOutput::Bin
-                },
-                high_to_id: caps[5].parse::<u32>().unwrap(),
+                low_to: BotOutput::new(
+                    caps[2].parse::<String>().unwrap().as_str(),
+                    caps[3].parse::<u32>().unwrap(),
+                ),
+                high_to: BotOutput::new(
+                    caps[4].parse::<String>().unwrap().as_str(),
+                    caps[5].parse::<u32>().unwrap(),
+                ),
             });
         } else {
             panic!("bad line: {}", line);
@@ -163,11 +163,11 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
                     v.remove(&high_value);
 
                     // closure to move a microchip to a bot or a bin
-                    let mut move_microchip = |to: BotOutput, to_id: u32, value: u32| match to {
-                        BotOutput::Bot => {
+                    let mut move_microchip = |to: BotOutput, value: u32| match to {
+                        BotOutput::Bot(to_id) => {
                             bots.entry(to_id).or_insert_with(HashSet::new).insert(value);
                         }
-                        BotOutput::Bin => match to_id {
+                        BotOutput::Bin(to_id) => match to_id {
                             0 => {
                                 output_values.push(value);
                                 output_bin0 += 1;
@@ -185,8 +185,8 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
                     };
 
                     // process low and high microchip values
-                    move_microchip(m.low_to, m.low_to_id, low_value);
-                    move_microchip(m.high_to, m.high_to_id, high_value);
+                    move_microchip(m.low_to, low_value);
+                    move_microchip(m.high_to, high_value);
 
                     // part 1 of the puzzle
                     if found_first.is_none() && low_value == 17 && high_value == 61 {
