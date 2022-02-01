@@ -1,2 +1,5 @@
 [workspace]
 members = ["day*"]
+
+[profile.release]
+opt-level = "s"
