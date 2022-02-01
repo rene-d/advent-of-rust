@@ -1,20 +1,17 @@
 /*!
-
+[Day 23: Safe Cracking](https://adventofcode.com/2016/day/23)
 */
 
 use assembunny::{Program, REG_A};
 
-fn run_until_safe(a: i32, program: &mut Program) -> i32 {
-    program.reset();
+fn compute_until_safe(a: i32, program: &str) -> i32 {
+    let mut program = Program::new(program);
     program.registers[REG_A] = a;
 
     loop {
-        let a_before = program.registers[REG_A];
-        program.run(100);
-        let a_after = program.registers[REG_A];
-
-        if a_before == a_after {
-            break a_after;
+        program.step();
+        if program.ip >= program.len() {
+            break program.registers[REG_A];
         }
     }
 }
@@ -22,7 +19,12 @@ fn run_until_safe(a: i32, program: &mut Program) -> i32 {
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
-    let mut program = Program::new(&data);
+    println!("{}", compute_until_safe(7, &data));
 
-    println!("{}", run_until_safe(7, &mut program));
+    println!("{}", compute_until_safe(12, &data));
+}
+
+#[test]
+fn test_compute_until_safe() {
+    assert_eq!(compute_until_safe(0, "cpy 41 a"), 41);
 }
