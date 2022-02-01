@@ -16,11 +16,21 @@ type Register = usize;
 fn to_reg(name: &str) -> Register {
     let name = name.chars().next().unwrap();
     match name {
-        'a' => 0,
-        'b' => 1,
-        'c' => 2,
-        'd' => 3,
+        'a' => REG_A,
+        'b' => REG_B,
+        'c' => REG_C,
+        'd' => REG_D,
         _ => panic!("Invalid register name: {}", name),
+    }
+}
+
+fn reg_name(r: Register) -> char {
+    match r {
+        0 => 'a',
+        1 => 'b',
+        REG_C => 'c',
+        REG_D => 'd',
+        _ => panic!("Invalid register index: {}", r),
     }
 }
 
@@ -40,6 +50,19 @@ impl RegOrValue {
     }
 }
 
+impl std::fmt::Display for RegOrValue {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                RegOrValue::Register(reg) => format!("{}", reg_name(*reg)),
+                RegOrValue::Value(value) => format!("{}", value),
+            }
+        )
+    }
+}
+
 /// instruction set of the processor
 #[derive(Copy, Clone)]
 enum Instruction {
@@ -49,6 +72,23 @@ enum Instruction {
     Jnz(RegOrValue, RegOrValue),
     Out(Register),
     Tgl(Register),
+}
+
+impl std::fmt::Display for Instruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match &self {
+                Instruction::Cpy(a, b) => format!("cpy {} {}", a, b),
+                Instruction::Inc(reg) => format!("inc {}", reg_name(*reg)),
+                Instruction::Dec(reg) => format!("dec {}", reg_name(*reg)),
+                Instruction::Jnz(a, b) => format!("jnz {} {}", a, b),
+                Instruction::Out(reg) => format!("out {}", reg_name(*reg)),
+                Instruction::Tgl(reg) => format!("tgl {}", reg_name(*reg)),
+            }
+        )
+    }
 }
 
 /// a program, the registers, with loader and executor
@@ -85,6 +125,25 @@ impl Program {
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.instructions.is_empty()
+    }
+
+    pub fn print(&self) {
+        for instruction in &self.instructions {
+            println!("{}", instruction);
+        }
+    }
+
+    pub fn print_state(&self) {
+        for (i, instruction) in self.instructions.iter().enumerate() {
+            let current = if self.ip == i { "=>" } else { "  " };
+            let instr = format!("{}", instruction);
+            let reg = if i < 4 {
+                format!("{}: {}", reg_name(i), self.registers[i])
+            } else {
+                "".to_owned()
+            };
+            println!("{:3}  {}:   {:20}   {}", current, i, instr, reg);
+        }
     }
 
     /// `load` loads the program from a sequence of instructions
