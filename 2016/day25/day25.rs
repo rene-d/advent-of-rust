@@ -13,7 +13,7 @@ fn run_clock_signal(program: &mut Program, a: i32) -> bool {
     let mut output = [0; 256];
     let mut output_index = 0;
 
-    while program.ip < program.len() && output_index < output.len() {
+    while !program.is_terminated() && output_index < output.len() {
         program.step();
 
         if let Some(value) = program.output {

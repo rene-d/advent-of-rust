@@ -70,8 +70,9 @@ enum Instruction {
     Inc(Register),
     Dec(Register),
     Jnz(RegOrValue, RegOrValue),
-    Out(Register),
+    Out(RegOrValue),
     Tgl(Register),
+    Nop,
 }
 
 impl std::fmt::Display for Instruction {
@@ -84,8 +85,9 @@ impl std::fmt::Display for Instruction {
                 Instruction::Inc(reg) => format!("inc {}", reg_name(*reg)),
                 Instruction::Dec(reg) => format!("dec {}", reg_name(*reg)),
                 Instruction::Jnz(a, b) => format!("jnz {} {}", a, b),
-                Instruction::Out(reg) => format!("out {}", reg_name(*reg)),
+                Instruction::Out(a) => format!("out {}", a),
                 Instruction::Tgl(reg) => format!("tgl {}", reg_name(*reg)),
+                Instruction::Nop => "nop".to_string(),
             }
         )
     }
@@ -114,12 +116,6 @@ impl Program {
 
         p.load(program);
         p
-    }
-
-    /// returns the length of the loaded program
-    #[must_use]
-    pub fn len(&self) -> usize {
-        self.instructions.len()
     }
 
     #[must_use]
@@ -165,7 +161,7 @@ impl Program {
                         let offset = words.next().unwrap();
                         Instruction::Jnz(RegOrValue::from_str(source), RegOrValue::from_str(offset))
                     }
-                    "out" => Instruction::Out(to_reg(source)),
+                    "out" => Instruction::Out(RegOrValue::from_str(source)),
                     "tgl" => Instruction::Tgl(to_reg(source)),
                     _ => panic!("Unknown instruction: {}", instruction),
                 }
@@ -176,9 +172,16 @@ impl Program {
             .instructions
             .iter()
             .map(|instruction| match instruction {
+                Instruction::Nop => Instruction::Nop,
+
                 // For one-argument instructions, inc becomes dec, and all other one-argument instructions become inc.
                 Instruction::Inc(reg) => Instruction::Dec(*reg),
-                Instruction::Dec(reg) | Instruction::Out(reg) | Instruction::Tgl(reg) => Instruction::Inc(*reg),
+                Instruction::Dec(reg) | Instruction::Tgl(reg) => Instruction::Inc(*reg),
+
+                Instruction::Out(reg) => match reg {
+                    RegOrValue::Register(reg) => Instruction::Out(RegOrValue::Register(*reg)),
+                    RegOrValue::Value(_) => Instruction::Nop,
+                },
 
                 // For two-argument instructions, jnz becomes cpy, and all other two-instructions become jnz.
                 Instruction::Jnz(a, b) => Instruction::Cpy(*a, *b),
@@ -191,11 +194,21 @@ impl Program {
         self.reset();
     }
 
+    #[must_use]
+    pub fn is_terminated(&self) -> bool {
+        self.ip >= self.instructions.len()
+    }
+
     /// run one instruction and advance the instruction pointer
-    pub fn step(&mut self) {
+    pub fn step(&mut self) -> bool {
         self.output = None;
 
+        if self.is_terminated() {
+            return false;
+        }
+
         match &self.instructions[self.ip] {
+            Instruction::Nop => {}
             Instruction::Cpy(src, dest) => {
                 if let RegOrValue::Register(reg_dest) = dest {
                     self.registers[*reg_dest] = match src {
@@ -221,23 +234,28 @@ impl Program {
                         RegOrValue::Value(value) => *value,
                     };
                     self.ip = Program::new_ip(self.ip, offset);
-                    return;
+                    return !self.is_terminated();
                 }
             }
-            Instruction::Out(reg) => {
+            Instruction::Out(RegOrValue::Register(reg)) => {
                 let value = self.registers[*reg];
                 self.output = Some(value);
+            }
+            Instruction::Out(RegOrValue::Value(value)) => {
+                self.output = Some(*value);
             }
             Instruction::Tgl(reg) => {
                 let ip = Program::new_ip(self.ip, self.registers[*reg]);
 
-                if ip < self.len() {
+                if ip < self.instructions.len() {
                     std::mem::swap(&mut self.instructions[ip], &mut self.toggled[ip]);
                 }
             }
         }
 
         self.ip += 1;
+
+        !self.is_terminated()
     }
 
     /// reset the program to the initial state
@@ -256,16 +274,16 @@ impl Program {
         }
     }
 
-    /// run the program and returns the value of register `a`
+    /// run the program
     pub fn run(&mut self, max_iterations: usize) -> bool {
         let mut iterations = max_iterations;
 
-        while self.ip < self.len() && iterations > 0 {
+        while !self.is_terminated() && iterations > 0 {
             self.step();
             iterations -= 1;
         }
 
-        self.ip >= self.len() || iterations != 0
+        self.is_terminated()
     }
 }
 
