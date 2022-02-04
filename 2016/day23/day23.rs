@@ -3,6 +3,8 @@
 */
 
 use assembunny::{Program, REG_A};
+use num_traits::cast::FromPrimitive;
+use std::time::Instant;
 
 fn compute_until_safe(a: i32, program: &str) -> i32 {
     let mut program = Program::new(program);
@@ -10,7 +12,7 @@ fn compute_until_safe(a: i32, program: &str) -> i32 {
 
     loop {
         program.step();
-        if program.ip >= program.len() {
+        if program.is_terminated() {
             break program.registers[REG_A];
         }
     }
@@ -19,9 +21,14 @@ fn compute_until_safe(a: i32, program: &str) -> i32 {
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
+    let now = Instant::now();
+
     println!("{}", compute_until_safe(7, &data));
 
     println!("{}", compute_until_safe(12, &data));
+
+    let micros = f64::from_u128(now.elapsed().as_micros()).unwrap();
+    println!("elapsed: {} s", micros / 1_000_000.);
 }
 
 #[test]

@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 assembunny = { path = "../assembunny/" }
+num-traits = "0.2.14"
 
 [[bin]]
 name = "day23"
