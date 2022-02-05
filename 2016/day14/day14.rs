@@ -74,7 +74,8 @@ struct TripletHash {
 
 impl TripletHash {
     /// Find the next index that produces a hash that contains a triplet
-    /// and search for eventual quintuplets.
+    /// and search for eventual quintuplets. As quintuplets are also triplets,
+    /// we cannot miss them.
     fn next(index: usize, salt: &str, key_stretching: usize) -> TripletHash {
         let mut index = index;
 
@@ -82,11 +83,13 @@ impl TripletHash {
             let hash = format!("{}{}", salt, index);
             let mut digest = md5::compute(hash);
 
+            // apply key stretching
             for _ in 0..key_stretching {
                 let hex = format!("{:x}", digest);
                 digest = md5::compute(hex);
             }
 
+            // get the 32 hexadecimal digits
             let mut digits = [0u8; 32];
             for (i, b) in digest.iter().enumerate() {
                 digits[i * 2] = (b >> 4) as u8;
@@ -98,6 +101,7 @@ impl TripletHash {
             let mut q_count = 0;
             let mut i = 0;
 
+            // look only for the first triplet
             while i < 32 - 2 {
                 if digits[i] == digits[i + 1] && digits[i] == digits[i + 2] {
                     triplet = digits[i];
@@ -106,12 +110,14 @@ impl TripletHash {
                 i += 1;
             }
             if triplet == u8::MAX {
-                // no triplet found
+                // no triplet found (and no quintuplet!)
+                // we can safely ignore this index
                 index += 1;
                 continue;
             }
 
-            // search for quintuplets (a quintuplet is a also a triplet)
+            // now search for quintuplets
+            // we can start at the first triplet at position i
             while i < 32 - 4 {
                 i += if digits[i] == digits[i + 1]
                     && digits[i] == digits[i + 2]
@@ -120,9 +126,9 @@ impl TripletHash {
                 {
                     quintuplet[q_count] = digits[i];
                     q_count += 1;
-                    5
+                    5 // increment by 5 the search position
                 } else {
-                    1
+                    1 // skip one digit
                 }
             }
 
