@@ -1,3 +1,5 @@
+//! [Day 25: Let It Snow](http://adventofcode.com/2015/day/25)
+
 fn main() {
     let column = 2981;
     let row = 3075;
