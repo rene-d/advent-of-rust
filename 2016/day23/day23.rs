@@ -1,13 +1,11 @@
-/*!
-[Day 23: Safe Cracking](https://adventofcode.com/2016/day/23)
-*/
+//! [Day 23: Safe Cracking](https://adventofcode.com/2016/day/23)
 
-use assembunny::{Program, REG_A};
+use assembunny::{BunnyVM, REG_A};
 use num_traits::cast::FromPrimitive;
 use std::time::Instant;
 
 fn compute_until_safe(a: i32, program: &str) -> i32 {
-    let mut program = Program::new(program);
+    let mut program = BunnyVM::new(program);
     program.registers[REG_A] = a;
 
     loop {
@@ -19,7 +17,7 @@ fn compute_until_safe(a: i32, program: &str) -> i32 {
 }
 
 fn main() {
-    let data = std::fs::read_to_string("input.txt").unwrap();
+    let data = aoc::load_input_data(23);
 
     let now = Instant::now();
 

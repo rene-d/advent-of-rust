@@ -1,9 +1,11 @@
 [package]
-name = "assembunny"
+name = "day20"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 aoc = { path = "../aoc/" }
 
-[lib]
+[[bin]]
+name = "day20"
+path = "day20.rs"

@@ -63,7 +63,7 @@ impl std::fmt::Display for RegOrValue {
     }
 }
 
-/// instruction set of the processor
+/// the instruction set of the processor
 #[derive(Copy, Clone)]
 enum Instruction {
     Cpy(RegOrValue, RegOrValue),
@@ -94,19 +94,22 @@ impl std::fmt::Display for Instruction {
 }
 
 /// a program, the registers, with loader and executor
-pub struct Program {
+pub struct BunnyVM {
     instructions: Vec<Instruction>,
     toggled: Vec<Instruction>,
+    /// the registers `REG_A` to `REG_D`
     pub registers: [i32; 4],
+    /// the instruction pointer
     pub ip: usize,
+    /// the output of `out` instruction if applicable, otherwise `None`
     pub output: Option<i32>,
 }
 
-impl Program {
+impl BunnyVM {
     /// `new` initializes a new program
     #[must_use]
-    pub fn new(program: &str) -> Program {
-        let mut p = Program {
+    pub fn new(program: &str) -> BunnyVM {
+        let mut p = BunnyVM {
             instructions: Vec::new(),
             toggled: Vec::new(),
             registers: [0; 4],
@@ -118,17 +121,14 @@ impl Program {
         p
     }
 
-    #[must_use]
-    pub fn is_empty(&self) -> bool {
-        self.instructions.is_empty()
-    }
-
+    /// print the program
     pub fn print(&self) {
         for instruction in &self.instructions {
             println!("{}", instruction);
         }
     }
 
+    /// print the program with registers state
     pub fn print_state(&self) {
         for (i, instruction) in self.instructions.iter().enumerate() {
             let current = if self.ip == i { "=>" } else { "  " };
@@ -146,6 +146,8 @@ impl Program {
     fn load(&mut self, input: &str) {
         self.instructions = input
             .lines()
+            .map(|line| line.split(';').next().unwrap().trim()) // remove comments
+            .filter(|line| !line.is_empty()) // ignore empty lines
             .map(|line| {
                 let mut words = line.split_whitespace();
                 let instruction = words.next().unwrap();
@@ -194,12 +196,15 @@ impl Program {
         self.reset();
     }
 
+    /// returns true if the program is finished (instruction pointer is out of bounds)
     #[must_use]
     pub fn is_terminated(&self) -> bool {
         self.ip >= self.instructions.len()
     }
 
     /// run one instruction and advance the instruction pointer
+    /// set `output` if applicable
+    /// return false if the program is finished
     pub fn step(&mut self) -> bool {
         self.output = None;
 
@@ -233,7 +238,7 @@ impl Program {
                         RegOrValue::Register(reg) => self.registers[*reg],
                         RegOrValue::Value(value) => *value,
                     };
-                    self.ip = Program::new_ip(self.ip, offset);
+                    self.ip = BunnyVM::new_ip(self.ip, offset);
                     return !self.is_terminated();
                 }
             }
@@ -245,7 +250,7 @@ impl Program {
                 self.output = Some(*value);
             }
             Instruction::Tgl(reg) => {
-                let ip = Program::new_ip(self.ip, self.registers[*reg]);
+                let ip = BunnyVM::new_ip(self.ip, self.registers[*reg]);
 
                 if ip < self.instructions.len() {
                     std::mem::swap(&mut self.instructions[ip], &mut self.toggled[ip]);
@@ -266,6 +271,7 @@ impl Program {
     }
 
     /// `new_ip` returns the new instruction pointer after jumping `offset` instructions
+    /// cannot underflow, can overflow (terminate the program or do not toggle instruction)
     fn new_ip(ip: usize, offset: i32) -> usize {
         if offset >= 0 {
             ip.checked_add(usize::try_from(offset).unwrap()).unwrap()
@@ -275,15 +281,35 @@ impl Program {
     }
 
     /// run the program
+    /// ignore the outputs (`out` instructions)
+    /// return `true` if the program is finished or `false` if it takes too long
     pub fn run(&mut self, max_iterations: usize) -> bool {
         let mut iterations = max_iterations;
 
-        while !self.is_terminated() && iterations > 0 {
-            self.step();
+        while self.step() && iterations > 0 {
             iterations -= 1;
         }
 
         self.is_terminated()
+    }
+
+    /// run the program and return the output
+    /// # Panics
+    /// if output is not a u8
+    pub fn run_output(&mut self, max_iterations: usize) -> String {
+        let mut iterations = max_iterations;
+        let mut output = String::new();
+
+        while self.step() && iterations > 0 {
+            if let Some(c) = self.output {
+                if (0..256).contains(&c) {
+                    output.push(char::from(u8::try_from(c).unwrap()));
+                }
+            }
+            iterations -= 1;
+        }
+
+        output
     }
 }
 
@@ -296,7 +322,7 @@ dec a
 jnz a 2
 dec a";
 
-    let mut program = Program::new(demo);
+    let mut program = BunnyVM::new(demo);
 
     assert!(program.run(100));
     assert_eq!(program.registers[REG_A], 42);
@@ -304,13 +330,13 @@ dec a";
 
 #[test]
 fn test_jnz() {
-    assert_eq!(Program::new_ip(10, 2), 12);
-    assert_eq!(Program::new_ip(10, -2), 8);
+    assert_eq!(BunnyVM::new_ip(10, 2), 12);
+    assert_eq!(BunnyVM::new_ip(10, -2), 8);
 }
 
 #[test]
 fn test_inc_a() {
-    let mut program = Program::new("inc a");
+    let mut program = BunnyVM::new("inc a");
     program.registers[REG_A] = 42;
     program.step();
     assert_eq!(program.registers[REG_A], 43);
@@ -318,7 +344,7 @@ fn test_inc_a() {
 
 #[test]
 fn test_dec_b() {
-    let mut program = Program::new("dec b");
+    let mut program = BunnyVM::new("dec b");
     program.registers[REG_B] = 42;
     program.step();
     assert_eq!(program.registers[REG_B], 41);
@@ -334,7 +360,7 @@ cpy 1 a
 dec a
 dec a";
 
-    let mut program = Program::new(demo);
+    let mut program = BunnyVM::new(demo);
 
     let ok = program.run(100);
     assert!(ok);
