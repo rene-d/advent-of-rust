@@ -1,5 +1,5 @@
 [workspace]
-members = ["day*"]
+members = ["day*", "aoc", "assembunny"]
 
 [profile.release]
 opt-level = "s"

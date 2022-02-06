@@ -1,22 +1,19 @@
-/*!
-[Day 25: Clock Signal](https://adventofcode.com/2016/day/25)
-*/
+//! [Day 25: Clock Signal](https://adventofcode.com/2016/day/25)
 
-use assembunny::{Program, REG_A};
+use assembunny::{BunnyVM, REG_A};
 
-/// run the program and returns the value of register `a`
-fn run_clock_signal(program: &mut Program, a: i32) -> bool {
-    program.reset();
+fn run_clock_signal(bunny_vm: &mut BunnyVM, a: i32) -> bool {
+    bunny_vm.reset();
 
-    program.registers[REG_A] = a;
+    bunny_vm.registers[REG_A] = a;
 
     let mut output = [0; 256];
     let mut output_index = 0;
 
-    while !program.is_terminated() && output_index < output.len() {
-        program.step();
+    while !bunny_vm.is_terminated() && output_index < output.len() {
+        bunny_vm.step();
 
-        if let Some(value) = program.output {
+        if let Some(value) = bunny_vm.output {
             if value != i32::try_from(output_index).unwrap() % 2 {
                 return false;
             }
@@ -31,10 +28,10 @@ fn run_clock_signal(program: &mut Program, a: i32) -> bool {
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
-    let mut program = Program::new(&data);
+    let mut bunny_vm = BunnyVM::new(&data);
 
     for a in 0..10000 {
-        if run_clock_signal(&mut program, a) {
+        if run_clock_signal(&mut bunny_vm, a) {
             println!("{}", a);
             break;
         }
