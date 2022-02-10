@@ -8,5 +8,7 @@ fn main() {
     let mut vm = BunnyVM::new(&data);
     let output = vm.run_output(usize::MAX);
 
+    println!("{:?}", vm.registers);
+
     print!("{}", output);
 }

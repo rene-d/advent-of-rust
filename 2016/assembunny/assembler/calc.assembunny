@@ -1,0 +1,57 @@
+
+%use std
+%use print_a
+
+.entry
+
+    ; add example
+    ;
+    outs "  10 + 20 = \x1B[32m"
+    cpy 10 a
+    cpy 20 d
+    add a d
+    print_a
+    outs "\033[0m\n"
+
+    ; sub example
+    ;
+    outs "   10 - 5 = \x1B[32m"
+    cpy 10 a
+    cpy 5 d
+    sub a d
+    print_a
+    outs "\x1b[0m\n"
+
+    ; mul example
+    ;
+    outs "1 + 7 * 5 = \x1B[32m"
+    cpy 1 a
+    cpy 7 b
+    cpy 5 d
+    addmul
+    print_a
+    outs "\x1b[0m\n"
+
+    ; divmod example
+    ;
+    %define NUM 11
+    %define DIV 5
+    outs "   "
+    outs NUM
+    outs " / "
+    outs DIV
+    outs " = \x1B[32mq="
+    cpy 0 a
+    cpy NUM b
+    cpy DIV d
+    divmod          ; a, d = b / d, b % d
+    print_a
+    cpy 0 a
+    cpy NUM b
+    cpy DIV d
+    divmod          ; a, d = b / d, b % d
+    outs " r="
+    print_d
+    outs "\x1b[0m\n"
+
+    halt

@@ -1,0 +1,12 @@
+; demonstrate macro and Unicode support
+
+%macro heart 1
+    outs "cœur="
+    out #1
+    out '\n'
+%endmacro
+
+    heart 0x2764
+    heart '❤'
+
+    halt
