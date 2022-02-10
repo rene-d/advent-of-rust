@@ -208,6 +208,8 @@ impl BunnyVM {
     pub fn step(&mut self) -> bool {
         self.output = None;
 
+        // println!("{}     {}   {:?}", self.ip, self.instructions[self.ip], self.registers);
+
         if self.is_terminated() {
             return false;
         }
@@ -260,7 +262,7 @@ impl BunnyVM {
 
         self.ip += 1;
 
-        !self.is_terminated()
+        true
     }
 
     /// reset the program to the initial state
@@ -302,9 +304,9 @@ impl BunnyVM {
 
         while self.step() && iterations > 0 {
             if let Some(c) = self.output {
-                if (0..256).contains(&c) {
-                    output.push(char::from(u8::try_from(c).unwrap()));
-                }
+                // if (0..256).contains(&c) {
+                output.push(char::from_u32(u32::try_from(c).unwrap()).unwrap());
+                // }
             }
             iterations -= 1;
         }

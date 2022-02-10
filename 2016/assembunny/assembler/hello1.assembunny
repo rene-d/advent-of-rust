@@ -1,0 +1,5 @@
+; print a message
+
+    %define MESSAGE "Hello, World!\n"
+
+    outs MESSAGE

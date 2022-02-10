@@ -1,0 +1,18 @@
+; print "Hello, World!"
+
+    call print_hello
+    call print_world
+    call print_lf
+    halt
+
+proc print_hello
+    outs "Hello, "
+    ret
+
+proc print_world
+    outs "World!\n"
+    ret
+
+proc print_lf
+    out '\n'
+    ret
