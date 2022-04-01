@@ -43,7 +43,7 @@ impl Password {
 
         // Passwords may not contain the letters i, o, or l, as these letters
         // can be mistaken for other characters and are therefore confusing.
-        for c in self.pwd.iter() {
+        for c in &self.pwd {
             match c {
                 'i' | 'o' | 'l' => return false,
                 _ => (),
