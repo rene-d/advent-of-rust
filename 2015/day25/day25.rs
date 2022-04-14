@@ -6,7 +6,7 @@ fn main() {
 
     let mut x = 1;
     let mut y = 1;
-    let mut value: u64 = 20151125;
+    let mut value: u64 = 20_151_125;
 
     while x != row || y != column {
         x += 1;
@@ -15,7 +15,7 @@ fn main() {
             y = x;
             x = 1;
         }
-        value = (value * 252533) % 33554393;
+        value = (value * 252_533) % 33_554_393;
     }
     println!("{}", value);
 }

@@ -25,7 +25,7 @@ fn main() {
 }
 
 fn part2(data: &[String]) {
-    let mut grid: [[i8; 1000]; 1000] = [[0; 1000]; 1000];
+    let mut grid = vec![[0_i8; 1000]; 1000];
 
     let re = Regex::new(r"^(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)$").unwrap();
 
@@ -62,16 +62,16 @@ fn part2(data: &[String]) {
     }
 
     let mut count: u32 = 0;
-    grid.iter().for_each(|row| {
-        row.iter().for_each(|cell| {
-            count += *cell as u32;
-        });
-    });
+    for row in &grid {
+        for cell in row.iter() {
+            count += u32::try_from(*cell).unwrap();
+        }
+    }
     println!("{}", count);
 }
 
 fn part1(data: &[String]) {
-    let mut grid: [[i8; 1000]; 1000] = [[0; 1000]; 1000];
+    let mut grid = vec![[0_i8; 1000]; 1000];
 
     let re = Regex::new(r"^(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)$").unwrap();
 
@@ -106,11 +106,11 @@ fn part1(data: &[String]) {
     }
 
     let mut count: u32 = 0;
-    grid.iter().for_each(|row| {
-        row.iter().for_each(|cell| {
-            count += *cell as u32;
-        });
-    });
+    for row in &grid {
+        for cell in row.iter() {
+            count += u32::try_from(*cell).unwrap();
+        }
+    }
     println!("{}", count);
 }
 

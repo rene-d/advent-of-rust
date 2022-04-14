@@ -20,7 +20,7 @@ fn main() {
     let data = load_data(args.path);
 
     // grid initialization
-    let mut grid = [[0u8; 100]; 100];
+    let mut grid = [[0_u8; 100]; 100];
 
     // part 1
     init_lights(&mut grid, &data);
@@ -71,7 +71,7 @@ fn count_lights(grid: &[[u8; 100]; 100]) -> u32 {
 }
 
 fn switch_lights(grid: &mut [[u8; 100]; 100]) {
-    let mut new_grid = [[0u8; 100]; 100];
+    let mut new_grid = [[0_u8; 100]; 100];
     for y in 0..100 {
         for x in 0..100 {
             let mut neighbors = 0;
@@ -86,19 +86,20 @@ fn switch_lights(grid: &mut [[u8; 100]; 100]) {
                     if x + x_off < 0 || x + x_off >= 100 {
                         continue;
                     }
-                    neighbors += grid[(y + y_off) as usize][(x + x_off) as usize];
+                    neighbors += grid[usize::try_from(y + y_off).unwrap()]
+                        [usize::try_from(x + x_off).unwrap()];
                 }
             }
 
-            if grid[y as usize][x as usize] == 1 {
+            if grid[usize::try_from(y).unwrap()][usize::try_from(x).unwrap()] == 1 {
                 // A light which is on stays on when 2 or 3 neighbors are on, and turns off otherwise.
                 if neighbors == 2 || neighbors == 3 {
-                    new_grid[y as usize][x as usize] = 1;
+                    new_grid[usize::try_from(y).unwrap()][usize::try_from(x).unwrap()] = 1;
                 }
             } else {
                 // A light which is off turns on if exactly 3 neighbors are on, and stays off otherwise.
                 if neighbors == 3 {
-                    new_grid[y as usize][x as usize] = 1;
+                    new_grid[usize::try_from(y).unwrap()][usize::try_from(x).unwrap()] = 1;
                 }
             }
         }
