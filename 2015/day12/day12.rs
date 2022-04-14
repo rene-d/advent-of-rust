@@ -11,6 +11,23 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
+fn sum(v: &serde_json::Value) -> i32 {
+    match v {
+        serde_json::Value::Number(n) => n.as_i64().unwrap().try_into().unwrap(),
+        serde_json::Value::Array(a) => a.iter().map(sum).sum(),
+        serde_json::Value::Object(o) => {
+            // Ignore any object (and all of its children) which has any property with the value "red".
+            for v in o.values() {
+                if v.as_str() == Some("red") {
+                    return 0;
+                }
+            }
+            o.values().map(sum).sum()
+        }
+        _ => 0,
+    }
+}
+
 /// main function
 fn main() {
     let args = Cli::from_args();
@@ -32,22 +49,6 @@ fn main() {
     // part 2
     let json: serde_json::Value =
         serde_json::from_str(&data[0]).expect("JSON was not well-formatted");
-    fn sum(v: &serde_json::Value) -> i32 {
-        match v {
-            serde_json::Value::Number(n) => n.as_i64().unwrap() as i32,
-            serde_json::Value::Array(a) => a.iter().map(sum).sum(),
-            serde_json::Value::Object(o) => {
-                // Ignore any object (and all of its children) which has any property with the value "red".
-                for v in o.values() {
-                    if v.as_str() == Some("red") {
-                        return 0;
-                    }
-                }
-                o.values().map(sum).sum()
-            }
-            _ => 0,
-        }
-    }
     println!("{}", sum(&json));
 }
 
