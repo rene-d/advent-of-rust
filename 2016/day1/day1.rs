@@ -6,8 +6,8 @@ use std::collections::HashSet;
 fn main() {
     let data = std::fs::read_to_string("input.txt").unwrap();
 
-    let mut x = 0i32;
-    let mut y = 0i32;
+    let mut x = 0_i32;
+    let mut y = 0_i32;
     let mut angle = 0;
 
     let mut visited: HashSet<(i32, i32)> = HashSet::new();
