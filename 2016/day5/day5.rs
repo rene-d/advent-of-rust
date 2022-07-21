@@ -5,7 +5,7 @@ use std::time::Instant;
 
 use indicatif::{ProgressBar, ProgressStyle};
 
-const TICK_CHARS: &str = r"⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ "; // r"⠁⠂⠄⡀⢀⠠⠐⠈ "
+const TICK_CHARS: &str = "\u{280b}\u{2819}\u{2839}\u{2838}\u{283c}\u{2834}\u{2826}\u{2827}\u{2807}\u{280f} ";
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
@@ -42,7 +42,7 @@ fn part1(door_id: &str) -> String {
         let hex = format!("{:x}", digest);
 
         if hex.starts_with("00000") {
-            password[found] = hex.chars().nth(6).unwrap();
+            password[found] = hex.chars().nth(5).unwrap();
             found += 1;
             if found == 8 {
                 break;
@@ -52,7 +52,6 @@ fn part1(door_id: &str) -> String {
 
         if index % 1000 == 0 {
             pb.set_message(password.iter().collect::<String>());
-            pb.tick();
         }
     }
 
@@ -96,7 +95,6 @@ fn part2(door_id: &str) -> String {
 
         if index % 1000 == 0 {
             pb.set_message(password.iter().collect::<String>());
-            pb.tick();
         }
     }
 
@@ -113,5 +111,5 @@ fn test_part1() {
 
 #[test]
 fn test_part2() {
-    // assert_eq!(part1("abc"), "05ace8e3");
+    // assert_eq!(part2("abc"), "05ace8e3");
 }

@@ -12,8 +12,8 @@ fn main() {
 fn part1(data: &str) -> String {
     let mut bathroom_code = String::new();
 
-    let mut x = 1u8; // position on the 3x3 grid
-    let mut y = 1u8; // starting at the middle of the grid
+    let mut x = 1_u8; // position on the 3x3 grid
+    let mut y = 1_u8; // starting at the middle of the grid
 
     for line in data.split('\n') {
         for c in line.chars() {

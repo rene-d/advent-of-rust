@@ -138,7 +138,7 @@ impl BunnyVM {
             } else {
                 "".to_owned()
             };
-            println!("{:3}  {}:   {:20}   {}", current, i, instr, reg);
+            println!("{:3} \u{a0}{}:   {:20}   {}", current, i, instr, reg);
         }
     }
 

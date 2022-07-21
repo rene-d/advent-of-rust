@@ -43,7 +43,7 @@ impl TripletHash {
             }
 
             // get the 32 hexadecimal digits
-            let mut digits = [0u8; 32];
+            let mut digits = [0_u8; 32];
             for (i, b) in digest.iter().enumerate() {
                 digits[i * 2] = (b >> 4) as u8;
                 digits[i * 2 + 1] = b & 0xf;
@@ -140,6 +140,11 @@ fn solve(salt: &str, key_stretching: usize) -> usize {
 }
 
 #[test]
-fn test_solve() {
+fn test_solve1() {
     assert_eq!(solve("abc", 0), 22728);
+}
+
+#[test]
+fn test_solve2() {
+    // assert_eq!(solve("abc", 2016), 22551);
 }
