@@ -2,7 +2,7 @@
 
 fn main() {
     let data = aoc::load_input_data(17);
-    let length = data.parse::<usize>().unwrap();
+    let length = data.trim().parse::<usize>().unwrap();
 
     println!("{}", part1(length));
 }
@@ -10,7 +10,7 @@ fn main() {
 fn part1(length: usize) -> usize {
     let mut gifts = Vec::new();
 
-    gifts.resize(length, 1u32);
+    gifts.resize(length, 1_u32);
 
     let mut current = 0;
     let mut turn = 0;
