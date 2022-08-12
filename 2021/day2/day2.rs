@@ -11,51 +11,51 @@ fn main() {
 }
 
 fn part1() {
-    let mut hpos = 0;
-    let mut vpos = 0;
+    let mut pos_h = 0;
+    let mut pos_v = 0;
 
     if let Ok(lines) = read_lines("input.txt") {
         for line in lines.flatten() {
-            if let Some((direction, _step)) = line.rsplit_once(' ') {
-                let step = _step.parse::<i32>().unwrap();
+            if let Some((direction, step_str)) = line.rsplit_once(' ') {
+                let step = step_str.parse::<i32>().unwrap();
 
                 if direction == "forward" {
-                    hpos += step;
+                    pos_h += step;
                 } else if direction == "down" {
-                    vpos += step;
+                    pos_v += step;
                 } else if direction == "up" {
-                    vpos -= step;
+                    pos_v -= step;
                 }
             }
         }
     }
 
-    println!("{}", hpos * vpos);
+    println!("{}", pos_h * pos_v);
 }
 
 fn part2() {
-    let mut hpos = 0;
-    let mut vpos = 0;
+    let mut pos_h = 0;
+    let mut pos_v = 0;
     let mut aim = 0;
 
     if let Ok(lines) = read_lines("input.txt") {
         for line in lines.flatten() {
-            if let Some((direction, _step)) = line.rsplit_once(' ') {
-                let step = _step.parse::<i32>().unwrap();
+            if let Some((direction, step_str)) = line.rsplit_once(' ') {
+                let step = step_str.parse::<i32>().unwrap();
 
                 if direction == "down" {
                     aim += step;
                 } else if direction == "up" {
                     aim -= step;
                 } else if direction == "forward" {
-                    hpos += step;
-                    vpos += aim * step;
+                    pos_h += step;
+                    pos_v += aim * step;
                 }
             }
         }
     }
 
-    println!("{}", hpos * vpos);
+    println!("{}", pos_h * pos_v);
 }
 
 // The output is wrapped in a Result to allow matching on errors

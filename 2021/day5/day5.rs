@@ -25,29 +25,29 @@ fn main() {
     let re = Regex::new(r"^(\d+),(\d+) -> (\d+),(\d+)$").unwrap();
 
     // --- Part One ---
-    let mut grid = [[0i16; 1000]; 1000];
+    let mut grid = vec![[0_i16; 1000]; 1000];
 
     for line in &data {
         let drawn = re.captures(line).unwrap();
 
-        let mut x1 = drawn[1].parse::<i32>().unwrap();
-        let mut y1 = drawn[2].parse::<i32>().unwrap();
-        let mut x2 = drawn[3].parse::<i32>().unwrap();
-        let mut y2 = drawn[4].parse::<i32>().unwrap();
+        let mut x1 = drawn[1].parse::<usize>().unwrap();
+        let mut y1 = drawn[2].parse::<usize>().unwrap();
+        let mut x2 = drawn[3].parse::<usize>().unwrap();
+        let mut y2 = drawn[4].parse::<usize>().unwrap();
 
         if x1 == x2 {
             if y1 > y2 {
                 std::mem::swap(&mut y1, &mut y2);
             }
-            for y in y1..y2 + 1 {
-                grid[x1 as usize][y as usize] += 1;
+            for y in y1..=y2 {
+                grid[x1][y] += 1;
             }
         } else if y1 == y2 {
             if x1 > x2 {
                 std::mem::swap(&mut x1, &mut x2);
             }
-            for x in x1..x2 + 1 {
-                grid[x as usize][y1 as usize] += 1;
+            for row in grid.iter_mut().take(x2 + 1).skip(x1) {
+                row[y1] += 1;
             }
         }
     }
@@ -66,10 +66,10 @@ fn main() {
     for line in &data {
         let drawn = re.captures(line).unwrap();
 
-        let mut x1 = drawn[1].parse::<i32>().unwrap();
-        let mut y1 = drawn[2].parse::<i32>().unwrap();
-        let mut x2 = drawn[3].parse::<i32>().unwrap();
-        let mut y2 = drawn[4].parse::<i32>().unwrap();
+        let mut x1 = drawn[1].parse::<usize>().unwrap();
+        let mut y1 = drawn[2].parse::<usize>().unwrap();
+        let mut x2 = drawn[3].parse::<usize>().unwrap();
+        let mut y2 = drawn[4].parse::<usize>().unwrap();
 
         if x1 != x2 && y1 != y2 {
             if x1 > x2 {
@@ -77,12 +77,12 @@ fn main() {
                 std::mem::swap(&mut y1, &mut y2);
             }
             if y1 < y2 {
-                for x in x1..x2 + 1 {
-                    grid[x as usize][(y1 + (x - x1)) as usize] += 1;
+                for (x, row) in grid.iter_mut().enumerate().take(x2 + 1).skip(x1) {
+                    row[y1 + (x - x1)] += 1;
                 }
             } else {
-                for x in x1..x2 + 1 {
-                    grid[x as usize][(y1 - (x - x1)) as usize] += 1;
+                for (x, row) in grid.iter_mut().enumerate().take(x2 + 1).skip(x1) {
+                    row[y1 - (x - x1)] += 1;
                 }
             }
         }

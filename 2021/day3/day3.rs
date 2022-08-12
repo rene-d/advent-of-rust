@@ -32,28 +32,28 @@ fn step2(data: &[String]) {
     // println!("nb_bits: {}", nb_bits);
 
     // oxygen generator rating
-    let mut o2_rate = 0;
-    let mut o2_start = "".to_owned();
+    let mut dioxygen_rate = 0;
+    let mut dioxygen_start = "".to_owned();
 
     for bit in 0..nb_bits {
         let mut one = 0;
         let mut nb = 0;
 
         for value in data.iter() {
-            if value.starts_with(&o2_start) {
+            if value.starts_with(&dioxygen_start) {
                 let c = value.chars().nth(bit).unwrap();
                 if c == '1' {
                     one += 1;
-                    o2_rate = isize::from_str_radix(value, 2).unwrap();
+                    dioxygen_rate = isize::from_str_radix(value, 2).unwrap();
                 }
                 nb += 1;
             }
         }
 
         if one >= nb - one {
-            o2_start.push('1');
+            dioxygen_start.push('1');
         } else {
-            o2_start.push('0');
+            dioxygen_start.push('0');
         }
     }
 
@@ -82,10 +82,10 @@ fn step2(data: &[String]) {
             co2_start.push('1');
         }
     }
-    println!("{}", o2_rate * co2_rate);
+    println!("{}", dioxygen_rate * co2_rate);
 }
 
-/// step 1: compute gamma_rate * espilon_rate
+/// step 1: compute `gamma_rate` * `espilon_rate`
 fn step1(data: &[String]) {
     let mut gamma_rate = 0;
     let mut freq_list: [i32; 12] = [0; 12];
@@ -94,7 +94,7 @@ fn step1(data: &[String]) {
     for bits in data {
         for (i, bit) in bits.chars().enumerate() {
             if bit == '1' {
-                freq_list[i] += 1i32;
+                freq_list[i] += 1_i32;
             }
         }
         nb += 1;
@@ -107,7 +107,7 @@ fn step1(data: &[String]) {
         }
     }
 
-    let espilon_rate = 0b111111111111 - gamma_rate;
+    let espilon_rate = 0b1111_1111_1111 - gamma_rate;
 
     println!("{}", gamma_rate * espilon_rate);
 }

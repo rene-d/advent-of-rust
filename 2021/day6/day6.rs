@@ -19,8 +19,8 @@ fn main() {
     let data = fs::read_to_string(args.path).unwrap();
 
     let mut timers = [0u64; 9];
-    for timer in data.split(',').map(|s| s.parse::<u64>().unwrap()) {
-        timers[timer as usize] += 1;
+    for timer in data.trim().split(',').map(|s| s.parse::<usize>().unwrap()) {
+        timers[timer] += 1;
     }
 
     lanterfishes(&timers, 80);

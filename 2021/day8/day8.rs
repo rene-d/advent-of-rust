@@ -115,13 +115,10 @@ fn part2(data: &[String]) {
             s.sort_unstable();
             let s_sorted = String::from_iter(s);
 
-            let v = *map.entry(s_sorted).or_insert(0) as u32;
+            let v = u32::from(*map.entry(s_sorted).or_insert(0));
             r = r * 10 + v;
         }
         total += r;
-
-        // println!("{:?}", d);
-        // println!("{:?}", map);
     }
     println!("{:?}", total);
 }

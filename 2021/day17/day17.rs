@@ -8,29 +8,29 @@ use text_io::scan;
 
 /// main function
 fn main() {
-    let target_x1: i32;
-    let target_x2: i32;
-    let target_y1: i32;
-    let target_y2: i32;
+    let abs_min: i32;
+    let abs_max: i32;
+    let ord_min: i32;
+    let ord_max: i32;
 
     let args: Vec<String> = env::args().collect();
     println!("args: {:?}", args);
     match args.len() {
         5 => {
-            target_x1 = args[1].parse::<i32>().unwrap();
-            target_x2 = args[2].parse::<i32>().unwrap();
-            target_y1 = args[3].parse::<i32>().unwrap();
-            target_y2 = args[4].parse::<i32>().unwrap();
+            abs_min = args[1].parse::<i32>().unwrap();
+            abs_max = args[2].parse::<i32>().unwrap();
+            ord_min = args[3].parse::<i32>().unwrap();
+            ord_max = args[4].parse::<i32>().unwrap();
         }
         2 => {
             let data = fs::read_to_string(args[1].to_string()).unwrap();
             scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
-                  target_x1, target_x2, target_y1, target_y2);
+                  abs_min, abs_max, ord_min, ord_max);
         }
         1 => {
             let data = fs::read_to_string("input.txt").unwrap();
             scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
-                  target_x1, target_x2, target_y1, target_y2);
+                  abs_min, abs_max, ord_min, ord_max);
         }
         _ => {
             panic!("Invalid number of arguments");
@@ -39,7 +39,7 @@ fn main() {
 
     println!(
         "target area: x={}..{}, y={}..{}",
-        target_x1, target_x2, target_y1, target_y2
+        abs_min, abs_max, ord_min, ord_max
     );
 
     let mut part1 = 0;
@@ -73,7 +73,7 @@ fn main() {
 
                 vy -= 1; // the probe's y velocity decreases by 1.
 
-                if target_x1 <= x && x <= target_x2 && target_y1 <= y && y <= target_y2 {
+                if abs_min <= x && x <= abs_max && ord_min <= y && y <= ord_max {
                     hit = true;
                 }
             }
