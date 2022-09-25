@@ -42,9 +42,7 @@ fn run(
     reg: &str,
     level: u32,
 ) -> u16 {
-    if level > 70 {
-        panic!("too deep");
-    }
+    assert!(!(level > 70), "too deep");
 
     if cache.contains_key(reg) {
         return cache[reg];
