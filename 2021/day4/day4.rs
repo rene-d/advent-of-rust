@@ -30,7 +30,7 @@ fn main() {
     let mut grids = vec![];
     let mut i = 2;
     while i < data.len() {
-        let mut grid = [[0i32; 5]; 5];
+        let mut grid = [[0_i32; 5]; 5];
 
         for y in 0..5 {
             let line = data[i + y]
@@ -50,7 +50,7 @@ fn main() {
     let mut last_draw = 0;
 
     for draw in drawn {
-        for grid in grids.iter_mut() {
+        for grid in &mut grids {
             if grid[0][0] == -2 {
                 // grid invalidated
                 continue;
@@ -91,7 +91,7 @@ fn sum(grid: &[[i32; 5]; 5]) -> i32 {
     s
 }
 
-/// has_win returns true if the grid has an cleared row or column
+/// `has_win` returns true if the grid has an cleared row or column
 fn win(grid: &[[i32; 5]; 5]) -> bool {
     for i in 0..5 {
         if grid[i][0] == -1

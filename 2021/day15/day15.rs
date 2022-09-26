@@ -27,7 +27,7 @@ fn main() {
     let mut grid = vec![vec![0i32; n]; n];
     for (y, line) in data.iter().enumerate() {
         for (x, c) in line.chars().enumerate() {
-            grid[y][x] = c.to_digit(10).unwrap() as i32;
+            grid[y][x] = c.to_string().parse().unwrap();
         }
     }
 
@@ -43,7 +43,8 @@ fn main() {
 
             for yy in 0..5 {
                 for xx in 0..5 {
-                    grid5[y + n * yy][x + n * xx] = (v - 1 + (xx + yy) as i32) % 9 + 1;
+                    grid5[y + n * yy][x + n * xx] =
+                        (v - 1 + i32::try_from(xx + yy).unwrap()) % 9 + 1;
                 }
             }
         }

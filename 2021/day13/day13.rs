@@ -66,10 +66,10 @@ fn main() {
 
         if !part1 {
             part1 = true;
-            let mut sum = 0;
+            let mut sum = 0i32;
             for row in &grid {
                 for cell in row {
-                    sum += *cell as u32;
+                    sum += i32::from(*cell);
                 }
             }
             println!("part1: {}", sum);

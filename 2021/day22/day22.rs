@@ -33,8 +33,6 @@ fn part2(data: &[String]) {
         Regex::new(r"^(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)$")
             .unwrap();
 
-    // let mut cubes_on: HashSet<(i32, i32, i32)> = HashSet::new();
-
     let mut x_slices: HashSet<i32> = HashSet::new();
     let mut y_slices: HashSet<i32> = HashSet::new();
     let mut z_slices: HashSet<i32> = HashSet::new();
@@ -67,9 +65,9 @@ fn part2(data: &[String]) {
         z_slices.insert(z2 + 1);
     }
 
-    let mut xx: Vec<i32> = x_slices.iter().cloned().collect();
-    let mut yy: Vec<i32> = y_slices.iter().cloned().collect();
-    let mut zz: Vec<i32> = z_slices.iter().cloned().collect();
+    let mut xx: Vec<i32> = x_slices.iter().copied().collect();
+    let mut yy: Vec<i32> = y_slices.iter().copied().collect();
+    let mut zz: Vec<i32> = z_slices.iter().copied().collect();
 
     xx.sort_unstable();
     yy.sort_unstable();
@@ -91,8 +89,6 @@ fn part2(data: &[String]) {
                 let z1 = zz[z];
                 let z2 = zz[z + 1];
 
-                // println!("{} {} {} {} {} {}", x1, x2, y1, y2, z1, z2);
-
                 let mut sign = false;
 
                 for cube in &cubes {
@@ -104,8 +100,9 @@ fn part2(data: &[String]) {
                     }
                 }
                 if sign {
-                    let elem_size = ((x2 - x1) as i64) * ((y2 - y1) as i64) * ((z2 - z1) as i64);
-                    size += elem_size;
+                    size += (i64::try_from(x2 - x1).unwrap())
+                        * (i64::try_from(y2 - y1).unwrap())
+                        * (i64::try_from(z2 - z1).unwrap());
                 }
             }
         }

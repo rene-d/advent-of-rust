@@ -23,7 +23,7 @@ struct Point {
     z: i32,
 }
 
-/// implement fmt::Debug for Point
+/// implement `fmt::Debug` for Point
 impl fmt::Debug for Point {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_tuple("")
@@ -44,11 +44,11 @@ fn main() {
     let scanners = load_scanners(data);
 
     let now = Instant::now();
-    solve(scanners);
-    println!("elapsed: {} s", (now.elapsed().as_millis() as f64) / 1000.);
+    solve(&scanners);
+    println!("elapsed: {} s", now.elapsed().as_secs_f64());
 }
 
-fn solve(scanners: Vec<Vec<Point>>) {
+fn solve(scanners: &[Vec<Point>]) {
     // the list of different beacons
     let mut beacons: HashSet<Point> = HashSet::new();
     for p in &scanners[0] {
@@ -67,8 +67,8 @@ fn solve(scanners: Vec<Vec<Point>>) {
     }
 
     // compute all rotated coordinates of beacons
-    let mut scanners_rotated: Vec<Vec<Vec<Point>>> = Vec::new();
-    for scanner in &scanners {
+    let mut scanner_rotated_list: Vec<Vec<Vec<Point>>> = Vec::new();
+    for scanner in scanners {
         let mut scanner_rotated: Vec<Vec<Point>> = Vec::new();
 
         for rotation in 0..24 {
@@ -78,7 +78,7 @@ fn solve(scanners: Vec<Vec<Point>>) {
                 .collect();
             scanner_rotated.push(r);
         }
-        scanners_rotated.push(scanner_rotated);
+        scanner_rotated_list.push(scanner_rotated);
     }
 
     while !pending.is_empty() {
@@ -96,7 +96,7 @@ fn solve(scanners: Vec<Vec<Point>>) {
             }
 
             for rotation in 0..24 {
-                let b_scan = scanners_rotated[*scanner_id][rotation].clone();
+                let b_scan = scanner_rotated_list[*scanner_id][rotation].clone();
 
                 let mut match_points: HashMap<Point, i32> = HashMap::new();
 
@@ -143,9 +143,7 @@ fn solve(scanners: Vec<Vec<Point>>) {
             }
         }
 
-        if found == usize::MAX {
-            panic!("no beacon found");
-        }
+        assert!(!(found == usize::MAX), "no beacon found");
 
         pending.remove(&found);
     }
@@ -232,5 +230,5 @@ fn rotate(point: &Point, rotation: usize) -> Point {
 /// load data from file
 fn load_data(path: std::path::PathBuf) -> Vec<String> {
     let data = fs::read_to_string(path).unwrap();
-    data.lines().map(|x| x.to_string()).collect()
+    data.lines().map(std::string::ToString::to_string).collect()
 }

@@ -21,10 +21,10 @@ fn main() {
 
     // read the grid
     let n = data.len();
-    let mut grid = vec![vec![0i8; n]; n];
+    let mut grid = vec![vec![0u8; n]; n];
     for (y, line) in data.iter().enumerate() {
         for (x, c) in line.chars().enumerate() {
-            grid[y][x] = c.to_digit(10).unwrap() as i8;
+            grid[y][x] = c.to_string().parse().unwrap();
         }
     }
 
@@ -32,7 +32,7 @@ fn main() {
 
     for turn in 1..1000 {
         // First, the energy level of each octopus increases by 1.
-        for line in grid.iter_mut() {
+        for line in &mut grid {
             for val in line {
                 *val += 1;
             }
@@ -55,24 +55,23 @@ fn main() {
                     if dy == 0 && dx == 0 {
                         continue;
                     }
-                    let nx = x as isize + dx;
-                    let ny = y as isize + dy;
-                    if 0 <= nx && nx < n as isize && 0 <= ny && ny < n as isize {
-                        let v = grid[ny as usize][nx as usize];
+                    let nx = isize::try_from(x).unwrap() + dx;
+                    let ny = isize::try_from(y).unwrap() + dy;
+                    if 0 <= nx
+                        && nx < n.try_into().unwrap()
+                        && 0 <= ny
+                        && ny < n.try_into().unwrap()
+                    {
+                        let nx = usize::try_from(nx).unwrap();
+                        let ny = usize::try_from(ny).unwrap();
+                        let v = grid[ny][nx];
                         if v != 0 && v <= 9 {
-                            grid[ny as usize][nx as usize] = v + 1;
+                            grid[ny][nx] = v + 1;
                         }
                     }
                 }
             }
         }
-
-        // for y in 0..n {
-        //     for x in 0..n {
-        //         print!("{}",grid[y][x]);
-        //     }
-        //     println!();
-        // }
 
         if all_flashing(&grid) {
             println!("part2: {}", turn);
@@ -85,7 +84,7 @@ fn main() {
     }
 }
 
-fn all_flashing(grid: &[Vec<i8>]) -> bool {
+fn all_flashing(grid: &[Vec<u8>]) -> bool {
     for line in grid {
         for val in line {
             if *val != 0 {
@@ -96,7 +95,7 @@ fn all_flashing(grid: &[Vec<i8>]) -> bool {
     true
 }
 
-fn find_flash(grid: &[Vec<i8>]) -> (usize, usize) {
+fn find_flash(grid: &[Vec<u8>]) -> (usize, usize) {
     for (y, line) in grid.iter().enumerate() {
         for (x, val) in line.iter().enumerate() {
             if *val == 10 {

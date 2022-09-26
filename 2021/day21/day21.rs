@@ -53,7 +53,7 @@ fn part2(player: u8, computer: u8) -> u64 {
                 for die3 in 1..=3 {
                     // player1's turn
                     let new_position1 = (position1 - 1 + die1 + die2 + die3) % 10 + 1;
-                    let new_score1 = score1 + (new_position1 as u64);
+                    let new_score1 = score1 + u64::from(new_position1);
 
                     // next turns
                     let next_turns = solve(cache, position2, new_position1, score2, new_score1);
@@ -91,8 +91,10 @@ fn part1(player: u8, computer: u8) -> u32 {
         let d2 = roll();
         let d3 = roll();
 
-        let new_place = ((positions[current_player] as u32 + d1 + d2 + d3 - 1) % 10 + 1) as u8;
-        let new_score = scores[current_player] + new_place as u32;
+        let new_place =
+            u8::try_from((u32::from(positions[current_player]) + d1 + d2 + d3 - 1) % 10 + 1)
+                .unwrap();
+        let new_score = scores[current_player] + u32::from(new_place);
 
         scores[current_player] = new_score;
         positions[current_player] = new_place;
