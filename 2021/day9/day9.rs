@@ -26,7 +26,7 @@ fn main() {
 
     for (y, line) in data.iter().enumerate() {
         for (x, c) in line.chars().enumerate() {
-            grid[y][x] = c.to_digit(10).unwrap() as i32;
+            grid[y][x] = c.to_string().parse().unwrap();
         }
     }
 

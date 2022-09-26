@@ -13,7 +13,7 @@ struct Cli {
     path: std::path::PathBuf,
 }
 
-type Grid = [[u8; 1000]; 1000];
+type Grid = Vec<Vec<u8>>;
 
 const PIXEL_UNKNOWN: u8 = 0;
 const PIXEL_OFF: u8 = 1;
@@ -34,11 +34,9 @@ fn main() {
         })
         .collect::<Vec<u8>>();
 
-    if decoder.len() != 512 {
-        panic!("invalid decoder length");
-    }
+    assert!(!(decoder.len() != 512), "invalid decoder length");
 
-    let mut grid: Grid = [[PIXEL_UNKNOWN; 1000]; 1000];
+    let mut grid: Grid = vec![vec![PIXEL_UNKNOWN; 1000]; 1000];
 
     let sx = data[2].len();
     let sy = data.len() - 2;
@@ -117,26 +115,26 @@ fn count_lit(grid: &Grid) -> usize {
 }
 
 fn range(grid: &Grid) -> (usize, usize, usize, usize) {
-    let mut minx = usize::MAX;
-    let mut maxx = usize::MIN;
-    let mut miny = usize::MAX;
-    let mut maxy = usize::MIN;
+    let mut min_abs = usize::MAX;
+    let mut max_abs = usize::MIN;
+    let mut min_ord = usize::MAX;
+    let mut max_ord = usize::MIN;
 
     for (y, line) in grid.iter().enumerate() {
         for (x, val) in line.iter().enumerate() {
             if *val != PIXEL_UNKNOWN {
-                minx = minx.min(x);
-                maxx = maxx.max(x);
-                miny = miny.min(y);
-                maxy = maxy.max(y);
+                min_abs = min_abs.min(x);
+                max_abs = max_abs.max(x);
+                min_ord = min_ord.min(y);
+                max_ord = max_ord.max(y);
             }
         }
     }
-    (minx, miny, maxx, maxy)
+    (min_abs, min_ord, max_abs, max_ord)
 }
 
 fn enhance(grid: &mut Grid, decoder: &[u8], default_pixel: u8) -> u8 {
-    let mut new_grid: Grid = [[PIXEL_UNKNOWN; 1000]; 1000];
+    let mut new_grid: Grid = vec![vec![PIXEL_UNKNOWN; 1000]; 1000];
     let extense = range(grid);
 
     for (y, line) in new_grid
@@ -154,9 +152,11 @@ fn enhance(grid: &mut Grid, decoder: &[u8], default_pixel: u8) -> u8 {
             let mut sum: usize = 0;
             for dy in -1..=1 {
                 for dx in -1..=1 {
-                    let nx = x as isize + dx;
-                    let ny = y as isize + dy;
-                    let mut pixel = grid[ny as usize][nx as usize];
+                    let nx = isize::try_from(x).unwrap() + dx;
+                    let ny = isize::try_from(y).unwrap() + dy;
+                    let nx = usize::try_from(nx).unwrap();
+                    let ny = usize::try_from(ny).unwrap();
+                    let mut pixel = grid[ny][nx];
                     if pixel == PIXEL_UNKNOWN {
                         pixel = default_pixel;
                     }
@@ -177,8 +177,8 @@ fn enhance(grid: &mut Grid, decoder: &[u8], default_pixel: u8) -> u8 {
     }
 
     match default_pixel {
-        PIXEL_OFF => decoder[0],          // pixel off decoded
-        PIXEL_ON => decoder[0b111111111], // pixel on decoded
+        PIXEL_OFF => decoder[0],            // pixel off decoded
+        PIXEL_ON => decoder[0b1_1111_1111], // pixel on decoded
         _ => panic!("unknown pixel"),
     }
 }

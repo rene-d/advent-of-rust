@@ -13,7 +13,7 @@ fn main() {
     let mut part2 = vec![];
 
     for line in data {
-        let (corrupted, completed) = check(line);
+        let (corrupted, completed) = check(&line);
 
         part1 += corrupted;
         if completed != 0 {
@@ -28,7 +28,7 @@ fn main() {
     println!("{:?}", part2[part2.len() / 2]);
 }
 
-fn check(line: String) -> (u64, u64) {
+fn check(line: &str) -> (u64, u64) {
     let mut stack = vec![];
 
     for c in line.chars() {

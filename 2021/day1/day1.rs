@@ -6,7 +6,7 @@ use std::io::{self, BufRead};
 use std::path::Path;
 
 fn main() {
-    let mut prev_num = 999999999u32;
+    let mut prev_num = 999_999_999_u32;
     let mut result = 0;
 
     let mut data = vec![];
@@ -26,13 +26,13 @@ fn main() {
             prev_num = num;
 
             // pour le step 2
-            data.push(num)
+            data.push(num);
         }
     }
     println!("{}", result);
 
     // step 2
-    prev_num = 999999999u32;
+    prev_num = 999_999_999_u32;
     result = 0;
 
     for i in 0..data.len() - 2 {
