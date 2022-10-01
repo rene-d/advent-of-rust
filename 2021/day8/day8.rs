@@ -40,8 +40,8 @@ fn part2(data: &[String]) {
     for line in data {
         let (notes1, code1) = line.split_once('|').unwrap();
 
-        let notes = notes1.trim().split_whitespace().collect::<Vec<&str>>();
-        let code = code1.trim().split_whitespace().collect::<Vec<&str>>();
+        let notes = notes1.split_whitespace().collect::<Vec<&str>>();
+        let code = code1.split_whitespace().collect::<Vec<&str>>();
 
         let mut d: HashMap<usize, HashSet<String>> = HashMap::new();
 

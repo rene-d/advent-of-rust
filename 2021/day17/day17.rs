@@ -23,7 +23,7 @@ fn main() {
             ord_max = args[4].parse::<i32>().unwrap();
         }
         2 => {
-            let data = fs::read_to_string(args[1].to_string()).unwrap();
+            let data = fs::read_to_string(&args[1]).unwrap();
             scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
                   abs_min, abs_max, ord_min, ord_max);
         }

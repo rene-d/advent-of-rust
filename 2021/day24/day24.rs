@@ -133,7 +133,7 @@ fn run_program(program: &[Instruction], input: &[i64], z: i64, verbose: bool) ->
     for instruction in program {
         let src = match instruction.src {
             Register::Input => {
-                assert!(!(input_ptr >= input.len()), "not enough input");
+                assert!(input_ptr < input.len(), "not enough input");
                 input_ptr += 1;
                 input[input_ptr - 1]
             }
@@ -151,11 +151,11 @@ fn run_program(program: &[Instruction], input: &[i64], z: i64, verbose: bool) ->
             OpCode::Add => dest_value + src,
             OpCode::Mul => dest_value * src,
             OpCode::Div => {
-                assert!(!(src <= 0), "Division by zero!");
+                assert!(src != 0, "Division by zero!");
                 dest_value / src
             }
             OpCode::Mod => {
-                assert!(!(src <= 0), "Division by zero!");
+                assert!(src != 0, "Division by zero!");
                 dest_value % src
             }
             OpCode::Eql => {

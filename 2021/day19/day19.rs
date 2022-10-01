@@ -143,7 +143,7 @@ fn solve(scanners: &[Vec<Point>]) {
             }
         }
 
-        assert!(!(found == usize::MAX), "no beacon found");
+        assert!(found != usize::MAX, "no beacon found");
 
         pending.remove(&found);
     }
