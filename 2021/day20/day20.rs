@@ -34,7 +34,7 @@ fn main() {
         })
         .collect::<Vec<u8>>();
 
-    assert!(!(decoder.len() != 512), "invalid decoder length");
+    assert!(decoder.len() == 512, "invalid decoder length");
 
     let mut grid: Grid = vec![vec![PIXEL_UNKNOWN; 1000]; 1000];
 

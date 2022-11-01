@@ -6,13 +6,12 @@ defaults:
     shell: bash
 
 jobs:
-  # Check Code style quickly by running `rustfmt` over all code
+
+  # Check coding style
   rustfmt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: rustup update nightly && rustup default nightly
-      - run: rustup +nightly component add rustfmt
+      - uses: actions/checkout@v3
       - run: |
           for manifest in `find . ! -path '*/day*' -name Cargo.toml`
           do
@@ -20,24 +19,23 @@ jobs:
             cargo fmt --all --manifest-path $manifest -- --check
           done
 
+  # Check static analysis defaults
   clippy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: rustup update nightly && rustup default nightly
-      - run: rustup component add clippy
+      - uses: actions/checkout@v3
       - run: |
           for manifest in `find . ! -path '*/day*' -name Cargo.toml`
           do
             echo check clippy for $manifest
-            cargo clippy --manifest-path $manifest
+            cargo clippy --manifest-path $manifest -- -D clippy::all -D clippy::pedantic
           done
 
+  # Check non-regression tests
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: rustup update stable && rustup default stable
+      - uses: actions/checkout@v3
       - run: |
           for manifest in `find . ! -path '*/day*' -name Cargo.toml`
           do
