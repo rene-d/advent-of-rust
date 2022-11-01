@@ -27,7 +27,7 @@ fn main() {
         if line.is_empty() {
             break;
         }
-        let (x, y) = line.split_once(",").unwrap();
+        let (x, y) = line.split_once(',').unwrap();
         let xx = x.parse::<usize>().unwrap();
         let yy = y.parse::<usize>().unwrap();
         grid[yy][xx] = 1;
@@ -39,7 +39,7 @@ fn main() {
         }
 
         if line.starts_with("fold along x=") {
-            let (_, s) = line.split_once("=").unwrap();
+            let (_, s) = line.split_once('=').unwrap();
             let fold = s.parse::<usize>().unwrap();
             for line in &mut grid {
                 for x in 0..fold {
@@ -52,7 +52,7 @@ fn main() {
                 line.resize(fold, 0);
             }
         } else if line.starts_with("fold along y=") {
-            let (_, s) = line.split_once("=").unwrap();
+            let (_, s) = line.split_once('=').unwrap();
             let fold = s.parse::<usize>().unwrap();
             for y in 0..fold {
                 for x in 0..grid[0].len() {
