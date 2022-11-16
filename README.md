@@ -88,5 +88,6 @@ Puzzle                                                                          
 [Day 16: Aunt Sue](https://adventofcode.com/2015/day/16)                             | ⭐⭐  | Rust Python
 [Day 17: No Such Thing as Too Much](https://adventofcode.com/2015/day/17)            | ⭐⭐  | Rust
 [Day 18: Like a GIF For Your Yard](https://adventofcode.com/2015/day/18)             | ⭐⭐  | Rust
+[Day 19: Medicine for Rudolph](https://adventofcode.com/2015/day/19)                 | ⭐⭐  | Rust
 [Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)   | ⭐⭐  | Rust
 [Day 25: Let It Snow](https://adventofcode.com/2015/day/25)                          | ⭐    | Rust
