@@ -1,5 +1,4 @@
-// Day 4: Giant Squid
-// https://adventofcode.com/2021/day/4
+//! [Day 4: Giant Squid](https://adventofcode.com/2021/day/4)
 
 use std::fs::File;
 use std::io::{self, BufRead};

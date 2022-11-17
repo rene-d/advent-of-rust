@@ -1,5 +1,4 @@
-// Day 5: Hydrothermal Venture
-// https://adventofcode.com/2021/day/5
+//! [Day 5: Hydrothermal Venture](https://adventofcode.com/2021/day/5)
 
 use regex::Regex;
 use std::fs::File;

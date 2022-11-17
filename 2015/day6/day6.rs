@@ -1,5 +1,4 @@
-// Day 6: Probably a Fire Hazard
-// https://adventofcode.com/2015/day/6
+//! [Day 6: Probably a Fire Hazard](https://adventofcode.com/2015/day/6)
 
 use regex::Regex;
 use std::fs::File;

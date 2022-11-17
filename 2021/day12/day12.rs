@@ -1,5 +1,4 @@
-// Day 12: Passage Pathing
-// https://adventofcode.com/2021/day/12
+//! [Day 12: Passage Pathing](https://adventofcode.com/2021/day/12)
 
 use std::collections::HashMap;
 use std::fs::File;

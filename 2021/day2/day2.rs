@@ -1,5 +1,4 @@
-// Day 2: Dive!
-// https://adventofcode.com/2021/day/2
+//! [Day 2: Dive!](https://adventofcode.com/2021/day/2)
 
 use std::fs::File;
 use std::io::{self, BufRead};

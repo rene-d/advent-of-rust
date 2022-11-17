@@ -1,3 +1,5 @@
+//! [Day 16: Aunt Sue](https://adventofcode.com/2015/day/16)
+
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs::File;
