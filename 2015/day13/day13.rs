@@ -1,3 +1,5 @@
+//! [Day 13: Knights of the Dinner Table](https://adventofcode.com/2015/day/13)
+
 use permutator::HeapPermutationIterator;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};

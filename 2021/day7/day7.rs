@@ -1,5 +1,4 @@
-// Day 7: The Treachery of Whales
-// https://adventofcode.com/2021/day/7
+//! [Day 7: The Treachery of Whales](https://adventofcode.com/2021/day/7)
 
 use std::fs::File;
 use std::io::{self, BufRead};

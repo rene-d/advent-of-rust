@@ -1,3 +1,5 @@
+//! [Day 14: Reindeer Olympics](https://adventofcode.com/2015/day/14)
+
 use regex::Regex;
 use std::fs::File;
 use std::io::{self, BufRead};

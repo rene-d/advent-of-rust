@@ -1,5 +1,4 @@
-// Day 1: Not Quite Lisp
-// https://adventofcode.com/2015/day/1
+//! [Day 1: Not Quite Lisp](https://adventofcode.com/2015/day/1)
 
 use std::fs::File;
 use std::io::{self, BufRead};
