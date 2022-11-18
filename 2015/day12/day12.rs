@@ -1,3 +1,5 @@
+//! [Day 12: JSAbacusFramework.io](https://adventofcode.com/2015/day/12)
+
 use regex::Regex;
 use std::fs::File;
 use std::io::{self, BufRead};

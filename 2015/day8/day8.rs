@@ -1,3 +1,5 @@
+//! [Day 8: Matchsticks](https://adventofcode.com/2015/day/8)
+
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;

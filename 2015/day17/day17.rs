@@ -1,3 +1,5 @@
+//! [Day 17: No Such Thing as Too Much](https://adventofcode.com/2015/day/17)
+
 use permutator::LargeCombinationIterator;
 use std::collections::HashMap;
 use std::fs::File;

@@ -1,5 +1,4 @@
-// Day 10: Syntax Scoring
-// https://adventofcode.com/2021/day/10
+//! [Day 10: Syntax Scoring](https://adventofcode.com/2021/day/10)
 
 use std::fs::File;
 use std::io::{self, BufRead};

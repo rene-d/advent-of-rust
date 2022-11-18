@@ -1,5 +1,4 @@
-// Day 6: Lanternfish
-// https://adventofcode.com/2021/day/6
+//! [Day 6: Lanternfish](https://adventofcode.com/2021/day/6)
 
 use std::fs;
 use structopt::StructOpt;
