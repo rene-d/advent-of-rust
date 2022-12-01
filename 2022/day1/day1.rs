@@ -23,6 +23,6 @@ fn main() {
     println!("part1: {}", calories.first().unwrap());
     println!(
         "part2: {}",
-        calories.get(0).unwrap() + calories.get(1).unwrap() + calories.get(2).unwrap()
+        calories.first().unwrap() + calories.get(1).unwrap() + calories.get(2).unwrap()
     );
 }
