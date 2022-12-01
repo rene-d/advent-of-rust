@@ -8,21 +8,21 @@ fn main() {
     lines.push(""); // add ane empty line to flush the energy accumulator into the array
 
     let mut energy = 0;
-    let mut reeinders = Vec::new();
+    let mut calories = Vec::new();
 
     for line in lines {
         if line.is_empty() {
-            reeinders.push(energy);
+            calories.push(energy);
             energy = 0;
         } else {
             energy += line.parse::<u32>().unwrap();
         }
     }
-    reeinders.sort_by(|a, b| b.cmp(a));
+    calories.sort_by(|a, b| b.cmp(a));
 
-    println!("part1: {}", reeinders.first().unwrap());
+    println!("part1: {}", calories.first().unwrap());
     println!(
         "part2: {}",
-        reeinders.get(0).unwrap() + reeinders.get(1).unwrap() + reeinders.get(2).unwrap()
+        calories.get(0).unwrap() + calories.get(1).unwrap() + calories.get(2).unwrap()
     );
 }
