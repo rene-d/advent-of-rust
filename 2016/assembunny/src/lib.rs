@@ -136,7 +136,7 @@ impl BunnyVM {
             let reg = if i < 4 {
                 format!("{}: {}", reg_name(i), self.registers[i])
             } else {
-                "".to_owned()
+                String::new()
             };
             println!("{:3} \u{a0}{}:   {:20}   {}", current, i, instr, reg);
         }

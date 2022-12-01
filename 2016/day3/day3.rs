@@ -45,11 +45,7 @@ fn part2(data: &str) -> u32 {
 
 /// ``is_triangle`` returns 1 if the given sides form a triangle, 0 otherwise
 fn is_triangle(x: i32, y: i32, z: i32) -> u32 {
-    if x + y > z && x + z > y && y + z > x {
-        1
-    } else {
-        0
-    }
+    u32::from(x + y > z && x + z > y && y + z > x)
 }
 
 #[cfg(test)]
