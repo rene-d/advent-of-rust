@@ -21,8 +21,5 @@ fn main() {
     calories.sort_by(|a, b| b.cmp(a));
 
     println!("part1: {}", calories.first().unwrap());
-    println!(
-        "part2: {}",
-        calories.first().unwrap() + calories.get(1).unwrap() + calories.get(2).unwrap()
-    );
+    println!("part2: {}", calories[0..3].iter().sum::<u32>());
 }
