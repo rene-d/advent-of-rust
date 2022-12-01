@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+# [Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)
 
 lines = open("input.txt").readlines()
 lines.append("")
-
 
 energy = 0
 reeinders = []

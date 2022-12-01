@@ -4,6 +4,12 @@ Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.r
 
 Made for fun 😎 and to practice Rust.
 
+## 2022
+
+Puzzle                                                                  | Stars | Languages
+----------------------------------------------------------------------- | ----- | -----------
+[Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)          | ⭐⭐ | [Rust](2022/day1/day1.rs) [Python](2022/day1/day1.py)
+
 ## 2021
 
 Puzzle                                                                  | Stars | Languages
