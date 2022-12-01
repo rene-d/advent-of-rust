@@ -5,18 +5,18 @@ lines = open("input.txt").readlines()
 lines.append("")
 
 energy = 0
-reeinders = []
+calories = []
 for line in lines:
     line = line.strip()
     if not line:
-        reeinders.append(energy)
+        calories.append(energy)
         energy = 0
     else:
         energy += int(line)
 
 # part one
-print(max(reeinders))
+print(max(calories))
 
 # part two
-reeinders = sorted(reeinders, reverse=True)
-print(reeinders[0] + reeinders[1] + reeinders[2])
+calories = sorted(calories, reverse=True)
+print(sum(calories[0:3]))
