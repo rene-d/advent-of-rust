@@ -9,6 +9,8 @@ Made for fun 😎 and to practice Rust.
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
 [Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)          | ⭐⭐ | [Rust](2022/day1/day1.rs) [Python](2022/day1/day1.py)
+[Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)       | ⭐⭐ | [Rust](2022/day2/day2.rs) [Python](2022/day2/day2.py)
+
 
 ## 2021
 
