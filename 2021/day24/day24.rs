@@ -157,13 +157,7 @@ fn run_program(program: &[Instruction], input: &[i64], z: i64, verbose: bool) ->
                 assert!(src != 0, "Division by zero!");
                 dest_value % src
             }
-            OpCode::Eql => {
-                if src == dest_value {
-                    1
-                } else {
-                    0
-                }
-            }
+            OpCode::Eql => i64::from(src == dest_value),
         };
 
         registers[instruction.dest as usize] = dest_value;

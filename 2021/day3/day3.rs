@@ -32,7 +32,7 @@ fn step2(data: &[String]) {
 
     // oxygen generator rating
     let mut dioxygen_rate = 0;
-    let mut dioxygen_start = "".to_owned();
+    let mut dioxygen_start = String::new();
 
     for bit in 0..nb_bits {
         let mut one = 0;
@@ -58,7 +58,7 @@ fn step2(data: &[String]) {
 
     // CO2 scrubber rating
     let mut co2_rate = 0;
-    let mut co2_start = "".to_owned();
+    let mut co2_start = String::new();
 
     for bit in 0..nb_bits {
         let mut one = 0;
