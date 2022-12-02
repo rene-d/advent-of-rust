@@ -1,28 +1,71 @@
 //! [Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)
 
-/// ``main`` reads the puzzle input then solves part 1 and part 2
-fn main() {
-    let data = std::fs::read_to_string("input.txt").unwrap();
+struct Puzzle {
+    calories: Vec<usize>,
+}
 
-    let mut lines = data.split('\n').collect::<Vec<_>>();
-    lines.push(""); // add ane empty line to flush the energy accumulator into the array
-
-    let mut energy = 0;
-    let mut calories = Vec::new();
-
-    for line in lines {
-        if line.is_empty() {
-            calories.push(energy);
-            energy = 0;
-        } else {
-            energy += line.parse::<u32>().unwrap();
+impl Puzzle {
+    fn new() -> Puzzle {
+        Puzzle {
+            calories: Vec::new(),
         }
     }
-    calories.sort_by(|a, b| b.cmp(a));
 
-    println!("part1: {}", calories.first().unwrap());
-    println!(
-        "part2: {}",
-        calories.first().unwrap() + calories.get(1).unwrap() + calories.get(2).unwrap()
-    );
+    fn configure(&mut self, path: &str) {
+        let mut data = std::fs::read_to_string(path).unwrap();
+        data.pop();
+        self.calories = data
+            .split("\n\n")
+            .map(|x| {
+                x.split('\n')
+                    .map(|y| y.parse::<usize>().unwrap())
+                    .sum::<usize>()
+            })
+            .collect::<Vec<_>>();
+
+        // Reverse sort to have to most significant values first
+        self.calories.sort_by(|a, b| b.cmp(a));
+    }
+
+    fn part1(&self) -> usize {
+        self.calories[0]
+    }
+
+    fn part2(&self) -> usize {
+        self.calories[0..3].iter().sum::<usize>()
+    }
+}
+
+/// Test from puzzle input
+#[test]
+fn test01() {
+    let mut puzzle = Puzzle::new();
+    puzzle.configure("test01.txt");
+    assert_eq!(puzzle.part1(), 24000);
+    assert_eq!(puzzle.part2(), 45000);
+}
+
+/// Test from user input
+#[test]
+fn test02() {
+    let mut puzzle = Puzzle::new();
+    puzzle.configure("test02.txt");
+    assert_eq!(puzzle.part1(), 69310);
+    assert_eq!(puzzle.part2(), 206104);
+}
+
+/// Test from user input
+#[test]
+fn test03() {
+    let mut puzzle = Puzzle::new();
+    puzzle.configure("test03.txt");
+    assert_eq!(puzzle.part1(), 72070);
+    assert_eq!(puzzle.part2(), 211805);
+}
+
+fn main() {
+    let mut puzzle = Puzzle::new();
+    puzzle.configure("input.txt");
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
 }
