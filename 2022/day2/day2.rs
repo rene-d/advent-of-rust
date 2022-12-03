@@ -1,110 +1,124 @@
-//! [Day 1: Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)
+//! [Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)
 
-// do not warn about if/else constructions
-#![allow(clippy::collapsible_else_if)]
+const VALUE_ROCK: u32 = 1;
+const VALUE_PAPER: u32 = 2;
+const VALUE_SCISSORS: u32 = 3;
 
-pub const ROCK: u32 = 1;
-pub const PAPER: u32 = 2;
-pub const SCISSORS: u32 = 3;
+const SHOULD_LOSE: u32 = 1;
+const SHOULD_DRAW: u32 = 2;
 
-pub const SCORE_WIN: u32 = 6;
-pub const SCORE_DRAW: u32 = 3;
-pub const SCORE_LOOSE: u32 = 0;
-
-pub const NEED_TO_LOOSE: u32 = 1;
-pub const NEED_TO_DRAW: u32 = 2;
-pub const NEED_TO_WIN: u32 = 3;
+const ROUND_OUTCOME_DRAW: u32 = 3;
+const ROUND_OUTCOME_WIN: u32 = 6;
 
 struct Puzzle {
-    part1: u32,
-    part2: u32,
+    guide: Vec<(u32, u32)>,
 }
 
 impl Puzzle {
     fn new() -> Puzzle {
-        Puzzle { part1: 0, part2: 0 }
+        Puzzle { guide: Vec::new() }
     }
 
-    fn solve(&mut self, path: &str) {
+    fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
-        let lines = data.split('\n').collect::<Vec<_>>();
+        let mut lines = data.split('\n').collect::<Vec<_>>();
+        lines.pop();
 
-        for line in lines {
-            if line.is_empty() {
-                continue;
+        for strategy in lines {
+            let shapes = strategy.split(' ').collect::<Vec<_>>();
+            let opponent = match shapes[0].parse::<char>().unwrap() {
+                'A' => VALUE_ROCK,
+                'B' => VALUE_PAPER,
+                'C' => VALUE_SCISSORS,
+                _ => panic!("bad input"),
+            };
+            let you = match shapes[1].parse::<char>().unwrap() {
+                'X' => 1,
+                'Y' => 2,
+                'Z' => 3,
+                _ => panic!("bad input"),
+            };
+            self.guide.push((opponent, you));
+        }
+    }
+
+    fn part1(&self) -> u32 {
+        let mut result = 0;
+        for strategy in &self.guide {
+            let (opponent, you) = *strategy;
+
+            // Always win what has been played
+            result += you;
+
+            // Take advantage of shapes sorting to check win conditions
+            if opponent + 1 == you || you + 2 == opponent {
+                result += ROUND_OUTCOME_WIN;
+            } else if opponent == you {
+                result += ROUND_OUTCOME_DRAW;
             }
-            let turn = line.split(' ').collect::<Vec<_>>();
+        }
+        result
+    }
 
-            let opponent = match *turn.first().unwrap() {
-                "A" => ROCK,
-                "B" => PAPER,
-                "C" => SCISSORS,
-                _ => panic!("bad input"),
-            };
+    fn part2(&self) -> u32 {
+        let mut result = 0;
+        for strategy in &self.guide {
+            let (opponent, you) = *strategy;
 
-            // part 1
-            let me = match *turn.get(1).unwrap() {
-                "X" => ROCK,
-                "Y" => PAPER,
-                "Z" => SCISSORS,
-                _ => panic!("bad input"),
-            };
-
-            if opponent == me {
-                self.part1 += opponent + SCORE_DRAW;
-            } else if (opponent == ROCK && me == SCISSORS)
-                || (opponent == SCISSORS && me == PAPER)
-                || (opponent == PAPER && me == ROCK)
-            {
-                self.part1 += me + SCORE_LOOSE;
-            } else {
-                self.part1 += me + SCORE_WIN;
-            }
-
-            // part 2
-            let need_to = match *turn.get(1).unwrap() {
-                "X" => NEED_TO_LOOSE,
-                "Y" => NEED_TO_DRAW,
-                "Z" => NEED_TO_WIN,
-                _ => panic!("bad input"),
-            };
-
-            if need_to == NEED_TO_DRAW {
-                self.part2 += opponent + SCORE_DRAW;
-            } else if need_to == NEED_TO_LOOSE {
-                if opponent == ROCK {
-                    self.part2 += SCISSORS + SCORE_LOOSE;
-                } else if opponent == PAPER {
-                    self.part2 += ROCK + SCORE_LOOSE;
-                } else if opponent == SCISSORS {
-                    self.part2 += PAPER + SCORE_LOOSE;
+            if you == SHOULD_LOSE {
+                if opponent == VALUE_ROCK {
+                    result += VALUE_SCISSORS;
+                } else {
+                    // Take advantage of shapes sorting to know what to play
+                    result += opponent - 1;
                 }
+            } else if you == SHOULD_DRAW {
+                result += ROUND_OUTCOME_DRAW + opponent;
             } else {
-                if opponent == ROCK {
-                    self.part2 += PAPER + SCORE_WIN;
-                } else if opponent == PAPER {
-                    self.part2 += SCISSORS + SCORE_WIN;
-                } else if opponent == SCISSORS {
-                    self.part2 += ROCK + SCORE_WIN;
+                result += ROUND_OUTCOME_WIN;
+                if opponent == VALUE_SCISSORS {
+                    result += VALUE_ROCK;
+                } else {
+                    // Take advantage of shapes sorting to know what to play
+                    result += opponent + 1;
                 }
             }
         }
+        result
     }
 }
 
 /// Solve the puzzle with the user input
 fn main() {
     let mut puzzle = Puzzle::new();
-    puzzle.solve("input.txt");
-    println!("{}", puzzle.part1);
-    println!("{}", puzzle.part2);
+    puzzle.configure("input.txt");
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
 }
 
 /// Test from puzzle input
 #[test]
-fn test_puzzle() {
+fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.solve("test.txt");
-    assert_eq!(puzzle.part1, 15);
-    assert_eq!(puzzle.part2, 12);
+    puzzle.configure("test01.txt");
+    assert_eq!(puzzle.part1(), 15);
+    assert_eq!(puzzle.part2(), 12);
+}
+
+/// Test from user input
+#[test]
+fn test02() {
+    let mut puzzle = Puzzle::new();
+    puzzle.configure("test02.txt");
+    assert_eq!(puzzle.part1(), 15337);
+    assert_eq!(puzzle.part2(), 11696);
+}
+
+/// Test from user input
+#[test]
+fn test03() {
+    let mut puzzle = Puzzle::new();
+    puzzle.configure("test03.txt");
+    assert_eq!(puzzle.part1(), 12156);
+    assert_eq!(puzzle.part2(), 10835);
 }
