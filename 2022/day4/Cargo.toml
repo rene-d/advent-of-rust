@@ -1,0 +1,13 @@
+[package]
+name = "day4"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# clap = "*"
+regex = "*"
+# rand = "*"
+
+[[bin]]
+name = "day4"
+path = "day4.rs"
