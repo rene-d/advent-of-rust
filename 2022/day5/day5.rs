@@ -92,8 +92,8 @@ impl Puzzle {
     fn top(stacks: &[String]) -> String {
         let mut top = String::new();
         for stack in stacks {
-            if !stack.is_empty() {
-                top.push(stack.chars().next().unwrap());
+            if let Some(crate_id) = stack.chars().next() {
+                top.push(crate_id);
             }
         }
 
