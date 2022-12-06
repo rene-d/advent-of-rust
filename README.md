@@ -8,9 +8,11 @@ Made for fun 😎 and to practice Rust.
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
-[Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)          | ⭐⭐  | [Rust](2022/day1/day1.rs) [Python](2022/day1/day1.py)
-[Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)       | ⭐⭐  | [Rust](2022/day2/day2.rs) [Python](2022/day2/day2.py)
+[Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)          | ⭐⭐  | [Rust](2022/day1/day1.rs)
+[Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)       | ⭐⭐  | [Rust](2022/day2/day2.rs)
 [Day 3: Rucksack Reorganization](https://adventofcode.com/2022/day/3)   | ⭐⭐  | [Rust](2022/day3/day3.rs)
+[Day 4: Camp Cleanup](https://adventofcode.com/2022/day/4)              | ⭐⭐  | [Rust](2022/day4/day4.rs)
+[Day 5: Supply Stacks](https://adventofcode.com/2022/day/5)             | ⭐⭐  | [Rust](2022/day5/day5.rs)
 [Day 6: Tuning Trouble](https://adventofcode.com/2022/day/6)            | ⭐⭐  | [Rust](2022/day6/day6.rs)
 
 ## 2021
