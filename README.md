@@ -13,6 +13,7 @@ Puzzle                                                                  | Stars 
 [Day 3: Rucksack Reorganization](https://adventofcode.com/2022/day/3)   | ⭐⭐  | [Rust](2022/day3/day3.rs)
 [Day 4: Camp Cleanup](https://adventofcode.com/2022/day/4)              | ⭐⭐  | [Rust](2022/day4/day4.rs)
 [Day 5: Supply Stacks](https://adventofcode.com/2022/day/5)             | ⭐⭐  | [Rust](2022/day5/day5.rs)
+[Day 6: Tuning Trouble](https://adventofcode.com/2022/day/6)            | ⭐⭐  | [Rust](2022/day6/day6.rs)
 
 ## 2021
 
