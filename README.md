@@ -32,7 +32,7 @@ Puzzle                                                                  | Stars 
 [Day 11: Dumbo Octopus](https://adventofcode.com/2021/day/11)           | ⭐⭐  | Rust
 [Day 12: Passage Pathing](https://adventofcode.com/2021/day/12)         | ⭐⭐  | Rust Python
 [Day 13: Transparent Origami](https://adventofcode.com/2021/day/13)     | ⭐⭐  | Rust Python
-[Day 14: Extended Polymerization](https://adventofcode.com/2021/day/14) | ⭐⭐  | Python
+[Day 14: Extended Polymerization](https://adventofcode.com/2021/day/14) | ⭐⭐  | Rust Python
 [Day 15: Chiton](https://adventofcode.com/2021/day/15)                  | ⭐⭐  | Rust
 [Day 16: Packet Decoder](https://adventofcode.com/2021/day/16)          | ⭐⭐  | Python
 [Day 17: Trick Shot](https://adventofcode.com/2021/day/17)              | ⭐⭐  | Rust
