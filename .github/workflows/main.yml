@@ -1,5 +1,8 @@
 name: CI
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches: ["main"]
 
 defaults:
   run:
@@ -28,7 +31,7 @@ jobs:
           for manifest in `find . ! -path '*/day*' -name Cargo.toml`
           do
             echo check clippy for $manifest
-            cargo clippy --manifest-path $manifest -- -D clippy::all -D clippy::pedantic
+            cargo clippy --manifest-path $manifest -- --no-deps -A clippy::all -A clippy::pedantic
           done
 
   # Check non-regression tests
