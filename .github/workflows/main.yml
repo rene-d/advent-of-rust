@@ -1,5 +1,8 @@
 name: CI
-on: [push] # adding pull_request duplicates the actions
+on:
+  pull_request:
+  push:
+    branches: ["main"]
 
 defaults:
   run:
