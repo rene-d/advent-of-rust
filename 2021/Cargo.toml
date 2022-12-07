@@ -1,4 +1,4 @@
 # http://adventofcode.com/2021
 [workspace]
 members = ["day*"]
-exclude = ["day14", "day16", "day18"]
+exclude = ["day16", "day18"]
