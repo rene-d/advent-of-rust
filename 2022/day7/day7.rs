@@ -4,9 +4,11 @@ use clap::Parser;
 use std::collections::{HashSet, HashMap};
 use std::path::PathBuf;
 
+
 #[derive(Parser)]
 struct Args {
     /// Puzzle input
+    #[arg(default_value = "input.txt")]
     path: String,
 }
 
