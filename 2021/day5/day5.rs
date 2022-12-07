@@ -1,23 +1,24 @@
 //! [Day 5: Hydrothermal Venture](https://adventofcode.com/2021/day/5)
 
+use clap::Parser;
 use regex::Regex;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use structopt::StructOpt;
 
 /// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    #[arg(help = "puzzle input", default_value = "input.txt")]
+    path: String,
 }
 
 /// main function
 fn main() {
-    let args = Cli::from_args();
+    let args = Args::parse();
 
-    println!("reading data from: {}", args.path.display());
+    println!("reading data from: {}", args.path);
 
     let data = load_data(args.path);
 
@@ -108,7 +109,7 @@ where
     Ok(io::BufReader::new(file).lines())
 }
 
-fn load_data(path: std::path::PathBuf) -> Vec<String> {
+fn load_data(path: String) -> Vec<String> {
     let mut data = vec![];
     if let Ok(lines) = read_lines(path) {
         for line in lines.flatten() {
