@@ -1,16 +1,16 @@
 //! [Day 5: Hydrothermal Venture](https://adventofcode.com/2021/day/5)
 
+use clap::Parser;
 use regex::Regex;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use clap::Parser;
 
 /// parse command line arguments
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(help="puzzle input",default_value="input.txt")]
+    #[arg(help = "puzzle input", default_value = "input.txt")]
     path: String,
 }
 
