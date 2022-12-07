@@ -2,7 +2,6 @@
 
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::env;
 use std::fs;
 
 #[derive(Debug)]
@@ -195,8 +194,7 @@ fn test02() {
 fn main() {
     let mut puzzle = Puzzle::new();
 
-    let args: Vec<String> = env::args().collect();
-    puzzle.configure(args.get(1).expect("No input file"));
+    puzzle.configure("input.txt");
 
     puzzle.steps = 10;
     let result = puzzle.part1();
