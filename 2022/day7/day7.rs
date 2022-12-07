@@ -1,9 +1,8 @@
 //! [Day 7: No Space Left On Device](https://adventofcode.com/2022/day/7)
 
 use clap::Parser;
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
-
 
 #[derive(Parser)]
 struct Args {
@@ -14,14 +13,14 @@ struct Args {
 
 struct Puzzle {
     // Puzzle input
-    dirs_size : HashMap<String, usize>,
+    dirs_size: HashMap<String, usize>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
             // data: String::new(),
-            dirs_size : HashMap::new(),
+            dirs_size: HashMap::new(),
         }
     }
 
@@ -30,18 +29,17 @@ impl Puzzle {
         let data = std::fs::read_to_string(path).unwrap();
         let lines = data.split('\n').collect::<Vec<_>>();
 
-        let mut path = PathBuf::from("/");
-
+        let mut current_path = PathBuf::from("/");
         let mut dirs = HashSet::new();
         let mut files = HashMap::new();
 
         for line in lines {
             if line == "$ cd /" {
-                path = PathBuf::from("/");
+                current_path = PathBuf::from("/");
             } else if line == "$ cd .." {
-                path.pop();
+                current_path.pop();
             } else if line.starts_with("$ cd ") {
-                path.push(&line[5..]);
+                current_path.push(&line[5..]);
             } else if line == "$ ls" {
                 // ignore
             } else if line.starts_with("dir ") {
@@ -51,14 +49,13 @@ impl Puzzle {
                 let size = info.next().unwrap().parse::<usize>().unwrap();
                 let name = info.next().unwrap();
 
-                path.push(name);
-                files.insert(path.as_path().to_str().unwrap().to_string() ,size);
-                path.pop();
+                current_path.push(name);
+                files.insert(current_path.as_path().to_str().unwrap().to_string(), size);
+                current_path.pop();
             }
 
-            dirs.insert(path.as_path().to_str().unwrap().to_string());
+            dirs.insert(current_path.as_path().to_str().unwrap().to_string());
         }
-
 
         for dir in dirs {
             let mut dir_size = 0;
@@ -69,7 +66,6 @@ impl Puzzle {
             }
             self.dirs_size.insert(dir, dir_size);
         }
-
     }
 
     // Solves part one
@@ -86,7 +82,6 @@ impl Puzzle {
     // Solve part two
     fn part2(&self) -> usize {
         let total = self.dirs_size.get("/").unwrap();
-
 
         let mut sizes = vec![];
         for dir in &self.dirs_size {
