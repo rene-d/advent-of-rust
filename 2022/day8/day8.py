@@ -16,7 +16,7 @@ for y, line in enumerate(data):
         trees[y][x] = int(line[x])
 
 # part 1
-visible = nx * 4 - 4
+visible = nx * 2 + ny * 2 - 2
 for y in range(1, ny - 1):
     for x in range(1, nx - 1):
         tree = trees[y][x]
