@@ -1,0 +1,13 @@
+[package]
+name = "day7"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.*", features = ["derive"] }
+# regex = "*"
+# rand = "*"
+
+[[bin]]
+name = "day7"
+path = "day7.rs"
