@@ -9,20 +9,23 @@ data = Path(filename).read_text()
 
 def show(rope):
 
-    minx = min(k[0][0] for k in rope)
-    maxx = max(k[0][0] for k in rope)
-    miny = min(k[0][1] for k in rope)
-    maxy = max(k[0][1] for k in rope)
+    minx = min(k[0] for k in rope)
+    maxx = max(k[0] for k in rope)
+    miny = min(k[1] for k in rope)
+    maxy = max(k[1] for k in rope)
 
+    minx = min(minx, 0)
+    miny = min(miny, 0)
     maxx = max(maxx, 5)
     maxy = max(maxy, 4)
 
     for y in range(maxy, miny - 1, -1):
         row = ""
         for x in range(minx, maxx + 1):
-            for knot in rope:
-                if knot[0] == (x, y):
-                    row += knot[1]
+            for i, knot in enumerate(rope):
+                if knot == (x, y):
+                    label = "H" if i == 0 else "T" if i == len(rope) - 1 else str(i)
+                    row += label
                     break
             else:
                 if (x, y) == (0, 0):
@@ -33,24 +36,26 @@ def show(rope):
     print()
 
 
-def move(dir, H, T):
-    hx, hy = H
-    tx, ty = T
+def move(dir, head, tail):
+    hx, hy = head
+    tx, ty = tail
 
+    # head movement
     if dir == "R":
-        mx, my = 1, 0
+        dx, dy = 1, 0
     elif dir == "L":
-        mx, my = -1, 0
+        dx, dy = -1, 0
     elif dir == "U":
-        mx, my = 0, 1
+        dx, dy = 0, 1
     elif dir == "D":
-        mx, my = 0, -1
+        dx, dy = 0, -1
     else:
-        mx, my = 0, 0
+        dx, dy = 0, 0
 
-    hx += mx
-    hy += my
+    hx += dx
+    hy += dy
 
+    # tail movement
     dx = 1 if hx - tx > 0 else -1
     dy = 1 if hy - ty > 0 else -1
 
@@ -64,14 +69,18 @@ def move(dir, H, T):
         tx += dx
         ty += dy
 
-    H = (hx, hy)
-    T = (tx, ty)
+    head = (hx, hy)
+    tail = (tx, ty)
 
-    return H, T
+    return head, tail
+
+
+def move_rope(dir, rope):
+    for k in range(len(rope) - 1):
+        rope[k], rope[k + 1] = move(dir if k == 0 else "", rope[k], rope[k + 1])
 
 
 # part 1
-start = (0, 0)
 H = (0, 0)
 T = (0, 0)
 tails = set()
@@ -82,29 +91,17 @@ for line in data.splitlines():
         H, T = move(dir, H, T)
         tails.add(T)
 print(len(tails))
+# show([H, T])
 
-# rope=[(H, "H"), (T, "T")]
-# show(rope)
 
 # part 2
+rope = [(0, 0)] * 10
 tails = set()
-rope = [[(0, 0), "H"]]
-for k in range(1, 10):
-    rope.append([(0, 0), str(k)])
-
-
-def move_rope(dir, n):
-    for i in range(n):
-        for k in range(len(rope) - 1):
-            h, _ = rope[k]
-            t, _ = rope[k + 1]
-            h, t = move(dir if k == 0 else "", h, t)
-            rope[k], rope[k + 1] = [h, rope[k][1]], [t, rope[k + 1][1]]
-        tails.add(rope[-1][0])
-
-
-tails = set()
+tails.add(rope[-1])
 for line in data.splitlines():
     dir, n = line.split()
-    move_rope(dir, int(n))
+    for _ in range(int(n)):
+        move_rope(dir, rope)
+        tails.add(rope[-1])
 print(len(tails))
+# show(rope)
