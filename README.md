@@ -14,6 +14,7 @@ Puzzle                                                                  | Stars 
 [Day 4: Camp Cleanup](https://adventofcode.com/2022/day/4)              | ⭐⭐  | [Rust](2022/day4/day4.rs)
 [Day 5: Supply Stacks](https://adventofcode.com/2022/day/5)             | ⭐⭐  | [Rust](2022/day5/day5.rs)
 [Day 6: Tuning Trouble](https://adventofcode.com/2022/day/6)            | ⭐⭐  | [Rust](2022/day6/day6.rs)
+[Day 9: Rope Bridge](https://adventofcode.com/2022/day/6)               | ⭐⭐  | [Rust](2022/day9/day9.rs)
 
 ## 2021
 
