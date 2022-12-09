@@ -41,7 +41,7 @@ impl Puzzle {
                 current_path = PathBuf::from("/");
             } else if line == "$ cd .." {
                 current_path.pop();
-            } else if let Some(dir)  = line.strip_prefix("$ cd ") {
+            } else if let Some(dir) = line.strip_prefix("$ cd ") {
                 current_path.push(dir);
             } else if line == "$ ls" {
                 // ignore
