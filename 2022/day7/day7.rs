@@ -1,5 +1,8 @@
 //! [Day 7: No Space Left On Device](https://adventofcode.com/2022/day/7)
 
+// I keep "// ignore" for completude
+#![allow(clippy::if_same_then_else)]
+
 use clap::Parser;
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
@@ -38,8 +41,8 @@ impl Puzzle {
                 current_path = PathBuf::from("/");
             } else if line == "$ cd .." {
                 current_path.pop();
-            } else if line.starts_with("$ cd ") {
-                current_path.push(&line[5..]);
+            } else if let Some(dir)  = line.strip_prefix("$ cd ") {
+                current_path.push(dir);
             } else if line == "$ ls" {
                 // ignore
             } else if line.starts_with("dir ") {
