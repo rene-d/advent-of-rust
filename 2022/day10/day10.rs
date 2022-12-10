@@ -10,6 +10,7 @@ struct Args {
 }
 
 struct Puzzle {
+    /// Value of X during the `index+1` cycle
     cycles: Vec<i32>,
 }
 
@@ -25,6 +26,9 @@ impl Puzzle {
 
         #[allow(non_snake_case)]
         let mut X = 1;
+
+        self.cycles.push(X); // value of X during the first cycle
+
         for line in lines {
             if line == "noop" {
                 self.cycles.push(X);
@@ -40,8 +44,9 @@ impl Puzzle {
     fn part1(&self) -> i32 {
         let mut signal_strength = 0;
         for (i, x) in self.cycles.iter().enumerate() {
-            if (i + 2 + 20) % 40 == 0 {
-                signal_strength += ((i + 2) as i32) * (*x);
+            let cycle = (i + 1) as i32;
+            if (cycle + 20) % 40 == 0 {
+                signal_strength += cycle * (*x);
             }
         }
         signal_strength
@@ -49,17 +54,16 @@ impl Puzzle {
 
     // Solve part two
     fn part2(&self) -> String {
-        let mut sprite = 1;
         let mut iter_x = self.cycles.iter();
         let mut crt = String::new();
         for _ in 1..=6 {
             for pixel in 1..=40 {
+                let sprite = *iter_x.next().unwrap();
                 if sprite <= pixel && pixel < sprite + 3 {
                     crt.push('#');
                 } else {
                     crt.push('.');
                 }
-                sprite = *iter_x.next().unwrap();
             }
             crt.push('\n');
         }
