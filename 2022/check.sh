@@ -7,6 +7,6 @@ cargo clippy
 cargo test
 cargo build --release
 for i in */Cargo.toml ; do
-    day=$(dirname $i)
-    cargo run --offline --release --bin $day -- $day/input.txt
-done
+    echo $(dirname $i) | cut -b4-
+done | sort -n | xargs -n1 -I % cargo run --offline --release --bin day% -- day%/input.txt
+
