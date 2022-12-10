@@ -1,5 +1,14 @@
 //! [Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)
 
+use clap::Parser;
+
+#[derive(Parser)]
+struct Args {
+    /// Puzzle input
+    #[arg(default_value = "input.txt")]
+    path: String,
+}
+
 const VALUE_ROCK: u32 = 1;
 const VALUE_PAPER: u32 = 2;
 const VALUE_SCISSORS: u32 = 3;
@@ -90,8 +99,9 @@ impl Puzzle {
 
 /// Solve the puzzle with the user input
 fn main() {
+    let args = Args::parse();
     let mut puzzle = Puzzle::new();
-    puzzle.configure("input.txt");
+    puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -100,25 +110,7 @@ fn main() {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test01.txt");
+    puzzle.configure("test.txt");
     assert_eq!(puzzle.part1(), 15);
     assert_eq!(puzzle.part2(), 12);
-}
-
-/// Test from user input
-#[test]
-fn test02() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test02.txt");
-    assert_eq!(puzzle.part1(), 15337);
-    assert_eq!(puzzle.part2(), 11696);
-}
-
-/// Test from user input
-#[test]
-fn test03() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test03.txt");
-    assert_eq!(puzzle.part1(), 12156);
-    assert_eq!(puzzle.part2(), 10835);
 }

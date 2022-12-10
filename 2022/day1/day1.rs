@@ -1,5 +1,14 @@
 //! [Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)
 
+use clap::Parser;
+
+#[derive(Parser)]
+struct Args {
+    /// Puzzle input
+    #[arg(default_value = "input.txt")]
+    path: String,
+}
+
 struct Puzzle {
     calories: Vec<usize>,
 }
@@ -40,32 +49,15 @@ impl Puzzle {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test01.txt");
+    puzzle.configure("test.txt");
     assert_eq!(puzzle.part1(), 24000);
     assert_eq!(puzzle.part2(), 45000);
 }
 
-/// Test from user input
-#[test]
-fn test02() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test02.txt");
-    assert_eq!(puzzle.part1(), 69310);
-    assert_eq!(puzzle.part2(), 206104);
-}
-
-/// Test from user input
-#[test]
-fn test03() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test03.txt");
-    assert_eq!(puzzle.part1(), 72070);
-    assert_eq!(puzzle.part2(), 211805);
-}
-
 fn main() {
+    let args = Args::parse();
     let mut puzzle = Puzzle::new();
-    puzzle.configure("input.txt");
+    puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
