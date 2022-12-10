@@ -1,5 +1,14 @@
 //! [Day 3: Rucksack Reorganization](https://adventofcode.com/2022/day/3)
 
+use clap::Parser;
+
+#[derive(Parser)]
+struct Args {
+    /// Puzzle input
+    #[arg(default_value = "input.txt")]
+    path: String,
+}
+
 struct Puzzle {
     rucksacks: Vec<String>,
 }
@@ -61,26 +70,18 @@ impl Puzzle {
 
 /// Solve the puzzle with the user input
 fn main() {
+    let args = Args::parse();
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test02.txt");
+    puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
 
 /// Test from puzzle input
 #[test]
-fn test01() {
+fn test_puzzle() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test01.txt");
+    puzzle.configure("test.txt");
     assert_eq!(puzzle.part1(), 157);
     assert_eq!(puzzle.part2(), 70);
-}
-
-/// Test from user input
-#[test]
-fn test02() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test02.txt");
-    assert_eq!(puzzle.part1(), 7831);
-    assert_eq!(puzzle.part2(), 2683);
 }
