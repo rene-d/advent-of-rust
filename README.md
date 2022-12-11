@@ -16,8 +16,10 @@ Puzzle                                                                  | Stars 
 [Day 6: Tuning Trouble](https://adventofcode.com/2022/day/6)            | ⭐⭐  | [Rust](2022/day6/day6.rs)
 [Day 7: No Space Left On Device](https://adventofcode.com/2022/day/7)   | ⭐⭐  | [Rust](2022/day7/day7.rs)
 [Day 8: Treetop Tree House](https://adventofcode.com/2022/day/8)        | ⭐⭐  | [Rust](2022/day8/day8.rs)
-[Day 9: Rope Bridge](https://adventofcode.com/2022/day/6)               | ⭐⭐  | [Rust](2022/day9/day9.rs)
+[Day 9: Rope Bridge](https://adventofcode.com/2022/day/9)               | ⭐⭐  | [Rust](2022/day9/day9.rs)
 [Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/day/10)        | ⭐⭐  | [Rust](2022/day10/day10.rs)
+[Day 11: Monkey in the Middle](https://adventofcode.com/2022/day/11)    | ⭐⭐  | [Rust](2022/day11/day11.rs)
+
 
 ## 2021
 
