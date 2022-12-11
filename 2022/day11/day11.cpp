@@ -4,6 +4,9 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <cstring>
+#include <cassert>
+#include <algorithm>
 
 struct Operation
 {
