@@ -61,7 +61,7 @@ impl Puzzle {
         let data = std::fs::read_to_string(path).unwrap();
         let mut lines = data.split('\n');
 
-        // Nota: monkey definitions start from id 0
+        // Nota: monkey definitions always start at id 0
 
         while lines.next().is_some() {
             let mut monkey = Monkey {
@@ -140,7 +140,7 @@ impl Puzzle {
 
         for _ in 0..rounds {
             for id in 0..monkey_count {
-                // I don't know how to safely borrow monkeys[id]...
+                // I don't know how to safely borrow monkeys[id]
                 let monkey = monkeys[id].clone();
 
                 monkeys[id].items.clear();
@@ -155,21 +155,22 @@ impl Puzzle {
                         worry_level %= modulus; // part 2
                     }
 
-                    if worry_level % monkey.divide == 0 {
-                        monkeys[monkey.if_true].items.push(worry_level);
-                    } else {
-                        monkeys[monkey.if_false].items.push(worry_level);
-                    }
+                    let thrown_to = match worry_level % monkey.divide {
+                        0 => monkey.if_true,
+                        _ => monkey.if_false,
+                    };
+                    monkeys[thrown_to].items.push(worry_level);
                 }
             }
         }
 
-        let mut a = monkeys
+        // compute the level of monkey business
+        let mut monkey_business = monkeys
             .iter()
             .map(|x| x.inspections)
             .collect::<Vec<usize>>();
-        a.sort_by(|a, b| b.cmp(a));
-        a[0] * a[1]
+        monkey_business.sort_by(|a, b| b.cmp(a));
+        monkey_business[0] * monkey_business[1]
     }
 }
 
