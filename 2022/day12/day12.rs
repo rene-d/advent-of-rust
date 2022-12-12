@@ -54,14 +54,16 @@ impl Puzzle {
                 }
                 row[x] = match pos {
                     'S' => {
+                        // start position: height 0
                         self.start = (x, y);
                         0
                     }
                     'E' => {
+                        // end position: height 26 (like 'z')
                         self.end = (x, y);
                         26
                     }
-                    _ => (pos as u8) - 96,
+                    _ => (pos as u8) - 96, // other locations: height 1 to 26
                 };
             }
             self.grid.push(row);
@@ -70,10 +72,14 @@ impl Puzzle {
         self.ny = self.grid.len();
     }
 
+    /// Breadth-first search
     fn bfs(&self, part: u8) -> usize {
         let mut q: VecDeque<Node> = VecDeque::new();
         let mut seen: HashSet<(usize, usize)> = HashSet::new();
 
+        // set up the start positions:
+        // 'S' if part 1 (height 0)
+        // any 'a' if part 2 (height 1)
         for y in 0..self.ny {
             for x in 0..self.nx {
                 if self.grid[y][x] == part {
@@ -81,7 +87,6 @@ impl Puzzle {
                         pos: (x, y),
                         steps: 0,
                     };
-
                     q.push_back(n);
                 }
             }
@@ -89,28 +94,30 @@ impl Puzzle {
 
         while !q.is_empty() {
             let n = q.pop_front().unwrap();
+            let pos = n.pos;
 
-            if n.pos == self.end {
+            if pos == self.end {
                 return n.steps;
             }
 
-            if seen.contains(&n.pos) {
+            if seen.contains(&pos) {
                 continue;
             }
-            seen.insert(n.pos);
+            seen.insert(pos);
 
-            for m in [(0, 1), (0, -1), (1, 0), (-1, 0)] {
-                let pos2 = (n.pos.0 as isize + m.0, n.pos.1 as isize + m.1);
+            // Nota: need to figure out the best way to write this in Rust without ugly casts
+            for step in [(0, 1), (0, -1), (1, 0), (-1, 0)] {
+                let pos2 = (pos.0 as isize + step.0, pos.1 as isize + step.1);
 
                 if 0 <= pos2.0
                     && pos2.0 < self.nx as isize
                     && 0 <= pos2.1
                     && pos2.1 < self.ny as isize
                 {
-                    let pos2 = (pos2.0 as usize, pos2.1 as usize);
-                    if self.grid[pos2.1][pos2.0] <= 1 + self.grid[n.pos.1][n.pos.0] {
+                    let new_pos = (pos2.0 as usize, pos2.1 as usize);
+                    if self.grid[new_pos.1][new_pos.0] <= 1 + self.grid[pos.1][pos.0] {
                         q.push_back(Node {
-                            pos: pos2,
+                            pos: new_pos,
                             steps: n.steps + 1,
                         });
                     }
