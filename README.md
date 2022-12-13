@@ -19,6 +19,8 @@ Puzzle                                                                  | Stars 
 [Day 9: Rope Bridge](https://adventofcode.com/2022/day/9)               | ⭐⭐  | [Rust](2022/day9/day9.rs)
 [Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/day/10)        | ⭐⭐  | [Rust](2022/day10/day10.rs)
 [Day 11: Monkey in the Middle](https://adventofcode.com/2022/day/11)    | ⭐⭐  | [Rust](2022/day11/day11.rs)
+[Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/day/12) | ⭐⭐  | [Rust](2022/day12/day12.rs)
+[Day 13: Distress Signal](https://adventofcode.com/2022/day/13)         | ⭐⭐  | Python
 
 
 ## 2021
