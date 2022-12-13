@@ -42,7 +42,7 @@ struct Monkey {
     inspections: usize,
     items: Vec<u64>,
     operation: Operation,
-    divide: u64,
+    divisible_by: u64,
     if_true: usize,
     if_false: usize,
 }
@@ -68,7 +68,7 @@ impl Puzzle {
                 inspections: 0,
                 items: vec![],
                 operation: Operation::Square,
-                divide: 0,
+                divisible_by: 0,
                 if_true: 0,
                 if_false: 0,
             };
@@ -90,7 +90,7 @@ impl Puzzle {
                     .unwrap(),
             );
 
-            monkey.divide = lines
+            monkey.divisible_by = lines
                 .next()
                 .unwrap()
                 .strip_prefix("  Test: divisible by ")
@@ -136,7 +136,7 @@ impl Puzzle {
         let mut monkeys = self.monkeys.clone();
 
         let monkey_count = monkeys.len();
-        let modulus: u64 = monkeys.iter().map(|x| x.divide).product();
+        let modulus: u64 = monkeys.iter().map(|x| x.divisible_by).product();
 
         for _ in 0..rounds {
             for id in 0..monkey_count {
@@ -155,7 +155,7 @@ impl Puzzle {
                         worry_level %= modulus; // part 2
                     }
 
-                    let thrown_to = match worry_level % monkey.divide {
+                    let thrown_to = match worry_level % monkey.divisible_by {
                         0 => monkey.if_true,
                         _ => monkey.if_false,
                     };
