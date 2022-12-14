@@ -1,14 +1,13 @@
 //! [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)
 
-// Use the [nom](https://github.com/Geal/nom) parser
-
 use clap::Parser as ClapParser;
 use nom::{
     branch::alt, bytes::complete::tag, character::complete::i32, combinator::map,
     multi::separated_list0, sequence::delimited, IResult,
 };
-use std::cmp::{Ordering, PartialOrd};
+use std::cmp::Ordering;
 
+/// A signal packet, as described in the puzzle
 #[derive(Debug, Clone)]
 enum Packet {
     Integer(i32),
@@ -20,24 +19,21 @@ impl Packet {
         alt((
             map(i32, Self::Integer),
             map(
-                delimited(tag("["), separated_list0(tag(","), Self::new), tag("]")),
+                delimited(
+                    tag("["),                             // start of array
+                    separated_list0(tag(","), Self::new), // array element (array or integer)
+                    tag("]"),                             // end of array
+                ),
                 Self::Array,
             ),
         ))(input)
     }
-}
 
-// traits for comparison
-impl std::cmp::PartialOrd for Packet {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
-            (Packet::Integer(a), Packet::Integer(b)) => a.partial_cmp(b),
-            (Packet::Integer(_), Packet::Array(_)) => {
-                Packet::Array(vec![self.clone()]).partial_cmp(other)
-            }
-            (Packet::Array(_), Packet::Integer(_)) => {
-                self.partial_cmp(&Packet::Array(vec![other.clone()]))
-            }
+            (Packet::Integer(a), Packet::Integer(b)) => a.cmp(b),
+            (Packet::Integer(_), Packet::Array(_)) => Packet::Array(vec![self.clone()]).cmp(other),
+            (Packet::Array(_), Packet::Integer(_)) => self.cmp(&Packet::Array(vec![other.clone()])),
             (Packet::Array(a), Packet::Array(b)) => {
                 let mut iter_a = a.iter();
                 let mut iter_b = b.iter();
@@ -47,31 +43,16 @@ impl std::cmp::PartialOrd for Packet {
                     if value_a.is_none() || value_b.is_none() {
                         break;
                     }
-                    let c = value_a.unwrap().partial_cmp(value_b.unwrap());
-                    if c.unwrap() != Ordering::Equal {
+                    let c = value_a.unwrap().cmp(value_b.unwrap());
+                    if c != Ordering::Equal {
                         return c;
                     }
                 }
-                a.len().partial_cmp(&b.len())
+                a.len().cmp(&b.len())
             }
         }
     }
 }
-
-impl std::cmp::PartialEq for Packet {
-    fn eq(&self, other: &Self) -> bool {
-        self.partial_cmp(other) == Some(Ordering::Equal)
-    }
-}
-
-// traits for sort()
-impl std::cmp::Ord for Packet {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap()
-    }
-}
-
-impl std::cmp::Eq for Packet {}
 
 /// Command-line arguments
 #[derive(ClapParser)]
@@ -107,12 +88,13 @@ impl Puzzle {
     fn part1(&self) -> usize {
         let mut result = 0;
         for (i, p) in self.packets.chunks(2).enumerate() {
-            if p[0] < p[1] {
+            if p[0].cmp(&p[1]) == Ordering::Less {
                 result += i + 1;
             }
         }
         result
     }
+
     // Solve part two
     fn part2(&self) -> usize {
         let mut packets = self.packets.clone();
@@ -122,11 +104,11 @@ impl Puzzle {
         packets.push(divider1.clone());
         packets.push(divider2.clone());
 
-        packets.sort();
+        packets.sort_by(|a, b| a.cmp(b));
 
         let mut result = 1;
         for (i, p) in packets.iter().enumerate() {
-            if p == &divider1 || p == &divider2 {
+            if p.cmp(&divider1) == Ordering::Equal || p.cmp(&divider2) == Ordering::Equal {
                 result *= i + 1;
             }
         }
