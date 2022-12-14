@@ -1,0 +1,8 @@
+value = _{ array | integer }
+
+integer = @{ ASCII_DIGIT+ }
+
+array = {
+    "[" ~ "]" |
+    "[" ~ value ~ ("," ~ value)* ~ "]"
+}
