@@ -5,12 +5,10 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.*", features = ["derive"] }
-pest =  "*"
-pest_derive = "*"
 nom = "*"
 # regex = "*"
 # rand = "*"
 
 [[bin]]
-name = "day13"
+name = "day13_nom"
 path = "day13.rs"

@@ -40,7 +40,7 @@ impl Puzzle {
             if line.is_empty() {
                 continue;
             }
-            let points = line
+            let path = line
                 .split(" -> ")
                 .map(|p| {
                     let mut xy = p.split(',');
@@ -50,9 +50,9 @@ impl Puzzle {
                 })
                 .collect::<Vec<_>>();
 
-            for i in 0..(points.len() - 1) {
-                let p1 = &points[i];
-                let p2 = &points[i + 1];
+            for i in 0..(path.len() - 1) {
+                let p1 = &path[i];
+                let p2 = &path[i + 1];
 
                 if p1.x == p2.x {
                     let y1 = p1.y.min(p2.y);
