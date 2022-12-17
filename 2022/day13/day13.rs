@@ -52,10 +52,10 @@ fn cmp(a: &str, b: &str) -> Ordering {
                     let value_a = iter_a.next();
                     let value_b = iter_b.next();
 
-                    if value_a.is_none() && !value_b.is_none() {
+                    if value_a.is_none() && value_b.is_some() {
                         return Ordering::Less;
                     }
-                    if !value_a.is_none() && value_b.is_none() {
+                    if value_a.is_some() && value_b.is_none() {
                         return Ordering::Greater;
                     }
                     if value_a.is_none() && value_b.is_none() {

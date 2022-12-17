@@ -1,14 +1,13 @@
 [package]
-name = "day13_nom"
+name = "day15"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 clap = { version = "4.*", features = ["derive"] }
-nom = "*"
-# regex = "*"
+regex = "*"
 # rand = "*"
 
 [[bin]]
-name = "day13_nom"
-path = "day13.rs"
+name = "day15"
+path = "day15.rs"

@@ -22,6 +22,7 @@ Puzzle                                                                  | Stars 
 [Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/day/12) | ⭐⭐  | [Rust](2022/day12/day12.rs)
 [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)         | ⭐⭐  | [Rust](2022/day13/day13.rs) [Rust](2022/day13_nom/day13.rs)
 [Day 14: Regolith Reservoir](https://adventofcode.com/2022/day/14)      | ⭐⭐  | [Rust](2022/day14/day14.rs)
+[Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)   | ⭐⭐  | [Rust](2022/day15/day15.rs)
 
 ## 2021
 
