@@ -7,7 +7,7 @@ cargo clippy
 cargo test
 cargo build --release
 
-days=($(find . -mindepth 2 -maxdepth 2 -name Cargo.toml | xargs dirname | xargs basename | cut -b4- | sort -n))
+days=($(find . -mindepth 2 -maxdepth 2 -path '*/day*' -name Cargo.toml | xargs dirname | xargs basename | cut -b4- | sort -n))
 if [[ ${#days[@]} == 0 ]] ; then
    if [[ -f input.txt ]] ; then cargo run --offline --release -- input.txt ; fi
 else
