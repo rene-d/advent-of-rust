@@ -23,6 +23,9 @@ Puzzle                                                                  | Stars 
 [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)         | ⭐⭐  | [Rust](2022/day13/day13.rs) [Rust](2022/day13_nom/day13.rs)
 [Day 14: Regolith Reservoir](https://adventofcode.com/2022/day/14)      | ⭐⭐  | [Rust](2022/day14/day14.rs)
 [Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)   | ⭐⭐  | [Rust](2022/day15/day15.rs)
+[Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)        | ⭐⭐  | [Rust](2022/day18/day18.rs)
+[Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20) | ⭐⭐  | [Rust](2022/day20/day20.rs)
+
 
 ## 2021
 
