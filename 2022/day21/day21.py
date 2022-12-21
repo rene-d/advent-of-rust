@@ -36,17 +36,18 @@ def part1():
         if isinstance(m2, str):
             m2 = f(m2)
 
-        if op == "+":
-            r = m1 + m2
-        elif op == "-":
-            r = m1 - m2
-        elif op == "*":
-            r = m1 * m2
-        elif op == "/":
-            assert m1 % m2 == 0
-            r = m1 // m2
-        else:
-            assert False
+        match op:
+            case  "+":
+                r = m1 + m2
+            case "-":
+                r = m1 - m2
+            case "*":
+                r = m1 * m2
+            case "/":
+                assert m1 % m2 == 0
+                r = m1 // m2
+            case _:
+                assert False
 
         del monkeys[monkey]
         nums[monkey] = r
