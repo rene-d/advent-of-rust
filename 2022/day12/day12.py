@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 from collections import deque
 
-filename = "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else "input.txt"
+filename = "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
 
 grid = []
@@ -17,7 +17,7 @@ for y, line in enumerate(data.splitlines()):
             c = 26
         elif c == "S":
             start_position = (x, y)
-            c = 0
+            c = 1
         else:
             c = ord(c) - 96
         row.append(c)
@@ -29,10 +29,13 @@ def bfs(part):
     """[Breadth-first search](https://en.wikipedia.org/wiki/Breadth-first_search)"""
 
     q = deque()
-    for y in range(ny):
-        for x in range(nx):
-            if grid[y][x] == part - 1:  # start at 'S' (0) or any 'a' (1)
-                q.append(((x, y), 0))
+    if part == 1:
+        q.append((start_position, 0))
+    else:
+        for y in range(ny):
+            for x in range(nx):
+                if grid[y][x] == 1:  # start at 'S' or any 'a'
+                    q.append(((x, y), 0))
 
     visited = set()
     while q:
