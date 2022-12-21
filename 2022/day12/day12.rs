@@ -56,7 +56,7 @@ impl Puzzle {
                     'S' => {
                         // start position: height 0
                         self.start = (x, y);
-                        0
+                        1
                     }
                     'E' => {
                         // end position: height 26 (like 'z')
@@ -78,16 +78,23 @@ impl Puzzle {
         let mut seen: HashSet<(usize, usize)> = HashSet::new();
 
         // set up the start positions:
-        // 'S' if part 1 (height 0)
-        // any 'a' if part 2 (height 1)
-        for y in 0..self.ny {
-            for x in 0..self.nx {
-                if self.grid[y][x] == part {
-                    let n = Node {
-                        pos: (x, y),
-                        steps: 0,
-                    };
-                    q.push_back(n);
+        // 'S' if part 1
+        // 'S' or any 'a' if part 2 (height 1)
+        if part == 1 {
+            q.push_back(Node {
+                pos: self.start,
+                steps: 0,
+            });
+        } else {
+            for y in 0..self.ny {
+                for x in 0..self.nx {
+                    if self.grid[y][x] == 1 {
+                        let n = Node {
+                            pos: (x, y),
+                            steps: 0,
+                        };
+                        q.push_back(n);
+                    }
                 }
             }
         }
@@ -130,12 +137,12 @@ impl Puzzle {
 
     // Solves part one
     fn part1(&self) -> usize {
-        self.bfs(0)
+        self.bfs(1)
     }
 
     // Solve part two
     fn part2(&self) -> usize {
-        self.bfs(1)
+        self.bfs(2)
     }
 }
 
