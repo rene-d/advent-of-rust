@@ -1,3 +1,5 @@
+# http://adventofcode.com/2022
 
 [workspace]
 members = ["day*"]
+exclude = ["day16_wip", "day17_wip", "day19_wip"]

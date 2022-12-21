@@ -25,7 +25,7 @@ Puzzle                                                                  | Stars 
 [Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)   | ⭐⭐  | [Rust](2022/day15/day15.rs)
 [Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)        | ⭐⭐  | [Rust](2022/day18/day18.rs)
 [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20) | ⭐⭐  | [Rust](2022/day20/day20.rs)
-
+[Day 21: Monkey Math](https://adventofcode.com/2022/day/21)             | ⭐⭐  | [Rust](2022/day21/day21.rs)
 
 ## 2021
 
