@@ -80,9 +80,10 @@ impl fmt::Display for Password {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "{} [loops: {}]",
+            // "{} [loops: {}]",
+            "{}",
             self.pwd.iter().collect::<String>(),
-            self.loops
+            // self.loops
         )
     }
 }
@@ -91,11 +92,11 @@ impl fmt::Display for Password {
 fn main() {
     let mut pwd: Password = Password::new("hepxcrrq");
 
-    println!("init:  {}", pwd);
+    // println!("init:  {}", pwd);
 
     pwd.next_valid();
-    println!("part1: {}", pwd);
+    println!("{}", pwd);
 
     pwd.next_valid();
-    println!("part2: {}", pwd);
+    println!("{}", pwd);
 }
