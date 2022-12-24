@@ -31,6 +31,7 @@ Puzzle                                                                  | Stars 
 [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)             | ⭐⭐  | [Rust](2022/day21/day21.rs)
 [Day 22: Monkey Map](https://adventofcode.com/2022/day/22)              | ⭐⭐  | [Rust](2022/day22/day22.rs)
 [Day 23: Unstable Diffusion](https://adventofcode.com/2022/day/23)      | ⭐⭐  | [Rust](2022/day23/day23.rs)
+[Day 24: Blizzard Basin](https://adventofcode.com/2022/day/24)          | ⭐⭐  | [Rust](2022/day24/day24.rs)
 
 ## 2021
 
