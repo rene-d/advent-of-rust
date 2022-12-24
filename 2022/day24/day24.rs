@@ -267,14 +267,26 @@ mod tests {
     use crate::Puzzle;
 
     #[test]
-    fn test_solve() {
+    fn test_part1() {
         let mut puzzle = Puzzle::new();
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part1(), 18);
-        // assert_eq!(puzzle.part2(), 54); // second trip doesn't work 😖
+    }
 
-        assert_eq!(puzzle.solve(1, 0, 6, 5, 0), 18);
-        assert_eq!(puzzle.solve(1, 0, 6, 5, 18 + 23 + 2), 54);
+    #[test]
+    fn test_part2() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("test.txt");
+        assert_eq!(puzzle.part2(), 54);
+    }
+
+    #[test]
+    fn test_part2_details() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("test.txt");
+        assert_eq!(puzzle.solve(1, 0, 6, 5, 0), 18); // this is part 1 actually
+        assert_eq!(puzzle.solve(6, 5, 1, 0, 18), 18 + 23);
+        assert_eq!(puzzle.solve(1, 0, 6, 5, 18 + 23), 54);
     }
 
     #[test]
