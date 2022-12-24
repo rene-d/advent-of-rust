@@ -30,6 +30,7 @@ Puzzle                                                                  | Stars 
 [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20) | ⭐⭐  | [Rust](2022/day20/day20.rs)
 [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)             | ⭐⭐  | [Rust](2022/day21/day21.rs)
 [Day 22: Monkey Map](https://adventofcode.com/2022/day/22)              | ⭐⭐  | [Rust](2022/day22/day22.rs)
+[Day 23: Unstable Diffusion](https://adventofcode.com/2022/day/23)      | ⭐⭐  | [Rust](2022/day23/day23.rs)
 
 ## 2021
 
