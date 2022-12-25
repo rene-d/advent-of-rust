@@ -32,6 +32,7 @@ Puzzle                                                                  | Stars 
 [Day 22: Monkey Map](https://adventofcode.com/2022/day/22)              | ⭐⭐  | [Rust](2022/day22/day22.rs)
 [Day 23: Unstable Diffusion](https://adventofcode.com/2022/day/23)      | ⭐⭐  | [Rust](2022/day23/day23.rs)
 [Day 24: Blizzard Basin](https://adventofcode.com/2022/day/24)          | ⭐⭐  | [Rust](2022/day24/day24.rs)
+[Day 25: Full of Hot Air](https://adventofcode.com/2022/day/25)         | ⭐  | [Rust](2022/day25/day25.rs)
 
 ## 2021
 

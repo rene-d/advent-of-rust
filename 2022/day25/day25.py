@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+# https://adventofcode.com/2022/day/25
+
+from pathlib import Path
+import sys
+
+filename = "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else "input.txt"
+data = Path(filename).read_text()
+lines = data.splitlines()
+
+
+def from_snafu(s):
+    digits = {"2": 2, "1": 1, "0": 0, "-": -1, "=": -2}
+    n = 0
+    for i, c in enumerate(reversed(s)):
+        d = digits[c]
+        n = 5**i * d + n
+    return n
+
+
+def to_snafu(n):
+    digits = "=-012"
+    s = []
+    while True:
+        c = digits[(n + 2) % 5]
+        s.append(c)
+        n = (n + 2) // 5
+        if n == 0:
+            break
+    return "".join(reversed(s))
+
+
+assert from_snafu("2=-01") == 976
+assert to_snafu(976) == "2=-01"
+
+print(to_snafu(sum(map(from_snafu, lines))))
