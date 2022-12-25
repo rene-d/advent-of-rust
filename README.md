@@ -26,7 +26,7 @@ Puzzle                                                                  | Stars 
 [Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)   | |
 [Day 17: Pyroclastic Flow](https://adventofcode.com/2022/day/17)        | |
 [Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)        | ⭐⭐  | [Rust](2022/day18/day18.rs)
-[Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)     | |
+[Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)     | ⭐⭐  | [Rust](2022/day19/day19.rs)
 [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20) | ⭐⭐  | [Rust](2022/day20/day20.rs)
 [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)             | ⭐⭐  | [Rust](2022/day21/day21.rs) [Python](2022/day21/day21.py)
 [Day 22: Monkey Map](https://adventofcode.com/2022/day/22)              | ⭐⭐  | [Rust](2022/day22/day22.rs) [Python](2022/day22/day22.py)
