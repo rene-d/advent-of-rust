@@ -29,7 +29,7 @@ RELATIVE_MODE = 2  # https://adventofcode.com/2019/day/9
 Operand = namedtuple("operand", ["value", "addr"])
 
 
-class Intcode:
+class Computer:
     def __init__(self):
         self.load("99")
 
@@ -57,7 +57,7 @@ class Intcode:
         self.input = deque()
         self.output = deque()
 
-    def disasm(self, debugger=None, raw=False):
+    def disasm(self, debugger=None, source=False):
 
         if debugger is not None:
             ip = debugger
@@ -106,13 +106,14 @@ class Intcode:
                     case _:
                         raise ValueError
 
-            if comment:                comment = f"; {comment}"
+            if comment:
+                comment = f"; {comment}"
             numbers = ",".join(map(str, memory[ip : ip + 1 + n_args])) + ","
 
-            if raw:
-                line =  f"{numbers:<20} ; {instruction:<12}{operands}"
+            if source:
+                line = f"{numbers:<20} ; {instruction:<12}{operands}"
             else:
-                line =  f"{ip:5d}  {numbers:<20} {instruction:<16}{operands:<20}{comment}"
+                line = f"{ip:5d}  {numbers:<20} {instruction:<16}{operands:<20}{comment}"
 
             print(line)
 
@@ -192,6 +193,7 @@ class Intcode:
                 else:
                     raise ValueError
 
+            current_ip = ip
             ip += 1 + n_args
 
             match opcode:
@@ -210,7 +212,7 @@ class Intcode:
                 case 3:  # input
                     # if no buffered input, program must suspend
                     if not self.input:
-                        return ip, "read"
+                        return current_ip, "read"
                     self._poke(args[0].addr, self.input.popleft())
 
                 case 4:  # output
@@ -257,7 +259,7 @@ class Intcode:
             if self._debug:
                 for i, arg in enumerate(args):
                     print(f"  args[{i}] =  {arg.value}   @{arg.addr}")
-                input(f"{list(self.output)}> ")
+                # input(f"{list(self.output)}> ")
 
         return ip, "exited"
 
@@ -275,33 +277,33 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-D", "--debug", action="store_true")
     parser.add_argument("-d", "--disasm", action="store_true")
-    parser.add_argument("-p", "--pretty", action="store_true")
+    parser.add_argument("-s", "--source", action="store_true")
     parser.add_argument("-a", "--ascii", action="store_true")
-    parser.add_argument("source")
+    parser.add_argument("-m", "--memory", action="store_true", help="show memory on exit")
+    parser.add_argument("filename")
     args = parser.parse_args()
 
-    computer = Intcode()
-    computer.load_from(args.source)
+    computer = Computer()
+    computer.load_from(args.filename)
 
     if args.disasm:
         computer.disasm()
-    elif args.pretty:
-        computer.disasm(raw=True)
+    elif args.source:
+        computer.disasm(source=True)
     elif args.ascii:
-        computer.run("ascii")
+        computer.run(output_mode="ascii")
     else:
-        while True:
-            state = computer.run(debug=args.debug)
-            if state == "read":
-                print(list(computer.output))
-                value = input("input> ")
-                if value.strip() == "":
-                    break
-                computer.input.extend(map(int, value.split(",")))
-            else:
+        state = computer.run(debug=args.debug)
+        while state == "read":
+            print(list(computer.output))
+            value = input("input> ")
+            if value.strip() == "":
                 break
+            computer.input.extend(map(int, value.split(",")))
+            state = computer.resume()
         print(state, list(computer.output))
-        computer.dump()
+        if args.memory:
+            computer.dump()
 
 
 if __name__ == "__main__":
