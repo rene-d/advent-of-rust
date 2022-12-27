@@ -1,1 +1,12 @@
-3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0
+# example from https://adventofcode.com/2019/day/7
+
+[    0]  3,23,                inp             [23]                ; input
+[    2]  3,24,                inp             [24]                ; input
+[    4]  1002,24,10,24,       mul             [24],10 to [24]     ; multiplication
+[    8]  1002,23,-1,23,       mul             [23],-1 to [23]     ; multiplication
+[   12]  101,5,23,23,         add             5,[23] to [23]      ; addition
+[   16]  1,24,23,23,          add             [24],[23] to [23]   ; addition
+[   20]  4,23,                outp            [23]                ; output
+[   22]  99,                  halt                                ; halt
+[   23]  0,                   nop                                 ; no operation
+[   24]  0,                   nop                                 ; no operation

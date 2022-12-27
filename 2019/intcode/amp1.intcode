@@ -1,1 +1,10 @@
-3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0
+# example from https://adventofcode.com/2019/day/7
+
+[    0]  3,15,                inp             [15]                ; input
+[    2]  3,16,                inp             [16]                ; input
+[    4]  1002,16,10,16,       mul             [16],10 to [16]     ; multiplication
+[    8]  1,16,15,15,          add             [16],[15] to [15]   ; addition
+[   12]  4,15,                outp            [15]                ; output
+[   14]  99,                  halt                                ; halt
+[   15]  0,                   nop                                 ; no operation
+[   16]  0,                   nop                                 ; no operation

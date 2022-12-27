@@ -1,12 +1,11 @@
 # https://esolangs.org/wiki/Intcode
 
-4,17,
-0,0,
-1001,17,1,17,
-8,17,18,16,
-1006,16,0,
-99,
--1,
-1,
-11,
-32
+[   0]  4,17,               outp            [17]                ; output
+[   2]  0,                  nop                                 ; no operation
+[   3]  0,                  nop                                 ; no operation
+[   4]  1001,17,1,17,       add             [17],1 to [17]      ; addition
+[   8]  8,17,18,16,         equal           [17],[18] to [16]   ; equal
+[  12]  1006,16,0,          jz              [16] to 0           ; jump-if-false
+[  15]  99,                 halt                                ; halt
+[  16]  -1,                 unknown         -1                  ; unknown opcode -1
+[  17]  1,11,32,            add             [11],[32] to ???    ; addition
