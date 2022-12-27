@@ -39,14 +39,19 @@ class Computer:
         else:
             self.program = []
             for line in data.splitlines():
-                # comments
-                p = line.find("#")
-                if p != -1:
-                    line = line[:p]
-                p = line.find(";")
-                if p != -1:
-                    line = line[:p]
                 line = line.strip()
+                if not line:
+                    continue
+
+                if line[0] == "[":  # suppress address
+                    line = line[line.index("]") + 1 :].lstrip()
+
+                # comments and anything else than numbers
+                for p, c in enumerate(line):
+                    if c not in "0123456789-,":
+                        line = line[:p]
+                        break
+
                 self.program.extend(map(int, filter(lambda x: x, line.strip(",").split(","))))
         self.flush_io()
 
@@ -57,7 +62,7 @@ class Computer:
         self.input = deque()
         self.output = deque()
 
-    def disasm(self, debugger=None, source=False):
+    def disasm(self, debugger=None):
 
         if debugger is not None:
             ip = debugger
@@ -110,10 +115,7 @@ class Computer:
                 comment = f"; {comment}"
             numbers = ",".join(map(str, memory[ip : ip + 1 + n_args])) + ","
 
-            if source:
-                line = f"{numbers:<20} ; {instruction:<12}{operands}"
-            else:
-                line = f"{ip:5d}  {numbers:<20} {instruction:<16}{operands:<20}{comment}"
+            line = f"[{ip:5d}]  {numbers:<20} {instruction:<16}{operands:<20}{comment}"
 
             print(line)
 
@@ -277,7 +279,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-D", "--debug", action="store_true")
     parser.add_argument("-d", "--disasm", action="store_true")
-    parser.add_argument("-s", "--source", action="store_true")
     parser.add_argument("-a", "--ascii", action="store_true")
     parser.add_argument("-m", "--memory", action="store_true", help="show memory on exit")
     parser.add_argument("filename")
@@ -288,8 +289,6 @@ def main():
 
     if args.disasm:
         computer.disasm()
-    elif args.source:
-        computer.disasm(source=True)
     elif args.ascii:
         computer.run(output_mode="ascii")
     else:
