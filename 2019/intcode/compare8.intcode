@@ -3,22 +3,22 @@
 # or output 1001 if the input value is greater than 8.
 # https://adventofcode.com/2019/day/5#part2
 
-3,21,                ; inp         [21]
-1008,21,8,20,        ; equal       [21],8 to [20]
-1005,20,22,          ; jnz         [20] to 22
-107,8,21,20,         ; less        8,[21] to [20]
-1006,20,31,          ; jz          [20] to 31
-1106,0,36,           ; jz          0 to 36
-98,                  ; unknown     98
-0,                   ; nop
-0,                   ; nop
-1002,21,125,20,      ; mul         [21],125 to [20]
-4,20,                ; outp        [20]
-1105,1,46,           ; jnz         1 to 46
-104,999,             ; outp        999
-1105,1,46,           ; jnz         1 to 46
-1101,1000,1,20,      ; add         1000,1 to [20]
-4,20,                ; outp        [20]
-1105,1,46,           ; jnz         1 to 46
-98,                  ; unknown     98
-99,                  ; halt
+[    0]  3,21,                inp             [21]                ; input
+[    2]  1008,21,8,20,        equal           [21],8 to [20]      ; equal
+[    6]  1005,20,22,          jnz             [20] to 22          ; jump-if-true
+[    9]  107,8,21,20,         less            8,[21] to [20]      ; less than
+[   13]  1006,20,31,          jz              [20] to 31          ; jump-if-false
+[   16]  1106,0,36,           jz              0 to 36             ; jump-if-false
+[   19]  98,                  unknown         98                  ; unknown opcode 98
+[   20]  0,                   nop                                 ; no operation
+[   21]  0,                   nop                                 ; no operation
+[   22]  1002,21,125,20,      mul             [21],125 to [20]    ; multiplication
+[   26]  4,20,                outp            [20]                ; output
+[   28]  1105,1,46,           jnz             1 to 46             ; jump-if-true
+[   31]  104,999,             outp            999                 ; output
+[   33]  1105,1,46,           jnz             1 to 46             ; jump-if-true
+[   36]  1101,1000,1,20,      add             1000,1 to [20]      ; addition
+[   40]  4,20,                outp            [20]                ; output
+[   42]  1105,1,46,           jnz             1 to 46             ; jump-if-true
+[   45]  98,                  unknown         98                  ; unknown opcode 98
+[   46]  99,                  halt                                ; halt

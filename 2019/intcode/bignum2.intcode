@@ -1,3 +1,4 @@
 # should output the large number in the middle
 
-104,1125899906842624,99
+[    0]  104,1125899906842624,  outp            1125899906842624    ; output
+[    2]  99,                    halt                                ; halt

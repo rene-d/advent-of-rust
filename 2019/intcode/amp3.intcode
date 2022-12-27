@@ -1,1 +1,15 @@
-3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0
+# example from https://adventofcode.com/2019/day/7
+
+[    0]  3,31,                inp             [31]                ; input
+[    2]  3,32,                inp             [32]                ; input
+[    4]  1002,32,10,32,       mul             [32],10 to [32]     ; multiplication
+[    8]  1001,31,-2,31,       add             [31],-2 to [31]     ; addition
+[   12]  1007,31,0,33,        less            [31],0 to [33]      ; less than
+[   16]  1002,33,7,33,        mul             [33],7 to [33]      ; multiplication
+[   20]  1,33,31,31,          add             [33],[31] to [31]   ; addition
+[   24]  1,32,31,31,          add             [32],[31] to [31]   ; addition
+[   28]  4,31,                outp            [31]                ; output
+[   30]  99,                  halt                                ; halt
+[   31]  0,                   nop                                 ; no operation
+[   32]  0,                   nop                                 ; no operation
+[   33]  0,                   nop                                 ; no operation

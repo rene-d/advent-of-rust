@@ -64,9 +64,11 @@ class Computer:
 
     def disasm(self, debugger=None):
 
+        lines = []
+
         if debugger is not None:
             ip = debugger
-            memory = self._code
+            memory = self._text
         else:
             ip = 0
             memory = self.program
@@ -115,14 +117,17 @@ class Computer:
                 comment = f"; {comment}"
             numbers = ",".join(map(str, memory[ip : ip + 1 + n_args])) + ","
 
-            line = f"[{ip:5d}]  {numbers:<20} {instruction:<16}{operands:<20}{comment}"
+            line = f"[{ip:4d}]  {numbers:<19} {instruction:<16}{operands:<20}{comment}"
 
-            print(line)
+            lines.append(line)
 
             ip += 1 + n_args
 
+            # only return one line if debugging
             if debugger is not None:
                 break
+
+        return "\n".join(lines)
 
     def run(self, **kwargs):
         self.start(**kwargs)
@@ -130,7 +135,7 @@ class Computer:
 
     def start(self, output_mode="buffered", debug=False):
         assert output_mode in ["buffered", "direct", "ascii", "yield"]
-        self._code = self.program.copy()  # code segment
+        self._text = self.program.copy()  # code segment
         self._bss = defaultdict(lambda: 0)  # data segment
         self._ip = 0
         self._relbase = 0
@@ -145,8 +150,8 @@ class Computer:
         return self._state
 
     def _peek(self, addr):
-        if 0 <= addr < len(self._code):
-            value = self._code[addr]
+        if 0 <= addr < len(self._text):
+            value = self._text[addr]
         else:
             value = self._bss[addr]
         # print(f"_peek [{addr}] -> {value}")
@@ -154,8 +159,8 @@ class Computer:
 
     def _poke(self, addr, value):
         # print(f"_poke [{addr}] <- {value}")
-        if 0 <= addr < len(self._code):
-            self._code[addr] = value
+        if 0 <= addr < len(self._text):
+            self._text[addr] = value
         else:
             self._bss[addr] = value
 
@@ -165,13 +170,13 @@ class Computer:
         assert self._state in ["start", "pause", "yield", "read"]
         self._state = ""
 
-        while ip < len(self._code):
+        while ip < len(self._text):
 
             if self._debug:
                 print()
-                self.disasm(ip)
+                print(self.disasm(debugger=ip))
 
-            opcode = self._code[ip]
+            opcode = self._text[ip]
 
             modes = (opcode // 100) % 10, (opcode // 1000) % 10, (opcode // 10000) % 10
             if opcode > 0:
@@ -184,7 +189,7 @@ class Computer:
 
             args = []  # (value, address) of arguments
             for i in range(n_args):
-                arg = self._code[ip + 1 + i]
+                arg = self._text[ip + 1 + i]
 
                 if modes[i] == POSITION_MODE:
                     args.append(Operand(self._peek(arg), arg))
@@ -267,28 +272,38 @@ class Computer:
 
     def dump(self):
         print(".text")
-        for i in range(0, len(self._code)):
-            if self.program[i] != self._code[i]:
-                print(f"{i:5}   {self.program[i]} -> {self._code[i]}")
+        for i in range(0, len(self._text)):
+            if self.program[i] != self._text[i]:
+                print(f"[{i:4d}]   {self.program[i]} -> {self._text[i]}")
         print(".bss")
         for i in sorted(self._bss.keys()):
-            print(f"{i:5}   {self._bss[i]}")
+            print(f"[{i:4d}]   {self._bss[i]}")
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-D", "--debug", action="store_true")
     parser.add_argument("-d", "--disasm", action="store_true")
+    parser.add_argument("--write", action="store_true", help="write formatted code (use with --disasm)")
+    parser.add_argument("-D", "--debug", action="store_true")
     parser.add_argument("-a", "--ascii", action="store_true")
     parser.add_argument("-m", "--memory", action="store_true", help="show memory on exit")
-    parser.add_argument("filename")
+    parser.add_argument("filename", type=Path)
     args = parser.parse_args()
 
     computer = Computer()
     computer.load_from(args.filename)
 
     if args.disasm:
-        computer.disasm()
+        asm = computer.disasm()
+        if args.write:
+            bak = args.filename.with_suffix(".bak")
+            if bak.exists():
+                bak.unlink()
+            args.filename.rename(bak)
+            args.filename.write_text(asm)
+        else:
+            print(asm)
+
     elif args.ascii:
         computer.run(output_mode="ascii")
     else:

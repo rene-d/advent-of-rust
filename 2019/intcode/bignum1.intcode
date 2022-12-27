@@ -1,0 +1,6 @@
+# should print a 16 digit number
+
+[    0]  1102,34915192,34915192,7,  mul             34915192,34915192 to [7]    ; multiplication
+[    4]  4,7,                       outp            [7]                         ; output
+[    6]  99,                        halt                                        ; halt
+[    7]  0,                         nop                                         ; no operation

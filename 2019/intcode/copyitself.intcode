@@ -1,9 +1,8 @@
 # takes no input and produces a copy of itself as output.
-# (day9)
 
-109,1,
-204,-1,
-1001,100,1,100,
-1008,100,16,101,
-1006,101,0,
-99
+[    0]  109,1,               relbase         1                   ; incr/decr relative base offset
+[    2]  204,-1,              outp            (rel -1)            ; output
+[    4]  1001,100,1,100,      add             [100],1 to [100]    ; addition
+[    8]  1008,100,16,101,     equal           [100],16 to [101]   ; equal
+[   12]  1006,101,0,          jz              [101] to 0          ; jump-if-false
+[   15]  99,                  halt                                ; halt
