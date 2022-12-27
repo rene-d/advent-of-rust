@@ -1,0 +1,11 @@
+# take an input, then output 0 if the input was zero or 1 if the input was non-zero
+
+3,12,                ; inp         [12]
+6,12,15,             ; jz          [12] to [15]
+1,13,14,13,          ; add         [13],[14] to [13]
+4,13,                ; outp        [13]
+99,                  ; halt
+-1,                  ;
+0,                   ;
+1,                   ;
+9,                   ;

@@ -1,0 +1,24 @@
+# The program will then output 999 if the input value is below 8,
+# output 1000 if the input value is equal to 8,
+# or output 1001 if the input value is greater than 8.
+# https://adventofcode.com/2019/day/5#part2
+
+3,21,                ; inp         [21]
+1008,21,8,20,        ; equal       [21],8 to [20]
+1005,20,22,          ; jnz         [20] to 22
+107,8,21,20,         ; less        8,[21] to [20]
+1006,20,31,          ; jz          [20] to 31
+1106,0,36,           ; jz          0 to 36
+98,                  ; unknown     98
+0,                   ; nop
+0,                   ; nop
+1002,21,125,20,      ; mul         [21],125 to [20]
+4,20,                ; outp        [20]
+1105,1,46,           ; jnz         1 to 46
+104,999,             ; outp        999
+1105,1,46,           ; jnz         1 to 46
+1101,1000,1,20,      ; add         1000,1 to [20]
+4,20,                ; outp        [20]
+1105,1,46,           ; jnz         1 to 46
+98,                  ; unknown     98
+99,                  ; halt

@@ -1,0 +1,8 @@
+# take an input, then output 0 if the input was zero or 1 if the input was non-zero
+
+[    0]  3,3,                 inp             [3]                 ; input
+[    2]  1105,-1,9,           jnz             -1 to 9             ; jump-if-true
+[    5]  1101,0,0,12,         add             0,0 to [12]         ; addition
+[    9]  4,12,                outp            [12]                ; output
+[   11]  99,                  halt                                ; halt
+[   12]  1,                                                       ; data
