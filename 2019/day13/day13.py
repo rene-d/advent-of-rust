@@ -4,6 +4,7 @@
 from pathlib import Path
 import sys
 from curtsies import Input
+import time
 
 sys.path.append("..")
 from intcode.Intcode import Computer
@@ -19,66 +20,102 @@ def getch():
             return e
 
 
+class ArcadeCabinet:
+    TILE_EMPTY = 0
+    TILE_WALL = 1
+    TILE_BLOCK = 2
+    TILE_PADDLE = 3
+    TILE_BALL = 4
+
+    def __init__(self, program):
+        self.computer = Computer()
+        self.computer.load(program)
+
+    def part1(self):
+        state = self.computer.run()
+        assert state == "halted"
+
+        return sum(1 for (_, _, tile) in chunker(list(self.computer.output), 3) if tile == ArcadeCabinet.TILE_BLOCK)
+
+    def show(self):
+        print("\x1b\x5b\x48\x1b\x5b\x32\x4a")  # tput clear
+        for row in self.screen:
+            print("".join(row))
+        print(f"[ score: {self.score} ]".center(self.width, "~"))
+
+    def part2(self, mode="solve"):
+        self.flag_auto = mode != "player"
+        self.flag_show = mode != "solve"
+
+        self.computer.flush_io()
+        self.computer.start(output_mode="buffered")
+        self.computer._poke(0, 2)  # play for free
+
+        state = self.computer.resume()
+        assert state == "read"
+
+        self.width = 1 + max(x for (x, _, _) in chunker(list(self.computer.output), 3))
+        self.height = 1 + max(y for (_, y, _) in chunker(list(self.computer.output), 3))
+
+        self.screen = [[" "] * (self.width) for _ in range(self.height)]
+        self.score = 0
+        self.paddle = self.ball = (0, 0)
+
+        self.play()
+
+        return self.score
+
+    def frame(self):
+        state = self.computer.resume()
+        assert state == "read" or state == "halted"
+
+        for (x, y, tile) in chunker(list(self.computer.output), 3):
+            if (x, y) == (-1, 0):
+                self.score = tile
+            else:
+                self.screen[y][x] = " Wx=o"[tile]
+                if tile == ArcadeCabinet.TILE_BALL:
+                    self.ball = (x, y)
+                elif tile == ArcadeCabinet.TILE_PADDLE:
+                    self.paddle = (x, y)
+
+        self.computer.output.clear()
+
+        return state == "read"
+
+    def play(self):
+
+        while self.frame():
+            if self.flag_show:
+                self.show()
+                time.sleep(0.01)
+
+            self.computer.input.append(self.joystick())
+
+    def joystick(self):
+
+        if self.flag_auto:
+
+            if self.paddle[0] < self.ball[0]:
+                return 1
+            if self.paddle[0] > self.ball[0]:
+                return -1
+            return 0
+        else:
+            while True:
+                key = getch()
+                if key == "KEY_LEFT":
+                    return -1
+                elif key == "KEY_RIGHT":
+                    return 1
+                elif key == "KEY_DOWN" or key == "KEY_UP" or key == " ":
+                    return 0
+
+
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
-data = Path(filename).read_text()
+software = Path(filename).read_text()
 
-game = Computer()
-game.load(data)
+game = ArcadeCabinet(software)
 
-# part 1
-state = game.run()
-assert state == "halted"
-print(sum(1 for (x, y, tile) in chunker(list(game.output), 3) if tile == 2))
-
-# part 2
-
-maxx = 1 + max(x for (x, y, tile) in chunker(list(game.output), 3))
-maxy = 1 + max(y for (x, y, tile) in chunker(list(game.output), 3))
-screen = [[" "] * (maxx) for _ in range(maxy)]
-score = 0
-
-
-def show():
-    global score
-    print("\x1b\x5b\x48\x1b\x5b\x32\x4a")
-    for row in screen:
-        print("".join(row))
-    print(f" score: {score} ".center(maxx, "~"))
-
-
-game.flush_io()
-game.start(output_mode="buffered")
-game._poke(0, 2)  # play for free
-
-
-def frame():
-    global score
-    state = game.resume()
-
-    for (x, y, tile) in chunker(list(game.output), 3):
-        if (x, y) == (-1, 0):
-            score = max(score, tile)
-        else:
-            screen[y][x] = " Wx=o"[tile]
-
-    show()
-    return state
-
-
-for _ in range(1000):
-    state = frame()
-    if state != "read":
-        break
-    while True:
-        key = getch()
-        if key == "KEY_LEFT":
-            game.input.append(-1)
-            break
-        elif key == "KEY_RIGHT":
-            game.input.append(1)
-            break
-        elif key == "KEY_DOWN" or key == "KEY_UP" or key == " ":
-            game.input.append(0)
-            break
-        else:
-            print(repr(key))
+print(game.part1())
+print(game.part2())
