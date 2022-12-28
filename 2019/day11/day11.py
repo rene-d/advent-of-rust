@@ -7,6 +7,7 @@ from collections import defaultdict
 
 sys.path.append("..")
 from intcode.Intcode import Computer
+from ocr.ocr import ocr
 
 
 class Robot:
@@ -25,7 +26,6 @@ class Robot:
     ]
 
     def __init__(self, program) -> None:
-
         self.brain = Computer()
         self.brain.load(program)
 
@@ -39,6 +39,7 @@ class Robot:
                 miny = min(miny, y)
                 maxy = max(maxy, y)
 
+        lines = []
         for y in range(maxy, miny - 1, -1):
             row = ""
             for x in range(minx, maxx + 1):
@@ -47,10 +48,12 @@ class Robot:
                 else:
                     c = ".#"[self.panel.get((x, y), 0)]
                 row += c
-            print(row)
+            lines.append(row)
+        return "\n".join(lines)
 
     def paint(self, initial_color):
 
+        self.brain.flush_io()
         self.brain.start(output_mode="yield")
 
         self.rx, self.ry = 0, 0
@@ -101,13 +104,13 @@ class Robot:
         assert state == "halted"
 
 
-filename = "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else "input.txt"
+filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
 
-r = Robot(data)
+robot = Robot(data)
 
-r.paint(Robot.COLOR_BLACK)
-print(len(r.painted))
+robot.paint(Robot.COLOR_BLACK)
+print(len(robot.painted))
 
-r.paint(Robot.COLOR_WHITE)
-r.show()
+robot.paint(Robot.COLOR_WHITE)
+print(ocr(robot.show()))
