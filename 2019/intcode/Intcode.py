@@ -204,7 +204,7 @@ class Computer:
             ip += 1 + n_args
 
             match opcode:
-                case 0:  # nop
+                case 0:  # nop (extension)
                     pass
 
                 case 99:  # halt
@@ -227,7 +227,7 @@ class Computer:
                         print(args[0].value)
 
                     elif self._output_mode == "ascii":
-                        if args[0].value < 256:
+                        if args[0].value < 127:
                             sys.stdout.write(chr(args[0].value))
                         else:
                             sys.stdout.write(f"#{args[0].value};")
@@ -247,15 +247,10 @@ class Computer:
                         ip = args[1].value
 
                 case 7:  # less than
-                    if args[0].value < args[1].value:
-                        self._poke(args[2].addr, 1)
-                    else:
-                        self._poke(args[2].addr, 0)
+                    self._poke(args[2].addr, 1 if args[0].value < args[1].value else 0)
+
                 case 8:  # equal
-                    if args[0].value == args[1].value:
-                        self._poke(args[2].addr, 1)
-                    else:
-                        self._poke(args[2].addr, 0)
+                    self._poke(args[2].addr, 1 if args[0].value == args[1].value else 0)
 
                 case 9:  # relative base offset
                     self._relbase += args[0].value
