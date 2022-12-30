@@ -5,6 +5,7 @@ import sys
 from collections import defaultdict, deque, namedtuple
 import argparse
 
+
 # opcodes
 OPCODES = {
     # opcode: (short_name, arguments, comment),
@@ -63,7 +64,6 @@ class Computer:
         self.output = deque()
 
     def disasm(self, debugger=None):
-
         lines = []
 
         if debugger is not None:
@@ -148,6 +148,20 @@ class Computer:
         assert self._state in ["yield", "read", "pause"]
         self._ip, self._state = self._run()
         return self._state
+
+    def clone(self):
+        clone = Computer()
+        clone.program = self.program
+        clone._debug = self._debug
+        clone._ip = self._ip
+        clone._relbase = self._relbase
+        clone._state = self._state
+        clone._bss = self._bss.copy()
+        clone._text = self._text.copy()
+        clone._output_mode = self._output_mode
+        clone.output = self.output.copy()
+        clone.input = self.input.copy()
+        return clone
 
     def _peek(self, addr):
         if 0 <= addr < len(self._text):
