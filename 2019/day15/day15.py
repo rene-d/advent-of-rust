@@ -53,9 +53,8 @@ def bfs(droid, show):
     oxygen = None
     max_steps = 0
 
-    # bfs
-    # I need to clone the droid state to avoid testing all directions and walk back to it
-    # when there is more than only one possible direction
+    # need to clone the droid state to avoid testing all directions and walk back to them
+    # when there is a T or X junction
     while q:
         x, y, steps = q.popleft()
 
@@ -116,9 +115,7 @@ def bfs(droid, show):
 
 
 (oxygen, steps), _ = bfs(droid, False)
-
 print(steps)
 
 _, distance = bfs(oxygen, False)
-
 print(distance)
