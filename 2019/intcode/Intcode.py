@@ -197,7 +197,7 @@ class Computer:
                 opcode %= 100
 
             if opcode not in OPCODES:
-                return ip + 1, "bad instruction"
+                return ip + 1, f"bad instruction {self._text[ip]} at ip {ip}"
 
             _, n_args, _ = OPCODES[opcode]
 
@@ -254,10 +254,14 @@ class Computer:
 
                 case 5:  # jump-if-true
                     if args[0].value != 0:
+                        if not (0 <= args[1].value < len(self._text)):
+                            return ip, f"jump-if-true out of range {args[1].value} at ip {current_ip}"
                         ip = args[1].value
 
                 case 6:  # jump-if-false
                     if args[0].value == 0:
+                        if not (0 <= args[1].value < len(self._text)):
+                            return ip, f"jump-if-true out of range {args[1].value} at ip {current_ip}"
                         ip = args[1].value
 
                 case 7:  # less than
