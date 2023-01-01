@@ -317,18 +317,35 @@ def main():
         else:
             print(asm)
 
-    elif args.ascii:
-        computer.run(output_mode="ascii")
     else:
         state = computer.run(debug=args.debug)
         while state == "read":
-            print(list(computer.output))
-            value = input("input> ")
-            if value.strip() == "":
+            if args.ascii:
+
+                print("".join(map(chr, computer.output)))
+            else:
+                print(list(computer.output))
+            computer.flush_io()
+
+            while True:
+                value = input("input> ")
+                if value.strip() == "":
+                    continue
+                if args.ascii:
+                    computer.input.extend(map(ord, value))
+                    computer.input.append(10)
+                else:
+                    computer.input.extend(map(int, value.split(",")))
                 break
-            computer.input.extend(map(int, value.split(",")))
+
             state = computer.resume()
-        print(state, list(computer.output))
+
+        if args.ascii:
+            print(state)
+            print("".join(map(chr, computer.output)))
+        else:
+            print(state, list(computer.output))
+
         if args.memory:
             computer.dump()
 
