@@ -55,12 +55,14 @@ int main()
     free(t);
 
     // part 2
-    int offset = (((((data[0] * 10 + data[1]) * 10 + data[2]) * 10 + data[3]) * 10 + data[4]) * 10 + data[5]) * 10 + data[6]; // ugly but no way to do this shorter/comprehensive I think
-    int n = size * 10000 - offset;                                                                                            // overflow, carry ?
-    p = malloc(n);                                                                                                            // check ?
+
+    // ugly but no way to do this shorter/comprehensive I think
+    int offset = (((((data[0] * 10 + data[1]) * 10 + data[2]) * 10 + data[3]) * 10 + data[4]) * 10 + data[5]) * 10 + data[6];
+    int n = size * 10000 - offset; // overflow, carry ?
+    p = malloc(n);                 // check, element type, cast ?
     t = malloc(n);
     for (int i = 0; i < n; ++i)
-    {
+    {                                     // accolade or not accolade for a only one statement ?
         p[i] = data[(i + offset) % size]; // I should remember that data is at most size byte wide
     }
     for (int k = 0; k < 100; ++k)
