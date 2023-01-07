@@ -1,4 +1,6 @@
 //! [Day 16: Flawed Frequency Transmission](https://adventofcode.com/2019/day/16)
+//!
+//! Solve the day16 puzzle of Advent of Code 2019
 
 /// Get the puzzle input into a vector of integer.
 fn parse_data(data: &str) -> Vec<u8> {
@@ -14,28 +16,27 @@ fn parse_data(data: &str) -> Vec<u8> {
         .collect()
 }
 
-/// Solve part one: compute phase after 100 phase rounds.
-fn part1(data: &[u8]) -> u32 {
-    // #[allow(unused_assignments)]
-    let mut p = vec![];
-    let mut t = vec![];
+/// Compute a phase of the Flawed Frequency Transmission (FFT)
+fn fft(signal: &mut [u8]) {
     let pattern = [0, 1, 0, -1];
 
-    p = data.to_owned();
-    t.resize(data.len(), 0u8);
+    let phase = signal.to_owned();
 
-    for _ in 0..100 {
-        for n in 0..data.len() {
-            let mut s = 0;
-            for i in 0..data.len() {
-                s += pattern[(1 + i) / (1 + n) % 4] * p[i] as i32;
-            }
-            t[n] = (s.abs() % 10) as u8;
+    for n in 0..signal.len() {
+        let mut s = 0;
+        for i in 0..signal.len() {
+            s += pattern[(1 + i) / (1 + n) % 4] * phase[i] as i32;
         }
-
-        p = t.to_owned();
+        signal[n] = (s.abs() % 10) as u8;
     }
+}
 
+/// Solve part one: compute the 100th phase of the signal.
+fn part1(data: &[u8]) -> u32 {
+    let mut p = data.to_owned();
+    for _ in 0..100 {
+        fft(&mut p);
+    }
     p[0..8].iter().fold(0, |acc, d| acc * 10 + (*d as u32))
 }
 
@@ -75,12 +76,13 @@ fn main() {
 }
 
 #[test]
-fn test_parse1() {
+fn test_parse_data() {
     assert_eq!(parse_data("123"), [1u8, 2u8, 3u8]);
 }
 
 #[test]
 fn test_part1() {
+    // values given as examples in the puzzle
     assert_eq!(
         part1(&parse_data("80871224585914546619083218645595")),
         24176176
@@ -97,6 +99,7 @@ fn test_part1() {
 
 #[test]
 fn test_part2() {
+    // values given as examples in the puzzle
     assert_eq!(
         part2(&parse_data("03036732577212944063491565474664")),
         84462026
@@ -109,4 +112,23 @@ fn test_part2() {
         part2(&parse_data("03081770884921959731165446850517")),
         53553731
     );
+}
+
+#[test]
+fn test_fft() {
+    // values given as examples in the puzzle
+
+    let mut signal = parse_data("12345678");
+
+    let phases = [
+        parse_data("48226158"),
+        parse_data("34040438"),
+        parse_data("03415518"),
+        parse_data("01029498"),
+    ];
+
+    for i in 0..3 {
+        fft(&mut signal);
+        assert_eq!(signal, phases[i]);
+    }
 }
