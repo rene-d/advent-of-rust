@@ -6,7 +6,7 @@ import sys
 from collections import deque
 
 
-sys.path.append("..")
+sys.path.append(Path(__file__).parent.parent.as_posix())
 from intcode.Intcode import Computer
 
 

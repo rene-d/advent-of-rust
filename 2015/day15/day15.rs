@@ -43,7 +43,7 @@ fn main() {
                 texture: cap[5].parse().unwrap(),
                 calories: cap[6].parse().unwrap(),
             };
-            println!("{:?}", ingredient);
+            // println!("{:?}", ingredient);
             ingredients.push(ingredient);
             0
         });

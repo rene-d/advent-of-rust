@@ -4,7 +4,13 @@ use std::collections::HashSet;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let data = std::fs::read_to_string("input.txt").unwrap();
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let data = std::fs::read_to_string(filename).unwrap();
 
     let mut x = 0_i32;
     let mut y = 0_i32;
@@ -12,6 +18,7 @@ fn main() {
 
     let mut visited: HashSet<(i32, i32)> = HashSet::new();
     let mut twice = false;
+    let mut part2 = 0;
 
     for op2 in data.split(',') {
         let op = op2.trim();
@@ -35,7 +42,8 @@ fn main() {
             }
 
             if !twice && visited.contains(&(x, y)) {
-                println!("twice: {} (part 2)", x.abs() + y.abs());
+                // println!("twice: {} (part 2)", x.abs() + y.abs());
+                part2 = x.abs() + y.abs();
                 twice = true;
             } else {
                 visited.insert((x, y));
@@ -43,5 +51,8 @@ fn main() {
         }
     }
 
-    println!("Easter Bunny HQ: {} (part 1)", x.abs() + y.abs());
+    //println!("Easter Bunny HQ: {} (part 1)", x.abs() + y.abs());
+
+    println!("{}", x.abs() + y.abs());
+    println!("{}", part2);
 }

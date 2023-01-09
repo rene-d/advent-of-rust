@@ -4,7 +4,7 @@ Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.r
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2022
+## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
@@ -29,17 +29,17 @@ Puzzle                                                                  | Stars 
 [Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)     | ⭐⭐  | [Rust](2022/day19/day19.rs)
 [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20) | ⭐⭐  | [Rust](2022/day20/day20.rs)
 [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)             | ⭐⭐  | [Rust](2022/day21/day21.rs) [Python](2022/day21/day21.py)
-[Day 22: Monkey Map](https://adventofcode.com/2022/day/22)              | ⭐⭐  | [Rust](2022/day22/day22.rs) [Python](2022/day22/day22.py)
+[Day 22: Monkey Map](https://adventofcode.com/2022/day/22)              | ⭐⭐  | [Rust](2022/day22/day22.rs)
 [Day 23: Unstable Diffusion](https://adventofcode.com/2022/day/23)      | ⭐⭐  | [Rust](2022/day23/day23.rs)
 [Day 24: Blizzard Basin](https://adventofcode.com/2022/day/24)          | ⭐⭐  | [Rust](2022/day24/day24.rs)
 [Day 25: Full of Hot Air](https://adventofcode.com/2022/day/25)         | ⭐⭐  | [Rust](2022/day25/day25.rs) [Python](2022/day25/day25.py)
 
-## 2021
+## 2021 ([Calendar](https://adventofcode.com/2021)) ([Solutions](2021/)) : 50⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
-[Day 1: Sonar Sweep](https://adventofcode.com/2021/day/1)               | ⭐⭐  | Rust Python
-[Day 2: Dive!](https://adventofcode.com/2021/day/2)                     | ⭐⭐  | Rust
+[Day 1: Sonar Sweep](https://adventofcode.com/2021/day/1)               | ⭐⭐  | [Rust](2021/day1/day1.rs) [Python](2021/day1/day1.py)
+[Day 2: Dive!](https://adventofcode.com/2021/day/2)                     | ⭐⭐  | [Rust](2021/day2/day2.rs)
 [Day 3: Binary Diagnostic](https://adventofcode.com/2021/day/3)         | ⭐⭐  | Rust Python
 [Day 4: Giant Squid](https://adventofcode.com/2021/day/4)               | ⭐⭐  | Rust Python
 [Day 5: Hydrothermal Venture](https://adventofcode.com/2021/day/5)      | ⭐⭐  | Rust Python
@@ -64,7 +64,8 @@ Puzzle                                                                  | Stars 
 [Day 24: Arithmetic Logic Unit](https://adventofcode.com/2021/day/24)   | ⭐⭐  | Rust
 [Day 25: Sea Cucumber](https://adventofcode.com/2021/day/25)            | ⭐⭐  | Rust Python
 
-## 2016
+## 2016 ([Calendar](https://adventofcode.com/2016)) ([Solutions](2016/)) : 43⭐
+
 
 Puzzle                                                                           | Stars | Languages
 -------------------------------------------------------------------------------- | ----- | ---------
@@ -88,28 +89,29 @@ Puzzle                                                                          
 [Day 23: Safe Cracking](https://adventofcode.com/2016/day/23)                    | ⭐⭐  | Rust
 [Day 25: Clock Signal](https://adventofcode.com/2016/day/25)                     | ⭐⭐  | Rust
 
-## 2015
+## 2015 ([Calendar](https://adventofcode.com/2015)) ([Solutions](2015/)) : 41⭐
+
 
 Puzzle                                                                               | Stars | Languages
 ------------------------------------------------------------------------------------ | ----- | -----------
-[Day 1: Not Quite Lisp](https://adventofcode.com/2015/day/1)                         | ⭐⭐  | Rust
-[Day 2: I Was Told There Would Be No Math](https://adventofcode.com/2015/day/2)      | ⭐⭐  | Rust
-[Day 3: Perfectly Spherical Houses in a Vacuum](https://adventofcode.com/2015/day/3) | ⭐⭐  | Rust
-[Day 4: The Ideal Stocking Stuffer](https://adventofcode.com/2015/day/4)             | ⭐⭐  | Rust
-[Day 5: Doesn't He Have Intern-Elves For This?](https://adventofcode.com/2015/day/5) | ⭐⭐  | Rust
-[Day 6: Probably a Fire Hazard](https://adventofcode.com/2015/day/6)                 | ⭐⭐  | Rust
-[Day 7: Some Assembly Required](https://adventofcode.com/2015/day/7)                 | ⭐⭐  | Rust
+[Day 1: Not Quite Lisp](https://adventofcode.com/2015/day/1)                         | ⭐⭐  | [Rust](2015/day1/day1.rs)
+[Day 2: I Was Told There Would Be No Math](https://adventofcode.com/2015/day/2)      | ⭐⭐  | [Rust](2015/day2/day2.rs)
+[Day 3: Perfectly Spherical Houses in a Vacuum](https://adventofcode.com/2015/day/3) | ⭐⭐  | [Rust](2015/day3/day3.rs)
+[Day 4: The Ideal Stocking Stuffer](https://adventofcode.com/2015/day/4)             | ⭐⭐  | [Rust](2015/day4/day4.rs)
+[Day 5: Doesn't He Have Intern-Elves For This?](https://adventofcode.com/2015/day/5) | ⭐⭐  | [Rust](2015/day5/day5.rs)
+[Day 6: Probably a Fire Hazard](https://adventofcode.com/2015/day/6)                 | ⭐⭐  | [Rust](2015/day6/day6.rs)
+[Day 7: Some Assembly Required](https://adventofcode.com/2015/day/7)                 | ⭐⭐  | [Rust](2015/day7/day7.rs)
 [Day 8: Matchsticks](https://adventofcode.com/2015/day/8)                            | ⭐⭐  | Rust
 [Day 9: All in a Single Night](https://adventofcode.com/2015/day/9)                  | ⭐⭐  | Rust
 [Day 10: Elves Look, Elves Say](https://adventofcode.com/2015/day/10)                | ⭐⭐  | Rust
 [Day 11: Corporate Policy](https://adventofcode.com/2015/day/11)                     | ⭐⭐  | Rust
 [Day 12: JSAbacusFramework.io](https://adventofcode.com/2015/day/12)                 | ⭐⭐  | Rust
-[Day 13: Knights of the Dinner Table](https://adventofcode.com/2015/day/13)          | ⭐⭐  | Rust Python
+[Day 13: Knights of the Dinner Table](https://adventofcode.com/2015/day/13)          | ⭐⭐  | [Rust](2015/day13/day13.rs) [Python](2015/day13/day13.py)
 [Day 14: Reindeer Olympics](https://adventofcode.com/2015/day/14)                    | ⭐⭐  | Rust
 [Day 15: Science for Hungry People](https://adventofcode.com/2015/day/15)            | ⭐⭐  | Rust
 [Day 16: Aunt Sue](https://adventofcode.com/2015/day/16)                             | ⭐⭐  | Rust Python
 [Day 17: No Such Thing as Too Much](https://adventofcode.com/2015/day/17)            | ⭐⭐  | Rust
 [Day 18: Like a GIF For Your Yard](https://adventofcode.com/2015/day/18)             | ⭐⭐  | Rust
-[Day 19: Medicine for Rudolph](https://adventofcode.com/2015/day/19)                 | ⭐⭐  | Rust
-[Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)   | ⭐⭐  | Rust
-[Day 25: Let It Snow](https://adventofcode.com/2015/day/25)                          | ⭐    | Rust
+[Day 19: Medicine for Rudolph](https://adventofcode.com/2015/day/19)                 | ⭐⭐  | [Rust](2015/day19/day19.rs)
+[Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)   | ⭐⭐  | [Rust](2015/day20/day20.rs)
+[Day 25: Let It Snow](https://adventofcode.com/2015/day/25)                          | ⭐    | [Rust](2015/day25/day25.rs)

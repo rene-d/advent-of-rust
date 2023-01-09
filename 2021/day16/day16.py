@@ -2,7 +2,7 @@
 
 import sys
 
-data = sys.argv[1] if len(sys.argv) > 1 else open("input.txt").read()
+data = open(sys.argv[1] if len(sys.argv) > 1 else "input.txt").read()
 
 packet = "".join(f"{int(d,16):04b}" for d in data.strip())
 
@@ -96,5 +96,5 @@ def read_packet(packet, offset, indent=""):
 
 
 _, part2 = read_packet(packet, 0)
-print("part1:", part1)
-print("part2:", part2)
+print(part1)
+print(part2)

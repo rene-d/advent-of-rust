@@ -21,7 +21,7 @@ const PIXEL_ON: u8 = 2;
 /// main function
 fn main() {
     let args = Cli::from_args();
-    println!("reading data from: {}", args.path.display());
+    // println!("reading data from: {}", args.path.display());
     let data = load_data(args.path);
 
     let decoder = data[0]
@@ -63,11 +63,11 @@ fn main() {
         display(&grid);
 
         if step == 2 {
-            println!("lit pixels: {}", count_lit(&grid));
+            println!("{}", count_lit(&grid));
         }
     }
 
-    println!("lit pixels: {}", count_lit(&grid));
+    println!("{}", count_lit(&grid));
 }
 
 fn display(grid: &Grid) {

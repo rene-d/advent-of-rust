@@ -2,12 +2,15 @@
 
 import itertools
 import re
+import sys
 
+
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 
 happiness = {}
 names = set()
 
-for line in open("input.txt"):
+for line in open(filename):
     m = re.match(r"(.+) would (gain|lose) (\d+) happiness units by sitting next to (.+)\.$", line)
     if not m:
         exit()

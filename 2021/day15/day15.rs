@@ -17,7 +17,7 @@ struct Cli {
 fn main() {
     let args = Cli::from_args();
 
-    println!("reading data from: {}", args.path.display());
+    // println!("reading data from: {}", args.path.display());
 
     let data = load_data(args.path);
 
@@ -31,7 +31,7 @@ fn main() {
     }
 
     // step 1
-    println!("{:?}", min_cost_dp(&grid) - grid[0][0]);
+    // println!("{:?}", min_cost_dp(&grid) - grid[0][0]);
     println!("{:?}", min_cost(&grid) - grid[0][0]);
 
     // build the five times larger grid
@@ -49,8 +49,8 @@ fn main() {
         }
     }
 
-    // // step 2
-    println!("{:?}", min_cost_dp(&grid5) - grid5[0][0]);
+    // step 2
+    // println!("{:?}", min_cost_dp(&grid5) - grid5[0][0]);
     println!("{:?}", min_cost(&grid5) - grid5[0][0]);
 }
 

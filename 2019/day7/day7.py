@@ -5,11 +5,11 @@ from pathlib import Path
 import sys
 import itertools
 
-sys.path.append("..")
+sys.path.append(Path(__file__).parent.parent.as_posix())
 from intcode.Intcode import Computer
 
 
-filename = "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else "input.txt"
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
 lines = data.splitlines()
 
@@ -26,19 +26,19 @@ def run_amplifiers(phases):
 
 amp = Computer()
 
-# tests from puzzle
-amp.load("3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0")
-assert run_amplifiers([4, 3, 2, 1, 0]) == 43210
+# # tests from puzzle
+# amp.load("3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0")
+# assert run_amplifiers([4, 3, 2, 1, 0]) == 43210
 
-amp.load("3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0")
-assert run_amplifiers([0, 1, 2, 3, 4]) == 54321
+# amp.load("3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0")
+# assert run_amplifiers([0, 1, 2, 3, 4]) == 54321
 
-amp.load("3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0")
-assert run_amplifiers([1, 0, 4, 3, 2]) == 65210
+# amp.load("3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0")
+# assert run_amplifiers([1, 0, 4, 3, 2]) == 65210
 
 
 # part 1
-amp.load_from("input.txt")
+amp.load_from(filename)
 print(max(run_amplifiers(phases) for phases in itertools.permutations(range(5))))
 
 

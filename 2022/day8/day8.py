@@ -3,7 +3,7 @@
 from pathlib import Path
 import sys
 
-filename = "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else "input.txt"
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
 
 data = data.splitlines()
@@ -16,7 +16,7 @@ for y, line in enumerate(data):
         trees[y][x] = int(line[x])
 
 # part 1
-visible = nx * 2 + ny * 2 - 2
+visible = nx * 2 + ny * 2 - 4
 for y in range(1, ny - 1):
     for x in range(1, nx - 1):
         tree = trees[y][x]

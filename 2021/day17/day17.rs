@@ -13,7 +13,7 @@ fn main() {
     let ord_max: i32;
 
     let args: Vec<String> = env::args().collect();
-    println!("args: {:?}", args);
+
     match args.len() {
         5 => {
             abs_min = args[1].parse::<i32>().unwrap();
@@ -36,10 +36,7 @@ fn main() {
         }
     }
 
-    println!(
-        "target area: x={}..{}, y={}..{}",
-        abs_min, abs_max, ord_min, ord_max
-    );
+    // println!("target area: x={}..{}, y={}..{}", abs_min, abs_max, ord_min, ord_max);
 
     let mut part1 = 0;
     let mut part2 = 0;

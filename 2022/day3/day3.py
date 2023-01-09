@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import string
+import sys
 
 
 def priority(items):
@@ -19,7 +20,8 @@ def priority(items):
     return p
 
 
-data = open("input.txt").readlines()
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+data = open(filename).readlines()
 
 part1 = 0
 for rucksack in data:

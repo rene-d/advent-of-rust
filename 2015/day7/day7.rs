@@ -33,7 +33,7 @@ fn main() {
     println!("{}", wire_a);
 
     // part 2
-    opcodes.insert("b".to_string(), "956".to_string());
+    opcodes.insert("b".to_string(), wire_a.to_string());
     let wire_a_bis = wires(&opcodes, "a");
     println!("{}", wire_a_bis);
 }

@@ -29,7 +29,7 @@ def ocr(t):
     t = ["." + line + "." for line in t if line.count(".") != len(line)]
     if len(t) < 6:
         return ""
-    w = max(len(line) for line in t)
+    w = min(len(line) for line in t)
     s = ""
     x = 0
     while x < w - 4:
@@ -46,9 +46,3 @@ def ocr(t):
 def display(text):
     alph = dict((v, k.split(" ")) for k, v in CHARSET_5X6.items())
     return "\n".join("".join(alph[c][y] for c in text) for y in range(6))
-
-
-if __name__ == "__main__":
-    import sys
-
-    print(ocr(sys.stdin.read()))

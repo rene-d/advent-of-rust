@@ -1,7 +1,7 @@
 //! [Day 5: How About a Nice Game of Chess?](https://adventofcode.com/2016/day/5)
 
-use num_traits::cast::FromPrimitive;
-use std::time::Instant;
+// use num_traits::cast::FromPrimitive;
+// use std::time::Instant;
 
 use indicatif::{ProgressBar, ProgressStyle};
 
@@ -9,16 +9,22 @@ const TICK_CHARS: &str = "\u{280b}\u{2819}\u{2839}\u{2838}\u{283c}\u{2834}\u{282
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let door_id = std::fs::read_to_string("input.txt").unwrap();
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let door_id = std::fs::read_to_string(filename).unwrap();
     let door_id = door_id.trim();
 
-    let now = Instant::now();
+    // let now = Instant::now();
 
     println!("{}", part1(door_id));
     println!("{}", part2(door_id));
 
-    let micros = f64::from_u128(now.elapsed().as_micros()).unwrap();
-    println!("elapsed: {} s", micros / 1_000_000.);
+    // let micros = f64::from_u128(now.elapsed().as_micros()).unwrap();
+    // println!("elapsed: {} s", micros / 1_000_000.);
 }
 
 /// ``part1`` solves part 1 of the puzzle

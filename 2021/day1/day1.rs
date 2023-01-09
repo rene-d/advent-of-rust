@@ -5,13 +5,19 @@ use std::io::{self, BufRead};
 use std::path::Path;
 
 fn main() {
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
     let mut prev_num = 999_999_999_u32;
     let mut result = 0;
 
     let mut data = vec![];
 
     // lecture du fichier et step 1
-    if let Ok(lines) = read_lines("input.txt") {
+    if let Ok(lines) = read_lines(filename) {
         // Consumes the iterator, returns a String
         for line in lines.flatten() {
             // convertit string -> u32
