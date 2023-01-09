@@ -13,7 +13,10 @@ struct Cli {
 fn main() {
     let args = Cli::from_args();
     // println!("reading data from: {}", args.path.display());
-    let data = std::fs::read_to_string(args.path).unwrap();
+    let data = std::fs::read_to_string(args.path)
+        .unwrap()
+        .trim()
+        .to_string();
 
     let mut key = 0;
 
@@ -25,7 +28,8 @@ fn main() {
         let digest = md5::compute(x);
 
         if format!("{:x}", digest).starts_with("00000") {
-            println!("{}\t{:?}", key, digest);
+            // println!("{}\t{:?}", key, digest);
+            println!("{}", key);
             break;
         }
 
@@ -40,7 +44,8 @@ fn main() {
         let digest = md5::compute(x);
 
         if format!("{:x}", digest).starts_with("000000") {
-            println!("{}\t{:?}", key, digest);
+            // println!("{}\t{:?}", key, digest);
+            println!("{}", key);
             break;
         }
 

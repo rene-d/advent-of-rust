@@ -39,7 +39,7 @@ def cmp(a, b):
             return 0
 
 
-filename = "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else "input.txt"
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
 lines = data.splitlines()
 

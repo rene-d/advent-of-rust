@@ -36,15 +36,15 @@ impl fmt::Debug for Point {
 /// main function
 fn main() {
     let args = Cli::from_args();
-    println!("reading data from: {}", args.path.display());
+    // println!("reading data from: {}", args.path.display());
     let data = load_data(args.path);
 
     // load puzzle data
     let scanners = load_scanners(data);
 
-    let now = Instant::now();
+    // let now = Instant::now();
     solve(&scanners);
-    println!("elapsed: {} s", now.elapsed().as_secs_f64());
+    // println!("elapsed: {} s", now.elapsed().as_secs_f64());
 }
 
 fn solve(scanners: &[Vec<Point>]) {
@@ -147,7 +147,7 @@ fn solve(scanners: &[Vec<Point>]) {
         pending.remove(&found);
     }
 
-    println!("part1: {}", beacons.len());
+    println!("{}", beacons.len());
 
     let mut manhattan = 0;
     for p1 in &scanner_coords {
@@ -159,7 +159,7 @@ fn solve(scanners: &[Vec<Point>]) {
         }
     }
 
-    println!("part2: {}", manhattan);
+    println!("{}", manhattan);
 }
 
 fn load_scanners(data: Vec<String>) -> Vec<Vec<Point>> {

@@ -3,7 +3,10 @@
 # Day 6: Lanternfish
 # https://adventofcode.com/2021/day/6
 
-data = open("input.txt").read().splitlines()
+import sys
+
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+data = open(filename).readlines()
 
 timers = list(map(int, data[0].split(",")))
 

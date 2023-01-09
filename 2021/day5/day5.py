@@ -4,8 +4,11 @@
 # https://adventofcode.com/2021/day/5
 
 import re
+import sys
 
-data = open("input.txt").read().splitlines()
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+data = open(filename).readlines()
+
 
 SIZEX = 1000
 SIZEY = 1000

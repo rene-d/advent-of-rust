@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
 import re
+import sys
 
 part1 = 0
 part2 = 0
 
-for line in open("input.txt"):
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+
+for line in open(filename):
     m = re.match(r"(\d+)-(\d+),(\d+)-(\d+)", line)
     a, b, c, d = map(int, m.groups())
 

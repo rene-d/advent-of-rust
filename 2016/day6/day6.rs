@@ -1,7 +1,13 @@
 //! [Day 6: Signals and Noise](https://adventofcode.com/2016/day/6)
 
 fn main() {
-    let data = std::fs::read_to_string("input.txt").unwrap();
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let data = std::fs::read_to_string(filename).unwrap();
 
     let (part1, part2) = solve(&data);
     println!("{}", part1);

@@ -4,21 +4,12 @@ use std::collections::HashMap;
 use std::env;
 
 fn main() {
-    let args: Vec<u8> = env::args()
-        .skip(1)
-        .map(|s| s.parse::<u8>().unwrap())
-        .collect();
-
     let player: u8;
     let computer: u8;
 
-    if args.len() == 2 {
-        player = args[0];
-        computer = args[1];
-    } else {
-        player = 5;
-        computer = 9;
-    }
+    //TODO
+    player = 5;
+    computer = 9;
 
     println!("{}", part1(player, computer));
     println!("{}", part2(player, computer));

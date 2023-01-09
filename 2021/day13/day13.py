@@ -3,7 +3,12 @@
 # Day 13: Transparent Origami
 # https://adventofcode.com/2021/day/13
 
+from pathlib import Path
 import sys
+
+sys.path.append(Path(__file__).parent.parent.as_posix())
+from ocr.ocr import ocr
+
 
 data = open("input.txt" if len(sys.argv) == 1 else sys.argv[1]).read().splitlines()
 
@@ -47,6 +52,5 @@ for line in data:
         print(sum(1 for row in grid for cell in row if cell == "#"))
         part1 = True
 
-print()
-for row in grid:
-    print("".join(str(x) for x in row))
+crt = "\n".join("".join(str(x) for x in row) for row in grid)
+print(ocr(crt))

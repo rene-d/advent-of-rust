@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
+import sys
+
 # Day 1: Sonar Sweep
 # https://adventofcode.com/2021/day/1
 
 # read the input
-data = open("input.txt").readlines()
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+data = open(filename).readlines()
 data = list(map(int, data))
 
 # --- Day 1: Sonar Sweep --- part one

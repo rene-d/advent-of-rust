@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-data = open("input.txt").read()
+import sys
+
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+data = open(filename).read()
 
 SCORE_WIN = 6
 SCORE_DRAW = 3

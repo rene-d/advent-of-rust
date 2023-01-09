@@ -6,7 +6,13 @@ use std::path::Path;
 
 /// main function
 fn main() {
-    let data = load_data("input.txt");
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let data = load_data(filename);
 
     let mut part1 = 0;
     let mut part2 = vec![];

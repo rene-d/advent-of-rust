@@ -18,7 +18,7 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    println!("reading data from: {}", args.path);
+    // println!("reading data from: {}", args.path);
 
     let data = load_data(args.path);
 

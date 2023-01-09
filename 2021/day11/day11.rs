@@ -15,7 +15,7 @@ struct Cli {
 /// main function
 fn main() {
     let args = Cli::from_args();
-    println!("reading data from: {}", args.path.display());
+    // println!("reading data from: {}", args.path.display());
     let data = load_data(args.path);
 
     // read the grid
@@ -73,12 +73,12 @@ fn main() {
         }
 
         if all_flashing(&grid) {
-            println!("part2: {}", turn);
+            println!("{}", turn);
             break;
         }
 
         if turn == 100 {
-            println!("part1: {}", flashes);
+            println!("{}", flashes);
         }
     }
 }

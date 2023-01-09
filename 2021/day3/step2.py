@@ -3,7 +3,8 @@
 # --- Day 3: Binary Diagnostic ---
 # https://adventofcode.com/2021/day/3
 
-data = list(map(str.strip, open("input.txt").readlines()))
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+data = list(map(str.strip, open(filename).readlines()))
 
 
 should_start_with = ""

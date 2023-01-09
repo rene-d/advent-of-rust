@@ -90,7 +90,18 @@ impl fmt::Display for Password {
 
 /// main function
 fn main() {
-    let mut pwd: Password = Password::new("hepxcrrq");
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let data = std::fs::read_to_string(filename)
+        .unwrap()
+        .trim()
+        .to_string();
+
+    let mut pwd: Password = Password::new(&data);
 
     // println!("init:  {}", pwd);
 

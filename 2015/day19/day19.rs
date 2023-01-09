@@ -79,6 +79,10 @@ impl Puzzle {
                 }
             }
             iterations += 1;
+
+            if iterations > 10000 {
+                return 0;
+            }
         }
 
         iterations

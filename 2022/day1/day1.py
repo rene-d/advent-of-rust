@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # [Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)
 
-lines = open("input.txt").readlines()
+import sys
+
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+lines = open(filename).readlines()
 lines.append("")
 
 energy = 0
