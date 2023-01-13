@@ -21,6 +21,10 @@ CHARSET_5X6 = {
     "#..#. #..#. #..#. #..#. #..#. .##..": "U",
     "#...# #...# .#.#. ..#.. ..#.. ..#..": "Y",
     "####. ...#. ..#.. .#... #.... ####.": "Z",
+    #
+    "###.. #..#. #..#. #..#. #..#. ###..": "D",
+    "..... ..... ..... ..... ..... .....": " ",
+    ".##.. #..#. ..#.. ..#.. ..... ..#..": "?",
 }
 
 
@@ -29,7 +33,7 @@ def ocr(t):
     t = ["." + line + "." for line in t if line.count(".") != len(line)]
     if len(t) < 6:
         return ""
-    w = min(len(line) for line in t)
+    w = max(len(line) for line in t)
     s = ""
     x = 0
     while x < w - 4:
@@ -44,5 +48,15 @@ def ocr(t):
 
 
 def display(text):
+    question_mark = ".##.. #..#. ..#.. ..#.. ..... ..#..".split(" ")
     alph = dict((v, k.split(" ")) for k, v in CHARSET_5X6.items())
-    return "\n".join("".join(alph[c][y] for c in text) for y in range(6))
+    return "\n".join("".join(alph.get(c, question_mark)[y] for c in text) for y in range(6))
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) > 1:
+        print(display(sys.argv[1].upper()))
+    else:
+        print(ocr(sys.stdin.read()))

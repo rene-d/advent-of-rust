@@ -1,6 +1,7 @@
 //! [Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/day/10)
 
 use clap::Parser;
+use phf::phf_map;
 
 #[derive(Parser)]
 struct Args {
@@ -77,17 +78,73 @@ fn main() {
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    // println!("{}", puzzle.part2());
+    println!("{}", ocr(&puzzle.part2()));
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
-    assert_eq!(puzzle.part1(), 13140);
-    assert_eq!(
-        puzzle.part2(),
-        "\
+static CHARSET_5X6: phf::Map<&'static str, char> = phf_map! {
+    ".##.. #..#. #..#. ####. #..#. #..#." => 'A',
+    "###.. #..#. ###.. #..#. #..#. ###.." => 'B',
+    ".##.. #..#. #.... #.... #..#. .##.." =>'C',
+    "####. #.... ###.. #.... #.... ####." =>'E',
+    "####. #.... ###.. #.... #.... #...." => 'F',
+    ".##.. #..#. #.... #.##. #..#. .###." => 'G',
+    "#..#. #..#. ####. #..#. #..#. #..#." => 'H',
+    ".###. ..#.. ..#.. ..#.. ..#.. .###." => 'I',
+    "..##. ...#. ...#. ...#. #..#. .##.." => 'J',
+    "#..#. #.#.. ##... #.#.. #.#.. #..#." => 'K',
+    "#.... #.... #.... #.... #.... ####." => 'L',
+    ".##.. #..#. #..#. #..#. #..#. .##.." => 'O',
+    "###.. #..#. #..#. ###.. #.... #...." => 'P',
+    "###.. #..#. #..#. ###.. #.#.. #..#." => 'R',
+    ".###. #.... #.... .##.. ...#. ###.." => 'S',
+    "#..#. #..#. #..#. #..#. #..#. .##.." => 'U',
+    "#...# #...# .#.#. ..#.. ..#.. ..#.." => 'Y',
+    "####. ...#. ..#.. .#... #.... ####." => 'Z',
+};
+
+fn ocr(text: &str) -> String {
+    let lines = text.lines().collect::<Vec<&str>>();
+
+    let width = lines.iter().map(|x| x.len()).min().unwrap();
+
+    let mut x = 0;
+    let mut result = String::new();
+
+    while x < width - 5 + 1 {
+        let key = (0..6)
+            .map(|y| &lines[y][x..(x + 5)])
+            .collect::<Vec<&str>>()
+            .join(" ");
+
+        if let Some(letter) = CHARSET_5X6.get(&key) {
+            result.push(*letter);
+            x += 5;
+        } else {
+            x += 1;
+        }
+    }
+
+    result
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn test_part1() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("test.txt");
+        assert_eq!(puzzle.part1(), 13140);
+    }
+
+    #[test]
+    fn test_part2() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("test.txt");
+        assert_eq!(
+            puzzle.part2(),
+            "\
 ##..##..##..##..##..##..##..##..##..##..
 ###...###...###...###...###...###...###.
 ####....####....####....####....####....
@@ -95,5 +152,19 @@ fn test01() {
 ######......######......######......####
 #######.......#######.......#######.....
 "
-    );
+        );
+    }
+
+    #[test]
+    fn test_ocr() {
+        let crt = "\
+####.#..#.###..####.#....###....##.###..
+#....#..#.#..#....#.#....#..#....#.#..#.
+###..####.###....#..#....#..#....#.#..#.
+#....#..#.#..#..#...#....###.....#.###..
+#....#..#.#..#.#....#....#.#..#..#.#.#..
+####.#..#.###..####.####.#..#..##..#..#.
+";
+        assert_eq!(ocr(crt), "EHBZLRJR");
+    }
 }
