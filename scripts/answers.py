@@ -13,7 +13,7 @@ import logging
 
 
 class AocSession:
-    last_submit_time = 0
+    last_submit_time = 0  # submissions must be at least 5 seconds apart
     rootdir = Path(__file__).parent.parent
 
     def __init__(self, session, force_update=False, dry_run=False) -> None:
@@ -24,11 +24,13 @@ class AocSession:
         self.dry_run = dry_run
         self.db = sqlite3.connect(self.data_dir / "cache.db")
 
-        self.db.execute("create table if not exists cache (url text,user text,last_modified date,content text)")
-        self.db.execute(
-            "create table if not exists answers (user text,year integer,day integer,language text, st_mtime float,part1 text,part2 text)"
+        self.db.executescript(
+            """
+            create table if not exists cache (url text,user text,last_modified date,content text);
+            create table if not exists answers (user text,year integer,day integer,language text, st_mtime float,part1 text,part2 text);
+            create unique index if not exists answers_idx on answers (user,year,day,language);
+            """
         )
-        self.db.execute("create unique index if not exists answers_idx on answers (user,year,day,language)")
 
         if isinstance(session, tuple):
             self.user, cookie = session
@@ -43,15 +45,19 @@ class AocSession:
             r_text = self.get("https://adventofcode.com/settings").decode()
 
             m = re.search(r'<div class="user">(.+?)\s*<', r_text)
-            user = m[1]
-
-            m = re.search(r"<span>\(anonymous user #(\d+)\)</span>", r_text)
-            user_id = m[1]
-
-            if "anonymous user" in user:
-                self.user = f"anon-{user_id}"
+            if m is None:
+                logging.error(f"Cannot retrieve session {cookie}")
+                self.user = "unknown"
             else:
-                self.user = user
+                user = m[1]
+
+                m = re.search(r"<span>\(anonymous user #(\d+)\)</span>", r_text)
+                user_id = m[1]
+
+                if "anonymous user" in user:
+                    self.user = f"anon-{user_id}"
+                else:
+                    self.user = user
 
         self.user_dir = self.data_dir / self.user
         self.user_dir.mkdir(parents=True, exist_ok=True)
@@ -92,7 +98,7 @@ class AocSession:
 
         return r.content
 
-    def is_available(self, year, day):
+    def is_available(year, day):
         now = datetime.utcnow()
         if (year > now.year) or (year == now.year and (now.month < 12 or now.day < day or (day == now.day and now.hour < 5))):
             return False
@@ -102,12 +108,19 @@ class AocSession:
         def wrapper(self, year=None, day=None):
             if year is None:
                 now = datetime.utcnow()
-                for year in range(2015, now.year + 1):
+                last_year = now.year
+                if AocSession.is_available(last_year, 1):
+                    last_year += 1
+                for year in range(2015, last_year):
                     wrapper(self, year, day)
             elif day is None:
+                # iterate over every days
                 for day in range(1, 26):
                     wrapper(self, year, day)
-            elif self.is_available(year, day):
+            elif day == 0:
+                # special case to iterate only on years
+                return func(self, year, 0)
+            elif AocSession.is_available(year, day):
                 return func(self, year, day)
 
         return wrapper
@@ -142,7 +155,7 @@ class AocSession:
         return stars.get(day, 0)
 
     @iter_all
-    def get_answers(self, year=None, day=None, force_update=False):
+    def get_answers(self, year=None, day=None):
         nb_stars = self.get_stars(year, day)
 
         if nb_stars > 0:
@@ -164,9 +177,12 @@ class AocSession:
                 if len(answers) > 0:
                     f.parent.mkdir(parents=True, exist_ok=True)
                     f.write_text("\n".join(answers) + "\n")
+
                     print(f"{self.prefix} Stars for {year} day {day}: {'⭐'*nb_stars}")
 
             return f
+
+        # print(f"{self.prefix} Stars for {year} day {day}: ⃞⃞")
 
     @iter_all
     def check(self, year=None, day=None):
@@ -284,38 +300,95 @@ class AocSession:
         run(f"{year}/target/release/day{day}", "Rust")
         run(f"{year}/day{day}/day{day}.py", "Python")
 
+    @iter_all
+    def print_stars(self, year=None, day=None):
+        nb_stars = self.get_stars(year, day)
+        print(f"{self.prefix} Stars for {year} day {day:2}: {'⭐'*nb_stars}")
+
+    def print_stars_year(self, year=None):
+        @AocSession.iter_all
+        def iterate(self, year, day):
+            nb_stars = sum(self.get_stars(year, day) for day in range(1, 26))
+            print(f"{self.prefix} Stars for {year}: {nb_stars:2}⭐")
+
+        iterate(self, year, 0)
+
 
 def main():
-    logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.DEBUG)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-y", "--year", type=int)
-    parser.add_argument("-d", "--day", type=int)
-    parser.add_argument("-s", "--session", type=str)
-    parser.add_argument("-u", "--update", action="store_true")
-    parser.add_argument("-n", "--dry-run", action="store_true")
+    parser.add_argument("-v", "--verbose", action="store_true", help="show request details")
+    parser.add_argument("-y", "--year", type=int, help="optional day, automatic if in ./\033[3mYEAR\033[0m")
+    parser.add_argument("-d", "--day", type=int, help="optional day, automatic if in ./\033[3mYEAR\033[0m/day\033[3mDAY\033[0m")
+    parser.add_argument("-s", "--session", type=str, help="session cookie")
+    parser.add_argument("--user", type=str, help="user")
+    parser.add_argument("-u", "--update", action="store_true", help="force update")
+    parser.add_argument("-n", "--dry-run", action="store_true", help="do nothing")
+    parser.add_argument("--dstars", action="store_true", help="show stars for each day")
+    parser.add_argument("--ystars", action="store_true", help="show stars by year")
     args = parser.parse_args()
+
+    if args.verbose:
+        logging.basicConfig(format="\033[2m%(asctime)s - %(levelname)s - %(message)s\033[0m", level=logging.DEBUG)
 
     sessions = AocSession.get_sessions()
 
     if args.session:
+        sessions.clear()
         sessions.append(args.session)
+
+    cwd = Path.cwd()
+    if cwd.name.startswith("day") and args.day is None:
+        args.year = int(cwd.parent.name)
+        args.day = int(cwd.name[3:])
+    if cwd.name.isdigit() and args.year is None:
+        args.year = int(cwd.name)
+
+    if args.dstars:
+
+        users = []
+
+        for session in sessions:
+            sess = AocSession(session, args.update, args.dry_run)
+            if args.user and sess.user != args.user:
+                continue
+            users.append(sess)
+
+        @AocSession.iter_all
+        def show_year(_self, year, _day):
+            stars = {}
+            for sess in users:
+                stars[sess.user] = []
+                for day in range(1, 26):
+                    stars[sess.user].append(sess.get_stars(year, day))
+
+            row = "|".join(f"\033[1;36m{sess.user:^12}\033[0m" for sess in users)
+            print(f"  {year} |{row}")
+            separator = "+".join("-" * 12 for _ in users)
+            print(f"-------+{separator}")
+            for day in range(1, 26):
+                row = "|".join(f"\033[1;33m{'*' *  stars[sess.user][day-1]:^12}\033[0m" for sess in users)
+                print(f"day {day:2} |{row}")
+            print(f"-------+{separator}")
+            print()
+
+        show_year(None, args.year, 0)
+
+        exit()
 
     for session in sessions:
 
         sess = AocSession(session, args.update, args.dry_run)
 
-        # sess.get_input()
-        # sess.get_answers()
+        if args.user and sess.user != args.user:
+            continue
 
-        cwd = Path.cwd()
-        if cwd.name.startswith("day") and args.day is None:
-            args.year = int(cwd.parent.name)
-            args.day = int(cwd.name[3:])
-        if cwd.name.isdigit() and args.year is None:
-            args.year = int(cwd.name)
-
-        sess.check(year=args.year, day=args.day)
+        if args.dstars:
+            sess.print_stars(year=args.year, day=args.day)
+        elif args.ystars:
+            sess.print_stars_year(args.year)
+        else:
+            sess.check(year=args.year, day=args.day)
 
 
 if __name__ == "__main__":
