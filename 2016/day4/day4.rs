@@ -27,7 +27,7 @@ fn main() {
 fn part1(data: &str) -> u32 {
     let mut sum = 0;
 
-    for line in data.split('\n') {
+    for line in data.lines() {
         let (name, checksum, sector_id) = extract(line);
         if is_real_room(&name, &checksum) {
             sum += sector_id;
@@ -40,7 +40,7 @@ fn part1(data: &str) -> u32 {
 /// ``part2`` returns the sector id of the room with name ``northpole object``.
 /// if no such room is found, returns ``0``.
 fn part2(data: &str) -> u32 {
-    for line in data.split('\n') {
+    for line in data.lines() {
         let (name, _, sector_id) = extract(line);
 
         //  Nota: the full decrypted name of the room is "northpole object storage"

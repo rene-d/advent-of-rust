@@ -108,7 +108,7 @@ fn part2(data: &[String]) {
     }
     bar.finish();
 
-    println!("part2: {}", size);
+    println!("{}", size);
 }
 
 fn part1(data: &[String]) {
@@ -143,7 +143,7 @@ fn part1(data: &[String]) {
         }
     }
 
-    println!("part1: {}", cubes_on.len());
+    println!("{}", cubes_on.len());
 }
 
 // The output is wrapped in a Result to allow matching on errors

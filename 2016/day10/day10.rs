@@ -5,14 +5,20 @@ use std::collections::{HashMap, HashSet};
 
 /// `main` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let data = std::fs::read_to_string("input.txt").unwrap();
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
 
-    let data = data.split('\n').collect::<Vec<&str>>();
+    let data = std::fs::read_to_string(filename).unwrap();
+
+    let data = data.lines().collect::<Vec<&str>>();
 
     let (part1, part2) = solve(data);
 
-    println!("part1: {}", part1);
-    println!("part2: {}", part2);
+    println!("{}", part1);
+    println!("{}", part2);
 }
 
 /// `BotOutput`represents the output of a bot

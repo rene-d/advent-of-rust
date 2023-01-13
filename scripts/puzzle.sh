@@ -2,7 +2,12 @@
 
 set -euo pipefail
 
-year=2019
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 [day]"
+    exit
+fi
+
+year=$(basename $PWD)
 session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $(dirname $0)/../session)
 
 mkdir -p day$1

@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import argparse
 import re
+from functools import reduce
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
 from intcode.Intcode import Computer
@@ -25,6 +26,10 @@ computer.start()
 
 
 if not args.manual:
+
+    if reduce(lambda a, b: a ^ b, computer.program) != -2251798974787211:
+        print("work only for my puzzle input", file=sys.stderr)
+        exit(2)
 
     # explore the spacecraft and take items - works only for my puzzle input
     explore_cmds = (

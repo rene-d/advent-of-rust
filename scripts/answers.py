@@ -178,7 +178,7 @@ class AocSession:
                     f.parent.mkdir(parents=True, exist_ok=True)
                     f.write_text("\n".join(answers) + "\n")
 
-                    print(f"{self.prefix} Stars for {year} day {day}: {'⭐'*nb_stars}")
+                    print(f"{self.prefix} Stars for {year} day {day:2}: {'⭐'*nb_stars}")
 
             return f
 
@@ -249,11 +249,11 @@ class AocSession:
                 try:
                     parts = subprocess.check_output(cmd, stderr=subprocess.DEVNULL).decode().strip().split()
                 except (subprocess.CalledProcessError, PermissionError) as e:
-                    print(f"{self.prefix} Program for {year} day {day} in {language} \033[91mfailed\033[0m")
+                    print(f"{self.prefix} Program for {year} day {day:2} in {language} \033[91mfailed\033[0m")
                     parts = []
 
             if parts == answers and len(parts) > 0:
-                print(f"{self.prefix} Solution {year} day {day} in {language:<6} \033[92mok\033[0m")
+                print(f"{self.prefix} Solution {year} day {day:2} in {language:<6} \033[92mok\033[0m")
                 update_last_answers(parts)
                 return
 
@@ -264,7 +264,7 @@ class AocSession:
                     if (
                         not self.dry_run
                         and input(
-                            f"{self.prefix} Answer for {year} day {day} in part 2 missing: {parts[1]}. Submit it ({language}) (y/N) ? "
+                            f"{self.prefix} Answer for {year} day {day:2} in part 2 missing: {parts[1]}. Submit it ({language}) (y/N) ? "
                         )
                         == "y"
                     ):
@@ -276,12 +276,12 @@ class AocSession:
                         self.get_answers(year, day)
 
                 else:
-                    print(f"{self.prefix} {year} day {day} {language} \033[91merror\033[0m '{' '.join(cmd)}' {parts} != {answers}")
+                    print(f"{self.prefix} {year} day {day:2} {language} \033[91merror\033[0m '{' '.join(cmd)}' {parts} != {answers}")
 
             elif len(parts) > 0:
                 if (
                     not self.dry_run
-                    and input(f"{self.prefix} Answers for {year} day {day} missing: {parts}. Submit them ({language}) (y/N) ? ") == "y"
+                    and input(f"{self.prefix} Answers for {year} day {day:2} missing: {parts}. Submit them ({language}) (y/N) ? ") == "y"
                 ):
                     success = submit(1, parts[0])
                     if len(parts) >= 2:
