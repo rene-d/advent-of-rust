@@ -18,7 +18,7 @@ struct Puzzle {
     valves: HashMap<String, u8>,
     flow_rates: HashMap<u8, u32>,
     tunnels: HashMap<u8, Vec<u8>>,
-    distances: [[u32; 64]; 64],
+    distances: [[u32; 128]; 128],
 }
 
 impl Puzzle {
@@ -27,7 +27,7 @@ impl Puzzle {
             valves: HashMap::new(),
             flow_rates: HashMap::new(),
             tunnels: HashMap::new(),
-            distances: [[0u32; 64]; 64],
+            distances: [[0u32; 128]; 128],
         }
     }
 
@@ -54,9 +54,9 @@ impl Puzzle {
             }
         }
 
-        // since we use a u64 bitfield for list of valves, there can be no more than 64
-        // and valve ID are between 0 and 63 included
-        assert!(self.valves.len() <= 64);
+        // since we use a u128 bitfield for list of valves, there can be no more than 64
+        // and valve ID are between 0 and127 included
+        assert!(self.valves.len() <= 128);
 
         // precompute distance between valves
         let max_id = self.valves.len();
@@ -72,16 +72,16 @@ impl Puzzle {
         self.distances[a as usize][b as usize]
     }
 
-    fn calc_dist(&self, a: u8, b: u8, visited: u64) -> u32 {
+    fn calc_dist(&self, a: u8, b: u8, visited: u128) -> u32 {
         let d = self.distance(a, b);
         if d != 0 {
             d
         } else if a == b {
             0
-        } else if (1u64 << b) & visited != 0 {
+        } else if (1u128 << b) & visited != 0 {
             u32::MAX - 1
         } else {
-            let b_visited = visited + (1u64 << b);
+            let b_visited = visited + (1u128 << b);
 
             self.tunnels[&b]
                 .iter()
@@ -95,7 +95,7 @@ impl Puzzle {
     /// Returns the valve ID with its name or create a new ID.
     fn valve_id_new(&mut self, name: &str) -> u8 {
         let next_id = self.valves.len() as u8;
-        assert!(next_id <= 63);
+        assert!(next_id <= 127);
         *self.valves.entry(name.to_string()).or_insert(next_id)
     }
 
@@ -145,9 +145,9 @@ impl Puzzle {
     fn max_flow(
         &self,
         valve: u8,
-        opened: u64,
+        opened: u128,
         time_left: u32,
-        seen: &mut HashMap<(u8, u64, u32), u32>,
+        seen: &mut HashMap<(u8, u128, u32), u32>,
     ) -> u32 {
         if let Some(e) = seen.get(&(valve, opened, time_left)) {
             return *e;
@@ -159,10 +159,10 @@ impl Puzzle {
 
         let mut best = 0;
 
-        if (opened & (1u64 << valve)) == 0 {
+        if (opened & (1u128 << valve)) == 0 {
             if let Some(flow) = self.flow_rates.get(&valve) {
                 best = (time_left - 1) * flow
-                    + self.max_flow(valve, opened | (1u64 << valve), time_left - 1, seen);
+                    + self.max_flow(valve, opened | (1u128 << valve), time_left - 1, seen);
             }
         }
 
@@ -197,21 +197,21 @@ impl Puzzle {
         let partitions = 1u32 << (self.flow_rates.len() - 1);
         for partition in 0..partitions {
             // bit value 1 is for me
-            let me: u64 = self
+            let me: u128 = self
                 .flow_rates
                 .iter()
                 .enumerate()
                 .filter(|(bit, _)| (partition & (1 << bit) != 0))
-                .map(|(_, (valve, _))| 1u64 << *valve)
+                .map(|(_, (valve, _))| 1u128 << *valve)
                 .sum();
 
             // bit value 0 is for the elehant
-            let elephant: u64 = self
+            let elephant: u128 = self
                 .flow_rates
                 .iter()
                 .enumerate()
                 .filter(|(bit, _)| (partition & (1 << bit) == 0))
-                .map(|(_, (valve, _))| 1u64 << *valve)
+                .map(|(_, (valve, _))| 1u128 << *valve)
                 .sum();
 
             let best_me = self.max_flow_valves(start_valve, 26, me);
@@ -222,7 +222,7 @@ impl Puzzle {
         best
     }
 
-    fn max_flow_valves<'a>(&self, valve: u8, time_left: u32, nodes: u64) -> u32 {
+    fn max_flow_valves<'a>(&self, valve: u8, time_left: u32, nodes: u128) -> u32 {
         if time_left <= 1 {
             return 0;
         }
@@ -243,7 +243,7 @@ impl Puzzle {
 
                     best = best.max(
                         time * self.flow_rates[&node]
-                            + self.max_flow_valves(node, time, nodes & !(1u64 << node)),
+                            + self.max_flow_valves(node, time, nodes & !(1u128 << node)),
                     );
                 }
             }
