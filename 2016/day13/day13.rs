@@ -24,7 +24,14 @@ impl Ord for State {
 }
 
 fn main() {
-    let data = std::fs::read_to_string("input.txt").unwrap();
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let data = std::fs::read_to_string(filename).unwrap();
+    let data = data.trim();
     let designer_number = data.parse::<i32>().unwrap();
 
     println!("{}", shortest_path((31, 39), designer_number));

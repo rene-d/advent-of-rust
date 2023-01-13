@@ -24,31 +24,31 @@ def scan_cell(x, y):
 
 
 N = 50
-scan_range = (0, N)
+last_row = (0, -1)
 Row = namedtuple("Row", ("y", "x1", "x2"))
 
 
 def scan_row(y, XMAX=N) -> Row:
-    global scan_range
+    global last_row
 
     # follow the edges of the beam
-    # the next row starts and finishs on the same columns of the previous one
-    x1, x2 = XMAX, 0
-    x = scan_range[0]
-    while x < scan_range[1]:
-        if scan_cell(x, y) == 1:
-            x1 = min(x1, x)
-            if 4 < scan_range[1] < XMAX and x < scan_range[1] - 2:
-                x = scan_range[1] - 2
-            x2 = max(x2, x)
-        x += 1
+    x1, x2 = last_row
+
+    while scan_cell(x1, y) == 0 and x1 < XMAX:
+        x1 += 1
+
+    if x1 == XMAX:
+        # nothing found on the line
+        return
 
     if x1 > x2:
-        # nothing found on the line
-        scan_range = (scan_range[0], scan_range[1] + 1)
-    else:
-        scan_range = (x1, x2 + 2)
-        return Row(y, x1, x2)
+        x2 = x1
+    while x2 < XMAX and scan_cell(x2, y) == 1:
+        x2 += 1
+
+    last_row = (x1, x2 - 1)
+
+    return Row(y, x1, x2 - 1)
 
 
 # part 1
@@ -57,8 +57,9 @@ for y in range(N):
     row = scan_row(y, N)
     if row:
         count += row.x2 - row.x1 + 1
+    if sys.stdout.isatty():
+        print(f"{y:2}", "".join(".#"[scan_cell(x, y)] for x in range(N)), row)
 print(count)
-
 
 SQUARE = 100
 grid = []

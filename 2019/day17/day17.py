@@ -37,7 +37,7 @@ print(part1)
 
 # part 2
 if sum(aft.program) != 2170216:
-    print("find your own solution")
+    print("part2: find your own solution", file=sys.sdterr)
     exit(0)
 aft.flush_io()
 aft.start()

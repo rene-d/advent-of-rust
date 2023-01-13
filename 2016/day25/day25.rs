@@ -26,7 +26,13 @@ fn run_clock_signal(bunny_vm: &mut BunnyVM, a: i32) -> bool {
 }
 
 fn main() {
-    let data = std::fs::read_to_string("input.txt").unwrap();
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let data = std::fs::read_to_string(filename).unwrap();
 
     let mut bunny_vm = BunnyVM::new(&data);
 

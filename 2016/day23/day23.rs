@@ -1,8 +1,7 @@
 //! [Day 23: Safe Cracking](https://adventofcode.com/2016/day/23)
 
 use assembunny::{BunnyVM, REG_A};
-use num_traits::cast::FromPrimitive;
-use std::time::Instant;
+// use std::time::Instant;
 
 fn compute_until_safe(a: i32, program: &str) -> i32 {
     let mut program = BunnyVM::new(program);
@@ -19,14 +18,14 @@ fn compute_until_safe(a: i32, program: &str) -> i32 {
 fn main() {
     let data = aoc::load_input_data(23);
 
-    let now = Instant::now();
+    // let now = Instant::now();
 
     println!("{}", compute_until_safe(7, &data));
 
     println!("{}", compute_until_safe(12, &data));
 
-    let micros = f64::from_u128(now.elapsed().as_micros()).unwrap();
-    println!("elapsed: {} s", micros / 1_000_000.);
+    // let micros = f64::from_u128(now.elapsed().as_micros()).unwrap();
+    // println!("elapsed: {} s", micros / 1_000_000.);
 }
 
 #[test]

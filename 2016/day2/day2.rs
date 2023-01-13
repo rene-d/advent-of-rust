@@ -21,7 +21,7 @@ fn part1(data: &str) -> String {
     let mut x = 1_u8; // position on the 3x3 grid
     let mut y = 1_u8; // starting at the middle of the grid
 
-    for line in data.split('\n') {
+    for line in data.lines() {
         for c in line.chars() {
             match c {
                 'U' => y = y.saturating_sub(1),
@@ -53,7 +53,7 @@ fn part2(data: &str) -> String {
     let mut bathroom_code = String::new();
     let mut pos = '5';
 
-    for line in data.split('\n') {
+    for line in data.lines() {
         for c in line.chars() {
             pos = match pos {
                 '1' => match c {

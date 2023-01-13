@@ -1,20 +1,26 @@
 //! [Day 14: One-Time Pad](https://adventofcode.com/2016/day/14)
 
 use std::collections::HashMap;
-use std::time::Instant;
+// use std::time::Instant;
 
 /// Solve the day 14 puzzle.
 fn main() {
-    let data = std::fs::read_to_string("input.txt").unwrap();
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let data = std::fs::read_to_string(filename).unwrap();
     let data = data.trim();
 
-    let now = Instant::now();
+    // let now = Instant::now();
 
     println!("{}", solve(data, 0));
     println!("{}", solve(data, 2016));
 
-    let micros = now.elapsed().as_micros();
-    println!("elapsed: {}.{:06} s", micros / 1_000_000, micros % 1_000_000);
+    // let micros = now.elapsed().as_micros();
+    // println!("elapsed: {}.{:06} s", micros / 1_000_000, micros % 1_000_000);
 }
 
 /// Triplet for a given index.
