@@ -3,16 +3,17 @@
 #![allow(clippy::manual_memcpy)]
 #![allow(clippy::needless_range_loop)] // assumed. code is much clearer
 
+use phf::phf_map;
 use regex::Regex;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
     let data = aoc::load_input_data(8);
 
-    println!("{}", part1(&data));
+    solve(&data);
 }
 
-fn part1(data: &str) -> usize {
+fn solve(data: &str) {
     const WIDTH: usize = 50;
     const HEIGHT: usize = 6;
 
@@ -66,22 +67,64 @@ fn part1(data: &str) -> usize {
     }
 
     let mut lit = 0;
+    let mut crt = String::new();
     for y in 0..HEIGHT {
         for x in 0..WIDTH {
-            print!(
-                "{}",
-                if grid[y][x] {
-                    lit += 1;
-                    '#'
-                } else {
-                    '.'
-                }
-            );
+            if grid[y][x] {
+                lit += 1;
+                crt.push('#');
+            } else {
+                crt.push('.');
+            }
         }
-        println!();
+        crt.push('\n');
     }
 
-    lit
+    println!("{}", lit); // part 1
+    println!("{}", ocr(&crt)); // part 2
 }
 
 // UPOJFLBCEZ
+
+static CHARSET_5X6: phf::Map<&'static str, char> = phf_map! {
+    ".##.. #..#. #..#. ####. #..#. #..#." => 'A',
+    "###.. #..#. ###.. #..#. #..#. ###.." => 'B',
+    ".##.. #..#. #.... #.... #..#. .##.." =>'C',
+    "####. #.... ###.. #.... #.... ####." =>'E',
+    "####. #.... ###.. #.... #.... #...." => 'F',
+    ".##.. #..#. #.... #.##. #..#. .###." => 'G',
+    "#..#. #..#. ####. #..#. #..#. #..#." => 'H',
+    ".###. ..#.. ..#.. ..#.. ..#.. .###." => 'I',
+    "..##. ...#. ...#. ...#. #..#. .##.." => 'J',
+    "#..#. #.#.. ##... #.#.. #.#.. #..#." => 'K',
+    "#.... #.... #.... #.... #.... ####." => 'L',
+    ".##.. #..#. #..#. #..#. #..#. .##.." => 'O',
+    "###.. #..#. #..#. ###.. #.... #...." => 'P',
+    "###.. #..#. #..#. ###.. #.#.. #..#." => 'R',
+    ".###. #.... #.... .##.. ...#. ###.." => 'S',
+    "#..#. #..#. #..#. #..#. #..#. .##.." => 'U',
+    "#...# #...# .#.#. ..#.. ..#.. ..#.." => 'Y',
+    "####. ...#. ..#.. .#... #.... ####." => 'Z',
+};
+
+fn ocr(text: &str) -> String {
+    let lines = text.lines().collect::<Vec<&str>>();
+
+    let width = lines.iter().map(|x| x.len()).min().unwrap();
+
+    let mut x = 0;
+    let mut result = String::new();
+
+    while x < width - 5 + 1 {
+        let key = (0..6).map(|y| &lines[y][x..(x + 5)]).collect::<Vec<&str>>().join(" ");
+
+        if let Some(letter) = CHARSET_5X6.get(&key) {
+            result.push(*letter);
+            x += 5;
+        } else {
+            x += 1;
+        }
+    }
+
+    result
+}
