@@ -5,7 +5,7 @@ use regex::Regex;
 use std::convert::TryFrom;
 
 lazy_static! {
-    /// Regex that mtches a line of input
+    /// Regex that matches a line of input
     static ref RE_INPUT: Regex = Regex::new(r"([\w-]+)\-(\d+)\[(\w+)\]").unwrap();
 }
 

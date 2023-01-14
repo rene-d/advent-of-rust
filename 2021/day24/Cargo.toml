@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-structopt = "0.3"
-regex = "1"
-rand = "0.8.4"
+structopt = "0.3.26"
+regex = "1.7.1"
+rand = "0.8.5"
 
 [[bin]]
 name = "day24"

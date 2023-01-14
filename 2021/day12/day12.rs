@@ -75,7 +75,7 @@ fn main() {
         "input.txt".to_string()
     };
 
-    let data = std::fs::read_to_string(&filename).unwrap();
+    let data = std::fs::read_to_string(filename).unwrap();
     let data = data.lines().collect::<Vec<_>>();
 
     let small_once = compute_paths(&data, false);

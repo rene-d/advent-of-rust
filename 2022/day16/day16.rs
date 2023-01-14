@@ -108,8 +108,7 @@ impl Puzzle {
     fn valve_name(&self, valve_id: u8) -> &str {
         self.valves
             .iter()
-            .filter(|x| *x.1 == valve_id)
-            .next()
+            .find(|x| *x.1 == valve_id)
             .unwrap()
             .0
     }
@@ -127,14 +126,14 @@ impl Puzzle {
                 println!(
                     "Valve {} has flow rate={}; tunnel leads to valve {}",
                     name,
-                    self.flow_rates.get(id).or(Some(&0)).unwrap(),
+                    self.flow_rates.get(id).unwrap_or(&0),
                     remotes
                 );
             } else {
                 println!(
                     "Valve {} has flow rate={}; tunnels lead to valves {}",
                     name,
-                    self.flow_rates.get(id).or(Some(&0)).unwrap(),
+                    self.flow_rates.get(id).unwrap_or(&0),
                     remotes
                 );
             }
@@ -222,7 +221,7 @@ impl Puzzle {
         best
     }
 
-    fn max_flow_valves<'a>(&self, valve: u8, time_left: u32, nodes: u128) -> u32 {
+    fn max_flow_valves(&self, valve: u8, time_left: u32, nodes: u128) -> u32 {
         if time_left <= 1 {
             return 0;
         }

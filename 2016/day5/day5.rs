@@ -4,6 +4,7 @@
 // use std::time::Instant;
 
 use indicatif::{ProgressBar, ProgressStyle};
+use std::time::Duration;
 
 const TICK_CHARS: &str = "\u{280b}\u{2819}\u{2839}\u{2838}\u{283c}\u{2834}\u{2826}\u{2827}\u{2807}\u{280f} ";
 
@@ -33,11 +34,12 @@ fn part1(door_id: &str) -> String {
     let mut found = 0;
 
     let pb = ProgressBar::new_spinner();
-    pb.enable_steady_tick(200);
+    pb.enable_steady_tick(Duration::from_millis(200));
     pb.set_style(
         ProgressStyle::default_spinner()
             .tick_chars(TICK_CHARS)
-            .template("  {prefix:.bold.dim} {spinner} {wide_msg}"),
+            .template("  {prefix:.bold.dim} {spinner} {wide_msg}")
+            .unwrap(),
     );
     pb.set_prefix("cracking password");
 
@@ -72,11 +74,12 @@ fn part2(door_id: &str) -> String {
     let mut remaining = 8;
 
     let pb = ProgressBar::new_spinner();
-    pb.enable_steady_tick(200);
+    pb.enable_steady_tick(Duration::from_millis(200));
     pb.set_style(
         ProgressStyle::default_spinner()
             .tick_chars(TICK_CHARS)
-            .template("  {prefix:.bold.dim} {spinner} {wide_msg}"),
+            .template("  {prefix:.bold.dim} {spinner} {wide_msg}")
+            .unwrap(),
     );
     pb.set_prefix("cracking password");
 

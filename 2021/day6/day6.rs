@@ -36,7 +36,7 @@ fn lanterfishes(initial: &[u64; 9], days: u64) {
                 new[6] += *timer;
                 new[8] += *timer;
             } else {
-                new[(i - 1) as usize] += *timer;
+                new[i - 1] += *timer;
             }
         }
         timers = new;

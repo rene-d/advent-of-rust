@@ -50,7 +50,7 @@ fn main() {
                 '.' => PIXEL_OFF,
                 _ => panic!("invalid input"),
             };
-            grid[offset_y + y as usize][offset_x + x as usize] = pixel;
+            grid[offset_y + y][offset_x + x] = pixel;
         }
     }
 
