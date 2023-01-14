@@ -1,11 +1,8 @@
 //! [Day 12: Passage Pathing](https://adventofcode.com/2021/day/12)
 
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
 
-fn compute_paths(data: &[std::string::String], small_twice: bool) -> u32 {
+fn compute_paths(data: &[&str], small_twice: bool) -> u32 {
     // Map containing each cave and its neighbors as a list
     let mut map: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -72,7 +69,14 @@ fn compute_paths(data: &[std::string::String], small_twice: bool) -> u32 {
 
 /// main function
 fn main() {
-    let data = load_data("input.txt");
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
+
+    let data = std::fs::read_to_string(&filename).unwrap();
+    let data = data.lines().collect::<Vec<_>>();
 
     let small_once = compute_paths(&data, false);
     let small_twice = compute_paths(&data, true);
@@ -81,26 +85,52 @@ fn main() {
     println!("{}", small_twice);
 }
 
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
+#[test]
+fn test_slightly_larger() {
+    let data = "\
+dc-end
+HN-start
+start-kj
+dc-start
+dc-HN
+LN-dc
+HN-end
+kj-sa
+kj-HN
+kj-dc
+"
+    .lines()
+    .collect::<Vec<_>>();
+
+    assert_eq!(compute_paths(&data, false), 19);
+    assert_eq!(compute_paths(&data, true), 103);
 }
 
-/// load data from file
-fn load_data<P>(path: P) -> Vec<String>
-where
-    P: AsRef<Path>,
-{
-    let mut data = vec![];
-    if let Ok(lines) = read_lines(path) {
-        for line in lines.flatten() {
-            data.push(line);
-        }
-    }
-    data
+#[test]
+fn test_even_larger() {
+    let data = "\
+fs-end
+he-DX
+fs-he
+start-DX
+pj-DX
+end-zg
+zg-sl
+zg-pj
+pj-he
+RW-he
+fs-DX
+pj-RW
+zg-RW
+start-pj
+he-WI
+zg-he
+pj-fs
+start-RW
+"
+    .lines()
+    .collect::<Vec<_>>();
+
+    assert_eq!(compute_paths(&data, false), 226);
+    assert_eq!(compute_paths(&data, true), 3509);
 }

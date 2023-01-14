@@ -186,13 +186,6 @@ class AocSession:
 
     @iter_all
     def check(self, year=None, day=None):
-
-        n = self.get_stars(year, day)
-        if n >= 1:
-            answers = self.get_answers(year, day).read_text().splitlines()
-        else:
-            answers = None
-
         def submit(level, answer):
             url = f"https://adventofcode.com/{year}/day/{day}/answer"
 
@@ -218,6 +211,12 @@ class AocSession:
             return result == "SUCCESS"
 
         def run(p, language):
+            nb_stars = self.get_stars(year, day)
+            if nb_stars >= 1:
+                answers = self.get_answers(year, day).read_text().splitlines()
+            else:
+                answers = None
+
             p = self.rootdir / Path(p)
             if not p.exists():
                 return
@@ -281,7 +280,8 @@ class AocSession:
             elif len(parts) > 0:
                 if (
                     not self.dry_run
-                    and input(f"{self.prefix} Answers for {year} day {day:2} missing: {parts}. Submit them ({language}) (y/N) ? ") == "y"
+                    and input(f"{self.prefix} Answers for {year} day {day:2} are missing: {parts}. Submit them ({language}) (y/N) ? ")
+                    == "y"
                 ):
                     success = submit(1, parts[0])
                     if len(parts) >= 2:
