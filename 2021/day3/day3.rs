@@ -103,10 +103,9 @@ fn part1(data: &[String]) -> i32 {
         nb += 1;
     }
 
-    for i in 0..width {
-        let freq = freq_list[i];
+    for freq in freq_list.iter().take(width) {
         gamma_rate *= 2;
-        if freq >= nb / 2 {
+        if *freq >= nb / 2 {
             gamma_rate += 1;
         }
     }

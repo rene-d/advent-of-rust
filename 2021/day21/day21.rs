@@ -1,7 +1,6 @@
 //! [Day 21: Dirac Dice](https://adventofcode.com/2021/day/21)
 
 use std::collections::HashMap;
-use std::env;
 
 fn main() {
     let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
@@ -10,7 +9,7 @@ fn main() {
         "input.txt".to_string()
     };
 
-    let data = std::fs::read_to_string(&filename).unwrap();
+    let data = std::fs::read_to_string(filename).unwrap();
     let mut data = data.lines();
 
     let player = data

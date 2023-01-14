@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
 use std::fs;
-use std::time::Instant;
+// use std::time::Instant;
 use structopt::StructOpt;
 
 /// parse command line arguments

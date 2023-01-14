@@ -54,7 +54,7 @@ impl Puzzle {
         for insertion_rule in data {
             let mut halves = insertion_rule.split(" -> ");
             let first = halves.next().unwrap().to_string();
-            let first_elem = (first.chars().nth(0).unwrap(), first.chars().nth(1).unwrap());
+            let first_elem = (first.chars().next().unwrap(), first.chars().nth(1).unwrap());
             let second = halves.next().unwrap().parse::<char>().unwrap();
             self.elements.insert(second);
             self.elements.insert(first_elem.0);
@@ -76,7 +76,7 @@ impl Puzzle {
             let mut polymer_new = String::new();
             for index in 0..polymer.len() - 1 {
                 let slice = polymer.get(index..=index + 1).unwrap();
-                polymer_new.push(slice.chars().nth(0).unwrap());
+                polymer_new.push(slice.chars().next().unwrap());
                 if let Some(rule) = self.generator.get(slice) {
                     polymer_new.push(rule.output);
                 }

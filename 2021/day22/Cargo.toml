@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-structopt = "0.3"
-regex = "1"
-indicatif = "0.16.2"
+structopt = "0.3.26"
+regex = "1.7.1"
+indicatif = "0.17.2"
 
 [[bin]]
 name = "day22"

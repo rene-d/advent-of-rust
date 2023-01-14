@@ -31,8 +31,8 @@ fn main() {
     }
 
     // step 1
-    // println!("{:?}", min_cost_dp(&grid) - grid[0][0]);
-    println!("{:?}", min_cost(&grid) - grid[0][0]);
+    println!("{:?}", min_cost_dp(&grid) - grid[0][0]);
+    //println!("{:?}", min_cost(&grid) - grid[0][0]);
 
     // build the five times larger grid
     let mut grid5 = vec![vec![0i32; 5 * n]; 5 * n];

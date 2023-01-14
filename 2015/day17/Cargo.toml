@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-structopt = "0.3"
-permutator = "0.4.0"
+structopt = "0.3.26"
+permutator = "0.4.3"
 
 [[bin]]
 name = "day17"
