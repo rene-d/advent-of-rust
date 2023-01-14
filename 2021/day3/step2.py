@@ -3,6 +3,8 @@
 # --- Day 3: Binary Diagnostic ---
 # https://adventofcode.com/2021/day/3
 
+import sys
+
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = list(map(str.strip, open(filename).readlines()))
 
@@ -34,6 +36,7 @@ for i in range(len(data[0])):
             nb += 1
             if value[i] == "1":
                 one += 1
+            else:
                 rate = value
     if one >= nb - one:
         should_start_with += "0"
