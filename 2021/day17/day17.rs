@@ -1,6 +1,5 @@
 //! [Day 17: Trick Shot](https://adventofcode.com/2021/day/17)
 
-use std::cmp::Ordering;
 use std::env;
 use std::fs;
 use text_io::scan;
@@ -41,8 +40,8 @@ fn main() {
     let mut part1 = 0;
     let mut part2 = 0;
 
-    for vx0 in 0..1000 {
-        for vy0 in -200..1000 {
+    for vx0 in 0..300 {
+        for vy0 in -300..2000 {
             let mut hit = false;
             let mut y_max = 0;
 
@@ -52,33 +51,35 @@ fn main() {
             let mut vx = vx0;
             let mut vy = vy0;
 
-            for _ in 0..1000 {
+            for _ in 0..2000 {
                 x += vx; // probe's x position increases by its x velocity
                 y += vy; // probe's y position increases by its y velocity
 
-                if y > y_max {
-                    y_max = y; // the highest y position
-                }
+                y_max = y_max.max(y); // the highest y position
 
-                // Decrement the velocity of the probe
-                match vx.cmp(&0) {
-                    Ordering::Greater => vx -= 1,
-                    Ordering::Less => vx += 1,
-                    Ordering::Equal => {}
+                // Adjust the x velocity of the probe
+                if vx > 0 {
+                    vx -= 1;
+                } else if vx < 0 {
+                    vx += 1;
                 }
 
                 vy -= 1; // the probe's y velocity decreases by 1.
 
                 if abs_min <= x && x <= abs_max && ord_min <= y && y <= ord_max {
                     hit = true;
+                    break;
+                }
+
+                // we are beyond the target area
+                if x > abs_max || y < ord_min {
+                    break;
                 }
             }
 
             if hit {
                 part2 += 1;
-                if part1 < y_max {
-                    part1 = y_max;
-                }
+                part1 = part1.max(y_max);
             }
         }
     }
