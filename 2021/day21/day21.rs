@@ -4,12 +4,30 @@ use std::collections::HashMap;
 use std::env;
 
 fn main() {
-    let player: u8;
-    let computer: u8;
+    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
+        x.clone()
+    } else {
+        "input.txt".to_string()
+    };
 
-    //TODO
-    player = 5;
-    computer = 9;
+    let data = std::fs::read_to_string(&filename).unwrap();
+    let mut data = data.lines();
+
+    let player = data
+        .next()
+        .unwrap()
+        .strip_prefix("Player 1 starting position: ")
+        .unwrap()
+        .parse::<u8>()
+        .unwrap();
+
+    let computer = data
+        .next()
+        .unwrap()
+        .strip_prefix("Player 2 starting position: ")
+        .unwrap()
+        .parse::<u8>()
+        .unwrap();
 
     println!("{}", part1(player, computer));
     println!("{}", part2(player, computer));
@@ -111,12 +129,15 @@ fn part1(player: u8, computer: u8) -> u32 {
 }
 
 #[cfg(test)]
-#[test]
-fn test_part1() {
-    assert_eq!(part1(4, 8), 739785);
-}
+mod tests {
+    use super::*;
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(4, 8), 739785);
+    }
 
-#[test]
-fn test_part2() {
-    assert_eq!(part2(4, 8), 444356092776315);
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(4, 8), 444356092776315);
+    }
 }
