@@ -34,9 +34,14 @@ fn main() {
             panic!("Invalid number of arguments");
         }
     }
-
     // println!("target area: x={}..{}, y={}..{}", abs_min, abs_max, ord_min, ord_max);
 
+    let parts = solve(abs_min, abs_max, ord_min, ord_max);
+    println!("{}", parts.0);
+    println!("{}", parts.1);
+}
+
+fn solve(abs_min: i32, abs_max: i32, ord_min: i32, ord_max: i32) -> (i32, i32) {
     let mut part1 = 0;
     let mut part2 = 0;
 
@@ -84,6 +89,13 @@ fn main() {
         }
     }
 
-    println!("{}", part1);
-    println!("{}", part2);
+    (part1, part2)
+}
+
+#[test]
+fn test_puzzle() {
+    let parts = solve(20, 30, -10, -5);
+
+    assert_eq!(parts.0, 45);
+    assert_eq!(parts.1, 112);
 }

@@ -106,11 +106,7 @@ impl Puzzle {
 
     /// Returns the valve name with its ID. Used only in `show()`.
     fn valve_name(&self, valve_id: u8) -> &str {
-        self.valves
-            .iter()
-            .find(|x| *x.1 == valve_id)
-            .unwrap()
-            .0
+        self.valves.iter().find(|x| *x.1 == valve_id).unwrap().0
     }
 
     /// Show the network of pipes (puzzle input), up the order to the valves.
