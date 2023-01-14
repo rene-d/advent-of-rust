@@ -20,13 +20,12 @@ fn main() {
 
     let data = load_data(args.path);
 
-    // println!("{:?}", data);
-    step1(&data);
-    step2(&data);
+    println!("{}", part1(&data));
+    println!("{}", part2(&data));
 }
 
 /// step 2
-fn step2(data: &[String]) {
+fn part2(data: &[String]) -> isize {
     let nb_bits = data[0].len();
     // println!("nb_bits: {}", nb_bits);
 
@@ -69,6 +68,7 @@ fn step2(data: &[String]) {
                 let c = value.chars().nth(bit).unwrap();
                 if c == '1' {
                     one += 1;
+                } else {
                     co2_rate = isize::from_str_radix(value, 2).unwrap();
                 }
                 nb += 1;
@@ -81,17 +81,21 @@ fn step2(data: &[String]) {
             co2_start.push('1');
         }
     }
-    println!("{}", dioxygen_rate * co2_rate);
+    dioxygen_rate * co2_rate
 }
 
 /// step 1: compute `gamma_rate` * `espilon_rate`
-fn step1(data: &[String]) {
+fn part1(data: &[String]) -> i32 {
     let mut gamma_rate = 0;
     let mut freq_list: [i32; 12] = [0; 12];
     let mut nb = 0;
 
+    let width = data.first().unwrap().len();
+    let mask = (1 << width) - 1;
+
     for bits in data {
         for (i, bit) in bits.chars().enumerate() {
+            assert!(i < width);
             if bit == '1' {
                 freq_list[i] += 1_i32;
             }
@@ -99,16 +103,17 @@ fn step1(data: &[String]) {
         nb += 1;
     }
 
-    for freq in freq_list {
+    for i in 0..width {
+        let freq = freq_list[i];
         gamma_rate *= 2;
         if freq >= nb / 2 {
             gamma_rate += 1;
         }
     }
 
-    let espilon_rate = 0b1111_1111_1111 - gamma_rate;
+    let espilon_rate = mask - gamma_rate;
 
-    println!("{}", gamma_rate * espilon_rate);
+    gamma_rate * espilon_rate
 }
 
 // The output is wrapped in a Result to allow matching on errors
@@ -129,4 +134,18 @@ fn load_data(path: std::path::PathBuf) -> Vec<String> {
         }
     }
     data
+}
+
+#[test]
+fn test_part1() {
+    let data = load_data("test.txt".into());
+
+    assert_eq!(part1(&data), 198);
+}
+
+#[test]
+fn test_part2() {
+    let data = load_data("test.txt".into());
+
+    assert_eq!(part2(&data), 230);
 }
