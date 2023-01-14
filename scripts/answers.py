@@ -23,6 +23,7 @@ class AocSession:
         self.force_update = force_update
         self.dry_run = dry_run
         self.db = sqlite3.connect(self.data_dir / "cache.db")
+        self.always_submit = False
 
         self.db.executescript(
             """
@@ -186,6 +187,7 @@ class AocSession:
 
     @iter_all
     def check(self, year=None, day=None):
+
         def submit(level, answer):
             url = f"https://adventofcode.com/{year}/day/{day}/answer"
 
@@ -208,6 +210,8 @@ class AocSession:
                 Path(f"{year}_{day}_{level}.log").write_bytes(r.content)
 
             print(f"{self.prefix} Submission for part {level}: {answer} ⇒ {r} {result}")
+            if not result == "SUCCESS":
+                self.always_submit = False
             return result == "SUCCESS"
 
         def run(p, language):
@@ -230,6 +234,42 @@ class AocSession:
                     (self.user, year, day, language, p.stat().st_mtime, part1, part2),
                 )
                 self.db.commit()
+
+            def submit_parts(step, parts):
+
+                if self.dry_run:
+                    return
+
+                question = (
+                    f"{self.prefix} Answer for {year} day {day:2} part 2 is missing: {parts[1]}. Submit it ({language}) (y/a/N) ? "
+                    if step == "second"
+                    else f"{self.prefix} Answers for {year} day {day:2} are missing: {parts}. Submit them ({language}) (y/a/N) ? "
+                )
+
+                if not self.always_submit:
+                    resp = input(question).lower()
+                else:
+                    resp = "y"
+
+                if resp == "a":
+                    self.always_submit = True
+                    resp = "y"
+
+                if resp == "y":
+                    if step == "first":
+                        success = submit(1, parts[0])
+                    else:
+                        success = True
+
+                    if len(parts) >= 2:
+                        success = success and submit(2, parts[1])
+
+                    if success:
+                        update_last_answers(parts)
+
+                    self.get_stars(year, day, True)
+                    self.get_answers(year, day)
+
 
             # check in program has been modified since last check
             cursor = self.db.execute(
@@ -257,41 +297,12 @@ class AocSession:
                 return
 
             if answers:
-
                 if len(parts) == 2 and len(answers) == 1 and answers[0] == parts[0]:
-
-                    if (
-                        not self.dry_run
-                        and input(
-                            f"{self.prefix} Answer for {year} day {day:2} part 2 is missing: {parts[1]}. Submit it ({language}) (y/N) ? "
-                        )
-                        == "y"
-                    ):
-                        success = submit(2, parts[1])
-                        if success:
-                            update_last_answers(parts)
-
-                        self.get_stars(year, day, True)
-                        self.get_answers(year, day)
-
+                    submit_parts("second", parts)
                 else:
                     print(f"{self.prefix} {year} day {day:2} {language} \033[91merror\033[0m '{' '.join(cmd)}' {parts} != {answers}")
-
             elif len(parts) > 0:
-                if (
-                    not self.dry_run
-                    and input(f"{self.prefix} Answers for {year} day {day:2} are missing: {parts}. Submit them ({language}) (y/N) ? ")
-                    == "y"
-                ):
-                    success = submit(1, parts[0])
-                    if len(parts) >= 2:
-                        success = success and submit(2, parts[1])
-
-                    if success:
-                        update_last_answers(parts)
-
-                    self.get_stars(year, day, True)
-                    self.get_answers(year, day)
+                submit_parts("first", parts)
 
             else:
                 # no solution yet or exec error

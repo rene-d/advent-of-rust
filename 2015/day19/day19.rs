@@ -142,5 +142,8 @@ fn main() {
     println!("{}", result);
 
     let result = puzzle.part2();
-    println!("{}", result);
+    if result != 0 {
+        // Nota: doesn't work in the general case
+        println!("{}", result);
+    }
 }
