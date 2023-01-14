@@ -263,7 +263,7 @@ class AocSession:
                     if (
                         not self.dry_run
                         and input(
-                            f"{self.prefix} Answer for {year} day {day:2} in part 2 missing: {parts[1]}. Submit it ({language}) (y/N) ? "
+                            f"{self.prefix} Answer for {year} day {day:2} part 2 is missing: {parts[1]}. Submit it ({language}) (y/N) ? "
                         )
                         == "y"
                     ):
