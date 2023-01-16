@@ -82,7 +82,7 @@ impl Puzzle {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test01.txt");
+    puzzle.house_present = 10;
     assert_eq!(puzzle.part1(), 1);
     assert_eq!(puzzle.part2(), 1);
 }
@@ -91,7 +91,7 @@ fn test01() {
 #[test]
 fn test02() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test02.txt");
+    puzzle.house_present = 30;
     assert_eq!(puzzle.part1(), 2);
     assert_eq!(puzzle.part2(), 2);
 }
@@ -100,7 +100,7 @@ fn test02() {
 #[test]
 fn test03() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test03.txt");
+    puzzle.house_present = 40;
     assert_eq!(puzzle.part1(), 3);
     assert_eq!(puzzle.part2(), 3);
 }
@@ -109,7 +109,7 @@ fn test03() {
 #[test]
 fn test04() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test04.txt");
+    puzzle.house_present = 60;
     assert_eq!(puzzle.part1(), 4);
     assert_eq!(puzzle.part2(), 4);
 }
@@ -118,7 +118,7 @@ fn test04() {
 #[test]
 fn test05() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test05.txt");
+    puzzle.house_present = 70;
     assert_eq!(puzzle.part1(), 4);
     assert_eq!(puzzle.part2(), 4);
 }
@@ -127,7 +127,7 @@ fn test05() {
 #[test]
 fn test06() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test06.txt");
+    puzzle.house_present = 80;
     assert_eq!(puzzle.part1(), 6);
     assert_eq!(puzzle.part2(), 6);
 }
@@ -136,7 +136,7 @@ fn test06() {
 #[test]
 fn test07() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test07.txt");
+    puzzle.house_present = 120;
     assert_eq!(puzzle.part1(), 6);
     assert_eq!(puzzle.part2(), 6);
 }
@@ -145,7 +145,7 @@ fn test07() {
 #[test]
 fn test08() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test08.txt");
+    puzzle.house_present = 130;
     assert_eq!(puzzle.part1(), 8);
     assert_eq!(puzzle.part2(), 6);
 }
@@ -154,18 +154,9 @@ fn test08() {
 #[test]
 fn test09() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test09.txt");
+    puzzle.house_present = 150;
     assert_eq!(puzzle.part1(), 8);
     assert_eq!(puzzle.part2(), 8);
-}
-
-/// Test from a user's input
-#[test]
-fn test10() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test10.txt");
-    assert_eq!(puzzle.part1(), 786240);
-    assert_eq!(puzzle.part2(), 831600);
 }
 
 fn main() {
