@@ -1,0 +1,7 @@
+# http://adventofcode.com/2022
+
+[workspace]
+members = ["day*"]
+exclude = ["day17"]
+
+resolver = "2"
