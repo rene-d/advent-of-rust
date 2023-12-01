@@ -4,6 +4,12 @@ Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.r
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
+## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 2⭐
+
+Puzzle                                                                  | Stars | Languages
+----------------------------------------------------------------------- | ----- | -----------
+[Day 1: Trebuchet?!](https://adventofcode.com/2023/day/1)               | ⭐⭐  | [Rust](2023/day1/day1.rs)
+
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
 Puzzle                                                                  | Stars | Languages
