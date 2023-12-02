@@ -1,0 +1,18 @@
+signed_integer = @{ "-"? ~ ASCII_DIGIT+ }
+register = @{ ASCII_ALPHA_LOWER+ }
+
+op = _{ inc | dec }
+    inc = { "inc" }
+    dec = { "dec" }
+
+compare = _{ equal | different | greater_or_equal | greater | less_or_equal | less }
+    equal            = { "==" }
+    different        = { "!=" }
+    greater_or_equal = { ">=" }
+    greater          = { ">" }
+    less_or_equal    = { "<=" }
+    less             = { "<" }
+
+instr = { register ~  op ~  signed_integer ~ "if" ~ register ~  compare ~  signed_integer }
+
+WHITESPACE = _{ " " }
