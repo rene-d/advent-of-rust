@@ -1,6 +1,7 @@
 //! [Day 3: Gear Ratios](https://adventofcode.com/2023/day/3)
 
 use std::collections::HashMap;
+use std::time::{Duration, Instant};
 
 use clap::Parser;
 
@@ -61,18 +62,25 @@ impl Puzzle {
                 while let Some(d) = self.g(x, y).to_digit(10) {
                     n = n * 10 + (d as u64);
 
-                    for ix in [-1, 0, 1] {
-                        for iy in [-1, 0, 1] {
-                            let c = self.g(x + ix, y + iy);
-                            if c != '.' && !c.is_digit(10) {
-                                symbol = true;
-                                if c == '*' {
-                                    if gear != [0, 0] && gear != [x + ix, y + iy] {
-                                        // assert we have only one gear near a part number
-                                        panic!();
-                                    }
-                                    gear = [x + ix, y + iy];
+                    for (ix, iy) in [
+                        (-1, -1),
+                        (-1, 0),
+                        (-1, 1),
+                        (0, -1),
+                        (0, 1),
+                        (1, -1),
+                        (1, 0),
+                        (1, 1),
+                    ] {
+                        let c = self.g(x + ix, y + iy);
+                        if c != '.' && !c.is_digit(10) {
+                            symbol = true;
+                            if c == '*' {
+                                if gear != [0, 0] && gear != [x + ix, y + iy] {
+                                    // assert we have only one gear near a part number
+                                    panic!();
                                 }
+                                gear = [x + ix, y + iy];
                             }
                         }
                     }
@@ -137,8 +145,13 @@ mod test {
 fn main() {
     let args = Args::parse();
     let mut puzzle = Puzzle::new();
+
+    let start = Instant::now();
     puzzle.configure(args.path.as_str());
     puzzle.parse();
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
+    let duration: Duration = start.elapsed();
+
+    eprintln!("Time elapsed: {:?}", duration);
 }
