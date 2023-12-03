@@ -3,13 +3,12 @@
 import re
 import sys
 
-
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 
 aunts = {}
 
 for line in open(filename):
-    m = re.match("Sue (\d+): (\w+): (\d+), (\w+): (\d+), (\w+): (\d+)", line)
+    m = re.match(r"Sue (\d+): (\w+): (\d+), (\w+): (\d+), (\w+): (\d+)", line)
     aunts[m.group(1)] = {m.group(2): int(m.group(3)), m.group(4): int(m.group(5)), m.group(6): int(m.group(7))}
 
 for sue, aunt in aunts.items():

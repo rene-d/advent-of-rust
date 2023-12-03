@@ -1,23 +1,18 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/23
 
-from pathlib import Path
-import sys
-from copy import deepcopy
-from collections import defaultdict, deque
 import itertools
-
+import sys
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer
-
+from intcode.Intcode import Computer  # noqa
 
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 software = Path(filename).read_text()
 
 
 class Node:
-
     network = {}
     idle = set()
 
@@ -39,12 +34,11 @@ class Node:
             assert state == "read" and len(self.computer.output) == 0
 
     def sched(self, part):
-
         answer = None
 
         if self.id == 255:
             while len(self.computer.input) > 0:
-                id = self.computer.input.popleft()  # seems to be always 24
+                _ = self.computer.input.popleft()  # seems to be always 24
                 _ = self.computer.input.popleft()  # weird, see below
                 X = self.computer.input.popleft()
                 Y = self.computer.input.popleft()
@@ -92,7 +86,6 @@ class Node:
         return answer
 
     def send_to(self, dest_id, X, Y):
-
         # Second arg is weird and mysterious: value seems to be ignored by the Intcode software.
         # Moreover, it doesn't work if I send only the 3 expected values (id,X,Y).
         # Found by accident during a code refactoring, that obviously did not work before.

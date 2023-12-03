@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/11
 
-from pathlib import Path
 import sys
 from collections import defaultdict
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer
-from ocr.ocr import ocr
+from intcode.Intcode import Computer  # noqa
+from ocr.ocr import ocr  # noqa
 
 
 class Robot:
-
     TURN_LEFT = 0
     TURN_RIGHT = 1
 
@@ -43,16 +42,12 @@ class Robot:
         for y in range(maxy, miny - 1, -1):
             row = ""
             for x in range(minx, maxx + 1):
-                if False and (x, y) == (self.rx, self.ry):
-                    c = "^>v<"[direction]
-                else:
-                    c = ".#"[self.panel.get((x, y), 0)]
+                c = ".#"[self.panel.get((x, y), 0)]
                 row += c
             lines.append(row)
         return "\n".join(lines)
 
     def paint(self, initial_color):
-
         self.brain.flush_io()
         self.brain.start(output_mode="yield")
 
@@ -65,7 +60,6 @@ class Robot:
         self.panel[(0, 0)] = initial_color
 
         while True:
-
             # by default (coords are missing), panel is black
             color = self.panel.get((self.rx, self.ry), Robot.COLOR_BLACK)
 

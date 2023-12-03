@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
+import argparse
 import sys
 from collections import defaultdict, deque, namedtuple
-import argparse
-
+from pathlib import Path
 
 # opcodes
 OPCODES = {
@@ -80,7 +79,7 @@ class Computer:
                 opcode %= 100
 
             if opcode not in OPCODES:
-                instruction = f"unknown"
+                instruction = "unknown"
                 comment = f"unknown opcode {memory[ip]}"
                 operands = f"{memory[ip]}"
                 n_args = 0
@@ -185,7 +184,6 @@ class Computer:
         self._state = ""
 
         while ip < len(self._text):
-
             if self._debug:
                 print()
                 print(self.disasm(debugger=ip))
@@ -274,7 +272,7 @@ class Computer:
                     self._relbase += args[0].value
 
                 case _:
-                    raise NotImplemented
+                    raise NotImplementedError
 
             if self._debug:
                 for i, arg in enumerate(args):
@@ -321,7 +319,6 @@ def main():
         state = computer.run(debug=args.debug)
         while state == "read":
             if args.ascii:
-
                 print("".join(map(chr, computer.output)))
             else:
                 print(list(computer.output))

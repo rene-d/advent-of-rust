@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/8
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from ocr.ocr import ocr
+from ocr.ocr import ocr  # noqa
 
 
 def chunker(seq, size):

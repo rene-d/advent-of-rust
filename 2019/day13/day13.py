@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/13
 
-from pathlib import Path
 import sys
-from curtsies import Input
 import time
+from pathlib import Path
+
+from curtsies import Input
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer
+from intcode.Intcode import Computer  # noqa
 
 
 def chunker(seq, size):
@@ -69,7 +70,7 @@ class ArcadeCabinet:
         state = self.computer.resume()
         assert state == "read" or state == "halted"
 
-        for (x, y, tile) in chunker(list(self.computer.output), 3):
+        for x, y, tile in chunker(list(self.computer.output), 3):
             if (x, y) == (-1, 0):
                 self.score = tile
             else:
@@ -84,7 +85,6 @@ class ArcadeCabinet:
         return state == "read"
 
     def play(self):
-
         while self.frame():
             if self.flag_show:
                 self.show()
@@ -93,9 +93,7 @@ class ArcadeCabinet:
             self.computer.input.append(self.joystick())
 
     def joystick(self):
-
         if self.flag_auto:
-
             if self.paddle[0] < self.ball[0]:
                 return 1
             if self.paddle[0] > self.ball[0]:

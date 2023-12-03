@@ -4,7 +4,6 @@ import itertools
 import re
 import sys
 
-
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 
 happiness = {}

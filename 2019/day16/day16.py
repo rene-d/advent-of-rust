@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/16
 
-from pathlib import Path
 import sys
-from copy import deepcopy
-from collections import defaultdict, deque
-import re
+from pathlib import Path
 
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text().strip()

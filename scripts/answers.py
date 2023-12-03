@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
-import re
-import requests
 import argparse
-import subprocess
-from datetime import datetime
-import sqlite3
-import zlib
-import time
 import logging
+import re
+import sqlite3
+import subprocess
+import time
+import zlib
+from datetime import datetime
+from pathlib import Path
+
+import requests
 
 
 class AocSession:
@@ -82,7 +83,8 @@ class AocSession:
             self.db.execute("delete from cache where url=? and user=?", (url, self.user))
         else:
             cursor = self.db.execute(
-                "select last_modified,content from cache where url=? and user=?", (url, self.user or self.sess.cookies["session"])
+                "select last_modified,content from cache where url=? and user=?",
+                (url, self.user or self.sess.cookies["session"]),
             )
             row = cursor.fetchone()
             if row:
@@ -101,7 +103,9 @@ class AocSession:
 
     def is_available(year, day):
         now = datetime.utcnow()
-        if (year > now.year) or (year == now.year and (now.month < 12 or now.day < day or (day == now.day and now.hour < 5))):
+        if (year > now.year) or (
+            year == now.year and (now.month < 12 or now.day < day or (day == now.day and now.hour < 5))
+        ):
             return False
         return True
 
@@ -138,10 +142,8 @@ class AocSession:
         return f
 
     def get_stars(self, year, day, force_update=False):
-
         stars = self.stars.get(year)
         if not stars or force_update:
-
             r_text = self.get(f"https://adventofcode.com/{year}", force_update).decode()
 
             parts_done = {
@@ -187,7 +189,6 @@ class AocSession:
 
     @iter_all
     def check(self, year=None, day=None):
-
         def submit(level, answer):
             url = f"https://adventofcode.com/{year}/day/{day}/answer"
 
@@ -236,7 +237,6 @@ class AocSession:
                 self.db.commit()
 
             def submit_parts(step, parts):
-
                 if self.dry_run:
                     return
 
@@ -270,7 +270,6 @@ class AocSession:
                     self.get_stars(year, day, True)
                     self.get_answers(year, day)
 
-
             # check in program has been modified since last check
             cursor = self.db.execute(
                 "select st_mtime,part1,part2 from answers where user=? and year=? and day=? and language=?",
@@ -287,7 +286,7 @@ class AocSession:
                 cmd = [p.as_posix(), self.get_input(year, day).as_posix()]
                 try:
                     parts = subprocess.check_output(cmd, stderr=subprocess.DEVNULL).decode().strip().split()
-                except (subprocess.CalledProcessError, PermissionError) as e:
+                except (subprocess.CalledProcessError, PermissionError):
                     print(f"{self.prefix} Program for {year} day {day:2} in {language} \033[91mfailed\033[0m")
                     parts = []
 
@@ -300,7 +299,9 @@ class AocSession:
                 if len(parts) == 2 and len(answers) == 1 and answers[0] == parts[0]:
                     submit_parts("second", parts)
                 else:
-                    print(f"{self.prefix} {year} day {day:2} {language} \033[91merror\033[0m '{' '.join(cmd)}' {parts} != {answers}")
+                    print(
+                        f"{self.prefix} {year} day {day:2} {language} \033[91merror\033[0m '{' '.join(cmd)}' {parts} != {answers}"
+                    )
             elif len(parts) > 0:
                 submit_parts("first", parts)
 
@@ -326,11 +327,12 @@ class AocSession:
 
 
 def main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", action="store_true", help="show request details")
     parser.add_argument("-y", "--year", type=int, help="optional day, automatic if in ./\033[3mYEAR\033[0m")
-    parser.add_argument("-d", "--day", type=int, help="optional day, automatic if in ./\033[3mYEAR\033[0m/day\033[3mDAY\033[0m")
+    parser.add_argument(
+        "-d", "--day", type=int, help="optional day, automatic if in ./\033[3mYEAR\033[0m/day\033[3mDAY\033[0m"
+    )
     parser.add_argument("-s", "--session", type=str, help="session cookie")
     parser.add_argument("--user", type=str, help="user")
     parser.add_argument("-u", "--update", action="store_true", help="force update")
@@ -356,7 +358,6 @@ def main():
         args.year = int(cwd.name)
 
     if args.dstars:
-
         users = []
 
         for session in sessions:
@@ -388,7 +389,6 @@ def main():
         exit()
 
     for session in sessions:
-
         sess = AocSession(session, args.update, args.dry_run)
 
         if args.user and sess.user != args.user:

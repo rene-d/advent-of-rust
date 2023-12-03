@@ -3,8 +3,8 @@
 # Day 8: Seven Segment Search
 # https://adventofcode.com/2021/day/8
 
-from collections import defaultdict
 import sys
+from collections import defaultdict
 
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = open(filename).readlines()

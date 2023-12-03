@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/15
 
-from pathlib import Path
 import sys
 from collections import deque
-
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer
-
+from intcode.Intcode import Computer  # noqa
 
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 software = Path(filename).read_text()
@@ -37,7 +35,6 @@ MOVES = [
 
 
 def bfs(droid, show):
-
     positions = {}
     x, y = 0, 0
     positions[(x, y)] = 4  # for S
@@ -63,7 +60,6 @@ def bfs(droid, show):
         droid = droids[(x, y)]
 
         for direction in (NORTH, SOUTH, WEST, EAST):
-
             dx, dy = MOVES[direction]
             mx, my = x + dx, y + dy
 

@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/25
 
-from pathlib import Path
-import sys
 import argparse
 import re
+import sys
 from functools import reduce
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer
-
+from intcode.Intcode import Computer  # noqa
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", action="store_true")
@@ -26,7 +25,6 @@ computer.start()
 
 
 if not args.manual:
-
     if reduce(lambda a, b: a ^ b, computer.program) != -2251798974787211:
         print("work only for my puzzle input", file=sys.stderr)
         exit(2)
@@ -43,7 +41,9 @@ if not args.manual:
 
     # try all combinations of items - works only for my puzzle input
     solve_cmds = []
-    items = "food ration,weather machine,antenna,space law space brochure,jam,semiconductor,planetoid,monolith".split(",")
+    items = "food ration,weather machine,antenna,space law space brochure,jam,semiconductor,planetoid,monolith".split(
+        ","
+    )
     for k in range(8):
         solve_cmds.append("drop " + items[k])
 
@@ -62,7 +62,6 @@ if not args.manual:
 
     # let's go
     for cmd in explore_cmds + solve_cmds:
-
         if args.verbose:
             print(f"> {cmd}")
 
@@ -77,7 +76,9 @@ if not args.manual:
         computer.flush_io()
 
         if state != "read":
-            answer = re.search(r"Oh, hello! You should be able to get in by typing (\d+) on the keypad at the main airlock.", t)
+            answer = re.search(
+                r"Oh, hello! You should be able to get in by typing (\d+) on the keypad at the main airlock.", t
+            )
             if answer:
                 answer = answer[1]
             break
@@ -85,7 +86,6 @@ if not args.manual:
     print(answer)
 
 else:
-
     shortcuts = {
         "n": "north",
         "s": "south",

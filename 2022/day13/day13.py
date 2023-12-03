@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2022/day/13
 
-from pathlib import Path
 import sys
 from functools import cmp_to_key
+from pathlib import Path
 
 
 def cmp(a, b):
-
     if isinstance(a, int) and isinstance(b, int):
         if a < b:
             return -1

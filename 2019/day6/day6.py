@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/6
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()

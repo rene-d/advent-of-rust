@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/17
 
-from pathlib import Path
 import sys
-
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer
-
+from intcode.Intcode import Computer  # noqa
 
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
@@ -29,7 +27,13 @@ w, h = len(grid[0]), len(grid)
 part1 = 0
 for y in range(1, h - 1):
     for x in range(1, w - 1):
-        if grid[y][x] == 35 and grid[y - 1][x] == 35 and grid[y + 1][x] == 35 and grid[y][x - 1] == 35 and grid[y][x + 1] == 35:
+        if (
+            grid[y][x] == 35
+            and grid[y - 1][x] == 35
+            and grid[y + 1][x] == 35
+            and grid[y][x - 1] == 35
+            and grid[y][x + 1] == 35
+        ):
             part1 += x * y
             grid[y][x] = ord("O")
 # print("\n".join("".join(map(chr, row)) for row in grid))

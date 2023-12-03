@@ -32,7 +32,6 @@ last_draw = None
 
 for draw in drawn:
     for grid in grids:
-
         if grid[0] == -1:
             continue
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/10
 
-from pathlib import Path
 import sys
 from collections import namedtuple
-from math import gcd, atan2, pi
+from math import atan2, gcd, pi
+from pathlib import Path
 
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
@@ -72,7 +72,6 @@ while len(asteroids) > 1:
 
     for asteroid in asteroids:
         if asteroid != station:
-
             v = insight_vector(station, asteroid)
             d = d_square(station, asteroid)
             a = angle(station, asteroid)
