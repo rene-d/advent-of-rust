@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
-import sys
 import re
+import sys
 from copy import deepcopy
+from pathlib import Path
 
 
 class Monkey:
@@ -68,12 +68,10 @@ for m in monkeys_ref.values():
     modulus *= m.test_divisible
 
 for rounds in (20, 10000):
-
     monkeys = deepcopy(monkeys_ref)
 
     for round in range(rounds):
         for monkey in monkeys.values():
-
             while monkey.items:
                 monkey.inspections += 1
                 worry_level = monkey.oper(monkey.items.pop(0))

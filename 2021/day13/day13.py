@@ -3,12 +3,11 @@
 # Day 13: Transparent Origami
 # https://adventofcode.com/2021/day/13
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from ocr.ocr import ocr
-
+from ocr.ocr import ocr  # noqa
 
 data = open("input.txt" if len(sys.argv) == 1 else sys.argv[1]).read().splitlines()
 
@@ -27,7 +26,6 @@ for line in data:
 part1 = False
 
 for line in data:
-
     if not line.startswith("fold"):
         continue
 

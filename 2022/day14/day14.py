@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2022/day/14
 
-from pathlib import Path
-import sys
 import re
+import sys
+from pathlib import Path
 
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
@@ -13,10 +13,9 @@ wall = set()
 floor = 0
 
 for line in lines:
-    points = list(tuple(map(int, re.match("^(\d+),(\d+)$", p).groups())) for p in line.split(" -> "))
+    points = list(tuple(map(int, re.match(r"^(\d+),(\d+)$", p).groups())) for p in line.split(" -> "))
 
     for a, b in zip(points, points[1:]):
-
         x1, y1 = a
         x2, y2 = b
 
@@ -42,7 +41,6 @@ def fall(part2):
     x, y = 500, 0
 
     while True:
-
         if y + 1 >= floor:
             if part2:
                 break

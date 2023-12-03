@@ -1,14 +1,7 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2017/day/5
 
-import itertools
-import math
-import re
 import sys
-import time
-from collections import defaultdict, deque, namedtuple
-from copy import deepcopy
-from functools import reduce
 from pathlib import Path
 
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"

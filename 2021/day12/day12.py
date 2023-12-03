@@ -26,7 +26,6 @@ def paths(visit_small_twice):
             continue
 
         for dest in nodes[node]:
-
             if dest not in once:
                 if dest.lower() == dest:
                     new_once = once.copy()

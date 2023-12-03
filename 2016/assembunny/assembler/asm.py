@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
-import shlex
 import argparse
 import os
-
+import shlex
+from pathlib import Path
 
 """
 
@@ -101,7 +100,6 @@ class Assembler:
     RESERVED_NAMES = INSTRUCTIONS.union(BUILTINS)
 
     def __init__(self, prog):
-
         self.macros = {}
         self.defines = {}
         self.procs = {}
@@ -124,7 +122,6 @@ class Assembler:
             self._parse_p1(line)
 
     def _parse_p1(self, line):
-
         # remove comments
         p = line.find(";")
         if p != -1:
@@ -141,11 +138,11 @@ class Assembler:
             assert len(line) == 2
             arg = line[1]
             if arg == "std":
-                for l in STD_MACROS.splitlines():
-                    self._parse_p1(l)
+                for line in STD_MACROS.splitlines():
+                    self._parse_p1(line)
             else:
-                for l in Path(f"{arg}.assembunny").open():
-                    self._parse_p1(l)
+                for line in Path(f"{arg}.assembunny").open():
+                    self._parse_p1(line)
             return
 
         if line[0] == "%macro":
@@ -229,8 +226,8 @@ class Assembler:
         if instr in self.macros:
             nb_args = self.macros[instr][0]
             assert len(line) == nb_args + 1
-            for l in self.macros[instr][1:]:
-                self._parse_p2(l, suffix=f"@{instr}{ip}", args=line[1:])
+            for line in self.macros[instr][1:]:
+                self._parse_p2(line, suffix=f"@{instr}{ip}", args=line[1:])
             return
 
         if instr[0] == ".":

@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/2
 
-from pathlib import Path
 import sys
-from copy import deepcopy
-from collections import defaultdict, deque
-import re
+from pathlib import Path
 
 
 class Puzzle:
@@ -17,7 +14,6 @@ class Puzzle:
         memory = memory or self.program.copy()
         ip = 0
         while True:
-
             if memory[ip] == 99:
                 break
 

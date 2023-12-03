@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2022/day/15
 
-from pathlib import Path
-import sys
 import re
+import sys
+from pathlib import Path
 
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
@@ -68,7 +68,6 @@ class Segment:
 
 max_y = 20 if filename == "test.txt" else 4_000_000
 for y in range(0, max_y + 1):
-
     # each sensor defines a zone where there is only one beacon
     # this zone is all points at a distance less than or equal to the Manhattan distance to its beacon
     # (i.e. a disk for this distance, not the Euclidian one)

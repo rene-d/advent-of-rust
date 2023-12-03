@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2022/day/12
 
-from pathlib import Path
 import sys
 from collections import deque
+from pathlib import Path
 
-filename = "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else sys.argv[1] if len(sys.argv) > 1 else "input.txt"
+filename = (
+    "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else sys.argv[1] if len(sys.argv) > 1 else "input.txt"
+)
 data = Path(filename).read_text()
 
 grid = []

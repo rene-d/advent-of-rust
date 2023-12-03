@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2019/day/19
 
-from pathlib import Path
 import sys
 from collections import namedtuple
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer
-
+from intcode.Intcode import Computer  # noqa
 
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 software = Path(filename).read_text()

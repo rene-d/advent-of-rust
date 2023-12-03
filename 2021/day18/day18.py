@@ -32,8 +32,8 @@ def to_snailfish(number):
 def explode(number):
     """If any pair is nested inside four pairs, the leftmost such pair explodes."""
 
-    def _flatten(l):
-        return (l,) if isinstance(l, RegularNumber) else sum(map(_flatten, l), ())
+    def _flatten(length):
+        return (length,) if isinstance(length, RegularNumber) else sum(map(_flatten, length), ())
 
     # flatten the nested list to get right and left numbers of number to explode
     # /!\ the RegularNumber are the same objects in the flattened and nested lists
@@ -58,10 +58,8 @@ def explode(number):
         left, right = number
 
         if isinstance(left, RegularNumber) and isinstance(right, RegularNumber):
-
             # If any pair of regular numbers is nested inside four pairs, the leftmost such pair explodes
             if depth >= 4 and not exploded:
-
                 # the pair's left value is added to the first regular number to the left of the exploding pair (if any)
                 if i_flat > 0:
                     flat[i_flat - 1].value += flat[i_flat].value

@@ -3,8 +3,8 @@
 
 # Nota: not sure to write it in Rust, nor to make it cleaner and more Pythonic...
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
@@ -77,7 +77,6 @@ def fall():
     x = 2
 
     while True:
-
         # current jet of gas
         gas = jets[jet_count % len(jets)]
         jet_count += 1
@@ -120,7 +119,6 @@ def show(rx=None, ry=None, rock=None):
         s = "|" if y > 0 else "+"
 
         for x in range(0, 7):
-
             if rx and ry and rock:
                 if rx <= x < rx + width and ry <= y < ry + height:
                     if rock[y - ry][x - rx] == 1:

@@ -4,13 +4,11 @@
 # Nota: this algorithm does not find the shortest path to the oxygen system
 # kept for reference
 
-from pathlib import Path
 import sys
-
+from pathlib import Path
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer
-
+from intcode.Intcode import Computer  # noqa
 
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 software = Path(filename).read_text()
@@ -48,7 +46,6 @@ hand = 0
 count = 0
 found = False
 for _ in range(1000):
-
     for _ in range(len(follow_hand)):
         direction = follow_hand[hand]
 
