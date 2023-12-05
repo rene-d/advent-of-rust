@@ -12,6 +12,7 @@ Puzzle                                                                  | Stars 
 [Day 2: Cube Conundrum](https://adventofcode.com/2023/day/2)            | ⭐⭐  | [Rust](2023/day2/day2.rs)
 [Day 3: Gear Ratios](https://adventofcode.com/2023/day/3)               | ⭐⭐  | [Rust](2023/day3/day3.rs)
 [Day 4: Scratchcards](https://adventofcode.com/2023/day/4)              | ⭐⭐  | [Rust](2023/day4/day4.rs)
+[Day 5: If You Give A Seed A Fertilizer](https://adventofcode.com/2023/day/5) | ⭐⭐  | [Rust](2023/day5/day5.rs)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
