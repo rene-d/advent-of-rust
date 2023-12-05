@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.*", features = ["derive"] }
+rayon = "1.8.0"
 
 [[bin]]
 name = "day5"

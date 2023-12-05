@@ -1,5 +1,6 @@
 //! [Day 5: If You Give A Seed A Fertilizer](https://adventofcode.com/2023/day/5)
 
+use rayon::prelude::*;
 use std::time::{Duration, Instant};
 
 use clap::Parser;
@@ -101,7 +102,7 @@ impl Puzzle {
     fn part1(&self) -> u64 {
         self.seeds
             .iter()
-            .map(|seed| self.grow(*seed))
+            .map(|&seed| self.grow(seed))
             .min()
             .unwrap()
     }
@@ -110,21 +111,19 @@ impl Puzzle {
     fn part2(&self) -> u64 {
         let start: Instant = Instant::now();
 
-        let mut result = u64::MAX;
-        let mut iterations = 0u64;
+        let result = self
+            .seeds
+            .chunks(2)
+            .par_bridge() // <-- just added that! 😎
+            .filter_map(|chunk| {
+                let start = chunk[0];
+                let end = chunk[0] + chunk[1];
+                (start..end).map(|seed| self.grow(seed)).min()
+            })
+            .min()
+            .unwrap_or(0);
 
-        for r in self.seeds.windows(2).step_by(2) {
-            let start = r[0];
-            let end = r[0] + r[1];
-            for seed in start..end {
-                result = result.min(self.grow(seed));
-            }
-            iterations += end - start;
-        }
-
-        // for _ in 0..1_000_000 {
-        //     result = result.min(self.grow(self.seeds[0]));
-        // }
+        let iterations: u64 = self.seeds.iter().skip(1).step_by(2).sum();
 
         let duration: Duration = start.elapsed();
 
