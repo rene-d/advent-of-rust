@@ -1,42 +1,27 @@
 //! [Day 5: If You Give A Seed A Fertilizer](https://adventofcode.com/2023/day/5)
 
-use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
 use clap::Parser;
-
-#[derive(Eq, Hash, PartialEq, Clone)]
-enum ConvType {
-    Unknown,
-    SeedToSoil,
-    SoilToFertilizer,
-    FertilizerToWater,
-    WaterTolight,
-    LightTotemperature,
-    TemperatureTohumidity,
-    HumidityTolocation,
-}
-
-impl ConvType {
-    fn new(name: &str) -> Self {
-        match name {
-            "seed-to-soil" => Self::SeedToSoil,
-            "soil-to-fertilizer" => Self::SoilToFertilizer,
-            "fertilizer-to-water" => Self::FertilizerToWater,
-            "water-to-light" => Self::WaterTolight,
-            "light-to-temperature" => Self::LightTotemperature,
-            "temperature-to-humidity" => Self::TemperatureTohumidity,
-            "humidity-to-location" => Self::HumidityTolocation,
-            _ => panic!("bad name: {name}"),
-        }
-    }
-}
 
 #[derive(Parser)]
 struct Args {
     /// Puzzle input
     #[arg(default_value = "input.txt")]
     path: String,
+}
+
+fn conv_step(name: &str) -> usize {
+    match name {
+        "seed-to-soil" => 0,
+        "soil-to-fertilizer" => 1,
+        "fertilizer-to-water" => 2,
+        "water-to-light" => 3,
+        "light-to-temperature" => 4,
+        "temperature-to-humidity" => 5,
+        "humidity-to-location" => 6,
+        _ => panic!("bad name: {name}"),
+    }
 }
 
 struct Conv {
@@ -47,21 +32,24 @@ struct Conv {
 
 struct Puzzle {
     seeds: Vec<u64>,
-    maps: HashMap<ConvType, Vec<Conv>>,
+    maps: Vec<Vec<Conv>>,
 }
 
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
             seeds: vec![],
-            maps: HashMap::new(),
+            maps: vec![],
         }
     }
 
     /// Get the puzzle input.
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
-        let mut current_map = ConvType::Unknown;
+        let mut current_map = 0;
+
+        self.maps.resize_with(7, || vec![]);
+
         for line in data.lines() {
             if let Some(seeds) = line.strip_prefix("seeds:") {
                 self.seeds = seeds
@@ -69,7 +57,7 @@ impl Puzzle {
                     .map(|x| x.parse::<u64>().unwrap())
                     .collect();
             } else if let Some(map) = line.strip_suffix(" map:") {
-                current_map = ConvType::new(map);
+                current_map = conv_step(map);
             } else if !line.is_empty() {
                 let dsc: Vec<u64> = line
                     .split_ascii_whitespace()
@@ -83,14 +71,13 @@ impl Puzzle {
                     source: dsc[1],
                     end: dsc[1] + dsc[2],
                 };
-                let current_map = current_map.clone();
-                self.maps.entry(current_map).or_default().push(conv);
+                self.maps[current_map].push(conv);
             }
         }
     }
 
-    fn convert(&self, map: ConvType, seed: u64) -> u64 {
-        let map = self.maps.get(&map).unwrap();
+    fn convert(&self, map: usize, seed: u64) -> u64 {
+        let map = self.maps.get(map).unwrap();
 
         for conv in map {
             if conv.source <= seed && seed < conv.end {
@@ -103,13 +90,10 @@ impl Puzzle {
 
     fn grow(&self, seed: u64) -> u64 {
         let mut seed = seed;
-        seed = self.convert(ConvType::SeedToSoil, seed);
-        seed = self.convert(ConvType::SoilToFertilizer, seed);
-        seed = self.convert(ConvType::FertilizerToWater, seed);
-        seed = self.convert(ConvType::WaterTolight, seed);
-        seed = self.convert(ConvType::LightTotemperature, seed);
-        seed = self.convert(ConvType::TemperatureTohumidity, seed);
-        seed = self.convert(ConvType::HumidityTolocation, seed);
+
+        for step in 0..7 {
+            seed = self.convert(step, seed);
+        }
         seed
     }
 
