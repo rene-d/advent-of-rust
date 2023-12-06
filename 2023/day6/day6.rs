@@ -42,6 +42,7 @@ impl Puzzle {
     }
 
     fn win(&self, t: u64, d: u64) -> u64 {
+        // nota: see Python version for an elegant math solution 🤓
         let mut win = 0;
         for hold in 1..t {
             let speed = hold;
