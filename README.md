@@ -1,10 +1,10 @@
-# advent-of-rust
+# Advent of Code in Rust 🦀
 
 Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/).
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 8⭐
+## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 12⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
@@ -13,6 +13,7 @@ Puzzle                                                                  | Stars 
 [Day 3: Gear Ratios](https://adventofcode.com/2023/day/3)               | ⭐⭐  | [Rust](2023/day3/day3.rs)
 [Day 4: Scratchcards](https://adventofcode.com/2023/day/4)              | ⭐⭐  | [Rust](2023/day4/day4.rs)
 [Day 5: If You Give A Seed A Fertilizer](https://adventofcode.com/2023/day/5) | ⭐⭐  | [Rust](2023/day5/day5.rs)
+[Day 6: Wait For It](https://adventofcode.com/2023/day/6)               | ⭐⭐  | [Rust](2023/day6/day6.rs)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
