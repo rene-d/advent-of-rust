@@ -1,4 +1,4 @@
-//! [Day 6: xxx](https://adventofcode.com/2023/day/6)
+//! [Day 6: Wait For It](https://adventofcode.com/2023/day/6)
 
 use clap::Parser;
 
@@ -56,19 +56,17 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u64 {
-        let time: Vec<u64> = self
+        let time = self
             .time
             .split_whitespace()
-            .map(|x| x.parse::<u64>().unwrap())
-            .collect();
-        let distance: Vec<u64> = self
+            .map(|x| x.parse::<u64>().unwrap());
+        let distance = self
             .distance
             .split_whitespace()
-            .map(|x| x.parse::<u64>().unwrap())
-            .collect();
+            .map(|x| x.parse::<u64>().unwrap());
 
         let mut result = 1;
-        for (&t, &d) in time.iter().zip(distance.iter()) {
+        for (t, d) in time.zip(distance) {
             result *= self.win(t, d);
         }
         result
