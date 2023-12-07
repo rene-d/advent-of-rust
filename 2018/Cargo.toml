@@ -1,0 +1,6 @@
+# https://adventofcode.com/2018
+
+[workspace]
+members = ["day*"]
+
+resolver = "2"
