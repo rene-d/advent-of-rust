@@ -91,7 +91,6 @@ impl Puzzle {
         })
     }
 
-
     /// The weight without the Jack/Jocker.
     fn weight_no_jack(hand: &String) -> u32 {
         hand.chars().fold(0, |acc, x| {
