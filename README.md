@@ -4,7 +4,7 @@ Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.r
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 12⭐
+## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 16⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
@@ -15,6 +15,7 @@ Puzzle                                                                  | Stars 
 [Day 5: If You Give A Seed A Fertilizer](https://adventofcode.com/2023/day/5) | ⭐⭐  | [Rust](2023/day5/day5.rs)
 [Day 6: Wait For It](https://adventofcode.com/2023/day/6)               | ⭐⭐  | [Rust](2023/day6/day6.rs)
 [Day 7: Camel Cards](https://adventofcode.com/2023/day/7)               | ⭐⭐  | [Rust](2023/day7/day7.rs)
+[Day 8: Haunted Wasteland](https://adventofcode.com/2023/day/8)         | ⭐⭐  | [Rust](2023/day8/day8.rs)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
