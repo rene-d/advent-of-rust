@@ -208,7 +208,7 @@ class AocSession:
                 result = "WAIT"
             else:
                 result = "UNKNOWN"
-                Path(f"{year}_{day}_{level}.log").write_bytes(r.content)
+                # Path(f"{year}_{day}_{level}.log").write_bytes(r.content)
 
             print(f"{self.prefix} Submission for part {level}: {answer} ⇒ {r} {result}")
             if not result == "SUCCESS":

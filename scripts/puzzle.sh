@@ -2,26 +2,32 @@
 
 set -euo pipefail
 
-if [ $# -eq 0 ]; then
-    echo "Usage: $0 [day]"
-    exit
+if [[ $(basename $PWD) =~ day* ]]; then
+    day=$(basename $PWD)
+    day=${day/day/}
+else
+    if [ $# -eq 0 ]; then
+        echo "Usage: $0 [day]"
+        exit
+    fi
+
+    day=$1
+    mkdir -p day$day
+    cd day$day
 fi
 
 year=$(basename $PWD)
-session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $(dirname $0)/../session)
+session=$(awk '/^[^#].*/{ if (! session) session=$day } END{print session}' < $(dirname $0)/../session)
 
-mkdir -p day$1
-cd day$1
-
-curl "https://adventofcode.com/$year/day/$1/input" \
+curl "https://adventofcode.com/$year/day/$day/input" \
     -H "Cookie: session=$session" -o input.txt
 head input.txt
 wc -l input.txt
 
-if [ ! -f day$1.py ]; then
-    cat <<EOF >day$1.py
+if [ ! -f day$day.py ]; then
+    cat <<EOF >day$day.py
 #!/usr/bin/env python3
-# https://adventofcode.com/$year/day/$1
+# https://adventofcode.com/$year/day/$day
 
 from pathlib import Path
 from copy import deepcopy
@@ -30,16 +36,19 @@ import sys, re, math, itertools, time
 from functools import reduce
 import re
 
+verbose = "-v" in sys.argv
+if verbose:
+    sys.argv.remove("-v")
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text().strip()
 lines = data.splitlines()
 EOF
-    chmod a+x day$1.py
+    chmod a+x day$day.py
 fi
 
-if [ ! -f day$1.rs ]; then
-    cat <<EOF >day$1.rs
-//! [Day $1: xxx](https://adventofcode.com/$year/day/$1)
+if [ ! -f day$day.rs ]; then
+    cat <<EOF >day$day.rs
+//! [Day $day: xxx](https://adventofcode.com/$year/day/$day)
 
 use clap::Parser;
 
@@ -112,7 +121,7 @@ fi
 if [ ! -f Cargo.toml ]; then
     cat <<EOF >Cargo.toml
 [package]
-name = "day$1"
+name = "day$day"
 version = "0.1.0"
 edition = "2021"
 
@@ -120,9 +129,9 @@ edition = "2021"
 clap = { version = "4.*", features = ["derive"] }
 
 [[bin]]
-name = "day$1"
-path = "day$1.rs"
+name = "day$day"
+path = "day$day.rs"
 EOF
 fi
 
-code --add . day$1.py
+code --add . day$day.py
