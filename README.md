@@ -4,7 +4,7 @@ Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.r
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 20⭐
+## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 22⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
@@ -18,6 +18,7 @@ Puzzle                                                                  | Stars 
 [Day 8: Haunted Wasteland](https://adventofcode.com/2023/day/8)         | ⭐⭐  | [Rust](2023/day8/day8.rs)
 [Day 9: Mirage Maintenance](https://adventofcode.com/2023/day/9)        | ⭐⭐  | [Rust](2023/day9/day9.rs)
 [Day 10: Pipe Maze](https://adventofcode.com/2023/day/10)               | ⭐⭐  | [Rust](2023/day10/day10.rs)
+[Day 11: Cosmic Expansion](https://adventofcode.com/2023/day/11)        | ⭐⭐  | [Rust](2023/day11/day11.rs)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 

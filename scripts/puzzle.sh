@@ -2,22 +2,26 @@
 
 set -euo pipefail
 
+rootdir=$(realpath $(dirname $0)/..)
+
 if [[ $(basename $PWD) =~ day* ]]; then
     day=$(basename $PWD)
     day=${day/day/}
+    year=$(basename $(realpath $PWD/..))
 else
     if [ $# -eq 0 ]; then
         echo "Usage: $0 [day]"
         exit
     fi
 
+    year=$(basename $PWD)
     day=$1
     mkdir -p day$day
     cd day$day
 fi
 
-year=$(basename $PWD)
-session=$(awk '/^[^#].*/{ if (! session) session=$day } END{print session}' < $(dirname $0)/../session)
+
+session=$(awk '/^[^#].*/{ if (! session) session='$day' } END{print session}' < $rootdir/session)
 
 curl "https://adventofcode.com/$year/day/$day/input" \
     -H "Cookie: session=$session" -o input.txt
