@@ -23,12 +23,28 @@ fi
 
 session=$(awk '/^[^#].*/{ if (! session) session='$day' } END{print session}' < $rootdir/session)
 
-curl "https://adventofcode.com/$year/day/$day/input" \
-    -H "Cookie: session=$session" -o input.txt
-head input.txt
-wc -l input.txt
+now=$(date -u +%Y%m%d%H%M%S)
+if [[ $now == ${year}12${day}050000 ]] || [[ $now > ${year}12${day}050000 ]] ; then
+    curl "https://adventofcode.com/$year/day/$day/input" \
+        -H "Cookie: session=$session" -o input.txt
+    head input.txt
+    wc -l input.txt
+    available=1
+else
+    opening=$(date -v${year}y -v12m -v${day}d -v5H -v0M -v0S -u +%s)
+    now=$(date -u +%s)
+    waiting=$(($opening-$now))
+    printf "\033[5;93m"
+    printf "Puzzle unavailable: please wait "
+    if [[ $(($waiting / 3600)) != 0 ]]; then printf "$(($waiting / 3600)) hours, "; fi
+    printf "$(( $(($waiting / 60)) % 60)) minutes and $(($waiting % 60)) seconds."
+    printf "\033[0m\n"
+    available=
+fi
 
-if [ ! -f day$day.py ]; then
+if [ -f day$day.py ]; then
+    printf "\033[31mPython script already exists.\033[0m\n"
+else
     cat <<EOF >day$day.py
 #!/usr/bin/env python3
 # https://adventofcode.com/$year/day/$day
@@ -48,9 +64,13 @@ data = Path(filename).read_text().strip()
 lines = data.splitlines()
 EOF
     chmod a+x day$day.py
+
+    printf "\033[32mPython script template created.\033[0m\n"
 fi
 
-if [ ! -f day$day.rs ]; then
+if [ -f day$day.rs ]; then
+    printf "\033[31mRust program already exists.\033[0m\n"
+else
     cat <<EOF >day$day.rs
 //! [Day $day: xxx](https://adventofcode.com/$year/day/$day)
 
@@ -120,6 +140,8 @@ fn main() {
     println!("{}", puzzle.part2());
 }
 EOF
+
+    printf "\033[32mRust program template created.\033[0m\n"
 fi
 
 if [ ! -f Cargo.toml ]; then
@@ -138,4 +160,7 @@ path = "day$day.rs"
 EOF
 fi
 
-code --add . day$day.py
+if [[ $available ]]; then
+    open "https://adventofcode.com/$year/day/$day"
+    code --add . day$day.py
+fi
