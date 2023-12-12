@@ -21,7 +21,7 @@ else
 fi
 
 
-session=$(awk '/^[^#].*/{ if (! session) session='$day' } END{print session}' < $rootdir/session)
+session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/session)
 
 now=$(date -u +%Y%m%d%H%M%S)
 if [[ $now == ${year}12${day}050000 ]] || [[ $now > ${year}12${day}050000 ]] ; then
@@ -161,6 +161,6 @@ EOF
 fi
 
 if [[ $available ]]; then
-    open "https://adventofcode.com/$year/day/$day"
     code --add . day$day.py
+    open "https://adventofcode.com/$year/day/$day"
 fi
