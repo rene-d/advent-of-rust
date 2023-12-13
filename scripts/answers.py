@@ -339,6 +339,7 @@ def main():
     parser.add_argument("-n", "--dry-run", action="store_true", help="do nothing")
     parser.add_argument("--dstars", action="store_true", help="show stars for each day")
     parser.add_argument("--ystars", action="store_true", help="show stars by year")
+    parser.add_argument("--yes", action="store_true", help="always yes")
     args = parser.parse_args()
 
     if args.verbose:
@@ -399,6 +400,7 @@ def main():
         elif args.ystars:
             sess.print_stars_year(args.year)
         else:
+            sess.always_submit = args.yes
             sess.check(year=args.year, day=args.day)
 
 
