@@ -1,11 +1,15 @@
 //! [Day 14: Parabolic Reflector Dish](https://adventofcode.com/2023/day/14)
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use clap::Parser;
 
 #[derive(Parser)]
 struct Args {
+    /// show animation until first repetition
+    #[arg(long, short, default_value_t = false)]
+    anim: bool,
+
     /// Puzzle input
     #[arg(default_value = "input.txt")]
     path: String,
@@ -146,6 +150,21 @@ impl Dish {
     }
 }
 
+impl std::fmt::Display for Dish {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        for row in &self.grid {
+            for c in row {
+                match c {
+                    'O' => f.write_str("\x1b[95mo\x1b[0m")?,
+                    _ => write!(f, "{c}")?,
+                }
+            }
+            writeln!(f)?;
+        }
+        Ok(())
+    }
+}
+
 struct Puzzle {
     data: String,
 }
@@ -165,14 +184,14 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&mut self) -> usize {
+    fn part1(&self) -> usize {
         let mut dish = Dish::new(&self.data);
         dish.north();
         dish.load()
     }
 
     /// Solve part two.
-    fn part2(&mut self) -> usize {
+    fn part2(&self) -> usize {
         let mut dish = Dish::new(&self.data);
 
         let cycles = 1_000_000_000;
@@ -202,6 +221,8 @@ impl Puzzle {
                     dish.east();
                 }
 
+                eprintln!("{}", dish);
+
                 // we've done
                 return dish.load();
             }
@@ -210,6 +231,42 @@ impl Puzzle {
         }
 
         0
+    }
+
+    /// Displays an ASCII animation of the platform's tilt.
+    /// Rather useless.
+    fn anim(&self) {
+        let mut dish = Dish::new(&self.data);
+        let mut seen = HashSet::new();
+
+        let tempo = std::time::Duration::from_millis(100);
+
+        let show = |dish: &Dish| {
+            println!("\x1b[H\x1b[2J{}", dish);
+            std::thread::sleep(tempo);
+        };
+
+        loop {
+            dish.north();
+            show(&dish);
+
+            dish.west();
+            show(&dish);
+
+            dish.south();
+            show(&dish);
+
+            dish.east();
+            show(&dish);
+
+            let key = dish.state();
+
+            if seen.contains(&key) {
+                break;
+            }
+
+            seen.insert(key);
+        }
     }
 }
 
@@ -237,6 +294,11 @@ fn main() {
     let args = Args::parse();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+
+    if args.anim {
+        puzzle.anim();
+    } else {
+        println!("{}", puzzle.part1());
+        println!("{}", puzzle.part2());
+    }
 }
