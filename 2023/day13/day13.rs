@@ -9,20 +9,34 @@ struct Args {
     path: String,
 }
 
-struct Grid {
-    p: Vec<Vec<char>>,
+struct Pattern {
+    p: Vec<Vec<u8>>,
 }
 
-impl Grid {
-    fn new() -> Self {
-        Self { p: vec![] }
+impl Pattern {
+    fn new(data: &str) -> Self {
+        let mut pattern = Self { p: vec![] };
+
+        for row in data.lines() {
+            pattern.p.push(
+                row.chars()
+                    .map(|c| match c {
+                        '.' => 0,
+                        '#' => 1,
+                        _ => panic!("unknown {c}"),
+                    })
+                    .collect(),
+            );
+        }
+
+        pattern
     }
 
     fn find_v(&self, smudge: bool) -> usize {
         let cols = self.p[0].len();
 
         for c in 0..(cols - 1) {
-            // check symmetry as columns c/c+1
+            // check symmetry at columns c/c+1
             let mut errors = 0;
             for i in 0..=c.min(cols - c - 2) {
                 // count differences between column c-i and column c+1+i
@@ -32,6 +46,7 @@ impl Grid {
                     .filter(|row| row[c - i] != row[c + 1 + i])
                     .count();
                 if errors > 1 {
+                    // too many differences, symmetry is not between cols c and c+1
                     break;
                 }
             }
@@ -47,7 +62,7 @@ impl Grid {
         let rows = self.p.len();
 
         for r in 0..(rows - 1) {
-            // check symmetry as rows r/r+1
+            // check symmetry at rows r/r+1
             let mut errors = 0;
             for i in 0..=r.min(rows - r - 2) {
                 // count differences between row r-i and row r+1+i
@@ -57,6 +72,7 @@ impl Grid {
                     .filter(|&(&a, &b)| a != b)
                     .count();
                 if errors > 1 {
+                    // too many differences, symmetry is not between rows r and r+1
                     break;
                 }
             }
@@ -70,42 +86,39 @@ impl Grid {
 }
 
 struct Puzzle {
-    grids: Vec<Grid>,
+    patterns: Vec<Pattern>,
 }
 
 impl Puzzle {
     fn new() -> Puzzle {
-        Puzzle { grids: vec![] }
+        Puzzle { patterns: vec![] }
     }
 
     /// Get the puzzle input.
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
 
-        for grid in data.split("\n\n") {
-            let mut z = Grid::new();
-
-            for row in grid.lines() {
-                z.p.push(row.chars().collect());
-            }
-            self.grids.push(z);
+        for pattern in data.split("\n\n") {
+            self.patterns.push(Pattern::new(pattern));
         }
+    }
+
+    /// Compute the sum of notes.
+    fn solve(&self, smudge: bool) -> usize {
+        self.patterns
+            .iter()
+            .map(|grid| grid.find_h(smudge) * 100 + grid.find_v(smudge))
+            .sum()
     }
 
     /// Solve part one.
     fn part1(&self) -> usize {
-        self.grids
-            .iter()
-            .map(|grid| grid.find_h(false) * 100 + grid.find_v(false))
-            .sum()
+        self.solve(false)
     }
 
     /// Solve part two.
     fn part2(&self) -> usize {
-        self.grids
-            .iter()
-            .map(|grid| grid.find_h(true) * 100 + grid.find_v(true))
-            .sum()
+        self.solve(true)
     }
 }
 
