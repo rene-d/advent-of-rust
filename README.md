@@ -22,6 +22,7 @@ Puzzle                                                                  | Stars 
 [Day 12: Hot Springs](https://adventofcode.com/2023/day/12)             | ⭐⭐  | [Rust](2023/day12/day12.rs)
 [Day 13: Point of Incidence](https://adventofcode.com/2023/day/13)      | ⭐⭐  | [Rust](2023/day13/day13.rs)
 [Day 14: Parabolic Reflector Dish](https://adventofcode.com/2023/day/14) | ⭐⭐  | [Rust](2023/day14/day14.rs)
+[Day 15: Lens Library](https://adventofcode.com/2023/day/15)            | ⭐⭐  | [Rust](2023/day15/day15.rs)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
