@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2020/day/25
 
-from pathlib import Path
 import sys
-from sympy.ntheory import discrete_log
+from pathlib import Path
 
+from sympy.ntheory import discrete_log
 
 verbose = "-v" in sys.argv
 if verbose:

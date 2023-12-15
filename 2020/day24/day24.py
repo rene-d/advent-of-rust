@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2020/day/24
 
+import sys
+from collections import defaultdict
 from pathlib import Path
-from copy import deepcopy
-from collections import defaultdict, deque, namedtuple
-import sys, re, math, itertools, time
-from functools import reduce
-import re
 
 verbose = "-v" in sys.argv
 if verbose:
@@ -18,12 +15,8 @@ lines = data.splitlines()
 
 # part 1
 
-tiles = defaultdict(lambda: False)
 
-
-def walk(data):
-    global tiles
-
+def walk(data, tiles):
     x, y = 0, 0
     i = 0
     while i < len(data):
@@ -61,10 +54,12 @@ def walk(data):
     tiles[(x, y)] = not tiles[(x, y)]
 
 
+tiles = defaultdict(lambda: False)
 for line in lines:
-    walk(line)
+    walk(line, tiles)
 
-# get only the black tiles (=True, white tiles are False)
+# get only the black tiles (=True, white tiles=False)
+# we need them for part 2
 tiles = set((x, y) for (x, y), face in tiles.items() if face == True)
 
 print(len(tiles))

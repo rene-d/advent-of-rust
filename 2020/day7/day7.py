@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2020/day/7
 
-from pathlib import Path
-from copy import deepcopy
-from collections import defaultdict, deque, namedtuple
-import sys, re, math, itertools, time
-from functools import reduce
 import re
+import sys
+from pathlib import Path
 
 verbose = "-v" in sys.argv
 if verbose:
@@ -33,6 +30,7 @@ for line in lines:
 
 # part 1
 
+
 def contains_color(bag, color):
     for sub_bag in bags[bag]:
         if sub_bag == color:
@@ -46,6 +44,7 @@ print(sum(contains_color(bag, "shiny gold") for bag in bags))
 
 
 # part 2
+
 
 def count(bag):
     t = 0
