@@ -17,8 +17,8 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            time: "".to_string(),
-            distance: "".to_string(),
+            time: String::new(),
+            distance: String::new(),
         }
     }
 
@@ -41,7 +41,7 @@ impl Puzzle {
             .to_string();
     }
 
-    fn win(&self, t: u64, d: u64) -> u64 {
+    fn win(t: u64, d: u64) -> u64 {
         // nota: see Python version for an elegant math solution 🤓
         let mut win = 0;
         for hold in 1..t {
@@ -68,7 +68,7 @@ impl Puzzle {
 
         let mut result = 1;
         for (t, d) in time.zip(distance) {
-            result *= self.win(t, d);
+            result *= Self::win(t, d);
         }
         result
     }
@@ -78,7 +78,7 @@ impl Puzzle {
         let time = self.time.replace(' ', "").parse::<u64>().unwrap();
         let distance = self.distance.replace(' ', "").parse::<u64>().unwrap();
 
-        self.win(time, distance)
+        Self::win(time, distance)
     }
 }
 
