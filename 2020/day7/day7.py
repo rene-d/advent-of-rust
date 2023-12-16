@@ -35,7 +35,7 @@ def contains_color(bag, color):
     for sub_bag in bags[bag]:
         if sub_bag == color:
             return True
-        if contains_color(sub_bag, color) == True:
+        if contains_color(sub_bag, color) is True:
             return True
     return False
 

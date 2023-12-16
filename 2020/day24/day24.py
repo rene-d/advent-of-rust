@@ -60,7 +60,7 @@ for line in lines:
 
 # get only the black tiles (=True, white tiles=False)
 # we need them for part 2
-tiles = set((x, y) for (x, y), face in tiles.items() if face == True)
+tiles = set((x, y) for (x, y), face in tiles.items() if face is True)
 
 print(len(tiles))
 

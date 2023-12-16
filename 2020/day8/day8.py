@@ -37,7 +37,7 @@ def run(program):
 
 # part 1
 acc, booted = run(lines)
-assert booted == False
+assert booted is False
 print(acc)
 
 
