@@ -41,10 +41,9 @@ impl Row {
             {
                 // we have found an arrangement
                 return 1;
-            } else {
-                // something doesn't match
-                return 0;
             }
+            // something doesn't match
+            return 0;
         }
 
         let mut result = 0;
@@ -102,7 +101,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u64 {
-        self.field.iter().map(|row| row.calc()).sum()
+        self.field.iter().map(Row::calc).sum()
     }
 
     /// Solve part two.
