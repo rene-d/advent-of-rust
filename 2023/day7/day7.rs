@@ -36,15 +36,12 @@ impl Puzzle {
             let hand = line.next().unwrap().to_string();
             let bid = line.next().unwrap().parse::<u32>().unwrap();
 
-            self.camels.push(Camel {
-                hand: hand,
-                bid: bid,
-            });
+            self.camels.push(Camel { hand, bid });
         }
     }
 
     /// Compute the rank of the hand.
-    fn rank(hand: &String) -> u32 {
+    fn rank(hand: &str) -> u32 {
         let hs = hand.chars().fold(HashMap::new(), |mut acc, c| {
             *acc.entry(c).or_insert(0) += 1;
             acc
@@ -65,7 +62,7 @@ impl Puzzle {
     }
 
     /// Find the max rank by changing the Jocker by any other card.
-    fn optimal_rank(hand: &String) -> u32 {
+    fn optimal_rank(hand: &str) -> u32 {
         if !hand.contains('J') {
             return Self::rank(hand);
         }
@@ -85,14 +82,14 @@ impl Puzzle {
     }
 
     /// The weight of the hand.
-    fn weight(hand: &String) -> u32 {
+    fn weight(hand: &str) -> u32 {
         hand.chars().fold(0, |acc, x| {
             acc * 16 + "23456789TJQKA".find(x).unwrap() as u32
         })
     }
 
     /// The weight without the Jack/Jocker.
-    fn weight_no_jack(hand: &String) -> u32 {
+    fn weight_no_jack(hand: &str) -> u32 {
         hand.chars().fold(0, |acc, x| {
             acc * 16 + "J23456789TQKA".find(x).unwrap() as u32
         })
