@@ -42,7 +42,7 @@ impl Puzzle {
                 return diffs;
             }
 
-            diffs.push(history.to_owned());
+            diffs.push(history.clone());
 
             history = history
                 .iter()
