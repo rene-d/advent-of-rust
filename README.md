@@ -4,7 +4,7 @@ Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.r
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 28⭐
+## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 32⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
@@ -23,6 +23,7 @@ Puzzle                                                                  | Stars 
 [Day 13: Point of Incidence](https://adventofcode.com/2023/day/13)      | ⭐⭐  | [Rust](2023/day13/day13.rs)
 [Day 14: Parabolic Reflector Dish](https://adventofcode.com/2023/day/14) | ⭐⭐  | [Rust](2023/day14/day14.rs)
 [Day 15: Lens Library](https://adventofcode.com/2023/day/15)            | ⭐⭐  | [Rust](2023/day15/day15.rs)
+[Day 16: The Floor Will Be Lava](https://adventofcode.com/2023/day/16)  | ⭐⭐  | [Rust](2023/day16/day16.rs)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
