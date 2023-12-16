@@ -73,7 +73,7 @@ impl Puzzle {
                         (1, 1),
                     ] {
                         let c = self.g(x + ix, y + iy);
-                        if c != '.' && !c.is_digit(10) {
+                        if c != '.' && !c.is_ascii_digit() {
                             symbol = true;
                             if c == '*' {
                                 if gear != [0, 0] && gear != [x + ix, y + iy] {
@@ -110,7 +110,7 @@ impl Puzzle {
     fn part2(&self) -> u64 {
         let mut gear_ratios = 0;
 
-        for (_, parts) in &self.gears {
+        for parts in self.gears.values() {
             if parts.len() == 2 {
                 gear_ratios += parts[0] * parts[1];
             }
