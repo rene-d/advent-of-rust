@@ -34,7 +34,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        self.data.split(',').map(|s| hash_algo(s)).sum()
+        self.data.split(',').map(hash_algo).sum()
     }
 
     /// Solve part two.
@@ -61,9 +61,7 @@ impl Puzzle {
                 if !found {
                     boxes[h].push((lens.to_owned(), focal));
                 }
-            } else if s.ends_with('-') {
-                let lens = &s[..s.len() - 1];
-
+            } else if let Some(lens) = s.strip_suffix('-') {
                 let h = hash_algo(lens) as usize;
 
                 boxes[h].retain(|b| b.0 != lens);
