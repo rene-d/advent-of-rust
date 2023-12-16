@@ -49,7 +49,7 @@ impl Puzzle {
         let data = std::fs::read_to_string(path).unwrap();
         let mut current_map = 0;
 
-        self.maps.resize_with(7, || vec![]);
+        self.maps.resize_with(7, Vec::new);
 
         for line in data.lines() {
             if let Some(seeds) = line.strip_prefix("seeds:") {
