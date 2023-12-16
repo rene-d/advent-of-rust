@@ -27,7 +27,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            navigation: String::from(""),
+            navigation: String::new(),
             network: HashMap::new(),
         }
     }
