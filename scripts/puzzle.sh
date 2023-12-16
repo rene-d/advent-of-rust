@@ -161,6 +161,6 @@ EOF
 fi
 
 if [[ $available ]]; then
-    code --add . day$day.py
+    code -n . day$day.py
     open "https://adventofcode.com/$year/day/$day"
 fi
