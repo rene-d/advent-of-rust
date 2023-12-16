@@ -52,7 +52,7 @@ impl Puzzle {
         let mut sum = 0;
         for n in &self.matching_cards {
             if n >= &1 {
-                sum += 2usize.pow(*n as u32 - 1)
+                sum += 2usize.pow(u32::try_from(*n).unwrap() - 1);
             }
         }
         sum
