@@ -75,8 +75,8 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> u64 {
-        let time = self.time.replace(" ", "").parse::<u64>().unwrap();
-        let distance = self.distance.replace(" ", "").parse::<u64>().unwrap();
+        let time = self.time.replace(' ', "").parse::<u64>().unwrap();
+        let distance = self.distance.replace(' ', "").parse::<u64>().unwrap();
 
         self.win(time, distance)
     }
