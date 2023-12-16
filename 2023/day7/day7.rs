@@ -14,7 +14,7 @@ struct Args {
 #[derive(Debug, Clone)]
 struct Camel {
     hand: String,
-    bid: u32,
+    bid: usize,
 }
 
 struct Puzzle {
@@ -34,20 +34,20 @@ impl Puzzle {
             let mut line = line.split_ascii_whitespace();
 
             let hand = line.next().unwrap().to_string();
-            let bid = line.next().unwrap().parse::<u32>().unwrap();
+            let bid = line.next().unwrap().parse::<usize>().unwrap();
 
             self.camels.push(Camel { hand, bid });
         }
     }
 
     /// Compute the rank of the hand.
-    fn rank(hand: &str) -> u32 {
+    fn rank(hand: &str) -> usize {
         let hs = hand.chars().fold(HashMap::new(), |mut acc, c| {
             *acc.entry(c).or_insert(0) += 1;
             acc
         });
         let mut hs = hs.into_values().collect::<Vec<_>>();
-        hs.sort();
+        hs.sort_unstable();
 
         match hs.as_slice() {
             [5] => 7,             // five of a kind
@@ -62,7 +62,7 @@ impl Puzzle {
     }
 
     /// Find the max rank by changing the Jocker by any other card.
-    fn optimal_rank(hand: &str) -> u32 {
+    fn optimal_rank(hand: &str) -> usize {
         if !hand.contains('J') {
             return Self::rank(hand);
         }
@@ -82,46 +82,36 @@ impl Puzzle {
     }
 
     /// The weight of the hand.
-    fn weight(hand: &str) -> u32 {
-        hand.chars().fold(0, |acc, x| {
-            acc * 16 + "23456789TJQKA".find(x).unwrap() as u32
-        })
+    fn weight(hand: &str) -> usize {
+        hand.chars()
+            .fold(0, |acc, x| acc * 16 + "23456789TJQKA".find(x).unwrap())
     }
 
     /// The weight without the Jack/Jocker.
-    fn weight_no_jack(hand: &str) -> u32 {
-        hand.chars().fold(0, |acc, x| {
-            acc * 16 + "J23456789TQKA".find(x).unwrap() as u32
-        })
+    fn weight_no_jack(hand: &str) -> usize {
+        hand.chars()
+            .fold(0, |acc, x| acc * 16 + "J23456789TQKA".find(x).unwrap())
     }
 
     /// Solve part one.
-    fn part1(&self) -> u32 {
+    fn part1(&self) -> usize {
         let mut camels = self.camels.clone();
 
         camels
-            .sort_by_key(|camel| Self::rank(&camel.hand) * 0x100000 + Puzzle::weight(&camel.hand));
+            .sort_by_key(|camel| Self::rank(&camel.hand) * 0x10_0000 + Puzzle::weight(&camel.hand));
 
-        camels
-            .iter()
-            .enumerate()
-            .map(|x| (x.0 as u32 + 1) * x.1.bid)
-            .sum()
+        camels.iter().enumerate().map(|x| (x.0 + 1) * x.1.bid).sum()
     }
 
     /// Solve part two.
-    fn part2(&self) -> u32 {
+    fn part2(&self) -> usize {
         let mut camels = self.camels.clone();
 
         camels.sort_by_key(|camel| {
-            Self::optimal_rank(&camel.hand) * 0x100000 + Puzzle::weight_no_jack(&camel.hand)
+            Self::optimal_rank(&camel.hand) * 0x10_0000 + Puzzle::weight_no_jack(&camel.hand)
         });
 
-        camels
-            .iter()
-            .enumerate()
-            .map(|x| (x.0 as u32 + 1) * x.1.bid)
-            .sum()
+        camels.iter().enumerate().map(|x| (x.0 + 1) * x.1.bid).sum()
     }
 }
 
