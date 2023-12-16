@@ -36,11 +36,10 @@ impl Row {
         }
 
         if si == self.springs.len() {
-            if di == self.damaged.len() && damaged == 0 {
-                // we have found a srrangement
-                return 1;
-            } else if di == self.damaged.len() - 1 && self.damaged[di] == damaged {
-                // we have found a srrangement
+            if (di == self.damaged.len() && damaged == 0)
+                || (di == self.damaged.len() - 1 && self.damaged[di] == damaged)
+            {
+                // we have found an arrangement
                 return 1;
             } else {
                 // something doesn't match
