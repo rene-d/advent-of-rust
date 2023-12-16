@@ -55,7 +55,7 @@ impl Puzzle {
                     }
                 }
 
-                return true;
+                true
             };
 
             if valid() {
