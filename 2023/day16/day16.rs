@@ -60,14 +60,14 @@ impl Puzzle {
         }
 
         // if point has already traversed by the beam, stop
-        let id = 1 << ("^v<>".find(d).unwrap() as u8);
+        let id = 1 << u8::try_from("^v<>".find(d).unwrap()).unwrap();
         if (self.beams[y][x] & id) == id {
             return;
         }
         self.beams[y][x] |= id;
 
-        match self.mirrors[y][x] {
-            '.' => match d {
+        match self.mirrors[y].get(x) {
+            Some('.') => match d {
                 '>' => self.beam(x + 1, y, d), // traverse
                 '<' => self.beam(x - 1, y, d), // traverse
                 'v' => self.beam(x, y + 1, d), // traverse
@@ -75,7 +75,7 @@ impl Puzzle {
                 _ => panic!(),
             },
 
-            '\\' => match d {
+            Some('\\') => match d {
                 '>' => self.beam(x, y + 1, 'v'), // reflect
                 '<' => self.beam(x, y - 1, '^'), // reflect
                 'v' => self.beam(x + 1, y, '>'), // reflect
@@ -83,7 +83,7 @@ impl Puzzle {
                 _ => panic!(),
             },
 
-            '/' => match d {
+            Some('/') => match d {
                 '>' => self.beam(x, y - 1, '^'), // reflect
                 '<' => self.beam(x, y + 1, 'v'), // reflect
                 'v' => self.beam(x - 1, y, '<'), // reflect
@@ -91,7 +91,7 @@ impl Puzzle {
                 _ => panic!(),
             },
 
-            '-' => match d {
+            Some('-') => match d {
                 '>' => self.beam(x + 1, y, d), // traverse
                 '<' => self.beam(x - 1, y, d), // traverse
                 'v' | '^' => {
@@ -101,7 +101,7 @@ impl Puzzle {
                 _ => panic!(),
             },
 
-            '|' => match d {
+            Some('|') => match d {
                 'v' => self.beam(x, y + 1, d), // traverse
                 '^' => self.beam(x, y - 1, d), // traverse
                 '>' | '<' => {
