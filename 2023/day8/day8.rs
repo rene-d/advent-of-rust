@@ -41,7 +41,7 @@ impl Puzzle {
         self.navigation = lines.next().unwrap().to_string();
         lines.next();
 
-        while let Some(line) = lines.next() {
+        for line in lines {
             let node = &line[0..3];
             let node = u32::from_str_radix(node, 36).unwrap();
 
@@ -61,7 +61,7 @@ impl Puzzle {
             .network
             .keys()
             .filter(|&&x| x % mask == start)
-            .map(|x| *x)
+            .copied()
             .collect();
 
         let size = q.len();
@@ -92,7 +92,7 @@ impl Puzzle {
                     z.insert(i, n);
 
                     if z.len() == size {
-                        let z = z.values().map(|&x| x).collect::<Vec<usize>>();
+                        let z = z.values().copied().collect::<Vec<usize>>();
                         return lcm(&z);
                     }
                 }
