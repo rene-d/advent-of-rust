@@ -10,8 +10,9 @@ struct Args {
 }
 
 fn hash_algo(s: &str) -> u32 {
-    s.chars()
-        .fold(0, |value, c| ((value + (c as u32)) * 17) % 256)
+    s.chars().fold(0, |value, c| {
+        ((value + u32::try_from(c).unwrap()) * 17) % 256
+    })
 }
 
 struct Puzzle {
@@ -21,7 +22,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            data: "".to_string(),
+            data: String::new(),
         }
     }
 
@@ -51,7 +52,7 @@ impl Puzzle {
 
                 let h = hash_algo(lens) as usize;
                 let mut found = false;
-                for b in boxes[h].iter_mut() {
+                for b in &mut boxes[h] {
                     if b.0 == lens {
                         *b = (lens.to_string(), focal);
                         found = true;
@@ -73,7 +74,7 @@ impl Puzzle {
         let mut result = 0;
         for (i, b) in boxes.iter().enumerate() {
             for (j, &(_, focal)) in b.iter().enumerate() {
-                result += (i as u32 + 1) * (j as u32 + 1) * focal
+                result += (u32::try_from(i).unwrap() + 1) * (u32::try_from(j).unwrap() + 1) * focal;
             }
         }
         result
