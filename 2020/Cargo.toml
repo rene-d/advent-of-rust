@@ -1,0 +1,6 @@
+# http://adventofcode.com/2020
+
+[workspace]
+members = ["day13"]
+
+resolver = "2"
