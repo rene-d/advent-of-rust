@@ -31,10 +31,10 @@ impl Puzzle {
         }
     }
 
-    fn history_diffs(history: &Vec<i32>) -> Vec<Vec<i32>> {
+    fn history_diffs(history: &[i32]) -> Vec<Vec<i32>> {
         let mut diffs = vec![];
 
-        let mut history = history.clone();
+        let mut history = history.to_vec();
 
         loop {
             // stop when the sequence of differences has only zeros
@@ -42,7 +42,7 @@ impl Puzzle {
                 return diffs;
             }
 
-            diffs.push(history.clone());
+            diffs.push(history.to_owned());
 
             history = history
                 .iter()
