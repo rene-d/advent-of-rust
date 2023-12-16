@@ -45,13 +45,21 @@ impl Dish {
         dish
     }
 
+    fn get(&self, x: usize, y: usize) -> char {
+        if x < self.sx && y < self.sy {
+            *self.grid[y].get(x).unwrap()
+        } else {
+            '@'
+        }
+    }
+
     /// Tilt the dish northwards.
     fn north(&mut self) {
         for x in 0..self.sx {
             for y in 0..self.sy {
                 if self.grid[y][x] == '.' {
                     for y2 in y..self.sy {
-                        match self.grid[y2][x] {
+                        match self.get(x, y2) {
                             'O' => {
                                 self.grid[y][x] = 'O';
                                 self.grid[y2][x] = '.';
@@ -72,7 +80,7 @@ impl Dish {
             for y in (0..self.sy).rev() {
                 if self.grid[y][x] == '.' {
                     for y2 in (0..y).rev() {
-                        match self.grid[y2][x] {
+                        match self.get(x, y2) {
                             'O' => {
                                 self.grid[y][x] = 'O';
                                 self.grid[y2][x] = '.';
@@ -93,7 +101,7 @@ impl Dish {
             for x in 0..(self.sx) {
                 if self.grid[y][x] == '.' {
                     for x2 in (x)..self.sx {
-                        match self.grid[y][x2] {
+                        match self.get(x2, y) {
                             'O' => {
                                 self.grid[y][x] = 'O';
                                 self.grid[y][x2] = '.';
@@ -114,7 +122,7 @@ impl Dish {
             for x in (0..(self.sx)).rev() {
                 if self.grid[y][x] == '.' {
                     for x2 in (0..x).rev() {
-                        match self.grid[y][x2] {
+                        match self.get(x2, y) {
                             'O' => {
                                 self.grid[y][x] = 'O';
                                 self.grid[y][x2] = '.';
@@ -221,7 +229,7 @@ impl Puzzle {
                     dish.east();
                 }
 
-                eprintln!("{}", dish);
+                eprintln!("{dish}");
 
                 // we've done
                 return dish.load();
@@ -242,7 +250,7 @@ impl Puzzle {
         let tempo = std::time::Duration::from_millis(100);
 
         let show = |dish: &Dish| {
-            println!("\x1b[H\x1b[2J{}", dish);
+            println!("\x1b[H\x1b[2J{dish}");
             std::thread::sleep(tempo);
         };
 
