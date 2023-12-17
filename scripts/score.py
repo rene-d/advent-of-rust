@@ -58,7 +58,8 @@ def show(data):
             e = data["members"][id]
 
             name = e["name"]
-            if not name :name= f"anon-{id}"
+            if not name:
+                name = f"anon-{id}"
 
             row.extend((name + "\n" + str(id), e["local_score"]))
 
@@ -104,8 +105,9 @@ def cookie():
 
 @click.command()
 @click.option("-y", "--year", type=click.IntRange(2015, current_year), default=current_year, help="Year")
+@click.option("-r", "--refresh", is_flag=True, help="Refresh the leaderboard")
 @click.argument("leaderboard", type=str)
-def main(year, leaderboard):
+def main(year, refresh, leaderboard):
     # 1540830
     url = f"https://adventofcode.com/{year}/leaderboard/private/view/{leaderboard}.json"
 
@@ -116,7 +118,7 @@ def main(year, leaderboard):
         sess = requests.Session()
         sess.cookies["session"] = cookie()
         now = datetime.now().timestamp()
-        if not cache_file.is_file() or (now - cache_file.stat().st_mtime) > 60 * 15:
+        if refresh or not cache_file.is_file() or (now - cache_file.stat().st_mtime) > 60 * 15:
             r = sess.get(url)
             r.raise_for_status()
 
