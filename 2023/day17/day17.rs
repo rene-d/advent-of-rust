@@ -22,6 +22,7 @@ enum Direction {
 }
 
 impl Direction {
+    /// Move one step in the given direction, if possible.
     fn step(self, x: usize, y: usize, sx: usize, sy: usize) -> Option<(usize, usize)> {
         if self == Direction::North && y > 0 {
             Some((x, y - 1))
@@ -36,7 +37,8 @@ impl Direction {
         }
     }
 
-    fn is_inverse(self, other: Direction) -> bool {
+    /// Indicate if two directions are opposite.
+    fn is_opposite(self, other: Direction) -> bool {
         self == Direction::North && other == Direction::South
             || self == Direction::South && other == Direction::North
             || self == Direction::East && other == Direction::West
@@ -46,7 +48,7 @@ impl Direction {
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 struct State {
-    cost: u32,
+    heat_loss: u32,
     x: usize,
     y: usize,
     direction: Direction,
@@ -61,7 +63,7 @@ impl Ord for State {
         // Notice that the we flip the ordering on costs.
         // In case of a tie we compare positions - this step is necessary
         // to make implementations of `PartialEq` and `Ord` consistent.
-        other.cost.cmp(&self.cost)
+        other.heat_loss.cmp(&self.heat_loss)
     }
 }
 
@@ -92,11 +94,9 @@ impl Puzzle {
         let data = std::fs::read_to_string(path).unwrap();
 
         for line in data.lines() {
-            let row = line.chars().filter_map(|c| c.to_digit(10)).collect();
-
-            self.grid.push(row);
+            self.grid
+                .push(line.chars().filter_map(|c| c.to_digit(10)).collect());
         }
-
         self.sx = self.grid[0].len();
         self.sy = self.grid.len();
     }
@@ -104,18 +104,18 @@ impl Puzzle {
     fn dijkstra(&self, ultra_crucibles: bool) -> u32 {
         let mut heap = BinaryHeap::new();
         let mut seen = HashSet::new();
-        let mut min_cost = u32::MAX;
+        let mut min_heat_loss = u32::MAX;
 
         heap.push(State {
-            cost: 0,
+            heat_loss: 0,
             x: 0,
             y: 0,
             direction: Direction::Unknown,
-            same_direction_count: 255,
+            same_direction_count: u8::MAX, // initial value, anything greater than 4
         });
 
         while let Some(State {
-            cost,
+            heat_loss,
             x,
             y,
             direction: course,
@@ -125,7 +125,7 @@ impl Puzzle {
             if x == self.sx - 1 && y == self.sy - 1 {
                 // a minimum of four blocks in that direction before it can stop at the end
                 if !ultra_crucibles || same_direction_count >= 4 {
-                    min_cost = min_cost.min(cost);
+                    min_heat_loss = min_heat_loss.min(heat_loss);
                 }
                 continue;
             }
@@ -136,20 +136,20 @@ impl Puzzle {
             }
             seen.insert(key);
 
-            for new_course in [
+            for new_direction in [
                 Direction::North,
                 Direction::East,
                 Direction::South,
                 Direction::West,
             ] {
                 // do not go back
-                if new_course.is_inverse(course) {
+                if new_direction.is_opposite(course) {
                     continue;
                 }
 
-                if let Some((nx, ny)) = new_course.step(x, y, self.sx, self.sy) {
+                if let Some((nx, ny)) = new_direction.step(x, y, self.sx, self.sy) {
                     // update the number of steps in the same direction
-                    let new_course_count = if new_course == course {
+                    let new_direction_count = if new_direction == course {
                         same_direction_count + 1
                     } else {
                         1
@@ -157,36 +157,33 @@ impl Puzzle {
 
                     if ultra_crucibles {
                         // 10 consecutive blocks without turning
-                        if new_course_count > 10 {
+                        if new_direction_count > 10 {
                             continue;
                         }
 
-                        // a minimum of four blocks in that direction (or start)
-                        if new_course != course
-                            && same_direction_count < 4
-                            && same_direction_count != 255
-                        {
+                        // a minimum of four blocks in that direction (or start position)
+                        if new_direction != course && same_direction_count < 4 {
                             continue;
                         }
                     } else {
-                        // at most three blocks in a single direction
-                        if new_course_count > 3 {
+                        // at most three blocks in the same direction
+                        if new_direction_count > 3 {
                             continue;
                         }
                     }
 
                     heap.push(State {
-                        cost: cost + self.grid[ny][nx],
+                        heat_loss: heat_loss + self.grid[ny][nx],
                         x: nx,
                         y: ny,
-                        direction: new_course,
-                        same_direction_count: new_course_count,
+                        direction: new_direction,
+                        same_direction_count: new_direction_count,
                     });
                 }
             }
         }
 
-        min_cost
+        min_heat_loss
     }
 
     /// Solve part one.
