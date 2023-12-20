@@ -20,20 +20,20 @@ fn lcm(values: &[u64]) -> u64 {
     m
 }
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq, Clone)]
 enum ModuleType {
     Broadcaster,
     Flipflop,
     Conjunction,
 }
 
-#[derive(PartialEq, Clone, Debug, Copy)]
+#[derive(PartialEq, Clone, Copy)]
 enum Pulse {
     Low,
     High,
 }
 
-#[derive(PartialEq, Clone, Debug, Copy)]
+#[derive(PartialEq, Clone, Copy)]
 enum State {
     Off,
     On,
@@ -50,13 +50,13 @@ impl std::ops::Not for State {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 struct Module {
     name: String,
     kind: ModuleType,
     outputs: Vec<String>,
-    state: State,
-    memory: HashMap<String, Pulse>,
+    state: State,                   // only for Flip-flop module
+    memory: HashMap<String, Pulse>, // only for Conjunction module
 }
 
 struct Puzzle {
@@ -101,7 +101,7 @@ impl Puzzle {
         for module in self.modules.values_mut() {
             if module.kind == ModuleType::Conjunction {
                 for m in toto.values() {
-                    // <== borrowing problem here
+                    //   ^== borrowing problem here
                     if m.outputs.contains(&module.name) {
                         module.memory.insert(m.name.clone(), Pulse::Low);
                     }
@@ -159,6 +159,20 @@ impl Puzzle {
         }
     }
 
+    fn press(&mut self, f: &mut dyn core::ops::FnMut(&str, &String, Pulse) -> bool) -> bool {
+        let mut q: VecDeque<(String, String, Pulse)> = VecDeque::new();
+        q.push_back(("button".to_string(), "broadcaster".to_string(), Pulse::Low));
+
+        while let Some((source, target, pulse)) = q.pop_front() {
+            if !f(&source, &target, pulse) {
+                return false;
+            }
+            self.propagate(&source, &target, pulse, &mut q);
+        }
+
+        true
+    }
+
     /// Solve part one.
     fn part1(&mut self) -> u32 {
         self.reset();
@@ -167,17 +181,13 @@ impl Puzzle {
         let mut hi = 0;
 
         for _ in 0..1000 {
-            let mut q: VecDeque<(String, String, Pulse)> = VecDeque::new();
-            q.push_back(("button".to_string(), "broadcaster".to_string(), Pulse::Low));
-
-            while let Some((source, target, pulse)) = q.pop_front() {
+            self.press(&mut |_, _, pulse| {
                 match pulse {
                     Pulse::Low => lo += 1,
                     Pulse::High => hi += 1,
-                };
-
-                self.propagate(&source, &target, pulse, &mut q);
-            }
+                }
+                true // continue to propagate the signals
+            });
         }
         lo * hi
     }
@@ -215,24 +225,23 @@ impl Puzzle {
         let mut rx_feed_input_presses = HashMap::new();
 
         for presses in 1.. {
-            let mut q: VecDeque<(String, String, Pulse)> = VecDeque::new();
-            q.push_back(("button".to_string(), "broadcaster".to_string(), Pulse::Low));
-
-            while let Some((source, target, pulse)) = q.pop_front() {
-                if target == rx_feed && pulse == Pulse::High {
+            if !self.press(&mut |source, target, pulse| {
+                if target == &rx_feed && pulse == Pulse::High {
                     // update the presses for the current input of the rx_feed module
                     rx_feed_input_presses
-                        .entry(source.clone())
+                        .entry(source.to_string())
                         .or_insert(presses);
 
                     // we have enough values
                     if rx_feed_input_presses.len() == rx_feed_inputs {
-                        let v: Vec<u64> = rx_feed_input_presses.values().copied().collect();
-                        return lcm(&v);
+                        return false; // stop the circuit
                     }
                 }
-
-                self.propagate(&source, &target, pulse, &mut q);
+                true
+            }) {
+                // the circuit is stopped: we have found the solution
+                let v: Vec<u64> = rx_feed_input_presses.values().copied().collect();
+                return lcm(&v);
             }
         }
 
