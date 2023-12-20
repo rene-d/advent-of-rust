@@ -4,7 +4,7 @@ Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.r
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 38⭐
+## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 40⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
@@ -27,6 +27,7 @@ Puzzle                                                                  | Stars 
 [Day 17: Clumsy Crucible](https://adventofcode.com/2023/day/17)         | ⭐⭐  | [Rust](2023/day17/day17.rs)
 [Day 18: Lavaduct Lagoon](https://adventofcode.com/2023/day/18)         | ⭐⭐  | [Rust](2023/day18/day18.rs)
 [Day 19: Aplenty](https://adventofcode.com/2023/day/19)                 | ⭐⭐  | [Rust](2023/day19/day19.rs)
+[Day 20: Pulse Propagation](https://adventofcode.com/2023/day/20)       | ⭐⭐  | [Rust](2023/day20/day20.rs)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
