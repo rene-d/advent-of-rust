@@ -52,15 +52,23 @@ impl std::ops::Not for State {
 
 #[derive(Clone)]
 struct Module {
-    name: String,
+    id: u32,
     kind: ModuleType,
-    outputs: Vec<String>,
-    state: State,                   // only for Flip-flop module
-    memory: HashMap<String, Pulse>, // only for Conjunction module
+    outputs: Vec<u32>,
+    state: State,                // only for Flip-flop module
+    memory: HashMap<u32, Pulse>, // only for Conjunction module
+}
+
+fn get_id(name: &str) -> u32 {
+    if name == "broadcaster" {
+        return 0;
+    }
+    assert!(name.chars().all(|c| c.is_ascii_lowercase()));
+    name.chars().fold(0, |acc, c| acc * 26 + (c as u32) - 96)
 }
 
 struct Puzzle {
-    modules: HashMap<String, Module>,
+    modules: HashMap<u32, Module>,
 }
 
 impl Puzzle {
@@ -76,7 +84,7 @@ impl Puzzle {
 
         for line in data.lines() {
             let (name, dests) = line.split_once(" -> ").unwrap();
-            let outputs: Vec<String> = dests.split(", ").map(String::from).collect();
+            let outputs: Vec<u32> = dests.split(", ").map(get_id).collect();
 
             let (name, mtype) = match &name[0..1] {
                 "%" => (&name[1..], ModuleType::Flipflop),
@@ -84,10 +92,12 @@ impl Puzzle {
                 _ => (name, ModuleType::Broadcaster),
             };
 
+            let id = get_id(name);
+
             self.modules.insert(
-                name.to_string(),
+                id,
                 Module {
-                    name: name.to_string(),
+                    id,
                     kind: mtype,
                     outputs,
                     state: State::Off,
@@ -98,18 +108,21 @@ impl Puzzle {
 
         let toto = self.modules.clone();
 
+        // find modules that are connected to a Conjunction module:
+        // they feed pulses the module remembers to send its pulse
         for module in self.modules.values_mut() {
             if module.kind == ModuleType::Conjunction {
                 for m in toto.values() {
                     //   ^== borrowing problem here
-                    if m.outputs.contains(&module.name) {
-                        module.memory.insert(m.name.clone(), Pulse::Low);
+                    if m.outputs.contains(&module.id) {
+                        module.memory.insert(m.id.clone(), Pulse::Low);
                     }
                 }
             }
         }
     }
 
+    /// Reset the modules to their initial state.
     fn reset(&mut self) {
         for module in self.modules.values_mut() {
             module.state = State::Off;
@@ -119,17 +132,18 @@ impl Puzzle {
         }
     }
 
+    /// Propagate a pulse.
     fn propagate(
         &mut self,
-        source: &str,
-        target: &String,
+        source: u32,
+        target: u32,
         pulse: Pulse,
-        q: &mut VecDeque<(String, String, Pulse)>,
+        q: &mut VecDeque<(u32, u32, Pulse)>,
     ) {
-        if let Some(module) = self.modules.get_mut(target) {
+        if let Some(module) = self.modules.get_mut(&target) {
             if module.kind == ModuleType::Broadcaster {
-                for output in &module.outputs {
-                    q.push_back((target.clone(), output.clone(), pulse));
+                for &output in &module.outputs {
+                    q.push_back((target, output, pulse));
                 }
             } else if module.kind == ModuleType::Flipflop {
                 if pulse == Pulse::Low {
@@ -140,11 +154,11 @@ impl Puzzle {
                         State::On => Pulse::High,
                     };
                     for e in &module.outputs {
-                        q.push_back((module.name.clone(), e.clone(), outgoing));
+                        q.push_back((module.id.clone(), e.clone(), outgoing));
                     }
                 }
             } else if module.kind == ModuleType::Conjunction {
-                module.memory.insert(source.to_string(), pulse);
+                module.memory.insert(source, pulse);
 
                 let outgoing = if module.memory.values().all(|&level| level == Pulse::High) {
                     Pulse::Low
@@ -153,21 +167,21 @@ impl Puzzle {
                 };
 
                 for e in &module.outputs {
-                    q.push_back((module.name.clone(), e.clone(), outgoing));
+                    q.push_back((module.id, e.clone(), outgoing));
                 }
             }
         }
     }
 
-    fn press(&mut self, f: &mut dyn core::ops::FnMut(&str, &String, Pulse) -> bool) -> bool {
-        let mut q: VecDeque<(String, String, Pulse)> = VecDeque::new();
-        q.push_back(("button".to_string(), "broadcaster".to_string(), Pulse::Low));
+    fn press(&mut self, f: &mut dyn core::ops::FnMut(u32, u32, Pulse) -> bool) -> bool {
+        let mut q: VecDeque<(u32, u32, Pulse)> = VecDeque::new();
+        q.push_back((0, get_id("broadcaster"), Pulse::Low));
 
         while let Some((source, target, pulse)) = q.pop_front() {
-            if !f(&source, &target, pulse) {
+            if !f(source, target, pulse) {
                 return false;
             }
-            self.propagate(&source, &target, pulse, &mut q);
+            self.propagate(source, target, pulse, &mut q);
         }
 
         true
@@ -186,7 +200,7 @@ impl Puzzle {
                     Pulse::Low => lo += 1,
                     Pulse::High => hi += 1,
                 }
-                true // continue to propagate the signals
+                true // continue to propagate the pulses
             });
         }
         lo * hi
@@ -196,7 +210,7 @@ impl Puzzle {
     fn part2(&mut self) -> u64 {
         self.reset();
 
-        let rx = "rx".to_string();
+        let rx = get_id("rx");
 
         // find the module that feeds rx module
         // &module -> rx
@@ -212,7 +226,7 @@ impl Puzzle {
         }
 
         // get its name
-        let rx_feed = rx_feed.unwrap().name.to_string();
+        let rx_feed = rx_feed.unwrap().id;
 
         // all  modules that send to the rx_feed module
         let rx_feed_inputs = self
@@ -226,7 +240,7 @@ impl Puzzle {
 
         for presses in 1.. {
             if !self.press(&mut |source, target, pulse| {
-                if target == &rx_feed && pulse == Pulse::High {
+                if target == rx_feed && pulse == Pulse::High {
                     // update the presses for the current input of the rx_feed module
                     rx_feed_input_presses
                         .entry(source.to_string())
