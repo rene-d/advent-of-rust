@@ -115,7 +115,7 @@ impl Puzzle {
                 for m in toto.values() {
                     //   ^== borrowing problem here
                     if m.outputs.contains(&module.id) {
-                        module.memory.insert(m.id.clone(), Pulse::Low);
+                        module.memory.insert(m.id, Pulse::Low);
                     }
                 }
             }
@@ -154,7 +154,7 @@ impl Puzzle {
                         State::On => Pulse::High,
                     };
                     for e in &module.outputs {
-                        q.push_back((module.id.clone(), e.clone(), outgoing));
+                        q.push_back((module.id, *e, outgoing));
                     }
                 }
             } else if module.kind == ModuleType::Conjunction {
@@ -167,7 +167,7 @@ impl Puzzle {
                 };
 
                 for e in &module.outputs {
-                    q.push_back((module.id, e.clone(), outgoing));
+                    q.push_back((module.id, *e, outgoing));
                 }
             }
         }
@@ -239,7 +239,7 @@ impl Puzzle {
         let mut rx_feed_input_presses = HashMap::new();
 
         for presses in 1.. {
-            if !self.press(&mut |source, target, pulse| {
+            let stopped = !self.press(&mut |source, target, pulse| {
                 if target == rx_feed && pulse == Pulse::High {
                     // update the presses for the current input of the rx_feed module
                     rx_feed_input_presses
@@ -252,7 +252,9 @@ impl Puzzle {
                     }
                 }
                 true
-            }) {
+            });
+
+            if stopped {
                 // the circuit is stopped: we have found the solution
                 let v: Vec<u64> = rx_feed_input_presses.values().copied().collect();
                 return lcm(&v);
