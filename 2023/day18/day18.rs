@@ -18,7 +18,7 @@ fn shoelace(points: &[(i64, i64)], contour_length: i64) -> i64 {
         let y0 = points[(i + n - 1) % n].1;
         let y2 = points[(i + 1) % n].1;
 
-        area += x1 * (y0 - y2)
+        area += x1 * (y0 - y2);
     }
     area.abs() / 2 + contour_length / 2 + 1
 }
