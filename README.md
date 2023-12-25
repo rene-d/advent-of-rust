@@ -4,7 +4,7 @@ Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.r
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 40⭐
+## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](2023/)) : 50⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
@@ -28,6 +28,11 @@ Puzzle                                                                  | Stars 
 [Day 18: Lavaduct Lagoon](https://adventofcode.com/2023/day/18)         | ⭐⭐  | [Rust](2023/day18/day18.rs)
 [Day 19: Aplenty](https://adventofcode.com/2023/day/19)                 | ⭐⭐  | [Rust](2023/day19/day19.rs)
 [Day 20: Pulse Propagation](https://adventofcode.com/2023/day/20)       | ⭐⭐  | [Rust](2023/day20/day20.rs)
+[Day 21: Step Counter](https://adventofcode.com/2023/day/21)            | ⭐⭐  | [Rust](2023/day21/day21.rs)
+[Day 22: Sand Slabs](https://adventofcode.com/2023/day/22)              | ⭐⭐  | [Rust](2023/day22/day22.rs)
+[Day 23: A Long Walk](https://adventofcode.com/2023/day/23)             | ⭐⭐  | [Rust](2023/day23/day23.rs)
+[Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)  | ⭐⭐  | [Rust (part 1)](2023/day24/day24.rs) [Python (part 2)](2023/day24/day24.py)
+[Day 25: Snowverload](https://adventofcode.com/2023/day/25)             | ⭐⭐  | [Python](2023/day25/day25.py)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
 
