@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 # https://adventofcode.com/2020/day/14
 
-from pathlib import Path
-from copy import deepcopy
-from collections import defaultdict, deque, namedtuple
-import sys, re, math, itertools, time
-from functools import reduce
 import re
+import sys
+from pathlib import Path
 
 verbose = "-v" in sys.argv
 if verbose:

@@ -174,7 +174,7 @@ class AocSession:
             if not f.exists():
                 url = f"https://adventofcode.com/{year}/day/{day}"
                 r_text = self.get(url).decode()
-                answers = [answer for answer in re.findall(r"<p>Your puzzle answer was <code>([\w=-]+)</code>", r_text)]
+                answers = [answer for answer in re.findall(r"<p>Your puzzle answer was <code>([\w,=-]+)</code>", r_text)]
                 # print(nb_stars, len(answers),day)
                 # assert (len(answers) == nb_stars) or (len(answers) == 1 and nb_stars == 2 and day == 25)
                 if len(answers) > 0:
