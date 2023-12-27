@@ -9,6 +9,7 @@ struct Args {
     path: String,
 }
 
+#[allow(clippy::many_single_char_names)]
 fn egcd(a: i64, b: i64) -> (i64, i64, i64) {
     if a == 0 {
         (b, 0, 1)
@@ -34,7 +35,7 @@ fn chinese_remainder(residues: &[i64], modulii: &[i64]) -> Option<i64> {
 
     for (&residue, &modulus) in residues.iter().zip(modulii) {
         let p = prod / modulus;
-        sum += residue * mod_inv(p, modulus)? * p
+        sum += residue * mod_inv(p, modulus)? * p;
     }
 
     Some(sum % prod)
