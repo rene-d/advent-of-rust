@@ -1,6 +1,7 @@
 //! [Day 23: A Long Walk](https://adventofcode.com/2023/day/23)
 
 use std::collections::{HashSet, VecDeque};
+use std::time::{Duration, Instant};
 
 use clap::Parser;
 
@@ -9,6 +10,9 @@ struct Args {
     /// Puzzle input
     #[arg(default_value = "input.txt")]
     path: String,
+    /// Bench part 2
+    #[arg(long, short, default_value_t = false)]
+    benchmark: bool,
 }
 
 const N: usize = 141;
@@ -157,8 +161,17 @@ fn main() {
     let args = Args::parse();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    if args.benchmark {
+        let start = Instant::now();
+
+        println!("{}", puzzle.part2());
+        let duration: Duration = start.elapsed();
+
+        eprintln!("Time elapsed: {:?}", duration);
+    } else {
+        println!("{}", puzzle.part1());
+        println!("{}", puzzle.part2());
+    }
 }
 
 /// Test from puzzle input

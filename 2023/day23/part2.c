@@ -26,7 +26,7 @@ static void walk(int c, int x, int y)
         return;
     }
 
-    if (x == N - 2 && y == N - 1 && c > m)
+    if (x == 1 && y == 0 && c > m)
     {
         m = c;
     }
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
     // check the size
     fgets(buf, 200, f);
-    N = strlen(buf) - 1;
+    N = (int)strlen(buf) - 1;
     if (N != 23 && N != 141)
     {
         printf("bad size: %d\n", N);
@@ -89,11 +89,22 @@ int main(int argc, char *argv[])
     }
     fclose(f);
 
+    struct timespec start, finish;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
     // walk all paths
-    walk(0, 1, 0);
+    walk(0, N - 2, N - 1);
 
     // print the longest one
     printf("%d\n", m);
+
+    clock_gettime(CLOCK_MONOTONIC, &finish);
+    finish.tv_nsec += 1000000000;
+    start.tv_sec += 1;
+    long duration = (finish.tv_nsec - start.tv_nsec) / 1000 + (finish.tv_sec - start.tv_sec) * 1000000;
+
+    fprintf(stderr, "Time elapsed: %.6lfs\n", (double)duration / 1000000.);
 
     return EXIT_SUCCESS;
 }
