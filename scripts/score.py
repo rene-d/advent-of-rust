@@ -16,20 +16,26 @@ def fmt_opening(d: timedelta) -> str:
     return f"{h:02d}:{m:02}"
 
 
-def fmt_part(part, opening):
+def fmt_part(part, opening, show_date):
     if part:
         ts = part["get_star_ts"]
+        ts = datetime.fromtimestamp(ts)
 
-        s = datetime.fromtimestamp(ts).strftime("%H:%M")
-        delta = datetime.fromtimestamp(ts).date() != opening.date()
-        if delta:
-            s = f"{s} +"
+        if show_date:
+            if ts.date() != opening.date():
+                s = ts.strftime("%y-%m-%d %H:%M")
+            else:
+                s = ts.strftime("day      %H:%M")
+        else:
+            s = ts.strftime("%H:%M")
+            if ts.date() != opening.date():
+                s = f"{s} +"
     else:
         s = ""
     return s
 
 
-def show(data):
+def show(data, show_date):
     members = []
     days = 0
     for id, member in data["members"].items():
@@ -42,10 +48,19 @@ def show(data):
 
     members = sorted(members, reverse=True)
 
-    for day_range in (
-        range(1, 14),
-        range(14, 26),
-    ):
+    if show_date:
+        ranges = (
+            range(1, 9),
+            range(9, 17),
+            range(17, 26),
+        )
+    else:
+        ranges = (
+            range(1, 13),
+            range(13, 26),
+        )
+
+    for day_range in ranges:
         t = []
 
         row = []
@@ -74,10 +89,10 @@ def show(data):
                 cl = c.get(str(day), None)
                 if cl:
                     part1 = cl.get("1", None)
-                    part1 = fmt_part(part1, opening)
+                    part1 = fmt_part(part1, opening, show_date)
 
                     part2 = cl.get("2", None)
-                    part2 = fmt_part(part2, opening)
+                    part2 = fmt_part(part2, opening, show_date)
 
                     row.append(part1 + "\n" + part2)
                 else:
@@ -106,8 +121,9 @@ def cookie():
 @click.command()
 @click.option("-y", "--year", type=click.IntRange(2015, current_year), default=current_year, help="Year")
 @click.option("-r", "--refresh", is_flag=True, help="Refresh the leaderboard")
+@click.option("-d", "--date", "show_date", is_flag=True, help="Show the date")
 @click.argument("leaderboard", type=str)
-def main(year, refresh, leaderboard):
+def main(year, refresh, show_date, leaderboard):
     # 1540830
     url = f"https://adventofcode.com/{year}/leaderboard/private/view/{leaderboard}.json"
 
@@ -132,7 +148,7 @@ def main(year, refresh, leaderboard):
     data = cache_file.read_bytes()
     data = json.loads(data)
 
-    show(data)
+    show(data, show_date)
 
 
 if __name__ == "__main__":
