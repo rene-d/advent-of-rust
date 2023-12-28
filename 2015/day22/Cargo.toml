@@ -1,0 +1,13 @@
+[package]
+name = "day22"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.*", features = ["derive"] }
+strum = { version = "0.25.0", features = ["strum_macros", "derive"] }
+strum_macros = "0.25.3"
+
+[[bin]]
+name = "day22"
+path = "day22.rs"

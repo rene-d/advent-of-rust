@@ -51,14 +51,18 @@ else
 
 from pathlib import Path
 from copy import deepcopy
-from collections import defaultdict, deque, namedtuple
+from collections import defaultdict, deque, namedtuple, Counter
 import sys, re, math, itertools, time
 from functools import reduce
 import re
+import unittest
 
 verbose = "-v" in sys.argv
 if verbose:
     sys.argv.remove("-v")
+self_tests = "-T" in sys.argv
+if self_tests:
+    sys.argv.remove("-T")
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text().strip()
 lines = data.splitlines()
