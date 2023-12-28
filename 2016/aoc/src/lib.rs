@@ -16,7 +16,7 @@ pub fn load_input_data(day: u8) -> String {
         if std::path::Path::new(filename).is_file() {
             filename.to_owned()
         } else {
-            let txt = format!("day{}/input.txt", day);
+            let txt = format!("day{day}/input.txt");
             if std::path::Path::new(&txt).is_file() {
                 txt
             } else {

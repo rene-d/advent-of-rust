@@ -1,149 +1,148 @@
 //! [Day 19: Medicine for Rudolph](https://adventofcode.com/2015/day/19)
 
+use clap::Parser;
 use std::collections::HashSet;
-use std::env;
-use std::fs;
+
+#[derive(Parser)]
+struct Args {
+    /// Puzzle input
+    #[arg(default_value = "input.txt")]
+    path: String,
+}
 
 struct Puzzle {
-    medicine_molecule: String,
     replacements: Vec<(String, String)>,
+    medicine_molecule: String,
 }
 
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
+            replacements: vec![],
             medicine_molecule: String::new(),
-            replacements: Vec::new(),
         }
     }
 
-    fn configure(&mut self, filename: &str) {
-        let mut data: Vec<String> = fs::read_to_string(filename)
-            .expect("Failed to read input file")
-            .lines()
-            .map(ToString::to_string)
-            .collect();
+    /// Get the puzzle input.
+    fn configure(&mut self, path: &str) {
+        let data = std::fs::read_to_string(path).unwrap();
 
-        self.medicine_molecule = data.pop().unwrap();
-
-        // Remove empty delimiter
-        data.pop();
-
-        for line in data {
-            // Get the replacement rule
-            let mut replacement: Vec<&str> = line.split(" => ").collect();
-            let to = replacement.pop().unwrap().to_string();
-            let from = replacement.pop().unwrap().to_string();
-            self.replacements.push((from, to));
+        for line in data.lines() {
+            if let Some((a, b)) = line.split_once(" => ") {
+                self.replacements.push((a.to_string(), b.to_owned()));
+            } else if !line.is_empty() {
+                self.medicine_molecule = line.to_owned();
+            }
         }
     }
 
-    fn part1(&mut self) -> usize {
+    fn replacements<'a>(
+        molecule: &'a str,
+        from: &'a str,
+        to: &'a str,
+    ) -> impl Iterator<Item = String> + 'a {
+        molecule.match_indices(from).map(move |(i, _)| {
+            let mut s = String::new();
+
+            s.push_str(&molecule[..i]);
+            s.push_str(to);
+            s.push_str(&molecule[(i + from.len())..]);
+
+            s
+        })
+    }
+
+    /// Solve part one.
+    fn part1(&self) -> usize {
         let mut molecules = HashSet::new();
 
         for (from, to) in &self.replacements {
-            // Split the molecule on each atom
-            let sub_molecules: Vec<String> = self
-                .medicine_molecule
-                .split_inclusive(from)
-                .map(ToString::to_string)
-                .collect();
-
-            // Apply the replacement rule for each atom found
-            for (i, sub_mol) in sub_molecules.iter().enumerate() {
-                let mut generated_molecule = sub_molecules.clone();
-                let sub_mol = sub_mol.replace(from, to);
-                generated_molecule[i] = sub_mol;
-                molecules.insert(generated_molecule.concat());
+            for s in Self::replacements(&self.medicine_molecule, from, to) {
+                molecules.insert(s);
             }
         }
-        molecules.remove(&self.medicine_molecule);
 
         molecules.len()
     }
 
-    /// This resolution works but it's not truly what's asked by the puzzle. We don't know if this
-    /// method yields the lowest count of iterations required to produce the molecule. Finding the
-    /// lowest count of iterations is a way harder puzzle and was probably not meant by the author
-    /// of the puzzle. The puzzle input is probably designed in order for only one answer to rise.
-    fn part2(&mut self) -> usize {
-        let mut iterations = 0_usize;
-
-        // Reduce the medicine molecule to the electron is equivalent to create the medicine molecule from the electron
-        while self.medicine_molecule != "e" {
-            for (from, to) in &self.replacements {
-                // Reverse apply the replacement only once
-                if self.medicine_molecule.contains(to) {
-                    self.medicine_molecule = self.medicine_molecule.replacen(to, from, 1);
-                    break;
-                }
+    /// Solve part two.
+    fn part2(&self) -> usize {
+        let mut molecule = self.medicine_molecule.clone();
+        for steps in 1.. {
+            let next = self
+                .replacements
+                .iter()
+                .find_map(|(from, to)| Self::replacements(&molecule, &to, &from).next());
+            if next.is_none() {
+                eprintln!("not found... steps so far: {steps}");
+                break;
             }
-            iterations += 1;
-
-            if iterations > 10000 {
-                return 0;
+            let next = next.unwrap();
+            if next == "e" {
+                return steps;
             }
+            molecule = next;
         }
 
-        iterations
+        // formulae
+        // https://github.com/petertseng/adventofcode-rb-2015/blob/e968bc59e527e47ca9a28b313f58cc04b6f074cb/19_molecule_replacement.rb#L54
+        // I don't know if there's an algorithm to solve this problem 😕
+
+        let molecule = &self.medicine_molecule;
+        let max_e = self
+            .replacements
+            .iter()
+            .filter(|r| r.0 == "e")
+            .map(|(_, r)| r.chars().filter(|&c| ('A'..='Z').contains(&c)).count())
+            .max()
+            .unwrap_or(0);
+        let elements = molecule
+            .chars()
+            .filter(|&c| ('A'..='Z').contains(&c))
+            .count();
+        let rn = molecule.matches("Rn").count();
+        let y = molecule.matches('Y').count();
+        let ar = molecule.matches("Ar").count();
+        assert_eq!(rn, ar);
+
+        elements - (max_e - 1) - rn - ar - y * 2
     }
 }
 
-/// Test from the puzzle description
-#[test]
-fn test1() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test01.txt");
-    assert_eq!(puzzle.part1(), 4);
-}
-
-/// Test from the puzzle description
-#[test]
-fn test2() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test02.txt");
-    assert_eq!(puzzle.part1(), 7);
-}
-
-/// Test from the puzzle description
-#[ignore = "Heuristic made to solve the problem does not work here"]
-#[test]
-fn test3() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test03.txt");
-    assert_eq!(puzzle.part2(), 3);
-}
-
-/// Test from the puzzle description
-#[ignore = "Heuristic made to solve the problem does not work here"]
-#[test]
-fn test4() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test04.txt");
-    assert_eq!(puzzle.part2(), 6);
-}
-
-/// Test from a player's input
-#[test]
-fn test5() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test05.txt");
-    assert_eq!(puzzle.part1(), 518);
-    assert_eq!(puzzle.part2(), 200);
-}
-
 fn main() {
+    let args = Args::parse();
     let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
 
-    let args: Vec<String> = env::args().collect();
-    puzzle.configure(args.get(1).expect("No input file"));
+/// Test from puzzle input
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    let result = puzzle.part1();
-    println!("{}", result);
+    #[test]
+    fn test01() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("sample_1.txt");
 
-    let result = puzzle.part2();
-    if result != 0 {
-        // Nota: doesn't work in the general case
-        println!("{}", result);
+        puzzle.medicine_molecule = "HOH".to_string();
+        assert_eq!(puzzle.part1(), 4);
+
+        puzzle.medicine_molecule = "HOHOHO".to_string();
+        assert_eq!(puzzle.part1(), 7);
+    }
+
+    #[test]
+    fn test02() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("sample_2.txt");
+
+        puzzle.medicine_molecule = "HOH".to_string();
+        assert_eq!(puzzle.part2(), 3);
+
+        puzzle.medicine_molecule = "HOHOHO".to_string();
+        assert_eq!(puzzle.part2(), 6);
     }
 }

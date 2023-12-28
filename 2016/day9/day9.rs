@@ -138,7 +138,7 @@ fn test_expand() {
 fn test_expand_v2() {
     assert_eq!(expand_v2("(3x3)XYZ"), 9); // XYZXYZXYZ
     assert_eq!(expand_v2("X(8x2)(3x3)ABCY"), 20); // XABCABCABCABCABCABCY
-    assert_eq!(expand_v2("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241920);
+    assert_eq!(expand_v2("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241_920);
     assert_eq!(
         expand_v2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"),
         445
@@ -152,5 +152,5 @@ X(8x2)(3x3)ABCY
 (27x12)(20x12)(13x14)(7x10)(1x12)A
 (25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN";
 
-    assert_eq!(part2(data), 9 + 20 + 241920 + 445);
+    assert_eq!(part2(data), 9 + 20 + 241_920 + 445);
 }

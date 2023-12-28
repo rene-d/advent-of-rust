@@ -85,7 +85,7 @@ fn is_real_room(name: &str, checksum: &str) -> bool {
 
     // compute the counts of each letter
     for c in name.chars() {
-        if ('a'..='z').contains(&c) {
+        if c.is_ascii_lowercase() {
             counts[(c as u8 - b'a') as usize] += 1;
         }
     }
@@ -153,10 +153,10 @@ fn test_extract() {
 
 #[test]
 fn test_is_real_room() {
-    assert_eq!(is_real_room("aaaaa-bbb-z-y-x", "abxyz"), true);
-    assert_eq!(is_real_room("a-b-c-d-e-f-g-h", "abcde"), true);
-    assert_eq!(is_real_room("not-a-real-room", "oarel"), true);
-    assert_eq!(is_real_room("totally-real-room", "decoy"), false);
+    assert!(is_real_room("aaaaa-bbb-z-y-x", "abxyz"));
+    assert!(is_real_room("a-b-c-d-e-f-g-h", "abcde"));
+    assert!(is_real_room("not-a-real-room", "oarel"));
+    assert!(!is_real_room("totally-real-room", "decoy"));
 }
 
 #[test]

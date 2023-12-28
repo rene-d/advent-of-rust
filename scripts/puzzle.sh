@@ -3,48 +3,109 @@
 set -euo pipefail
 
 rootdir=$(realpath $(dirname $0)/..)
+declare -a features=
+day=
+year=
+available=
 
-if [[ $(basename $PWD) =~ day* ]]; then
-    day=$(basename $PWD)
-    day=${day/day/}
-    year=$(basename $(realpath $PWD/..))
-else
-    if [ $# -eq 0 ]; then
-        echo "Usage: $0 [day]"
-        exit
+usage()
+{
+    echo "Usage: $0 [day]"
+    exit
+}
+
+parse_args()
+{
+    declare -a args=
+    for i ; do
+        case $i in
+            -h|--help) usage ;;
+            -r|--rs|--rust) features+=("rust") ;;
+            -p|--py|--python) features+=("python") ;;
+            -c|--c) features+=("c") ;;
+            *) args+=$i ;;
+        esac
+    done
+    set -- "${args[@]}"
+
+    if [[ $(basename $PWD) =~ day* ]]; then
+        day=$(basename $PWD)
+        day=${day/day/}
+        year=$(basename $(realpath $PWD/..))
+    else
+        if [ $# -eq 0 ]; then
+            usage
+        fi
+
+        year=$(basename $PWD)
+        day=$1
+        mkdir -p day$day
+        cd day$day
+    fi
+}
+
+has_feature()
+{
+    [[ -z "${features[@]}" ]] || [[ "${features[@]}" =~ "$1" ]]
+}
+
+fetch_input()
+{
+    local session
+    local now
+    local opening
+    local waiting
+
+    session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/session)
+
+    now=$(date -u +%Y%m%d%H%M%S)
+    if [[ $now == ${year}12${day}050000 ]] || [[ $now > ${year}12${day}050000 ]] ; then
+        curl "https://adventofcode.com/$year/day/$day/input" \
+            -H "Cookie: session=$session" -o input.txt
+        head input.txt
+        wc -l input.txt
+        available=1
+    else
+        opening=$(date -v${year}y -v12m -v${day}d -v5H -v0M -v0S -u +%s)
+        now=$(date -u +%s)
+        waiting=$(($opening-$now))
+        printf "\033[5;93m"
+        printf "Puzzle unavailable: please wait "
+        if [[ $(($waiting / 3600)) != 0 ]]; then printf "$(($waiting / 3600)) hours, "; fi
+        printf "$(( $(($waiting / 60)) % 60)) minutes and $(($waiting % 60)) seconds."
+        printf "\033[0m\n"
+        available=
+    fi
+}
+
+fetch_samples()
+{
+    local session
+
+    [[ $available ]] || return 0
+
+    session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/session)
+
+    curl -s "https://adventofcode.com/$year/day/$day" \
+        -H "Cookie: session=$session" | python3 -EB -c '
+import re, sys, pathlib
+for i, m in enumerate(re.finditer(r"<pre><code>(.*?)</code></pre>", sys.stdin.read(), re.DOTALL), 1):
+    sample = m[1]
+    sample = re.sub(r"<em>(.*?)</em>", r"\1", sample)
+    print(f"\033[32mextracting sample {i} ({len(sample)} bytes)\033[0m")
+    pathlib.Path(f"sample_{i}.txt").write_text(sample)
+'
+}
+
+create_python()
+{
+    has_feature python || return 0
+
+    if [ -f day$day.py ]; then
+        printf "\033[31mPython script already exists.\033[0m\n"
+        return
     fi
 
-    year=$(basename $PWD)
-    day=$1
-    mkdir -p day$day
-    cd day$day
-fi
-
-
-session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/session)
-
-now=$(date -u +%Y%m%d%H%M%S)
-if [[ $now == ${year}12${day}050000 ]] || [[ $now > ${year}12${day}050000 ]] ; then
-    curl "https://adventofcode.com/$year/day/$day/input" \
-        -H "Cookie: session=$session" -o input.txt
-    head input.txt
-    wc -l input.txt
-    available=1
-else
-    opening=$(date -v${year}y -v12m -v${day}d -v5H -v0M -v0S -u +%s)
-    now=$(date -u +%s)
-    waiting=$(($opening-$now))
-    printf "\033[5;93m"
-    printf "Puzzle unavailable: please wait "
-    if [[ $(($waiting / 3600)) != 0 ]]; then printf "$(($waiting / 3600)) hours, "; fi
-    printf "$(( $(($waiting / 60)) % 60)) minutes and $(($waiting % 60)) seconds."
-    printf "\033[0m\n"
-    available=
-fi
-
-if [ -f day$day.py ]; then
-    printf "\033[31mPython script already exists.\033[0m\n"
-else
     cat <<EOF >day$day.py
 #!/usr/bin/env python3
 # https://adventofcode.com/$year/day/$day
@@ -70,14 +131,21 @@ EOF
     chmod a+x day$day.py
 
     printf "\033[32mPython script template created.\033[0m\n"
-fi
+}
 
-if [ -f day$day.rs ]; then
-    printf "\033[31mRust program already exists.\033[0m\n"
-else
+create_rust()
+{
+    has_feature rust || return 0
+
+    if [ -f day$day.rs ]; then
+        printf "\033[31mRust program already exists.\033[0m\n"
+        return
+    fi
+
     cat <<EOF >day$day.rs
 //! [Day $day: xxx](https://adventofcode.com/$year/day/$day)
 
+use std::collections::{HashMap,HashSet};
 use clap::Parser;
 
 #[derive(Parser)]
@@ -116,6 +184,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = Args::parse();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -135,21 +211,12 @@ mod test {
         assert_eq!(puzzle.part2(), 0);
     }
 }
-
-fn main() {
-    let args = Args::parse();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
-}
 EOF
 
     printf "\033[32mRust program template created.\033[0m\n"
-fi
 
-if [ ! -f Cargo.toml ]; then
-    cat <<EOF >Cargo.toml
+    if [ ! -f Cargo.toml ]; then
+        cat <<EOF >Cargo.toml
 [package]
 name = "day$day"
 version = "0.1.0"
@@ -162,9 +229,21 @@ clap = { version = "4.*", features = ["derive"] }
 name = "day$day"
 path = "day$day.rs"
 EOF
-fi
+    fi
+}
 
-if [[ $available ]]; then
-    code -n . day$day.py
-    open "https://adventofcode.com/$year/day/$day"
-fi
+open_if_available()
+{
+    if [[ $available ]]; then
+        code -n . day$day.py
+        open "https://adventofcode.com/$year/day/$day"
+    fi
+}
+
+
+parse_args "$@"
+fetch_input
+fetch_samples
+create_python
+create_rust
+open_if_available

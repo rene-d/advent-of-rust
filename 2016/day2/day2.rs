@@ -36,7 +36,7 @@ fn part1(data: &str) -> String {
                         x += 1;
                     }
                 }
-                _ => panic!("unknown direction: {}", c),
+                _ => panic!("unknown direction: {c}"),
             }
         }
 
@@ -127,7 +127,7 @@ fn part2(data: &str) -> String {
                     'U' => 'B',
                     _ => pos,
                 },
-                _ => panic!("unknown position: {}", pos),
+                _ => panic!("unknown position: {pos}"),
             }
         }
         bathroom_code.push(pos);

@@ -38,7 +38,7 @@ fn main() {
 
     for a in 0..10000 {
         if run_clock_signal(&mut bunny_vm, a) {
-            println!("{}", a);
+            println!("{a}");
             break;
         }
     }

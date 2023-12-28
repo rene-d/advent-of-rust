@@ -17,8 +17,8 @@ fn main() {
 
     let (part1, part2) = solve(data);
 
-    println!("{}", part1);
-    println!("{}", part2);
+    println!("{part1}");
+    println!("{part2}");
 }
 
 /// `BotOutput`represents the output of a bot
@@ -67,7 +67,7 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
             let value = caps[1].parse::<u32>().unwrap();
             let bot = caps[2].parse::<u32>().unwrap();
             assert_ne!(value, 0);
-            bots.entry(bot).or_insert_with(HashSet::new).insert(value);
+            bots.entry(bot).or_default().insert(value);
         } else if let Some(caps) = re_move.captures(line) {
             //
             moves.push(BotInstruction {
@@ -82,7 +82,7 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
                 ),
             });
         } else {
-            panic!("bad line: {}", line);
+            panic!("bad line: {line}");
         }
     }
 
@@ -119,7 +119,7 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
                     // closure to move a microchip to a bot or a bin
                     let mut move_microchip = |to: BotOutput, value: u32| match to {
                         BotOutput::Bot(to_id) => {
-                            bots.entry(to_id).or_insert_with(HashSet::new).insert(value);
+                            bots.entry(to_id).or_default().insert(value);
                         }
                         BotOutput::Bin(to_id) => match to_id {
                             0 => {

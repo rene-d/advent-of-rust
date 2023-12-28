@@ -1,5 +1,5 @@
 
 [workspace]
 members = ["day*"]
-exclude = ["day21", "day24"]
+exclude = ["day21", "day23", "day24"]
 resolver = "2"

@@ -20,7 +20,7 @@ fn to_reg(name: &str) -> Register {
         'b' => REG_B,
         'c' => REG_C,
         'd' => REG_D,
-        _ => panic!("Invalid register name: {}", name),
+        _ => panic!("Invalid register name: {name}"),
     }
 }
 
@@ -30,7 +30,7 @@ fn reg_name(r: Register) -> char {
         1 => 'b',
         REG_C => 'c',
         REG_D => 'd',
-        _ => panic!("Invalid register index: {}", r),
+        _ => panic!("Invalid register index: {r}"),
     }
 }
 
@@ -57,7 +57,7 @@ impl std::fmt::Display for RegOrValue {
             "{}",
             match self {
                 RegOrValue::Register(reg) => format!("{}", reg_name(*reg)),
-                RegOrValue::Value(value) => format!("{}", value),
+                RegOrValue::Value(value) => format!("{value}"),
             }
         )
     }
@@ -81,11 +81,11 @@ impl std::fmt::Display for Instruction {
             f,
             "{}",
             match &self {
-                Instruction::Cpy(a, b) => format!("cpy {} {}", a, b),
+                Instruction::Cpy(a, b) => format!("cpy {a} {b}"),
                 Instruction::Inc(reg) => format!("inc {}", reg_name(*reg)),
                 Instruction::Dec(reg) => format!("dec {}", reg_name(*reg)),
-                Instruction::Jnz(a, b) => format!("jnz {} {}", a, b),
-                Instruction::Out(a) => format!("out {}", a),
+                Instruction::Jnz(a, b) => format!("jnz {a} {b}"),
+                Instruction::Out(a) => format!("out {a}"),
                 Instruction::Tgl(reg) => format!("tgl {}", reg_name(*reg)),
                 Instruction::Nop => "nop".to_string(),
             }
@@ -124,7 +124,7 @@ impl BunnyVM {
     /// print the program
     pub fn print(&self) {
         for instruction in &self.instructions {
-            println!("{}", instruction);
+            println!("{instruction}");
         }
     }
 
@@ -132,13 +132,13 @@ impl BunnyVM {
     pub fn print_state(&self) {
         for (i, instruction) in self.instructions.iter().enumerate() {
             let current = if self.ip == i { "=>" } else { "  " };
-            let instr = format!("{}", instruction);
+            let instr = format!("{instruction}");
             let reg = if i < 4 {
                 format!("{}: {}", reg_name(i), self.registers[i])
             } else {
                 String::new()
             };
-            println!("{:3} \u{a0}{}:   {:20}   {}", current, i, instr, reg);
+            println!("{current:3} \u{a0}{i}:   {instr:20}   {reg}");
         }
     }
 
@@ -165,7 +165,7 @@ impl BunnyVM {
                     }
                     "out" => Instruction::Out(RegOrValue::from_str(source)),
                     "tgl" => Instruction::Tgl(to_reg(source)),
-                    _ => panic!("Unknown instruction: {}", instruction),
+                    _ => panic!("Unknown instruction: {instruction}"),
                 }
             })
             .collect();

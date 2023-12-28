@@ -100,7 +100,7 @@ fn test_tls() {
     assert!(support_tls("abba[mnop]qrst"));
     assert!(!support_tls("abcd[bddb]xyyx"));
     assert!(!support_tls("aaaa[qwer]tyui"));
-    assert!(support_tls("ioxxoj[asdfgh]zxcvbn"))
+    assert!(support_tls("ioxxoj[asdfgh]zxcvbn"));
 }
 
 #[test]
@@ -108,5 +108,5 @@ fn test_ssl() {
     assert!(support_ssl("aba[bab]xyz"));
     assert!(!support_ssl("xyx[xyx]xyx"));
     assert!(support_ssl("aaa[kek]eke"));
-    assert!(support_ssl("zazbz[bzb]cdb"))
+    assert!(support_ssl("zazbz[bzb]cdb"));
 }
