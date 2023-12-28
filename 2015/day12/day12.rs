@@ -46,7 +46,7 @@ fn main() {
                 .sum::<i32>()
         })
         .sum::<i32>();
-    println!("{}", part1);
+    println!("{part1}");
 
     // part 2
     let json: serde_json::Value =

@@ -106,8 +106,8 @@ fn main() {
     // println!("init:  {}", pwd);
 
     pwd.next_valid();
-    println!("{}", pwd);
+    println!("{pwd}");
 
     pwd.next_valid();
-    println!("{}", pwd);
+    println!("{pwd}");
 }

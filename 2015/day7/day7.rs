@@ -30,12 +30,12 @@ fn main() {
 
     // part 1
     let wire_a = wires(&opcodes, "a");
-    println!("{}", wire_a);
+    println!("{wire_a}");
 
     // part 2
     opcodes.insert("b".to_string(), wire_a.to_string());
     let wire_a_bis = wires(&opcodes, "a");
-    println!("{}", wire_a_bis);
+    println!("{wire_a_bis}");
 }
 
 fn run(
@@ -112,13 +112,13 @@ fn run(
                 }
             }
         } else {
-            panic!("unknown opcode <{}>", op);
+            panic!("unknown opcode <{op}>");
         }
 
         cache.insert(reg.to_string(), value);
         value
     } else {
-        panic!("unknown register {} ", reg);
+        panic!("unknown register {reg} ");
     }
 }
 

@@ -56,8 +56,8 @@ fn main() {
         total_ribbon += ribbon + bow;
     }
 
-    println!("{}", total_paper);
-    println!("{}", total_ribbon);
+    println!("{total_paper}");
+    println!("{total_ribbon}");
 }
 
 // The output is wrapped in a Result to allow matching on errors

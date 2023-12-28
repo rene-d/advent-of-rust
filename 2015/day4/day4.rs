@@ -27,9 +27,9 @@ fn main() {
         x.push_str(&key_str);
         let digest = md5::compute(x);
 
-        if format!("{:x}", digest).starts_with("00000") {
+        if format!("{digest:x}").starts_with("00000") {
             // println!("{}\t{:?}", key, digest);
-            println!("{}", key);
+            println!("{key}");
             break;
         }
 
@@ -43,9 +43,9 @@ fn main() {
         x.push_str(&key_str);
         let digest = md5::compute(x);
 
-        if format!("{:x}", digest).starts_with("000000") {
+        if format!("{digest:x}").starts_with("000000") {
             // println!("{}\t{:?}", key, digest);
-            println!("{}", key);
+            println!("{key}");
             break;
         }
 

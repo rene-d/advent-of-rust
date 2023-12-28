@@ -62,11 +62,11 @@ fn part2(data: &[String]) {
 
     let mut count: u32 = 0;
     for row in &grid {
-        for cell in row.iter() {
+        for cell in row {
             count += u32::try_from(*cell).unwrap();
         }
     }
-    println!("{}", count);
+    println!("{count}");
 }
 
 fn part1(data: &[String]) {
@@ -106,11 +106,11 @@ fn part1(data: &[String]) {
 
     let mut count: u32 = 0;
     for row in &grid {
-        for cell in row.iter() {
+        for cell in row {
             count += u32::try_from(*cell).unwrap();
         }
     }
-    println!("{}", count);
+    println!("{count}");
 }
 
 // The output is wrapped in a Result to allow matching on errors

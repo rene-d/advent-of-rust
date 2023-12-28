@@ -66,7 +66,7 @@ fn main() {
         })
         .max()
         .unwrap();
-    println!("{}", max_distance);
+    println!("{max_distance}");
 
     // part 2
     let mut scores: Vec<u32> = vec![0; reinders.len()];

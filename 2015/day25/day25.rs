@@ -16,7 +16,7 @@ fn main() {
         }
         value = (value * 252_533) % 33_554_393;
     }
-    println!("{}", value);
+    println!("{value}");
 }
 
 fn read_data() -> (i32, i32) {
@@ -32,8 +32,8 @@ fn read_data() -> (i32, i32) {
         .to_string();
     let data = data.split(' ').collect::<Vec<&str>>();
 
-    let row = data[16].strip_suffix(",").unwrap().parse::<i32>().unwrap();
-    let column = data[18].strip_suffix(".").unwrap().parse::<i32>().unwrap();
+    let row = data[16].strip_suffix(',').unwrap().parse::<i32>().unwrap();
+    let column = data[18].strip_suffix('.').unwrap().parse::<i32>().unwrap();
 
     (row, column)
 }

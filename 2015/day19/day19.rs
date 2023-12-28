@@ -72,7 +72,7 @@ impl Puzzle {
             let next = self
                 .replacements
                 .iter()
-                .find_map(|(from, to)| Self::replacements(&molecule, &to, &from).next());
+                .find_map(|(from, to)| Self::replacements(&molecule, to, from).next());
             if next.is_none() {
                 eprintln!("not found... steps so far: {steps}");
                 break;
@@ -93,12 +93,12 @@ impl Puzzle {
             .replacements
             .iter()
             .filter(|r| r.0 == "e")
-            .map(|(_, r)| r.chars().filter(|&c| ('A'..='Z').contains(&c)).count())
+            .map(|(_, r)| r.chars().filter(|&c| c.is_ascii_uppercase()).count())
             .max()
             .unwrap_or(0);
         let elements = molecule
             .chars()
-            .filter(|&c| ('A'..='Z').contains(&c))
+            .filter(|&c| c.is_ascii_uppercase())
             .count();
         let rn = molecule.matches("Rn").count();
         let y = molecule.matches('Y').count();

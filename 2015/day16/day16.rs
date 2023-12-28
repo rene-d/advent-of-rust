@@ -33,7 +33,7 @@ fn main() {
             let value = m.get(i + 1).unwrap().as_str().parse::<u32>().unwrap();
             aunts
                 .entry(sue)
-                .or_insert_with(HashMap::new)
+                .or_default()
                 .insert(key.to_string(), value);
         }
     }
@@ -51,7 +51,7 @@ fn main() {
             && aunt.get("cars").unwrap_or(&2) == &2
             && aunt.get("perfumes").unwrap_or(&1) == &1
         {
-            println!("{}", sue);
+            println!("{sue}");
         }
     }
 
@@ -68,7 +68,7 @@ fn main() {
             && aunt.get("cars").unwrap_or(&2) == &2
             && aunt.get("perfumes").unwrap_or(&1) == &1
         {
-            println!("{}", sue);
+            println!("{sue}");
         }
     }
 }
