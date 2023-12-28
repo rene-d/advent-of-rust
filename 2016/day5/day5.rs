@@ -45,9 +45,9 @@ fn part1(door_id: &str) -> String {
 
     let mut index = 0;
     loop {
-        let hash = format!("{}{}", door_id, index);
+        let hash = format!("{door_id}{index}");
         let digest = md5::compute(hash);
-        let hex = format!("{:x}", digest);
+        let hex = format!("{digest:x}");
 
         if hex.starts_with("00000") {
             password[found] = hex.chars().nth(5).unwrap();
@@ -85,9 +85,9 @@ fn part2(door_id: &str) -> String {
 
     let mut index = 0;
     loop {
-        let hash = format!("{}{}", door_id, index);
+        let hash = format!("{door_id}{index}");
         let digest = md5::compute(hash);
-        let hex = format!("{:x}", digest);
+        let hex = format!("{digest:x}");
 
         if hex.starts_with("00000") {
             if let Some(position) = hex.chars().nth(5).unwrap().to_digit(10) {

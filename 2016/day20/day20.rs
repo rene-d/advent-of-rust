@@ -20,7 +20,7 @@ fn main() {
         }
         not_blocked = not_blocked.max(max + 1);
     }
-    println!("{}", not_blocked);
+    println!("{not_blocked}");
 
     // merge the ranges
     let mut merged = Vec::<(u32, u32)>::new();

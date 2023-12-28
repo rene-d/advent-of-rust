@@ -29,7 +29,7 @@ fn main() {
         match direction {
             'L' => angle = (angle + 90) % 360,
             'R' => angle = (angle + 270) % 360,
-            _ => panic!("unknown direction: {}", direction),
+            _ => panic!("unknown direction: {direction}"),
         }
 
         for _ in 1..=distance {
@@ -38,7 +38,7 @@ fn main() {
                 90 => x += 1,
                 180 => y -= 1,
                 270 => x -= 1,
-                _ => panic!("unknown angle: {}", angle),
+                _ => panic!("unknown angle: {angle}"),
             }
 
             if !twice && visited.contains(&(x, y)) {
@@ -54,5 +54,5 @@ fn main() {
     //println!("Easter Bunny HQ: {} (part 1)", x.abs() + y.abs());
 
     println!("{}", x.abs() + y.abs());
-    println!("{}", part2);
+    println!("{part2}");
 }

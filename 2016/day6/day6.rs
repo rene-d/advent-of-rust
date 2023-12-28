@@ -10,8 +10,8 @@ fn main() {
     let data = std::fs::read_to_string(filename).unwrap();
 
     let (part1, part2) = solve(&data);
-    println!("{}", part1);
-    println!("{}", part2);
+    println!("{part1}");
+    println!("{part2}");
 }
 
 /// solve both parts
@@ -21,7 +21,7 @@ fn solve(data: &str) -> (String, String) {
     for line in data.split('\n') {
         for (i, c) in line.chars().enumerate() {
             assert!(i < 8, "too many chars");
-            if ('a'..='z').contains(&c) {
+            if c.is_ascii_lowercase() {
                 freq[i][c as usize - 'a' as usize] += 1;
             }
         }
@@ -75,7 +75,7 @@ vrdear
 dvrsen
 enarar";
 
-    let (part1, part2) = solve(&data);
+    let (part1, part2) = solve(data);
 
     assert_eq!(part1, "easter  ".to_string());
     assert_eq!(part2, "advent  ".to_string());

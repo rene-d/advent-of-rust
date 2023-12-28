@@ -44,7 +44,7 @@ fn main() {
             }
         }
     }
-    println!("{}", n);
+    println!("{n}");
 }
 
 /// Find the shortest path from (1, 1) to (x, y) with A* search algorithm.
@@ -119,8 +119,8 @@ fn count_ones(value: i32) -> i32 {
 
 #[test]
 fn test_count_ones() {
-    assert_eq!(count_ones(0b001100110011), 6);
-    assert_eq!(count_ones(0b110011001100), 6);
+    assert_eq!(count_ones(0b0011_0011_0011), 6);
+    assert_eq!(count_ones(0b1100_1100_1100), 6);
     assert_eq!(count_ones(0b111), 3);
     assert_eq!(count_ones(0b1), 1);
     assert_eq!(count_ones(0b0), 0);

@@ -247,7 +247,9 @@ class AocSession:
                 )
 
                 if not self.always_submit:
-                    resp = input(question).lower()
+                    while True:
+                        resp = input(question).lower()
+                        if resp and resp in "yan": break
                 else:
                     resp = "y"
 

@@ -1,61 +1,17 @@
 //! [Day 15: Chiton](https://adventofcode.com/2021/day/15)
 
+use clap::Parser;
 use std::collections::BinaryHeap;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-use structopt::StructOpt;
 
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-}
-
-/// main function
-fn main() {
-    let args = Cli::from_args();
-
-    // println!("reading data from: {}", args.path.display());
-
-    let data = load_data(args.path);
-
-    // read the grid
-    let n = data.len();
-    let mut grid = vec![vec![0i32; n]; n];
-    for (y, line) in data.iter().enumerate() {
-        for (x, c) in line.chars().enumerate() {
-            grid[y][x] = c.to_string().parse().unwrap();
-        }
-    }
-
-    // step 1
-    println!("{:?}", min_cost_dp(&grid) - grid[0][0]);
-    //println!("{:?}", min_cost(&grid) - grid[0][0]);
-
-    // build the five times larger grid
-    let mut grid5 = vec![vec![0i32; 5 * n]; 5 * n];
-    for y in 0..n {
-        for x in 0..n {
-            let v = grid[y][x];
-
-            for yy in 0..5 {
-                for xx in 0..5 {
-                    grid5[y + n * yy][x + n * xx] =
-                        (v - 1 + i32::try_from(xx + yy).unwrap()) % 9 + 1;
-                }
-            }
-        }
-    }
-
-    // step 2
-    // println!("{:?}", min_cost_dp(&grid5) - grid5[0][0]);
-    println!("{:?}", min_cost(&grid5) - grid5[0][0]);
+#[derive(Parser)]
+struct Args {
+    /// Puzzle input
+    #[arg(default_value = "input.txt")]
+    path: String,
 }
 
 struct Cost {
-    cost: i32,
+    cost: u32,
     x: usize,
     y: usize,
 }
@@ -80,9 +36,9 @@ impl PartialEq for Cost {
 
 impl Eq for Cost {}
 
-fn min_cost(grid: &[Vec<i32>]) -> i32 {
+fn min_cost(grid: &[Vec<u32>]) -> u32 {
     let n = grid.len();
-    let mut d = vec![vec![0i32; n]; n];
+    let mut d = vec![vec![0u32; n]; n];
 
     let mut heap = BinaryHeap::new();
 
@@ -140,51 +96,78 @@ fn min_cost(grid: &[Vec<i32>]) -> i32 {
     d[n - 1][n - 1]
 }
 
-fn min_cost_dp(grid: &[Vec<i32>]) -> i32 {
-    let n = grid.len();
-    let mut cost = vec![vec![0i32; n]; n];
+struct Puzzle {
+    grid: Vec<Vec<u32>>,
+}
 
-    for y in 0..n {
-        for x in 0..n {
-            if x == 0 && y == 0 {
-                cost[y][x] = grid[y][x];
-            } else if x == 0 {
-                cost[y][x] = grid[y][x] + cost[y - 1][x];
-            } else if y == 0 {
-                cost[y][x] = grid[y][x] + cost[y][x - 1];
-            } else {
-                cost[y][x] = grid[y][x] + min(cost[y - 1][x], cost[y][x - 1]);
+impl Puzzle {
+    fn new() -> Puzzle {
+        Puzzle { grid: vec![] }
+    }
+
+    /// Get the puzzle input.
+    fn configure(&mut self, path: &str) {
+        let data = std::fs::read_to_string(path).unwrap();
+
+        // read the grid
+        for line in data.lines() {
+            let row: Vec<_> = line.chars().filter_map(|c| c.to_digit(10)).collect();
+            self.grid.push(row);
+        }
+    }
+
+    /// Solve part one.
+    fn part1(&self) -> u32 {
+        min_cost(&self.grid) - self.grid[0][0]
+    }
+
+    /// Solve part two.
+    fn part2(&self) -> u32 {
+        let n = self.grid.len();
+
+        // build the five times larger grid
+        let mut grid5 = vec![vec![0u32; 5 * n]; 5 * n];
+        for y in 0..n {
+            for x in 0..n {
+                let v = self.grid[y][x];
+
+                for yy in 0..5 {
+                    for xx in 0..5 {
+                        grid5[y + n * yy][x + n * xx] =
+                            (v - 1 + u32::try_from(xx + yy).unwrap()) % 9 + 1;
+                    }
+                }
             }
         }
-    }
 
-    cost[n - 1][n - 1]
-}
-
-fn min(a: i32, b: i32) -> i32 {
-    if a < b {
-        a
-    } else {
-        b
+        min_cost(&grid5) - self.grid[0][0]
     }
 }
 
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
+fn main() {
+    let args = Args::parse();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
 }
 
-fn load_data(path: std::path::PathBuf) -> Vec<String> {
-    let mut data = vec![];
-    if let Ok(lines) = read_lines(path) {
-        for line in lines.flatten() {
-            data.push(line);
-        }
+/// Test from puzzle input
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test01() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("sample_1.txt");
+        assert_eq!(puzzle.part1(), 40);
     }
-    data
+
+    #[test]
+    fn test02() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("sample_1.txt");
+        assert_eq!(puzzle.part2(), 315);
+    }
 }

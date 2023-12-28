@@ -41,7 +41,7 @@ fn solve(data: &str) {
 
             // println!("row {} by {}", y, by);
 
-            let mut new_row = vec![false; WIDTH];
+            let mut new_row = [false; WIDTH];
             for x in 0..WIDTH {
                 new_row[(x + by) % WIDTH] = grid[y][x];
             }
@@ -54,7 +54,7 @@ fn solve(data: &str) {
 
             // println!("col {} by {}", x, by);
 
-            let mut new_col = vec![false; HEIGHT];
+            let mut new_col = [false; HEIGHT];
             for y in 0..HEIGHT {
                 new_col[(y + by) % HEIGHT] = grid[y][x];
             }
@@ -80,7 +80,7 @@ fn solve(data: &str) {
         crt.push('\n');
     }
 
-    println!("{}", lit); // part 1
+    println!("{lit}"); // part 1
     println!("{}", ocr(&crt)); // part 2
 }
 

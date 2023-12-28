@@ -39,19 +39,19 @@ impl TripletHash {
         let mut index = index;
 
         loop {
-            let hash = format!("{}{}", salt, index);
+            let hash = format!("{salt}{index}");
             let mut digest = md5::compute(hash);
 
             // apply key stretching
             for _ in 0..key_stretching {
-                let hex = format!("{:x}", digest);
+                let hex = format!("{digest:x}");
                 digest = md5::compute(hex);
             }
 
             // get the 32 hexadecimal digits
             let mut digits = [0_u8; 32];
             for (i, b) in digest.iter().enumerate() {
-                digits[i * 2] = (b >> 4) as u8;
+                digits[i * 2] = b >> 4;
                 digits[i * 2 + 1] = b & 0xf;
             }
 

@@ -10,5 +10,5 @@ fn main() {
 
     println!("{:?}", vm.registers);
 
-    print!("{}", output);
+    print!("{output}");
 }

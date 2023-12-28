@@ -21,7 +21,7 @@ fn main() {
     let nb_discsc = discs.len();
     for time in 0.. {
         if (0..nb_discsc).all(|i| (discs[i] + i + time + 1) % positions[i] == 0) {
-            println!("{}", time);
+            println!("{time}");
             break;
         }
     }
@@ -33,7 +33,7 @@ fn main() {
     let nb_discsc = discs.len();
     for time in 0.. {
         if (0..nb_discsc).all(|i| (discs[i] + i + time + 1) % positions[i] == 0) {
-            println!("{}", time);
+            println!("{time}");
             break;
         }
     }
