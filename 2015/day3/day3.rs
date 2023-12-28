@@ -18,15 +18,17 @@ fn main() {
     // println!("reading data from: {}", args.path.display());
     let data = load_data(args.path);
 
-    part1(&data[0]);
-    part2(&data[0]);
+    println!("{}", part1(&data[0]));
+    println!("{}", part2(&data[0]));
 }
 
-fn part2(line: &str) {
+fn part2(line: &str) -> usize {
     let mut visited = std::collections::HashSet::new();
 
     let mut position_santa = (0, 0);
     let mut position_robot = (0, 0);
+
+    visited.insert(position_santa);
 
     for (i, dir) in line.chars().enumerate() {
         if i % 2 == 0 {
@@ -52,13 +54,15 @@ fn part2(line: &str) {
         }
     }
 
-    println!("{}", visited.len());
+    visited.len()
 }
 
-fn part1(line: &str) {
+fn part1(line: &str) -> usize {
     let mut visited = std::collections::HashSet::new();
 
     let mut position = (0, 0);
+
+    visited.insert(position);
 
     for dir in line.chars() {
         match dir {
@@ -72,7 +76,7 @@ fn part1(line: &str) {
         visited.insert(position);
     }
 
-    println!("{}", 1 + visited.len());
+    visited.len()
 }
 
 // The output is wrapped in a Result to allow matching on errors
@@ -94,4 +98,23 @@ fn load_data(path: std::path::PathBuf) -> Vec<String> {
         }
     }
     data
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test1() {
+        assert_eq!(part1(">"), 2);
+        assert_eq!(part1("^>v<"), 4);
+        assert_eq!(part1("^v^v^v^v^v"), 2);
+    }
+
+    #[test]
+    fn test2() {
+        assert_eq!(part2("^v"), 3);
+        assert_eq!(part2("^>v<"), 3);
+        assert_eq!(part2("^v^v^v^v^v"), 11);
+    }
 }
