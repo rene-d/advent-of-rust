@@ -25,9 +25,7 @@ fn compute_paths(data: &[&str], small_twice: bool) -> u32 {
     let mut path_list = vec![(String::from("start"), vec![String::from("start")], false)];
     let mut path_count = 0;
 
-    while !path_list.is_empty() {
-        let (node, path, twice) = path_list.pop().unwrap();
-
+    while let Some((node, path, twice)) = path_list.pop() {
         if node == "end" {
             // Count this path and let it be removed from the paths list
             path_count += 1;
@@ -81,8 +79,8 @@ fn main() {
     let small_once = compute_paths(&data, false);
     let small_twice = compute_paths(&data, true);
 
-    println!("{}", small_once);
-    println!("{}", small_twice);
+    println!("{small_once}");
+    println!("{small_twice}");
 }
 
 #[test]

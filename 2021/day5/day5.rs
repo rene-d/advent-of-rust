@@ -60,7 +60,7 @@ fn main() {
             }
         }
     }
-    println!("{:?}", sum);
+    println!("{sum:?}");
 
     // --- Part Two ---
     for line in &data {
@@ -96,7 +96,7 @@ fn main() {
             }
         }
     }
-    println!("{:?}", sum2);
+    println!("{sum2:?}");
 }
 
 // The output is wrapped in a Result to allow matching on errors

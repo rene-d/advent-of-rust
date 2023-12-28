@@ -34,7 +34,7 @@ fn main() {
             data.push(num);
         }
     }
-    println!("{}", result);
+    println!("{result}");
 
     // step 2
     prev_num = 999_999_999_u32;
@@ -48,7 +48,7 @@ fn main() {
         }
         prev_num = num;
     }
-    println!("{}", result);
+    println!("{result}");
 }
 
 // The output is wrapped in a Result to allow matching on errors

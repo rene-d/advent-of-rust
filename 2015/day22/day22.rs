@@ -226,8 +226,6 @@ impl Puzzle {
     }
 }
 
-
-
 fn main() {
     let args = Args::parse();
     let mut puzzle = Puzzle::new();

@@ -47,8 +47,8 @@ fn main() {
         }
     }
 
-    println!("{}", min_sum1);
-    println!("{}", min_sum2);
+    println!("{min_sum1}");
+    println!("{min_sum2}");
 }
 
 // The output is wrapped in a Result to allow matching on errors

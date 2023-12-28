@@ -54,7 +54,7 @@ fn main() {
     }
 
     // part 1
-    println!("{}", risk);
+    println!("{risk}");
 
     // part 2
     if basins.len() >= 3 {

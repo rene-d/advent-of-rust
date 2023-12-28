@@ -7,7 +7,7 @@ import sqlite3
 import subprocess
 import time
 import zlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import requests
@@ -36,35 +36,36 @@ class AocSession:
 
         if isinstance(session, tuple):
             self.user, cookie = session
-        else:
-            cookie = session
-            self.user = None
+            raise Exception("TODO - not supported ")
+
+        cookie = session
+        self.user = None
+        self.user_id = ""
 
         self.sess = requests.Session()
         self.sess.cookies["session"] = cookie
 
-        if not self.user:
-            r_text = self.get("https://adventofcode.com/settings").decode()
+        r_text = self.get("https://adventofcode.com/settings").decode()
 
-            m = re.search(r'<div class="user">(.+?)\s*<', r_text)
-            if m is None:
-                logging.error(f"Cannot retrieve session {cookie}")
-                self.user = "unknown"
+        m = re.search(r'<div class="user">(.+?)\s*<', r_text)
+        if m is None:
+            logging.error(f"Cannot retrieve session {cookie}")
+            self.user = "unknown"
+        else:
+            user = m[1]
+
+            m = re.search(r"<span>\(anonymous user #(\d+)\)</span>", r_text)
+            self.user_id = m[1]
+
+            if "anonymous user" in user:
+                self.user = f"anon-{self.user_id}"
             else:
-                user = m[1]
+                self.user = user
 
-                m = re.search(r"<span>\(anonymous user #(\d+)\)</span>", r_text)
-                user_id = m[1]
-
-                if "anonymous user" in user:
-                    self.user = f"anon-{user_id}"
-                else:
-                    self.user = user
-
-        self.user_dir = self.data_dir / self.user
+        self.user_dir = self.data_dir / self.user_id
         self.user_dir.mkdir(parents=True, exist_ok=True)
 
-        self.prefix = f"\033[1;36m[{self.user:<12}]\033[0m "
+        self.prefix = f"\033[1;36m[{self.user:<15}]\033[0m "
 
     def get_sessions():
         f = AocSession.rootdir / "session"
@@ -80,11 +81,11 @@ class AocSession:
         """Do a HTTP request."""
 
         if force_update or self.force_update:
-            self.db.execute("delete from cache where url=? and user=?", (url, self.user))
+            self.db.execute("delete from cache where url=? and user=?", (url, self.user_id))
         else:
             cursor = self.db.execute(
                 "select last_modified,content from cache where url=? and user=?",
-                (url, self.user or self.sess.cookies["session"]),
+                (url, self.user_id or self.sess.cookies["session"]),
             )
             row = cursor.fetchone()
             if row:
@@ -95,7 +96,7 @@ class AocSession:
 
         self.db.execute(
             "insert into cache (url,user,last_modified,content) values (?,?,?,?)",
-            (url, self.user or self.sess.cookies["session"], datetime.utcnow(), zlib.compress(r.content)),
+            (url, self.user_id or self.sess.cookies["session"], datetime.utcnow(), zlib.compress(r.content)),
         )
         self.db.commit()
 
@@ -174,7 +175,9 @@ class AocSession:
             if not f.exists():
                 url = f"https://adventofcode.com/{year}/day/{day}"
                 r_text = self.get(url).decode()
-                answers = [answer for answer in re.findall(r"<p>Your puzzle answer was <code>([\w,=-]+)</code>", r_text)]
+                answers = [
+                    answer for answer in re.findall(r"<p>Your puzzle answer was <code>([\w,=-]+)</code>", r_text)
+                ]
                 # print(nb_stars, len(answers),day)
                 # assert (len(answers) == nb_stars) or (len(answers) == 1 and nb_stars == 2 and day == 25)
                 if len(answers) > 0:
@@ -232,7 +235,7 @@ class AocSession:
 
                 self.db.execute(
                     "insert or replace into answers (user,year,day,language,st_mtime,part1,part2) values (?,?,?,?,?,?,?)",
-                    (self.user, year, day, language, p.stat().st_mtime, part1, part2),
+                    (self.user_id, year, day, language, p.stat().st_mtime, part1, part2),
                 )
                 self.db.commit()
 
@@ -249,7 +252,8 @@ class AocSession:
                 if not self.always_submit:
                     while True:
                         resp = input(question).lower()
-                        if resp and resp in "yan": break
+                        if resp and resp in "yan":
+                            break
                 else:
                     resp = "y"
 
@@ -272,10 +276,12 @@ class AocSession:
                     self.get_stars(year, day, True)
                     self.get_answers(year, day)
 
+            remarks = ""
+
             # check in program has been modified since last check
             cursor = self.db.execute(
                 "select st_mtime,part1,part2 from answers where user=? and year=? and day=? and language=?",
-                (self.user, year, day, language),
+                (self.user_id, year, day, language),
             )
             row = cursor.fetchone()
             if row and row[0] == p.stat().st_mtime:
@@ -283,17 +289,22 @@ class AocSession:
                 parts = [row[1]]
                 if row[2]:
                     parts.append(row[2])
+
+                remarks += " (cached)"
             else:
                 # run the program to solve the puzzle
                 cmd = [p.as_posix(), self.get_input(year, day).as_posix()]
                 try:
+                    start_time = datetime.now()
                     parts = subprocess.check_output(cmd, stderr=subprocess.DEVNULL).decode().strip().split()
+                    elapsed = datetime.now() - start_time
+                    remarks += f" ({elapsed.total_seconds():.3}s)"
                 except (subprocess.CalledProcessError, PermissionError):
                     print(f"{self.prefix} Program for {year} day {day:2} in {language} \033[91mfailed\033[0m")
                     parts = []
 
             if parts == answers and len(parts) > 0:
-                print(f"{self.prefix} Solution {year} day {day:2} in {language:<6} \033[92mok\033[0m")
+                print(f"{self.prefix} Solution {year} day {day:2} in {language:<6} \033[92mok\033[0m {remarks}")
                 update_last_answers(parts)
                 return
 

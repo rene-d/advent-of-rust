@@ -163,12 +163,12 @@ fn run_program(program: &[Instruction], input: &[i64], z: i64, verbose: bool) ->
         registers[instruction.dest as usize] = dest_value;
 
         if verbose {
-            println!("{:?} -> {:?}", instruction, registers);
+            println!("{instruction:?} -> {registers:?}");
         }
     }
 
     if verbose {
-        println!("{:?} -> {:?}", input, registers);
+        println!("{input:?} -> {registers:?}");
     }
     registers[Register::Z as usize]
 }

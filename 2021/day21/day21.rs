@@ -84,8 +84,8 @@ fn part2(player: u8, computer: u8) -> u64 {
 
 fn part1(player: u8, computer: u8) -> u32 {
     let mut current_player = 0;
-    let mut scores = vec![0, 0];
-    let mut positions = vec![player, computer];
+    let mut scores = [0, 0];
+    let mut positions = [player, computer];
 
     let mut die: u32 = 0;
     let mut roll = || -> u32 {
@@ -132,11 +132,11 @@ mod tests {
     use super::*;
     #[test]
     fn test_part1() {
-        assert_eq!(part1(4, 8), 739785);
+        assert_eq!(part1(4, 8), 739_785);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(part2(4, 8), 444356092776315);
+        assert_eq!(part2(4, 8), 444_356_092_776_315);
     }
 }

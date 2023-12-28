@@ -37,7 +37,7 @@ fn part2(data: &[String]) -> isize {
         let mut one = 0;
         let mut nb = 0;
 
-        for value in data.iter() {
+        for value in data {
             if value.starts_with(&dioxygen_start) {
                 let c = value.chars().nth(bit).unwrap();
                 if c == '1' {
@@ -63,7 +63,7 @@ fn part2(data: &[String]) -> isize {
         let mut one = 0;
         let mut nb = 0;
 
-        for value in data.iter() {
+        for value in data {
             if value.starts_with(&co2_start) {
                 let c = value.chars().nth(bit).unwrap();
                 if c == '1' {

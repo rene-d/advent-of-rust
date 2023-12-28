@@ -108,7 +108,7 @@ fn part2(data: &[String]) {
     }
     bar.finish();
 
-    println!("{}", size);
+    println!("{size}");
 }
 
 fn part1(data: &[String]) {

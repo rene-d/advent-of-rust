@@ -72,7 +72,7 @@ fn main() {
                     sum += i32::from(*cell);
                 }
             }
-            println!("{}", sum);
+            println!("{sum}");
         }
     }
 
