@@ -62,8 +62,8 @@ fn init_lights(grid: &mut [[u8; 100]; 100], data: &[String]) {
 
 fn count_lights(grid: &[[u8; 100]; 100]) -> u32 {
     let mut count = 0;
-    for line in grid.iter() {
-        for c in line.iter() {
+    for line in grid {
+        for c in line {
             if *c == 1 {
                 count += 1;
             }

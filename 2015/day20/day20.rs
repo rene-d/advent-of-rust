@@ -166,8 +166,8 @@ fn main() {
     puzzle.configure(args.get(1).expect("No input file"));
 
     let result = puzzle.part1();
-    println!("{}", result);
+    println!("{result}");
 
     let result = puzzle.part2();
-    println!("{}", result);
+    println!("{result}");
 }

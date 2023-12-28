@@ -33,8 +33,8 @@ fn main() {
                 enter = position;
             }
         }
-        println!("{}", floor);
-        println!("{}", enter);
+        println!("{floor}");
+        println!("{enter}");
     }
 }
 

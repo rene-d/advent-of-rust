@@ -67,8 +67,8 @@ fn main() {
         }
     }
 
-    println!("{}", min_distance);
-    println!("{}", max_distance);
+    println!("{min_distance}");
+    println!("{max_distance}");
 }
 
 // The output is wrapped in a Result to allow matching on errors

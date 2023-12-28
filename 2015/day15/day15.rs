@@ -116,7 +116,7 @@ fn main() {
             }
         }
 
-        println!("{}", score_max);
+        println!("{score_max}");
     }
 }
 

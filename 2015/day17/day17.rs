@@ -43,9 +43,9 @@ fn main() {
             }
         }
     }
-    println!("{}", part1);
+    println!("{part1}");
 
-    let min_container = part2.iter().map(|(k, _)| k).min().unwrap();
+    let min_container = part2.keys().min().unwrap();
     println!("{}", part2[min_container]);
 }
 

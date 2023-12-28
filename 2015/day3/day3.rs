@@ -37,7 +37,7 @@ fn part2(line: &str) -> usize {
                 '>' => position_santa.0 += 1,
                 '^' => position_santa.1 -= 1,
                 'v' => position_santa.1 += 1,
-                _ => panic!("invalid direction: {}", dir),
+                _ => panic!("invalid direction: {dir}"),
             }
 
             visited.insert(position_santa);
@@ -47,7 +47,7 @@ fn part2(line: &str) -> usize {
                 '>' => position_robot.0 += 1,
                 '^' => position_robot.1 -= 1,
                 'v' => position_robot.1 += 1,
-                _ => panic!("invalid direction: {}", dir),
+                _ => panic!("invalid direction: {dir}"),
             }
 
             visited.insert(position_robot);
@@ -70,7 +70,7 @@ fn part1(line: &str) -> usize {
             '>' => position.0 += 1,
             '^' => position.1 -= 1,
             'v' => position.1 += 1,
-            _ => panic!("invalid direction: {}", dir),
+            _ => panic!("invalid direction: {dir}"),
         }
 
         visited.insert(position);

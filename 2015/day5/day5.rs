@@ -56,7 +56,7 @@ fn part2(data: &[String]) {
         }
     }
 
-    println!("{}", nice_words);
+    println!("{nice_words}");
 }
 
 fn part1(data: &[String]) {
@@ -86,7 +86,7 @@ fn part1(data: &[String]) {
         }
     }
 
-    println!("{}", nice_words);
+    println!("{nice_words}");
 }
 
 // The output is wrapped in a Result to allow matching on errors

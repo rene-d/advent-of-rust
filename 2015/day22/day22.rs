@@ -44,7 +44,7 @@ impl State {
             boss_dmg,
             boss_hp,
             hp,
-            mana: mana,
+            mana,
             timer_recharge: 0,
             timer_shield: 0,
             timer_poison: 0,
