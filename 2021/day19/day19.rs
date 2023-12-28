@@ -159,7 +159,7 @@ fn solve(scanners: &[Vec<Point>]) {
         }
     }
 
-    println!("{}", manhattan);
+    println!("{manhattan}");
 }
 
 fn load_scanners(data: Vec<String>) -> Vec<Vec<Point>> {

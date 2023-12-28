@@ -29,7 +29,7 @@ fn main() {
     // part2.sort_by(|a, b| a.cmp(b));
     part2.sort_unstable();
 
-    println!("{}", part1);
+    println!("{part1}");
     println!("{:?}", part2[part2.len() / 2]);
 }
 
@@ -58,8 +58,7 @@ fn check(line: &str) -> (u64, u64) {
     }
 
     let mut score = 0u64;
-    while !stack.is_empty() {
-        let d = stack.pop().unwrap();
+    while let Some(d) = stack.pop() {
         match d {
             ')' => score = score * 5 + 1,
             ']' => score = score * 5 + 2,

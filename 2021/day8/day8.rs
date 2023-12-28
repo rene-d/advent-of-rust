@@ -48,9 +48,7 @@ fn part2(data: &[String]) {
             let mut s: Vec<char> = c.chars().collect();
             s.sort_unstable();
             let s_sorted = String::from_iter(s);
-            d.entry(c.len())
-                .or_insert_with(HashSet::new)
-                .insert(s_sorted);
+            d.entry(c.len()).or_default().insert(s_sorted);
         }
 
         let mut map: HashMap<String, u8> = HashMap::new();
@@ -66,7 +64,7 @@ fn part2(data: &[String]) {
         let eight = d.get(&7).unwrap().iter().next().unwrap(); // the only digit with 7 segments
         let mut nine: &str = "";
 
-        for x in d.get(&6).unwrap().iter() {
+        for x in d.get(&6).unwrap() {
             // could be 0 6 9
             if contains(x, one) {
                 // si on n'a pas les deux segments du 1
@@ -83,7 +81,7 @@ fn part2(data: &[String]) {
             }
         }
 
-        for x in d.get(&5).unwrap().iter() {
+        for x in d.get(&5).unwrap() {
             // 2 3 5
             if contains(x, seven) {
                 // si 7 est inclus, c est forcément un 3
@@ -119,7 +117,7 @@ fn part2(data: &[String]) {
         }
         total += r;
     }
-    println!("{:?}", total);
+    println!("{total:?}");
 }
 
 fn part1(data: &[String]) {
@@ -168,9 +166,9 @@ fn load_data(path: std::path::PathBuf) -> Vec<String> {
 #[cfg(test)]
 #[test]
 fn test_contains() {
-    assert_eq!(contains("abcde", "ab"), true);
-    assert_eq!(contains("abcde", "ba"), true);
-    assert_eq!(contains("abcde", "abcde"), true);
-    assert_eq!(contains("abcde", "az"), false);
-    assert_eq!(contains("abcde", "ef"), false);
+    assert!(contains("abcde", "ab"));
+    assert!(contains("abcde", "ba"));
+    assert!(contains("abcde", "abcde"));
+    assert!(!contains("abcde", "az"));
+    assert!(!contains("abcde", "ef"));
 }

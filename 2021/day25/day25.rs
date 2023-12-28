@@ -35,7 +35,7 @@ fn main() {
     while do_move(&mut grid) {
         step += 1;
     }
-    println!("{}", step);
+    println!("{step}");
 }
 
 fn do_move(grid: &mut [Vec<char>]) -> bool {

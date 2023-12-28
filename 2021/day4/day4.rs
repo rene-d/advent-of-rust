@@ -67,14 +67,14 @@ fn main() {
                 last_draw = draw * sum(grid);
                 if !first_win {
                     first_win = true;
-                    println!("{}", last_draw);
+                    println!("{last_draw}");
                 }
                 grid[0][0] = -2; // invalidate the grid
             }
         }
     }
 
-    println!("{}", last_draw);
+    println!("{last_draw}");
 }
 
 /// sum computes the sum of non-cleared cases

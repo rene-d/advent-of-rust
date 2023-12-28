@@ -73,12 +73,12 @@ fn main() {
         }
 
         if all_flashing(&grid) {
-            println!("{}", turn);
+            println!("{turn}");
             break;
         }
 
         if turn == 100 {
-            println!("{}", flashes);
+            println!("{flashes}");
         }
     }
 }

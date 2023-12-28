@@ -88,7 +88,7 @@ impl Puzzle {
         let mut min = u64::MAX;
         let mut max = u64::MIN;
         for c in &self.elements {
-            let count = polymer.chars().into_iter().filter(|x| *x == *c).count() as u64;
+            let count = polymer.chars().filter(|x| *x == *c).count() as u64;
             if count > max {
                 max = count;
             }
@@ -174,7 +174,7 @@ fn test01() {
     assert_eq!(puzzle.part2(), 1588);
 
     puzzle.steps = 40;
-    assert_eq!(puzzle.part2(), 2188189693529);
+    assert_eq!(puzzle.part2(), 2_188_189_693_529);
 }
 
 /// Test from a user's input
@@ -188,7 +188,7 @@ fn test02() {
     assert_eq!(puzzle.part2(), 3058);
 
     puzzle.steps = 40;
-    assert_eq!(puzzle.part2(), 3447389044530);
+    assert_eq!(puzzle.part2(), 3_447_389_044_530);
 }
 
 fn main() {
@@ -204,9 +204,9 @@ fn main() {
 
     puzzle.steps = 10;
     let result = puzzle.part1();
-    println!("{}", result);
+    println!("{result}");
 
     puzzle.steps = 40;
     let result = puzzle.part2();
-    println!("{}", result);
+    println!("{result}");
 }
