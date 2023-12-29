@@ -46,8 +46,7 @@ impl Puzzle {
             if line.is_empty() {
                 continue;
             }
-            let mut row = vec![];
-            row.resize(self.nx, 0);
+            let mut row = vec![0; self.nx];
             for (x, pos) in line.chars().enumerate() {
                 if pos == 'S' {
                     self.start = (x, y);

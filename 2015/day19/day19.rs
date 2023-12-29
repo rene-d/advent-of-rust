@@ -67,6 +67,25 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> usize {
+        // formulae
+        // https://github.com/petertseng/adventofcode-rb-2015/blob/e968bc59e527e47ca9a28b313f58cc04b6f074cb/19_molecule_replacement.rb#L54
+        // I don't know if there's an algorithm to solve this problem 😕
+
+        let molecule = &self.medicine_molecule;
+        let max_e = &self
+            .replacements
+            .iter()
+            .filter_map(|r| (r.0 == "e").then_some(&r.1))
+            .map(|r| r.chars().filter(|&c| c.is_ascii_uppercase()).count())
+            .max();
+        let elements = molecule.chars().filter(|&c| c.is_ascii_uppercase()).count();
+        let rn = molecule.matches("Rn").count();
+        let y = molecule.matches('Y').count();
+        let ar = molecule.matches("Ar").count();
+        assert_eq!(rn, ar);
+
+        let formulae = elements - (max_e.unwrap_or(0) - 1) - rn - ar - y * 2;
+
         let mut molecule = self.medicine_molecule.clone();
         for steps in 1.. {
             let next = self
@@ -75,7 +94,7 @@ impl Puzzle {
                 .find_map(|(from, to)| Self::replacements(&molecule, to, from).next());
             if next.is_none() {
                 eprintln!("not found... steps so far: {steps}");
-                break;
+                return formulae;
             }
             let next = next.unwrap();
             if next == "e" {
@@ -84,16 +103,7 @@ impl Puzzle {
             molecule = next;
         }
 
-        // formulae
-        // https://github.com/petertseng/adventofcode-rb-2015/blob/e968bc59e527e47ca9a28b313f58cc04b6f074cb/19_molecule_replacement.rb#L54
-        // I don't know if there's an algorithm to solve this problem 😕
-
-        let molecule = &self.medicine_molecule;
-        let elements = molecule.chars().filter(|&c| c.is_ascii_uppercase()).count();
-        let rn = molecule.matches("Rn").count();
-        let y = molecule.matches('Y').count();
-
-        elements - 2 * (rn + y) - 1
+        unreachable!();
     }
 }
 

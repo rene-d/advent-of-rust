@@ -10,9 +10,8 @@ struct Args {
 }
 
 fn hash_algo(s: &str) -> u32 {
-    s.chars().fold(0, |value, c| {
-        ((value + u32::try_from(c).unwrap()) * 17) % 256
-    })
+    s.chars()
+        .fold(0, |value, c| ((value + u32::from(c)) * 17) % 256)
 }
 
 struct Puzzle {
@@ -81,6 +80,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = Args::parse();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -99,12 +106,4 @@ mod test {
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part2(), 145);
     }
-}
-
-fn main() {
-    let args = Args::parse();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

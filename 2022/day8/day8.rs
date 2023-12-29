@@ -36,8 +36,7 @@ impl Puzzle {
             if line.is_empty() {
                 continue;
             }
-            let mut row = vec![];
-            row.resize(self.nx, 0);
+            let mut row = vec![0; self.nx];
             for (x, tree) in line.chars().enumerate() {
                 row[x] = tree.to_digit(10).unwrap() as u8;
             }

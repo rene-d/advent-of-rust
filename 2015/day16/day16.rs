@@ -31,10 +31,7 @@ fn main() {
         for i in (2..=6).step_by(2) {
             let key = m.get(i).unwrap().as_str();
             let value = m.get(i + 1).unwrap().as_str().parse::<u32>().unwrap();
-            aunts
-                .entry(sue)
-                .or_default()
-                .insert(key.to_string(), value);
+            aunts.entry(sue).or_default().insert(key.to_string(), value);
         }
     }
 

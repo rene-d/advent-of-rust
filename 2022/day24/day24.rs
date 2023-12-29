@@ -103,9 +103,7 @@ impl Puzzle {
         let mut seen = HashSet::new();
 
         #[cfg(debug_assertions)]
-        println!(
-            "\ntime: {start_time} - entry: {start_x},{start_y} - exit: {end_x},{end_y}"
-        );
+        println!("\ntime: {start_time} - entry: {start_x},{start_y} - exit: {end_x},{end_y}");
 
         q.push_back((start_x, start_y, start_time));
 

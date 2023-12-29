@@ -99,9 +99,7 @@ fn part2(data: &[String]) {
                     }
                 }
                 if sign {
-                    size += (i64::try_from(x2 - x1).unwrap())
-                        * (i64::try_from(y2 - y1).unwrap())
-                        * (i64::try_from(z2 - z1).unwrap());
+                    size += (i64::from(x2 - x1)) * (i64::from(y2 - y1)) * (i64::from(z2 - z1));
                 }
             }
         }

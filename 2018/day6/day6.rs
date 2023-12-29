@@ -56,6 +56,7 @@ impl Puzzle {
     // }
 
     /// Solve part one.
+    #[allow(clippy::needless_range_loop)] // much comprehensive (according to me...)
     fn part1(&self) -> u32 {
         let mut grid = [[0u8; N]; N];
 
@@ -131,6 +132,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = Args::parse();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2(10_000));
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -149,12 +158,4 @@ mod test {
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part2(32), 16);
     }
-}
-
-fn main() {
-    let args = Args::parse();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2(10_000));
 }
