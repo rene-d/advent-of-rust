@@ -18,7 +18,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            data: "".to_string(),
+            data: String::new(),
         }
     }
 
@@ -89,13 +89,13 @@ impl Puzzle {
                     for j in y..(y + h) {
                         let key = (i, j);
 
-                        if squares_id.contains_key(&key) {
+                        if let std::collections::hash_map::Entry::Vacant(e) = squares_id.entry(key) {
+                            e.insert(id);
+                        } else {
                             intact.remove(&id);
 
                             let o = squares_id[&key];
                             intact.remove(&o);
-                        } else {
-                            squares_id.insert(key, id);
                         }
                     }
                 }

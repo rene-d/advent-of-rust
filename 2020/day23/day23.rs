@@ -110,14 +110,14 @@ mod test {
     fn test01() {
         let mut puzzle = Puzzle::new();
         puzzle.configure("test.txt");
-        assert_eq!(puzzle.part1(), 67384529);
+        assert_eq!(puzzle.part1(), 67_384_529);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
         puzzle.configure("test.txt");
-        assert_eq!(puzzle.part2(), 149245887792);
+        assert_eq!(puzzle.part2(), 149_245_887_792);
     }
 }
 

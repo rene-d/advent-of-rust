@@ -116,7 +116,7 @@ mod test {
     fn test02() {
         let mut puzzle = Puzzle::new();
         puzzle.configure("test.txt");
-        assert_eq!(puzzle.part2(), 1068781);
+        assert_eq!(puzzle.part2(), 1_068_781);
     }
 
     #[test]
@@ -127,16 +127,16 @@ mod test {
         assert_eq!(puzzle.part2(), 3417);
 
         puzzle.set_buses("67,7,59,61");
-        assert_eq!(puzzle.part2(), 754018);
+        assert_eq!(puzzle.part2(), 754_018);
 
         puzzle.set_buses("67,x,7,59,61");
-        assert_eq!(puzzle.part2(), 779210);
+        assert_eq!(puzzle.part2(), 779_210);
 
         puzzle.set_buses("67,7,x,59,61");
-        assert_eq!(puzzle.part2(), 1261476);
+        assert_eq!(puzzle.part2(), 1_261_476);
 
         puzzle.set_buses("1789,37,47,1889");
-        assert_eq!(puzzle.part2(), 1202161486);
+        assert_eq!(puzzle.part2(), 1_202_161_486);
     }
 }
 
