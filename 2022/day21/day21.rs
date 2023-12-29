@@ -70,13 +70,13 @@ impl Puzzle {
                     let l = self.eval(l);
                     let r = self.eval(r);
 
-                    return match o {
+                    match o {
                         '+' => l + r,
                         '-' => l - r,
                         '*' => l * r,
                         '/' => l / r,
                         _ => panic!("unknown operation"),
-                    };
+                    }
                 }
             }
         } else {

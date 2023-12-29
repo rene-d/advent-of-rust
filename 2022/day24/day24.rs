@@ -63,7 +63,7 @@ impl Puzzle {
                         'v' => DOWN,
                         '<' => LEFT,
                         '^' => UP,
-                        _ => panic!("bad input {},{} : {}", x, y, c),
+                        _ => panic!("bad input {x},{y} : {c}"),
                     };
                     self.blizzards[dir].insert((x, y));
                 }
@@ -104,8 +104,7 @@ impl Puzzle {
 
         #[cfg(debug_assertions)]
         println!(
-            "\ntime: {} - entry: {},{} - exit: {},{}",
-            start_time, start_x, start_y, end_x, end_y
+            "\ntime: {start_time} - entry: {start_x},{start_y} - exit: {end_x},{end_y}"
         );
 
         q.push_back((start_x, start_y, start_time));
@@ -135,7 +134,7 @@ impl Puzzle {
                     self.show(end_x, end_y, next_time);
 
                     #[cfg(debug_assertions)]
-                    println!("found: {}", next_time);
+                    println!("found: {next_time}");
 
                     return next_time;
                 }
@@ -180,7 +179,7 @@ impl Puzzle {
 
     #[cfg(debug_assertions)]
     fn show(&self, elf_x: i32, elf_y: i32, time: i32) {
-        println!("\ntime {}", time);
+        println!("\ntime {time}");
         print!("{}", self.grid_str(elf_x, elf_y, time));
     }
 
@@ -238,7 +237,7 @@ impl Puzzle {
                     }
 
                     if b > 1 {
-                        &"01234"[b..(b + 1)]
+                        &"01234"[b..=b]
                     } else {
                         c
                     }

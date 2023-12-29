@@ -170,5 +170,5 @@ fn test01() {
     let mut puzzle = Puzzle::new();
     puzzle.configure("test.txt", true);
     assert_eq!(puzzle.part1(), 26);
-    assert_eq!(puzzle.part2(), 56000011);
+    assert_eq!(puzzle.part2(), 56_000_011);
 }

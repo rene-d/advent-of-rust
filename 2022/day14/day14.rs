@@ -67,7 +67,7 @@ impl Puzzle {
                         self.wall.insert(Coord { x, y: p1.y });
                     }
                 } else {
-                    panic!("{:?} {:?} diagonal", p1, p2);
+                    panic!("{p1:?} {p2:?} diagonal");
                 }
             }
         }
@@ -132,7 +132,7 @@ impl Puzzle {
 
     // Solve part two
     fn part2(&mut self) -> usize {
-        for i in 1..100000 {
+        for i in 1..100_000 {
             if !self.fall(true) {
                 self.sand += i;
                 break;

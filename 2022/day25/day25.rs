@@ -20,7 +20,7 @@ fn from_snafu(s: &str) -> i64 {
                 '0' => 0,
                 '-' => -1,
                 '=' => -2,
-                _ => panic!("unknown digit '{}'", ch),
+                _ => panic!("unknown digit '{ch}'"),
             };
         pow *= 5;
     }
