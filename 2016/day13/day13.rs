@@ -73,11 +73,9 @@ fn bfs(designer_number: u32, start: (u32, u32), end: (u32, u32), max_moves: usiz
         }
 
         for (x, y) in Direction::iter(x, y) {
-            if !is_wall(x, y, designer_number) {
-                if !seen.contains(&(x, y)) {
-                    seen.insert((x, y));
-                    q.push_front(((x, y), cost + 1));
-                }
+            if !is_wall(x, y, designer_number) && !seen.contains(&(x, y)) {
+                seen.insert((x, y));
+                q.push_front(((x, y), cost + 1));
             }
         }
     }
