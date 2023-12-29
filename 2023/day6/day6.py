@@ -20,10 +20,10 @@ def wins(times, distances):
         b = (t + (t * t - 4 * d) ** 0.5) / 2
 
         # 1 ≤ hold < t
-        a = max(1, math.ceil(a))
+        a = max(1, math.floor(a))
         b = min(t, math.ceil(b))
 
-        win = b - a
+        win = b - a - 1
 
         result *= win
 
