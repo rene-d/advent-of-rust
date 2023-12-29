@@ -18,7 +18,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            data: "".to_string(),
+            data: String::new(),
         }
     }
 

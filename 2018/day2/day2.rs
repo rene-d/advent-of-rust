@@ -16,7 +16,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            data: "".to_string(),
+            data: String::new(),
         }
     }
 
@@ -56,7 +56,6 @@ impl Puzzle {
                     .chars()
                     .zip(r.chars())
                     .filter_map(|x| if x.0 == x.1 { Some(x.0) } else { None })
-                    .into_iter()
                     .collect();
 
                 if same.len() == l.len() - 1 {
