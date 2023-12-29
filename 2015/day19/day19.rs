@@ -89,23 +89,11 @@ impl Puzzle {
         // I don't know if there's an algorithm to solve this problem 😕
 
         let molecule = &self.medicine_molecule;
-        let max_e = self
-            .replacements
-            .iter()
-            .filter(|r| r.0 == "e")
-            .map(|(_, r)| r.chars().filter(|&c| c.is_ascii_uppercase()).count())
-            .max()
-            .unwrap_or(0);
-        let elements = molecule
-            .chars()
-            .filter(|&c| c.is_ascii_uppercase())
-            .count();
+        let elements = molecule.chars().filter(|&c| c.is_ascii_uppercase()).count();
         let rn = molecule.matches("Rn").count();
         let y = molecule.matches('Y').count();
-        let ar = molecule.matches("Ar").count();
-        assert_eq!(rn, ar);
 
-        elements - (max_e - 1) - rn - ar - y * 2
+        elements - 2 * (rn + y) - 1
     }
 }
 
