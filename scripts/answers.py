@@ -291,6 +291,8 @@ class AocSession:
                     parts.append(row[2])
 
                 remarks += " (cached)"
+
+                cmd = [p.resolve().as_posix(), self.get_input(year, day).resolve().as_posix()]
             else:
                 # run the program to solve the puzzle
                 cmd = [p.as_posix(), self.get_input(year, day).as_posix()]
@@ -298,7 +300,7 @@ class AocSession:
                     start_time = datetime.now()
                     parts = subprocess.check_output(cmd, stderr=subprocess.DEVNULL).decode().strip().split()
                     elapsed = datetime.now() - start_time
-                    remarks += f" ({elapsed.total_seconds():.3}s)"
+                    remarks += f" ({elapsed.total_seconds():.6f}s)"
                 except (subprocess.CalledProcessError, PermissionError):
                     print(f"{self.prefix} Program for {year} day {day:2} in {language} \033[91mfailed\033[0m")
                     parts = []
