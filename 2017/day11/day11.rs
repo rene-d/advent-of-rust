@@ -21,7 +21,7 @@ const STEP_Y: i32 = 1;
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            data: "".to_string(),
+            data: String::new(),
             part1: 0,
             part2: 0,
         }
@@ -62,22 +62,22 @@ impl Puzzle {
         for d in self.data.split(',') {
             match d {
                 "ne" => {
-                    x = x + STEP_X;
-                    y = y + STEP_Y;
+                    x += STEP_X;
+                    y += STEP_Y;
                 }
                 "se" => {
-                    x = x + STEP_X;
-                    y = y - STEP_Y;
+                    x += STEP_X;
+                    y -= STEP_Y;
                 }
-                "s" => y = y - STEP_Y * 2,
-                "n" => y = y + STEP_Y * 2,
+                "s" => y -= STEP_Y * 2,
+                "n" => y += STEP_Y * 2,
                 "nw" => {
-                    x = x - STEP_X;
-                    y = y + STEP_Y;
+                    x -= STEP_X;
+                    y += STEP_Y;
                 }
                 "sw" => {
-                    x = x - STEP_X;
-                    y = y - STEP_Y;
+                    x -= STEP_X;
+                    y -= STEP_Y;
                 }
                 _ => panic!(),
             }
