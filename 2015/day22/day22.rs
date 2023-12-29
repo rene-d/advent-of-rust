@@ -180,9 +180,7 @@ impl Puzzle {
     }
 
     fn play(&self, hard_mode: bool) -> i32 {
-        let mut states = vec![];
-
-        states.push(State::new(self.boss_dmg, self.boss_hp, 50, 500));
+        let mut states = vec![State::new(self.boss_dmg, self.boss_hp, 50, 500)];
 
         while !states.is_empty() {
             let mut mana_used = i32::MAX;

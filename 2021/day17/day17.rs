@@ -1,5 +1,6 @@
 //! [Day 17: Trick Shot](https://adventofcode.com/2021/day/17)
 
+use std::cmp::Ordering;
 use std::env;
 use std::fs;
 use text_io::scan;
@@ -63,10 +64,10 @@ fn solve(abs_min: i32, abs_max: i32, ord_min: i32, ord_max: i32) -> (i32, i32) {
                 y_max = y_max.max(y); // the highest y position
 
                 // Adjust the x velocity of the probe
-                if vx > 0 {
-                    vx -= 1;
-                } else if vx < 0 {
-                    vx += 1;
+                match vx.cmp(&0) {
+                    Ordering::Greater => vx -= 1,
+                    Ordering::Less => vx += 1,
+                    _ => (),
                 }
 
                 vy -= 1; // the probe's y velocity decreases by 1.

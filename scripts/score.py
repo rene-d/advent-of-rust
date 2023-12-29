@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import requests
-import click
-from pathlib import Path
-from datetime import datetime, timedelta
-import tabulate
 import json
+from datetime import datetime, timedelta
+from pathlib import Path
+
+import click
+import requests
+import tabulate
 
 current_year = datetime.now().year
 
