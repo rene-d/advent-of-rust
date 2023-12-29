@@ -25,7 +25,7 @@ impl Operation {
         } else if let Some(m) = s.strip_prefix("old * ") {
             return Operation::Product(m.parse().unwrap());
         }
-        panic!("bad operation {}", s)
+        panic!("bad operation {s}")
     }
 
     fn calc(&self, arg: u64) -> u64 {
@@ -188,5 +188,5 @@ fn test01() {
     let mut puzzle = Puzzle::new();
     puzzle.configure("test.txt");
     assert_eq!(puzzle.part1(), 10605);
-    assert_eq!(puzzle.part2(), 2713310158);
+    assert_eq!(puzzle.part2(), 2_713_310_158);
 }

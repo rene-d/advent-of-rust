@@ -53,7 +53,7 @@ impl Puzzle {
 
                 while p * 4 + 1 < line.len() {
                     let crate_id = line.chars().nth(p * 4 + 1).unwrap();
-                    if ('A'..='Z').contains(&crate_id) {
+                    if crate_id.is_ascii_uppercase() {
                         self.stacks[p].push(crate_id);
                     }
                     p += 1;

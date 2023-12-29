@@ -91,7 +91,7 @@ impl Puzzle {
 
         for line in &lines {
             if !line.is_empty() {
-                self.packets.push(line.to_string());
+                self.packets.push((*line).to_string());
             }
         }
     }

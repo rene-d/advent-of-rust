@@ -104,7 +104,7 @@ impl Puzzle {
         packets.push(divider1.clone());
         packets.push(divider2.clone());
 
-        packets.sort_by(|a, b| a.cmp(b));
+        packets.sort_by(Packet::cmp);
 
         let mut result = 1;
         for (i, p) in packets.iter().enumerate() {

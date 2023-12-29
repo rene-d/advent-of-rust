@@ -102,7 +102,7 @@ impl Puzzle {
         sizes.sort_unstable();
 
         for size in sizes {
-            if total - size + 30000000 <= 70000000 {
+            if total - size + 30_000_000 <= 70_000_000 {
                 return *size;
             }
         }
@@ -125,5 +125,5 @@ fn test01() {
     let mut puzzle = Puzzle::new();
     puzzle.configure("test.txt");
     assert_eq!(puzzle.part1(), 95437);
-    assert_eq!(puzzle.part2(), 24933642);
+    assert_eq!(puzzle.part2(), 24_933_642);
 }
