@@ -31,7 +31,7 @@ Puzzle                                                                  | Stars 
 [Day 21: Step Counter](https://adventofcode.com/2023/day/21)            | ⭐⭐  | [Rust](2023/day21/day21.rs)
 [Day 22: Sand Slabs](https://adventofcode.com/2023/day/22)              | ⭐⭐  | [Rust](2023/day22/day22.rs)
 [Day 23: A Long Walk](https://adventofcode.com/2023/day/23)             | ⭐⭐  | [Rust](2023/day23/day23.rs)
-[Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)  | ⭐⭐  | [Rust (part 1)](2023/day24/day24.rs) [Python (part 2)](2023/day24/day24.py)
+[Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)  | ⭐⭐  | [Rust](2023/day24/day24.rs)
 [Day 25: Snowverload](https://adventofcode.com/2023/day/25)             | ⭐⭐  | [Python](2023/day25/day25.py)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](2022/)) : 50⭐
@@ -118,7 +118,7 @@ Puzzle                                                                          
 [Day 23: Safe Cracking](https://adventofcode.com/2016/day/23)                    | ⭐⭐  | [Rust](2016/day23/day23.rs)
 [Day 25: Clock Signal](https://adventofcode.com/2016/day/25)                     | ⭐⭐  | [Rust](2016/day25/day25.rs)
 
-## 2015 ([Calendar](https://adventofcode.com/2015)) ([Solutions](2015/)) : 41⭐
+## 2015 ([Calendar](https://adventofcode.com/2015)) ([Solutions](2015/)) : 50⭐
 
 Puzzle                                                                               | Stars | Languages
 ------------------------------------------------------------------------------------ | ----- | -----------
@@ -143,4 +143,7 @@ Puzzle                                                                          
 [Day 19: Medicine for Rudolph](https://adventofcode.com/2015/day/19)                 | ⭐⭐  | [Rust](2015/day19/day19.rs)
 [Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)   | ⭐⭐  | [Rust](2015/day20/day20.rs)
 [day 21: RPG Simulator 20XX](https://adventofcode.com/2015/day/21)                   | ⭐⭐  | [Python](2015/day21/day21.py)
-[Day 25: Let It Snow](https://adventofcode.com/2015/day/25)                          | ⭐    | [Rust](2015/day25/day25.rs)
+[Day 22: Wizard Simulator 20XX](https://adventofcode.com/2015/day/22)                | ⭐⭐  | [Rust](2015/day22/day22.rs)
+[Day 23: Opening the Turing Lock](https://adventofcode.com/2015/day/23)              | ⭐⭐  | [Python](2015/day23/day23.py)
+[Day 24: It Hangs in the Balance](https://adventofcode.com/2015/day/24)              | ⭐⭐  | [Python](2015/day24/day24.py)
+[Day 25: Let It Snow](https://adventofcode.com/2015/day/25)                          | ⭐⭐  | [Rust](2015/day25/day25.rs)
