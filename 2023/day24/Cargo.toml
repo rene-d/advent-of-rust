@@ -2,9 +2,12 @@
 name = "day24"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 [dependencies]
 clap = { version = "4.*", features = ["derive"] }
+fraction = "0.14.0"
+z3 = "0.12.1"
 
 [[bin]]
 name = "day24"
