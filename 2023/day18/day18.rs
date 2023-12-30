@@ -9,7 +9,7 @@ struct Args {
     path: String,
 }
 
-/// Use the Shoelace formula to compute polygon area.
+/// Use the Shoelace and Pick formulas to compute polygon area.
 fn shoelace(points: &[(i64, i64)], contour_length: i64) -> i64 {
     let n = points.len();
     let mut area = 0;
