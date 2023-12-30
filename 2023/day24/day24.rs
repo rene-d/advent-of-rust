@@ -8,7 +8,6 @@ use fraction::{GenericFraction, Zero};
 // (it works in f64 too 😳)
 type Q128 = GenericFraction<i128>;
 
-
 #[derive(Parser)]
 struct Args {
     /// Puzzle input
