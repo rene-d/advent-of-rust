@@ -1,0 +1,13 @@
+[package]
+name = "day24"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.*", features = ["derive"] }
+aoc = { path = "../aoc/" }
+itertools = "0.12.0"
+
+[[bin]]
+name = "day24"
+path = "day24.rs"
