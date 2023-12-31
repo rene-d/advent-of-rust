@@ -111,7 +111,7 @@ class AocSession:
         return True
 
     def iter_all(func):
-        def wrapper(self, year=None, day=None):
+        def wrapper(self, year=None, day=None, *args, **kwargs):
             if year is None:
                 now = datetime.utcnow()
                 last_year = now.year
@@ -140,6 +140,7 @@ class AocSession:
             url = f"https://adventofcode.com/{year}/day/{day}/input"
             r = self.get(url)
             f.write_bytes(r)
+            print(f"downloaded: {f}")
         return f
 
     def get_stars(self, year, day, force_update=False):
@@ -251,8 +252,13 @@ class AocSession:
 
                 if not self.always_submit:
                     while True:
-                        resp = input(question).lower()
-                        if resp and resp in "yan":
+                        resp = input(question)
+                        if not resp:
+                            continue
+                        if resp == "N":
+                            self.dry_run = True
+                            return
+                        if resp.lower() in "yan":
                             break
                 else:
                     resp = "y"
@@ -355,6 +361,7 @@ def main():
     parser.add_argument("--dstars", action="store_true", help="show stars for each day")
     parser.add_argument("--ystars", action="store_true", help="show stars by year")
     parser.add_argument("--yes", action="store_true", help="always yes")
+    parser.add_argument("--inputs", action="store_true", help="download inputs")
     args = parser.parse_args()
 
     if args.verbose:
@@ -410,7 +417,9 @@ def main():
         if args.user and sess.user != args.user:
             continue
 
-        if args.dstars:
+        if args.inputs:
+            sess.get_input(year=args.year, day=args.day)
+        elif args.dstars:
             sess.print_stars(year=args.year, day=args.day)
         elif args.ystars:
             sess.print_stars_year(args.year)

@@ -27,3 +27,5 @@ pub fn load_input_data(day: u8) -> String {
 
     std::fs::read_to_string(filename).unwrap()
 }
+
+pub mod grid;
