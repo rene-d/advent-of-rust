@@ -115,6 +115,8 @@ Puzzle                                                                          
 [Day 16: Dragon Checksum](https://adventofcode.com/2016/day/16)                  | ⭐⭐  | [Rust](2016/day16/day16.rs)
 [Day 19: An Elephant Named Joseph](https://adventofcode.com/2016/day/19)         | ⭐⭐  | [Rust](2016/day19/day19.rs)
 [Day 20: Firewall Rules](https://adventofcode.com/2016/day/20)                   | ⭐⭐  | [Rust](2016/day20/day20.rs)
+[Day 21: Scrambled Letters and Hash](https://adventofcode.com/2016/day/21)       | ⭐⭐  | [Rust](2016/day21/day21.rs)
+[Day 22: Grid Computing](https://adventofcode.com/2016/day/22)                   | ⭐⭐  | [Rust](2016/day22/day22.rs)
 [Day 23: Safe Cracking](https://adventofcode.com/2016/day/23)                    | ⭐⭐  | [Rust](2016/day23/day23.rs)
 [Day 24: Air Duct Spelunking](https://adventofcode.com/2016/day/24)              | ⭐⭐  | [Rust](2016/day24/day24.rs)
 [Day 25: Clock Signal](https://adventofcode.com/2016/day/25)                     | ⭐⭐  | [Rust](2016/day25/day25.rs)
