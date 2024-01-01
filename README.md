@@ -94,7 +94,7 @@ Puzzle                                                                  | Stars 
 [Day 24: Arithmetic Logic Unit](https://adventofcode.com/2021/day/24)   | ⭐⭐  | [Rust](2021/day24/day24.rs)
 [Day 25: Sea Cucumber](https://adventofcode.com/2021/day/25)            | ⭐⭐  | [Rust](2021/day25/day25.rs) [Python](2021/day25/day25.py)
 
-## 2016 ([Calendar](https://adventofcode.com/2016)) ([Solutions](2016/)) : 43⭐
+## 2016 ([Calendar](https://adventofcode.com/2016)) ([Solutions](2016/)) : 50⭐
 
 Puzzle                                                                           | Stars | Languages
 -------------------------------------------------------------------------------- | ----- | ---------
@@ -108,11 +108,14 @@ Puzzle                                                                          
 [Day 8: Two-Factor Authentication](https://adventofcode.com/2016/day/8)          | ⭐⭐  | [Rust](2016/day8/day8.rs)
 [Day 9: Explosives in Cyberspace](https://adventofcode.com/2016/day/9)           | ⭐⭐  | [Rust](2016/day9/day9.rs)
 [Day 10: Balance Bots](https://adventofcode.com/2016/day/10)                     | ⭐⭐  | [Rust](2016/day10/day10.rs)
+[Day 11: Radioisotope Thermoelectric Generators](https://adventofcode.com/2016/day/11) | ⭐⭐  | [Rust](2016/day11/day11.rs)
 [Day 12: Leonardo's Monorail](https://adventofcode.com/2016/day/12)              | ⭐⭐  | [Rust](2016/day12/day12.rs)
 [Day 13: A Maze of Twisty Little Cubicles](https://adventofcode.com/2016/day/13) | ⭐⭐  | [Rust](2016/day13/day13.rs)
 [Day 14: One-Time Pad](https://adventofcode.com/2016/day/14)                     | ⭐⭐  | [Rust](2016/day14/day14.rs)
 [Day 15: Timing is Everything](https://adventofcode.com/2016/day/15)             | ⭐⭐  | [Rust](2016/day15/day15.rs)
 [Day 16: Dragon Checksum](https://adventofcode.com/2016/day/16)                  | ⭐⭐  | [Rust](2016/day16/day16.rs)
+[Day 17: Two Steps Forward](https://adventofcode.com/2016/day/17)                | ⭐⭐  | [Rust](2016/day17/day17.rs)
+[Day 18: Like a Rogue](https://adventofcode.com/2016/day/18)                     | ⭐⭐  | [Rust](2016/day18/day18.rs)
 [Day 19: An Elephant Named Joseph](https://adventofcode.com/2016/day/19)         | ⭐⭐  | [Rust](2016/day19/day19.rs)
 [Day 20: Firewall Rules](https://adventofcode.com/2016/day/20)                   | ⭐⭐  | [Rust](2016/day20/day20.rs)
 [Day 21: Scrambled Letters and Hash](https://adventofcode.com/2016/day/21)       | ⭐⭐  | [Rust](2016/day21/day21.rs)
