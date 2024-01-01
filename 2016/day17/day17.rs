@@ -1,4 +1,4 @@
-//! [Day 17: xxx](https://adventofcode.com/2016/day/17)
+//! [Day 17: Two Steps Forward](https://adventofcode.com/2016/day/17)
 
 use clap::Parser;
 use std::collections::VecDeque;
