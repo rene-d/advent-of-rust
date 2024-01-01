@@ -1,32 +1,32 @@
 use std::ops::{Index, IndexMut};
 
-#[derive(PartialEq)]
-enum Direction {
+#[derive(PartialEq, Clone, Copy)]
+pub enum Direction {
     North,
     East,
     South,
     West,
 }
 
-// impl Direction {
-//     fn iter(x: u32, y: u32) -> impl Iterator<Item = (u32, u32)> {
-//         [Direction::North, Direction::East, Direction::South, Direction::West]
-//             .iter()
-//             .filter_map(move |d| {
-//                 if d == &Direction::North && y > 0 {
-//                     Some((x, y - 1))
-//                 } else if d == &Direction::South {
-//                     Some((x, y + 1))
-//                 } else if d == &Direction::East {
-//                     Some((x + 1, y))
-//                 } else if d == &Direction::West && x > 0 {
-//                     Some((x - 1, y))
-//                 } else {
-//                     None
-//                 }
-//             })
-//     }
-// }
+impl Direction {
+    pub fn iter(x: u32, y: u32, width: u32, height: u32) -> impl Iterator<Item = (u32, u32, Self)> {
+        [Direction::North, Direction::East, Direction::South, Direction::West]
+            .iter()
+            .filter_map(move |&d| {
+                if d == Direction::North && y > 0 {
+                    Some((x, y - 1, d))
+                } else if d == Direction::South && y < height - 1 {
+                    Some((x, y + 1, d))
+                } else if d == Direction::East && x < width - 1 {
+                    Some((x + 1, y, d))
+                } else if d == Direction::West && x > 0 {
+                    Some((x - 1, y, d))
+                } else {
+                    None
+                }
+            })
+    }
+}
 
 #[macro_export]
 macro_rules! grid {
