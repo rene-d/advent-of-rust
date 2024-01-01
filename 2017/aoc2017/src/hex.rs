@@ -33,3 +33,14 @@ where
         HexSlice::new(self)
     }
 }
+
+/// Test from puzzle input
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_hex_display() {
+        assert_eq!(b"Rosko".hex_display().to_string(), "526f736b6f");
+    }
+}
