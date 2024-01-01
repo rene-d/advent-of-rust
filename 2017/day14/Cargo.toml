@@ -1,5 +1,5 @@
 [package]
-name = "day10"
+name = "day14"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,8 +8,5 @@ clap = { version = "4.*", features = ["derive"] }
 aoc2017 = { path = "../aoc2017" }
 
 [[bin]]
-name = "day10"
-path = "day10.rs"
-
-# [lib]
-# path = "lib.rs"
+name = "day14"
+path = "day14.rs"
