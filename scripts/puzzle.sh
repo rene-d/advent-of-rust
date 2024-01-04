@@ -235,7 +235,11 @@ EOF
 open_if_available()
 {
     if [[ $available ]]; then
-        code -n . day$day.py
+        if [[ -f day$day.py ]]; then
+            code -n . day$day.py
+        else
+            code -n .
+        fi
         open "https://adventofcode.com/$year/day/$day"
     fi
 }
