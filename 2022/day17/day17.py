@@ -176,7 +176,7 @@ for n in range(1, 10000):
     if not end:
         heights.append(cave_height() - 1)
         key = make_key()
-        if key in keys:
+        if n > 2000 and key in keys:
             start = keys[key]
             end = n
         keys[key] = n
