@@ -232,7 +232,7 @@ class AocSession:
 
             def update_last_answers(parts):
                 part1 = parts[0]
-                part2 = parts[1] if len(parts) > 1 else None
+                part2 = parts[1] if len(parts) > 1 and parts[1] != "???" else None
 
                 self.db.execute(
                     "insert or replace into answers (user,year,day,language,st_mtime,part1,part2) values (?,?,?,?,?,?,?)",
@@ -273,7 +273,7 @@ class AocSession:
                     else:
                         success = True
 
-                    if len(parts) >= 2:
+                    if len(parts) >= 2 and parts[1] != "???":
                         success = success and submit(2, parts[1])
 
                     if success:
@@ -316,13 +316,19 @@ class AocSession:
                 update_last_answers(parts)
                 return
 
+            if len(parts) == 2 and parts[1] == "???":
+                parts.pop(1)
+
             if answers:
                 if len(parts) == 2 and len(answers) == 1 and answers[0] == parts[0]:
                     submit_parts("second", parts)
                 else:
-                    print(
-                        f"{self.prefix} {year} day {day:2} {language} \033[91merror\033[0m '{' '.join(cmd)}' {parts} != {answers}"
-                    )
+                    if parts == answers:
+                        print(f"{self.prefix} Solution {year} day {day:2} in {language} \033[93mwarning part 2 is missing\033[0m ")
+                    else:
+                        print(
+                            f"{self.prefix} {year} day {day:2} {language} \033[91merror\033[0m '{' '.join(cmd)}' {parts} != {answers}"
+                        )
             elif len(parts) > 0:
                 submit_parts("first", parts)
 
