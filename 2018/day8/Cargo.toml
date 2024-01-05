@@ -1,0 +1,11 @@
+[package]
+name = "day8"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.*", features = ["derive"] }
+
+[[bin]]
+name = "day8"
+path = "day8.rs"
