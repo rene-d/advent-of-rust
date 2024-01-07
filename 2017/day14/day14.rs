@@ -1,4 +1,4 @@
-//! [Day 14: xxx](https://adventofcode.com/2017/day/14)
+//! [Day 14: Disk Defragmentation](https://adventofcode.com/2017/day/14)
 
 use aoc2017::grid::*;
 use aoc2017::knot::knot_hash_raw;

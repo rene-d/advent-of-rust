@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2019/day/19
+# [Day 19: Tractor Beam](https://adventofcode.com/2019/day/19)
 
 import sys
 from collections import namedtuple

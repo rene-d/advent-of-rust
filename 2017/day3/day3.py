@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2017/day/3
+# [Day 3: Spiral Memory](https://adventofcode.com/2017/day/3)
 
 import sys
 from pathlib import Path

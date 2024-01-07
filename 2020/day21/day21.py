@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2020/day/21
+# [Day 21: Allergen Assessment](https://adventofcode.com/2020/day/21)
 
 import itertools
 import sys

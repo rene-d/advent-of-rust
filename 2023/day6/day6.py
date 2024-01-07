@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2023/day/6
+# [Day 6: Wait For It](https://adventofcode.com/2023/day/6)
 
 import math
 import sys

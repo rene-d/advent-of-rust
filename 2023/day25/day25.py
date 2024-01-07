@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2023/day/25
+# [Day 25: Snowverload](https://adventofcode.com/2023/day/25)
 
 import sys
 from pathlib import Path

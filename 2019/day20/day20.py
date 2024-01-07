@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2019/day/20
+# [Day 20: Donut Maze](https://adventofcode.com/2019/day/20)
 
 from pathlib import Path
 from copy import deepcopy

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2017/day/5
+# [Day 5: A Maze of Twisty Trampolines, All Alike](https://adventofcode.com/2017/day/5)
 
 import sys
 from pathlib import Path

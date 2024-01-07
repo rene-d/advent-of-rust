@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2020/day/22
+# [Day 22: Crab Combat](https://adventofcode.com/2020/day/22)
 
 import sys
 from pathlib import Path

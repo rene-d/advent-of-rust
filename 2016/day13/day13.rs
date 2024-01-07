@@ -1,4 +1,4 @@
-//! [Day 13: xxx](https://adventofcode.com/2016/day/13)
+//! [Day 13: A Maze of Twisty Little Cubicles](https://adventofcode.com/2016/day/13)
 
 use clap::Parser;
 use std::collections::{HashSet, VecDeque};

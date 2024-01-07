@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2022/day/12
+# [Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/day/12)
 
 import sys
 from collections import deque

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import typing as t
 import argparse
 import logging
 import re
@@ -354,16 +355,39 @@ class AocSession:
 
         iterate(self, year, 0)
 
-    @iter_all
-    def set_titles(self, year=None, day=None):
+    def get_title(self, year, day) -> str:
         """TODO."""
 
         url = f"https://adventofcode.com/{year}/day/{day}"
         r = self.get(url)
         title = re.search(r"<h2>\-\-\- (.+?) \-\-\-</h2>", r.decode()).group(1)
+        title = title.replace("&apos;", "'")
+        if "&" in title:
+            print(title)
+            exit(2)
         markdown = f"[{title}]({url})"
+        return markdown
 
-        for f in (Path(self.rootdir) / str(year) / f"day{day}").glob("day*.*"):
+    def get_solutions(self, year, day) -> t.List[str]:
+        """TODO."""
+        sols = []
+        year_dir = Path(self.rootdir) / str(year)
+        days = [year_dir / f"day{day}"]
+        days.extend(year_dir.glob(f"day{day}_*"))
+        for day in days:
+            if day.is_dir():
+                for f in day.glob("day*.*"):
+                    if f.is_file():
+                        sols.append(f)
+        return sols
+
+    @iter_all
+    def set_titles(self, year=None, day=None):
+        """TODO."""
+
+        markdown = self.get_title(year, day)
+
+        for f in self.get_solutions(year, day):
             original = f.read_text()
             lines = original.splitlines() + [""]
 
@@ -377,6 +401,123 @@ class AocSession:
                 print(f"set puzzle title in {f.relative_to(self.rootdir)}: {markdown}")
                 f.write_text(content)
 
+    @iter_all
+    def get_titles(self, year=None, day=None):
+        """TODO."""
+
+        print(self.get_title(year, day))
+
+
+def show_dstars(args):
+    sessions = AocSession.get_sessions()
+
+    users = []
+
+    for session in sessions:
+        sess = AocSession(session, args.update, args.dry_run)
+        if args.user and sess.user != args.user:
+            continue
+        users.append(sess)
+
+    @AocSession.iter_all
+    def show_year(_self, year, _day):
+        stars = {}
+        for sess in users:
+            stars[sess.user] = []
+            for day in range(1, 26):
+                stars[sess.user].append(sess.get_stars(year, day))
+
+        row = "|".join(f"\033[1;36m{sess.user:^12}\033[0m" for sess in users)
+        print(f"  {year} |{row}")
+        separator = "+".join("-" * 12 for _ in users)
+        print(f"-------+{separator}")
+        for day in range(1, 26):
+            row = "|".join(f"\033[1;33m{'*' *  stars[sess.user][day-1]:^12}\033[0m" for sess in users)
+            print(f"day {day:2} |{row}")
+        print(f"-------+{separator}")
+        print()
+
+    show_year(None, args.year, 0)
+
+    exit()
+
+
+def get_first_session(args):
+    sessions = AocSession.get_sessions()
+
+    sess = None
+    for session in sessions:
+        sess = AocSession(session, args.update, args.dry_run)
+        if args.user and sess.user != args.user:
+            continue
+        return sess
+
+    print("no valid session found")
+    exit(2)
+
+
+def make_readme(args):
+    session = get_first_session(args)
+
+    @AocSession.iter_all
+    def readme(_self, year, _day):
+        puzzles = []
+        for day in range(1, 26):
+            stars = session.get_stars(year, day)
+            title = session.get_title(year, day)
+            sols = session.get_solutions(year, day)
+            puzzles.append((day, stars, title, sols))
+
+        stars = sum(n for _, n, _, _ in puzzles)
+        rust = sum(1 for _, _, _, s in puzzles for f in s if f.suffix == ".rs")
+        python = sum(1 for _, _, _, s in puzzles for f in s if f.suffix == ".py")
+
+        md = []
+        md.append("# Advent of Code in Rust 🦀")
+        md.append("")
+        md.append(f"![AoC{year}](https://img.shields.io/badge/Advent_of_Code-{year}-8A2BE2)")
+        md.append(f"![Stars: {stars}](https://img.shields.io/badge/Stars-{stars}⭐-blue)")
+        if rust:
+            md.append(f"![Rust: {rust}](https://img.shields.io/badge/Rust-{rust}-cyan?logo=Rust)")
+        if python:
+            md.append(f"![Python: {python}](https://img.shields.io/badge/Python-{python}-cyan?logo=Python)")
+        md.append("")
+        md.append(f"## {year} ([Calendar](https://adventofcode.com/{year})) ([Solutions](../{year}/)) : {stars}⭐")
+        md.append("")
+
+        width = max(len(title) for _, _, title, _ in puzzles)
+
+        md.append(f"{'Puzzle':<{width}} | Stars | Languages")
+        md.append("-" * width + " | ----- | -----------")
+
+        year_dir = session.rootdir / str(year)
+
+        for day, stars, title, sols in puzzles:
+            if stars > 0:
+                stars = "⭐" * stars
+
+                files = []
+                files.extend(f"[Rust](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rs")
+                files.extend(f"[Python](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".py")
+                files = " ".join(files)
+
+                md.append(f"{title:<{width}} | {stars:<2}  | {files}")
+
+        bonus = Path(session.rootdir) / str(year) / ".bonus.md"
+        if bonus.is_file():
+            md.append("")
+            md.extend(bonus.read_text().strip().splitlines())
+
+        md.append("")
+        md = "\n".join(md)
+
+        if args.write:
+            (Path(session.rootdir) / str(year) / "README.md").write_text(md)
+        else:
+            print(md)
+
+    readme(None, args.year, 0)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -385,7 +526,7 @@ def main():
     parser.add_argument(
         "-d", "--day", type=int, help="optional day, automatic if in ./\033[3mYEAR\033[0m/day\033[3mDAY\033[0m"
     )
-    parser.add_argument("-s", "--session", type=str, help="session cookie")
+    # parser.add_argument("-s", "--session", type=str, help="session cookie")
     parser.add_argument("--user", type=str, help="user")
     parser.add_argument("-u", "--update", action="store_true", help="force update")
     parser.add_argument("-n", "--dry-run", action="store_true", help="do nothing")
@@ -394,16 +535,14 @@ def main():
     parser.add_argument("--yes", action="store_true", help="always yes")
     parser.add_argument("--inputs", action="store_true", help="download inputs")
     parser.add_argument("--titles", action="store_true", help="set puzzlz titles")
+    parser.add_argument("--get-titles", action="store_true", help="get puzzlz title")
+    parser.add_argument("--readme", action="store_true", help="make readme")
+    parser.add_argument("-w", "--write", action="store_true", help="write the readme")
+
     args = parser.parse_args()
 
     if True or args.verbose:
         logging.basicConfig(format="\033[2m%(asctime)s - %(levelname)s - %(message)s\033[0m", level=logging.DEBUG)
-
-    sessions = AocSession.get_sessions()
-
-    if args.session:
-        sessions.clear()
-        sessions.append(args.session)
 
     cwd = Path.cwd()
     if cwd.name.startswith("day") and args.day is None:
@@ -412,61 +551,36 @@ def main():
     if cwd.name.isdigit() and args.year is None:
         args.year = int(cwd.name)
 
-    if args.titles:
-        for session in sessions:
+    if args.readme:
+        make_readme(args)
+
+    elif args.get_titles:
+        session = get_first_session(args)
+        session.get_titles(year=args.year, day=args.day)
+
+    elif args.titles:
+        session = get_first_session(args)
+        session.set_titles(year=args.year, day=args.day)
+
+    elif args.dstars:
+        show_dstars(args)
+
+    else:
+        for session in AocSession.get_sessions():
             sess = AocSession(session, args.update, args.dry_run)
+
             if args.user and sess.user != args.user:
                 continue
-            sess.set_titles(year=args.year, day=args.day)
-            break
-        exit()
 
-    if args.dstars:
-        users = []
-
-        for session in sessions:
-            sess = AocSession(session, args.update, args.dry_run)
-            if args.user and sess.user != args.user:
-                continue
-            users.append(sess)
-
-        @AocSession.iter_all
-        def show_year(_self, year, _day):
-            stars = {}
-            for sess in users:
-                stars[sess.user] = []
-                for day in range(1, 26):
-                    stars[sess.user].append(sess.get_stars(year, day))
-
-            row = "|".join(f"\033[1;36m{sess.user:^12}\033[0m" for sess in users)
-            print(f"  {year} |{row}")
-            separator = "+".join("-" * 12 for _ in users)
-            print(f"-------+{separator}")
-            for day in range(1, 26):
-                row = "|".join(f"\033[1;33m{'*' *  stars[sess.user][day-1]:^12}\033[0m" for sess in users)
-                print(f"day {day:2} |{row}")
-            print(f"-------+{separator}")
-            print()
-
-        show_year(None, args.year, 0)
-
-        exit()
-
-    for session in sessions:
-        sess = AocSession(session, args.update, args.dry_run)
-
-        if args.user and sess.user != args.user:
-            continue
-
-        if args.inputs:
-            sess.get_input(year=args.year, day=args.day)
-        elif args.dstars:
-            sess.print_stars(year=args.year, day=args.day)
-        elif args.ystars:
-            sess.print_stars_year(args.year)
-        else:
-            sess.always_submit = args.yes
-            sess.check(year=args.year, day=args.day)
+            if args.inputs:
+                sess.get_input(year=args.year, day=args.day)
+            elif args.dstars:
+                sess.print_stars(year=args.year, day=args.day)
+            elif args.ystars:
+                sess.print_stars_year(args.year)
+            else:
+                sess.always_submit = args.yes
+                sess.check(year=args.year, day=args.day)
 
 
 if __name__ == "__main__":

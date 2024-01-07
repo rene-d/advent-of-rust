@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2019/day/25
+# [Day 25: Cryostasis](https://adventofcode.com/2019/day/25)
 
 import argparse
 import re

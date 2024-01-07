@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2015/day/23
+# [Day 23: Opening the Turing Lock](https://adventofcode.com/2015/day/23)
 
 import sys
 from pathlib import Path

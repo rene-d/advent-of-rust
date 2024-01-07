@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2019/day/10
+# [Day 10: Monitoring Station](https://adventofcode.com/2019/day/10)
 
 import sys
 from collections import namedtuple

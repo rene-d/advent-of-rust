@@ -1,4 +1,4 @@
-//! [Day 1: xxx](https://adventofcode.com/2018/day/1)
+//! [Day 1: Chronal Calibration](https://adventofcode.com/2018/day/1)
 
 use std::collections::HashSet;
 

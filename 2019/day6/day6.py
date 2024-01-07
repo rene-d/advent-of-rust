@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2019/day/6
+# [Day 6: Universal Orbit Map](https://adventofcode.com/2019/day/6)
 
 import sys
 from pathlib import Path

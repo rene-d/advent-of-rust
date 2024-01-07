@@ -1,4 +1,4 @@
-//! [Day 12: Leonardo's Monorail](https://adventofcode.com/2016/day/12)
+//! [Day 12: Leonardo&apos;s Monorail](https://adventofcode.com/2016/day/12)
 
 use assembunny::{BunnyVM, REG_A, REG_C};
 

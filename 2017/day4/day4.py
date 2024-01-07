@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2017/day/4
+# [Day 4: High-Entropy Passphrases](https://adventofcode.com/2017/day/4)
 
 import sys
 from pathlib import Path

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2017/day/22
+# [Day 22: Sporifica Virus](https://adventofcode.com/2017/day/22)
 
 import sys
 from collections import defaultdict

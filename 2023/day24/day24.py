@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2023/day/24
+# [Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)
 
 import sys
 from collections import Counter, namedtuple

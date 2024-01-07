@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2019/day/9
+# [Day 9: Sensor Boost](https://adventofcode.com/2019/day/9)
 
 import sys
 from pathlib import Path

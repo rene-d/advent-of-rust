@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2017/day/12
+# [Day 12: Digital Plumber](https://adventofcode.com/2017/day/12)
 
 import sys
 from collections import deque

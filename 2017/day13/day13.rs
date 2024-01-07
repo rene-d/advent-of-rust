@@ -1,4 +1,4 @@
-//! [Day 13: xxx](https://adventofcode.com/2017/day/13)
+//! [Day 13: Packet Scanners](https://adventofcode.com/2017/day/13)
 
 use clap::Parser;
 use std::collections::HashMap;

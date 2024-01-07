@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2018/day/8
+# [Day 8: Memory Maneuver](https://adventofcode.com/2018/day/8)
 
 from pathlib import Path
 from copy import deepcopy
