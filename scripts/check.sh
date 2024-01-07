@@ -28,6 +28,7 @@ c()
 {
    local manifest=$1
 
+   cargo fmt --all --manifest-path $manifest --
    cargo fmt --all --manifest-path $manifest -- --check
    cargo clippy --manifest-path $manifest -- --no-deps -W clippy::all
 
