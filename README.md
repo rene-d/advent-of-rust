@@ -36,13 +36,13 @@ Puzzle                                                                  | Stars 
 
 ## Previous years
 
-Year                                                 | Solutions          | Stars
----------------------------------------------------- | ------------------ | -----
-[Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/) | 50⭐
-[Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/) | 50⭐
-[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/) | 50⭐
-[Advent of Code 2019](https://adventofcode.com/2019) | [Solutions](2019/) | 50⭐
-[Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](2018/) | 16⭐
-[Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/) | 50⭐
-[Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](2016/) | 50⭐
-[Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/) | 50⭐
+Year                                                 | Solutions                   | Stars
+---------------------------------------------------- | --------------------------- | -----
+[Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) | 50⭐
+[Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) | 50⭐
+[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/README.md) | 50⭐
+[Advent of Code 2019](https://adventofcode.com/2019) | [Solutions](2019/README.md) | 50⭐
+[Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](2018/README.md) | 16⭐
+[Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) | 50⭐
+[Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](2016/README.md) | 50⭐
+[Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/README.md) | 50⭐
