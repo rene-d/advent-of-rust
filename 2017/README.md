@@ -2,7 +2,7 @@
 
 ![AoC2017](https://img.shields.io/badge/Advent_of_Code-2017-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 11](https://img.shields.io/badge/Rust-11-cyan?logo=Rust)
+![Rust: 12](https://img.shields.io/badge/Rust-12-cyan?logo=Rust)
 ![Python: 17](https://img.shields.io/badge/Python-17-cyan?logo=Python)
 
 ## 2017 ([Calendar](https://adventofcode.com/2017)) ([Solutions](../2017/)) : 50⭐
@@ -10,7 +10,7 @@
 Puzzle                                                                                | Stars | Languages
 ------------------------------------------------------------------------------------- | ----- | -----------
 [Day 1: Inverse Captcha](https://adventofcode.com/2017/day/1)                         | ⭐⭐  | [Rust](../2017/day1/day1.rs) [Python](../2017/day1/day1.py)
-[Day 2: Corruption Checksum](https://adventofcode.com/2017/day/2)                     | ⭐⭐  | [Python](../2017/day2/day2.py)
+[Day 2: Corruption Checksum](https://adventofcode.com/2017/day/2)                     | ⭐⭐  | [Rust](../2017/day2/day2.rs) [Python](../2017/day2/day2.py)
 [Day 3: Spiral Memory](https://adventofcode.com/2017/day/3)                           | ⭐⭐  | [Python](../2017/day3/day3.py)
 [Day 4: High-Entropy Passphrases](https://adventofcode.com/2017/day/4)                | ⭐⭐  | [Python](../2017/day4/day4.py)
 [Day 5: A Maze of Twisty Trampolines, All Alike](https://adventofcode.com/2017/day/5) | ⭐⭐  | [Python](../2017/day5/day5.py)

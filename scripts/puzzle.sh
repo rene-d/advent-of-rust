@@ -106,9 +106,11 @@ create_python()
         return
     fi
 
+    local title=$($rootdir/scripts/answers.py --get-title --year $year --day $day)
+
     cat <<EOF >day$day.py
 #!/usr/bin/env python3
-# https://adventofcode.com/$year/day/$day
+# $title
 
 from pathlib import Path
 from copy import deepcopy
@@ -142,8 +144,10 @@ create_rust()
         return
     fi
 
+    local title=$($rootdir/scripts/answers.py --get-title --year $year --day $day)
+
     cat <<EOF >day$day.rs
-//! [Day $day: xxx](https://adventofcode.com/$year/day/$day)
+//! $title
 
 use std::collections::{HashMap,HashSet};
 use clap::Parser;
@@ -162,7 +166,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            data: "".to_string(),
+            data: String::new(),
         }
     }
 
