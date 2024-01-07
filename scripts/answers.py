@@ -324,7 +324,9 @@ class AocSession:
                     submit_parts("second", parts)
                 else:
                     if parts == answers:
-                        print(f"{self.prefix} Solution {year} day {day:2} in {language} \033[93mwarning part 2 is missing\033[0m ")
+                        print(
+                            f"{self.prefix} Solution {year} day {day:2} in {language} \033[93mwarning part 2 is missing\033[0m "
+                        )
                     else:
                         print(
                             f"{self.prefix} {year} day {day:2} {language} \033[91merror\033[0m '{' '.join(cmd)}' {parts} != {answers}"
@@ -352,6 +354,29 @@ class AocSession:
 
         iterate(self, year, 0)
 
+    @iter_all
+    def set_titles(self, year=None, day=None):
+        """TODO."""
+
+        url = f"https://adventofcode.com/{year}/day/{day}"
+        r = self.get(url)
+        title = re.search(r"<h2>\-\-\- (.+?) \-\-\-</h2>", r.decode()).group(1)
+        markdown = f"[{title}]({url})"
+
+        for f in (Path(self.rootdir) / str(year) / f"day{day}").glob("day*.*"):
+            original = f.read_text()
+            lines = original.splitlines() + [""]
+
+            if f.suffix == ".py" and lines[1].startswith("# "):
+                lines[1] = f"# {markdown}"
+            elif f.suffix == ".rs" and lines[0].startswith("//! "):
+                lines[0] = f"//! {markdown}"
+
+            content = "\n".join(lines)
+            if content != original:
+                print(f"set puzzle title in {f.relative_to(self.rootdir)}: {markdown}")
+                f.write_text(content)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -368,9 +393,10 @@ def main():
     parser.add_argument("--ystars", action="store_true", help="show stars by year")
     parser.add_argument("--yes", action="store_true", help="always yes")
     parser.add_argument("--inputs", action="store_true", help="download inputs")
+    parser.add_argument("--titles", action="store_true", help="set puzzlz titles")
     args = parser.parse_args()
 
-    if args.verbose:
+    if True or args.verbose:
         logging.basicConfig(format="\033[2m%(asctime)s - %(levelname)s - %(message)s\033[0m", level=logging.DEBUG)
 
     sessions = AocSession.get_sessions()
@@ -385,6 +411,15 @@ def main():
         args.day = int(cwd.name[3:])
     if cwd.name.isdigit() and args.year is None:
         args.year = int(cwd.name)
+
+    if args.titles:
+        for session in sessions:
+            sess = AocSession(session, args.update, args.dry_run)
+            if args.user and sess.user != args.user:
+                continue
+            sess.set_titles(year=args.year, day=args.day)
+            break
+        exit()
 
     if args.dstars:
         users = []
