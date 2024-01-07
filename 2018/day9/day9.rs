@@ -1,12 +1,19 @@
 //! [Day 9: Marble Mania](https://adventofcode.com/2018/day/9)
 
 use clap::Parser;
-
 #[derive(Parser)]
 struct Args {
     /// Puzzle input
     #[arg(default_value = "input.txt")]
     path: String,
+}
+
+pub fn c_solve(elves: u32, points: u32) -> u32 {
+    extern "C" {
+        fn c_solve(elves: u32, points: u32) -> u32;
+    }
+
+    unsafe { c_solve(elves, points) }
 }
 
 fn solve(nb_players: u32, nb_marbles: u32) -> u32 {
@@ -36,8 +43,8 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
-            elves: 9,
-            points: 25,
+            elves: 0,
+            points: 0,
         }
     }
 
@@ -62,7 +69,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> u32 {
-        solve(self.elves, self.points * 100)
+        c_solve(self.elves, self.points * 100)
     }
 }
 
@@ -81,28 +88,25 @@ mod test {
 
     #[test]
     fn test01() {
-        let puzzle = Puzzle::new();
-
+        let mut puzzle = Puzzle::new();
+        puzzle.elves = 9;
+        puzzle.points = 25;
         assert_eq!(puzzle.part1(), 32);
     }
 
     #[test]
     fn test02() {
         assert_eq!(solve(10, 1618), 8317);
+        assert_eq!(solve(13, 7999), 146373);
+        assert_eq!(solve(21, 6111), 54718);
+        assert_eq!(solve(30, 5807), 37305);
     }
 
     #[test]
     fn test03() {
-        assert_eq!(solve(13, 7999), 146373);
-    }
-
-    #[test]
-    fn test04() {
-        assert_eq!(solve(21, 6111), 54718);
-    }
-
-    #[test]
-    fn test05() {
-        assert_eq!(solve(30, 5807), 37305);
+        assert_eq!(c_solve(10, 1618), 8317);
+        assert_eq!(c_solve(13, 7999), 146373);
+        assert_eq!(c_solve(21, 6111), 54718);
+        assert_eq!(c_solve(30, 5807), 37305);
     }
 }
