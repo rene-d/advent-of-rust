@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2022/day/21
+# [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)
 
 import sys
 from pathlib import Path

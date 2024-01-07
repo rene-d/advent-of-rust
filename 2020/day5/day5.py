@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2020/day/5
+# [Day 5: Binary Boarding](https://adventofcode.com/2020/day/5)
 
 import sys
 from pathlib import Path

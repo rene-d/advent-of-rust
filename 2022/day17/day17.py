@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2022/day/17
+# [Day 17: Pyroclastic Flow](https://adventofcode.com/2022/day/17)
 
 # Nota: not sure to write it in Rust, nor to make it cleaner and more Pythonic...
 

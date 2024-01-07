@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2019/day/23
+# [Day 23: Category Six](https://adventofcode.com/2019/day/23)
 
 import itertools
 import sys

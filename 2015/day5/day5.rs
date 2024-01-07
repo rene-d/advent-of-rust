@@ -1,4 +1,4 @@
-//! [Day 5: Doesn't He Have Intern-Elves For This?](https://adventofcode.com/2015/day/5)
+//! [Day 5: Doesn&apos;t He Have Intern-Elves For This?](https://adventofcode.com/2015/day/5)
 
 use std::fs::File;
 use std::io::{self, BufRead};

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2020/day/11
+# [Day 11: Seating System](https://adventofcode.com/2020/day/11)
 
 import sys
 from pathlib import Path

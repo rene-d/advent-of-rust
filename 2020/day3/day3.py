@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2020/day/3
+# [Day 3: Toboggan Trajectory](https://adventofcode.com/2020/day/3)
 
 import sys
 from pathlib import Path

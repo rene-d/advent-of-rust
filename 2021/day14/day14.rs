@@ -1,4 +1,4 @@
-//! [Day 14: Extended Polymerization](https://adventofcode.com/2015/day/14)
+//! [Day 14: Extended Polymerization](https://adventofcode.com/2021/day/14)
 
 use std::collections::HashMap;
 use std::collections::HashSet;

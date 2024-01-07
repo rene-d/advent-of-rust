@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2019/day/24
+# [Day 24: Planet of Discord](https://adventofcode.com/2019/day/24)
 
 import sys
 import unittest

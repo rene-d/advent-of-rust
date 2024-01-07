@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2017/day/8
+# [Day 8: I Heard You Like Registers](https://adventofcode.com/2017/day/8)
 
 import re
 import sys

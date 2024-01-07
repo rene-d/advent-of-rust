@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2017/day/20
+# [Day 20: Particle Swarm](https://adventofcode.com/2017/day/20)
 
 import re
 import sys

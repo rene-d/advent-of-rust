@@ -1,4 +1,4 @@
-//! [Day 25: Let It Snow](http://adventofcode.com/2015/day/25)
+//! [Day 25: Let It Snow](https://adventofcode.com/2015/day/25)
 
 fn main() {
     let (row, column) = read_data();

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2020/day/17
+# [Day 17: Conway Cubes](https://adventofcode.com/2020/day/17)
 
 import sys
 from pathlib import Path

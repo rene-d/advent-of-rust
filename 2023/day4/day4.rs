@@ -1,4 +1,4 @@
-//! [Day 4: xxx](https://adventofcode.com/2023/day/4)
+//! [Day 4: Scratchcards](https://adventofcode.com/2023/day/4)
 
 use std::collections::HashSet;
 

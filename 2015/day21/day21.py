@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# https://adventofcode.com/2015/day/21
+# [Day 21: RPG Simulator 20XX](https://adventofcode.com/2015/day/21)
 
 import sys
 from collections import namedtuple
