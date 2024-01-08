@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2018](https://img.shields.io/badge/Advent_of_Code-2018-8A2BE2)
-![Stars: 16](https://img.shields.io/badge/Stars-16⭐-blue)
-![Rust: 8](https://img.shields.io/badge/Rust-8-cyan?logo=Rust)
+![Stars: 24](https://img.shields.io/badge/Stars-24⭐-blue)
+![Rust: 12](https://img.shields.io/badge/Rust-12-cyan?logo=Rust)
 ![Python: 2](https://img.shields.io/badge/Python-2-cyan?logo=Python)
 
-## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 16⭐
+## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 24⭐
 
 Puzzle                                                                               | Stars | Languages
 ------------------------------------------------------------------------------------ | ----- | -----------
@@ -17,3 +17,7 @@ Puzzle                                                                          
 [Day 6: Chronal Coordinates](https://adventofcode.com/2018/day/6)                    | ⭐⭐  | [Rust](../2018/day6/day6.rs)
 [Day 7: The Sum of Its Parts](https://adventofcode.com/2018/day/7)                   | ⭐⭐  | [Rust](../2018/day7/day7.rs)
 [Day 8: Memory Maneuver](https://adventofcode.com/2018/day/8)                        | ⭐⭐  | [Rust](../2018/day8/day8.rs) [Python](../2018/day8/day8.py)
+[Day 9: Marble Mania](https://adventofcode.com/2018/day/9)                           | ⭐⭐  | [Rust](../2018/day9/day9.rs)
+[Day 10: The Stars Align](https://adventofcode.com/2018/day/10)                      | ⭐⭐  | [Rust](../2018/day10/day10.rs)
+[Day 11: Chronal Charge](https://adventofcode.com/2018/day/11)                       | ⭐⭐  | [Rust](../2018/day11/day11.rs)
+[Day 12: Subterranean Sustainability](https://adventofcode.com/2018/day/12)          | ⭐⭐  | [Rust](../2018/day12/day12.rs)
