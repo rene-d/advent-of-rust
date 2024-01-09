@@ -1,15 +1,7 @@
 //! [Day 8: Haunted Wasteland](https://adventofcode.com/2023/day/8)
 
-use clap::Parser;
 use num::Integer;
 use std::collections::HashMap;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 fn lcm(values: &Vec<usize>) -> usize {
     let mut m = 1;
@@ -132,7 +124,7 @@ mod test {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

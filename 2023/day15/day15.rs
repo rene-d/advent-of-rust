@@ -1,14 +1,5 @@
 //! [Day 15: Lens Library](https://adventofcode.com/2023/day/15)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 fn hash_algo(s: &str) -> u32 {
     s.chars()
         .fold(0, |value, c| ((value + u32::from(c)) * 17) % 256)
@@ -81,7 +72,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

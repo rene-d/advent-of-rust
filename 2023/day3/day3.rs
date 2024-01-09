@@ -3,15 +3,6 @@
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 struct Puzzle {
     sx: i32,
     sy: i32,
@@ -143,7 +134,7 @@ mod test {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
 
     let start = Instant::now();

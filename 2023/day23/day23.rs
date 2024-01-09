@@ -3,18 +3,6 @@
 use std::collections::{HashSet, VecDeque};
 use std::time::{Duration, Instant};
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-    /// Bench part 2
-    #[arg(long, short, default_value_t = false)]
-    benchmark: bool,
-}
-
 const N: usize = 141;
 
 fn walk(g: &mut [u8; N * N], max_cost: &mut u32, cost: u32, x: usize, y: usize) {
@@ -158,10 +146,10 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
-    if args.benchmark {
+    if args.verbose {
         let start = Instant::now();
 
         println!("{}", puzzle.part2());

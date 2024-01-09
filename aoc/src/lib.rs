@@ -15,8 +15,7 @@ pub struct Args {
 
 /// Parse the command line arguments for puzzle.
 pub fn parse_args() -> Args {
-    let args = Args::parse();
-    args
+    Args::parse()
 }
 
 /// Read the puzzle input
