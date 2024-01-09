@@ -92,6 +92,8 @@ import re, sys, pathlib
 for i, m in enumerate(re.finditer(r"<pre><code>(.*?)</code></pre>", sys.stdin.read(), re.DOTALL), 1):
     sample = m[1]
     sample = re.sub(r"<em>(.*?)</em>", r"\1", sample)
+    sample = sample.replace("&gt;", ">")
+    sample = sample.replace("&lt;", "<")
     print(f"\033[32mextracting sample {i} ({len(sample)} bytes)\033[0m")
     pathlib.Path(f"sample_{i}.txt").write_text(sample)
 '

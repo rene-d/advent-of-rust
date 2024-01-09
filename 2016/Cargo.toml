@@ -1,5 +1,5 @@
 [workspace]
-members = ["day*", "aoc", "assembunny"]
+members = ["day*", "assembunny"]
 resolver = "2"
 
 [profile.release]

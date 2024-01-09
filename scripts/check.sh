@@ -33,7 +33,7 @@ c()
    cargo clippy --manifest-path $manifest -- --no-deps -W clippy::all
 
    cargo build --manifest-path $manifest --release
-   cargo test --manifest-path $manifest --quiet --release
+   cargo test --manifest-path $manifest --release
 }
 
 main()

@@ -3,7 +3,7 @@
 #![allow(clippy::manual_memcpy)]
 #![allow(clippy::needless_range_loop)] // assumed. code is much clearer
 
-use phf::phf_map;
+use aoc::ocr::ocr_5x6;
 use regex::Regex;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
@@ -81,48 +81,5 @@ fn solve(data: &str) {
     }
 
     println!("{lit}"); // part 1
-    println!("{}", ocr(&crt)); // part 2
-}
-
-static CHARSET_5X6: phf::Map<&'static str, char> = phf_map! {
-    ".##.. #..#. #..#. ####. #..#. #..#." => 'A',
-    "###.. #..#. ###.. #..#. #..#. ###.." => 'B',
-    ".##.. #..#. #.... #.... #..#. .##.." => 'C',
-    "####. #.... ###.. #.... #.... ####." => 'E',
-    "####. #.... ###.. #.... #.... #...." => 'F',
-    ".##.. #..#. #.... #.##. #..#. .###." => 'G',
-    "#..#. #..#. ####. #..#. #..#. #..#." => 'H',
-    ".###. ..#.. ..#.. ..#.. ..#.. .###." => 'I',
-    "..##. ...#. ...#. ...#. #..#. .##.." => 'J',
-    "#..#. #.#.. ##... #.#.. #.#.. #..#." => 'K',
-    "#.... #.... #.... #.... #.... ####." => 'L',
-    ".##.. #..#. #..#. #..#. #..#. .##.." => 'O',
-    "###.. #..#. #..#. ###.. #.... #...." => 'P',
-    "###.. #..#. #..#. ###.. #.#.. #..#." => 'R',
-    ".###. #.... #.... .##.. ...#. ###.." => 'S',
-    "#..#. #..#. #..#. #..#. #..#. .##.." => 'U',
-    "#...# #...# .#.#. ..#.. ..#.. ..#.." => 'Y',
-    "####. ...#. ..#.. .#... #.... ####." => 'Z',
-};
-
-fn ocr(text: &str) -> String {
-    let lines = text.lines().collect::<Vec<&str>>();
-
-    let width = lines.iter().map(|x| x.len()).min().unwrap();
-
-    let mut x = 0;
-    let mut result = String::new();
-
-    while x < width - 5 + 1 {
-        let key = (0..6).map(|y| &lines[y][x..(x + 5)]).collect::<Vec<&str>>().join(" ");
-
-        if let Some(letter) = CHARSET_5X6.get(&key) {
-            result.push(*letter);
-            x += 5;
-        } else {
-            x += 1;
-        }
-    }
-
-    result
+    println!("{}", ocr_5x6(&crt)); // part 2
 }
