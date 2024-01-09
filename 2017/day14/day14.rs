@@ -1,16 +1,7 @@
 //! [Day 14: Disk Defragmentation](https://adventofcode.com/2017/day/14)
 
 use aoc::grid::*;
-use aoc::knot::knot_hash_raw;
-
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
+use aoc::knot;
 
 fn count_ones(value: u8) -> u32 {
     let mut count = 0;
@@ -44,7 +35,7 @@ impl Puzzle {
     fn part1(&self) -> u32 {
         (0..128)
             .map(|i| {
-                knot_hash_raw(format!("{}-{i}", self.key).as_str())
+                knot::hash_raw(format!("{}-{i}", self.key).as_str())
                     .iter()
                     .copied()
                     .map(count_ones)
@@ -58,7 +49,7 @@ impl Puzzle {
         let mut g: Grid<u8> = Grid::with_size(128, 128);
 
         for y in 0..128 {
-            let row = knot_hash_raw(format!("{}-{y}", self.key).as_str());
+            let row = knot::hash_raw(format!("{}-{y}", self.key).as_str());
 
             for (i, octet) in row.iter().enumerate() {
                 //
@@ -103,7 +94,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

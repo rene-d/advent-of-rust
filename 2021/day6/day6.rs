@@ -1,21 +1,8 @@
 //! [Day 6: Lanternfish](https://adventofcode.com/2021/day/6)
 
-use std::fs;
-use structopt::StructOpt;
-
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-}
-
 /// main function
 fn main() {
-    let args = Cli::from_args();
-    // println!("reading data from: {}", args.path.display());
-
-    let data = fs::read_to_string(args.path).unwrap();
+    let data = aoc::load_input_data(6);
 
     let mut timers = [0u64; 9];
     for timer in data.trim().split(',').map(|s| s.parse::<usize>().unwrap()) {

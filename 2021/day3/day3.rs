@@ -1,24 +1,8 @@
 //! [Day 3: Binary Diagnostic](https://adventofcode.com/2021/day/3)
 
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-use structopt::StructOpt;
-
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-}
-
 /// main function
 fn main() {
-    let args = Cli::from_args();
-
-    // println!("reading data from: {}", args.path.display());
-
-    let data = load_data(args.path);
+    let data: Vec<_> = aoc::load_input_data_vec(3);
 
     println!("{}", part1(&data));
     println!("{}", part2(&data));
@@ -115,36 +99,30 @@ fn part1(data: &[String]) -> i32 {
     gamma_rate * espilon_rate
 }
 
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-fn load_data(path: std::path::PathBuf) -> Vec<String> {
-    let mut data = vec![];
-    if let Ok(lines) = read_lines(path) {
-        for line in lines.flatten() {
-            data.push(line);
-        }
+    #[test]
+    fn test_part1() {
+        let data = load_data("test.txt".into());
+
+        assert_eq!(part1(&data), 198);
     }
-    data
-}
 
-#[test]
-fn test_part1() {
-    let data = load_data("test.txt".into());
+    #[test]
+    fn test_part2() {
+        let data = load_data("test.txt".into());
 
-    assert_eq!(part1(&data), 198);
-}
+        assert_eq!(part2(&data), 230);
+    }
 
-#[test]
-fn test_part2() {
-    let data = load_data("test.txt".into());
-
-    assert_eq!(part2(&data), 230);
+    /// load data from file
+    fn load_data(filename: std::path::PathBuf) -> Vec<String> {
+        std::fs::read_to_string(filename)
+            .unwrap()
+            .lines()
+            .map(String::from)
+            .collect()
+    }
 }

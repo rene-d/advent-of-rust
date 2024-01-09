@@ -4,16 +4,6 @@ use scan_fmt::scan_fmt;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fmt;
-use std::fs;
-// use std::time::Instant;
-use structopt::StructOpt;
-
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-}
 
 #[derive(Hash, Eq, PartialEq, Clone)]
 struct Point {
@@ -35,9 +25,7 @@ impl fmt::Debug for Point {
 
 /// main function
 fn main() {
-    let args = Cli::from_args();
-    // println!("reading data from: {}", args.path.display());
-    let data = load_data(args.path);
+    let data = aoc::load_input_data_vec(19);
 
     // load puzzle data
     let scanners = load_scanners(data);
@@ -224,10 +212,4 @@ fn rotate(point: &Point, rotation: usize) -> Point {
         y: p.1,
         z: p.2,
     }
-}
-
-/// load data from file
-fn load_data(path: std::path::PathBuf) -> Vec<String> {
-    let data = fs::read_to_string(path).unwrap();
-    data.lines().map(std::string::ToString::to_string).collect()
 }

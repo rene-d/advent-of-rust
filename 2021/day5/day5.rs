@@ -1,26 +1,10 @@
 //! [Day 5: Hydrothermal Venture](https://adventofcode.com/2021/day/5)
 
-use clap::Parser;
 use regex::Regex;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-
-/// parse command line arguments
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    #[arg(help = "puzzle input", default_value = "input.txt")]
-    path: String,
-}
 
 /// main function
 fn main() {
-    let args = Args::parse();
-
-    // println!("reading data from: {}", args.path);
-
-    let data = load_data(args.path);
+    let data = aoc::load_input_data_vec(5);
 
     let re = Regex::new(r"^(\d+),(\d+) -> (\d+),(\d+)$").unwrap();
 
@@ -97,24 +81,4 @@ fn main() {
         }
     }
     println!("{sum2:?}");
-}
-
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
-
-fn load_data(path: String) -> Vec<String> {
-    let mut data = vec![];
-    if let Ok(lines) = read_lines(path) {
-        for line in lines.flatten() {
-            data.push(line);
-        }
-    }
-    data
 }

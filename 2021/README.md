@@ -12,7 +12,7 @@ Puzzle                                                                  | Stars 
 [Day 1: Sonar Sweep](https://adventofcode.com/2021/day/1)               | ⭐⭐  | [Rust](../2021/day1/day1.rs) [Python](../2021/day1/day1.py)
 [Day 2: Dive!](https://adventofcode.com/2021/day/2)                     | ⭐⭐  | [Rust](../2021/day2/day2.rs)
 [Day 3: Binary Diagnostic](https://adventofcode.com/2021/day/3)         | ⭐⭐  | [Rust](../2021/day3/day3.rs)
-[Day 4: Giant Squid](https://adventofcode.com/2021/day/4)               | ⭐⭐  | [Rust](../2021/day4/day4.rs) [Python](../2021/day4/day4.py)
+[Day 4: Giant Squid](https://adventofcode.com/2021/day/4)               | ⭐⭐  | [Rust](../2021/day4/day4.rs) [Python](../2021/day4/day4_bug.py)
 [Day 5: Hydrothermal Venture](https://adventofcode.com/2021/day/5)      | ⭐⭐  | [Rust](../2021/day5/day5.rs) [Python](../2021/day5/day5.py)
 [Day 6: Lanternfish](https://adventofcode.com/2021/day/6)               | ⭐⭐  | [Rust](../2021/day6/day6.rs) [Python](../2021/day6/day6.py)
 [Day 7: The Treachery of Whales](https://adventofcode.com/2021/day/7)   | ⭐⭐  | [Rust](../2021/day7/day7.rs)
