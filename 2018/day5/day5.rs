@@ -1,14 +1,5 @@
 //! [Day 5: Alchemical Reduction](https://adventofcode.com/2018/day/5)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 // Return true if same letter and different cases
 fn react(a: char, b: char) -> bool {
     a.to_ascii_lowercase() == b.to_ascii_lowercase() && a.is_lowercase() ^ b.is_lowercase()
@@ -68,7 +59,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

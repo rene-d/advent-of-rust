@@ -1,14 +1,6 @@
 //! [Day 10: The Stars Align](https://adventofcode.com/2018/day/10)
 
 use aoc::ocr::ocr_6x10;
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Puzzle {
     pos: Vec<(i32, i32)>,
@@ -123,7 +115,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     puzzle.solve();
