@@ -3,10 +3,6 @@
 use rand::Rng;
 use regex::Regex;
 use std::fmt;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-use structopt::StructOpt;
 
 #[derive(Debug, Clone, Copy)]
 enum OpCode {
@@ -266,64 +262,21 @@ fn solve(data: &[String]) {
     println!("{}", valid_monads.iter().min().unwrap());
 }
 
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-
-    #[structopt(short = "-i", default_value = "")]
-    input: String,
-
-    //#[structopt(default_value = "")]
-    #[structopt(short = "w", default_value = "0")]
-    w: i64,
-
-    //#[structopt(default_value = "")]
-    #[structopt(short = "z", default_value = "0")]
-    z: i64,
-}
-
 /// main function
 fn main() {
-    let args = Cli::from_args();
-    // println!("reading data from: {}", args.path.display());
-    let data = load_data(args.path);
+    let data = aoc::load_input_data_vec(24);
 
-    let program = load_program(&data);
+    // let program = load_program(&data);
 
-    if data.len() == 252 && args.input.is_empty() {
-        solve(&data);
-    } else {
-        let mut monad = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-        monad[0] = args.w;
-
-        for (i, c) in args.input.chars().enumerate() {
-            monad[i] = (c as i64) - 48;
-        }
-
-        run_program(&program, &monad, args.z, true);
-    }
-}
-
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
-
-/// load data from file
-fn load_data(path: std::path::PathBuf) -> Vec<String> {
-    let mut data = vec![];
-    if let Ok(lines) = read_lines(path) {
-        for line in lines.flatten() {
-            data.push(line);
-        }
-    }
-    data
+    // if data.len() == 252 {
+    // puzzle input
+    solve(&data);
+    // } else {
+    //     let mut monad = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    //     monad[0] = args.w;
+    //     for (i, c) in args.input.chars().enumerate() {
+    //         monad[i] = (c as i64) - 48;
+    //     }
+    //     run_program(&program, &monad, args.z, true);
+    // }
 }

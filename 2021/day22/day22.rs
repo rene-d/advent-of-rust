@@ -5,23 +5,10 @@ use regex::Regex;
 use std::cmp::max;
 use std::cmp::min;
 use std::collections::HashSet;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-use structopt::StructOpt;
-
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-}
 
 /// main function
 fn main() {
-    let args = Cli::from_args();
-    // println!("reading data from: {}", args.path.display());
-    let data = load_data(args.path);
+    let data = aoc::load_input_data_vec(22);
 
     part1(&data);
     part2(&data);
@@ -142,25 +129,4 @@ fn part1(data: &[String]) {
     }
 
     println!("{}", cubes_on.len());
-}
-
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
-
-/// load data from file
-fn load_data(path: std::path::PathBuf) -> Vec<String> {
-    let mut data = vec![];
-    if let Ok(lines) = read_lines(path) {
-        for line in lines.flatten() {
-            data.push(line);
-        }
-    }
-    data
 }

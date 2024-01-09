@@ -1,14 +1,6 @@
 //! [Day 10: Knot Hash](https://adventofcode.com/2017/day/10)
 
-use aoc::knot::*;
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
+use aoc::knot;
 
 struct Puzzle {
     data: String,
@@ -40,19 +32,19 @@ impl Puzzle {
         let mut pos = 0;
         let mut sparse: Vec<u8> = (0..=255).collect();
 
-        knot_tie(&lengths, &mut sparse, &mut skip, &mut pos);
+        knot::tie(&lengths, &mut sparse, &mut skip, &mut pos);
 
         (sparse[0] as u32) * (sparse[1] as u32)
     }
 
     /// Solve part two.
     fn part2(&self) -> String {
-        knot_hash(&self.data)
+        knot::hash(&self.data)
     }
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

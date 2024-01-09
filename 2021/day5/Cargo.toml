@@ -6,9 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-structopt = "0.3.26"
+aoc = { path = "../../aoc" }
 regex = "1.7.1"
-clap = { version = "4.1.1", features = ["derive"] }
 
 [[bin]]
 name = "day5"

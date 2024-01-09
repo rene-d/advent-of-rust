@@ -32,16 +32,18 @@ pub fn load_input_data(day: u8) -> String {
         args.path
     };
 
-    if filename == "input.txt" {
-        if !std::path::Path::new(&filename).is_file() {
-            let txt = format!("day{day}/input.txt");
-            if std::path::Path::new(&txt).is_file() {
-                filename = txt;
-            }
+    if filename == "input.txt" && !std::path::Path::new(&filename).is_file() {
+        let txt = format!("day{day}/input.txt");
+        if std::path::Path::new(&txt).is_file() {
+            filename = txt;
         }
     }
 
     std::fs::read_to_string(filename).unwrap()
+}
+
+pub fn load_input_data_vec(day: u8) -> Vec<String> {
+    load_input_data(day).lines().map(String::from).collect()
 }
 
 pub mod grid;
