@@ -1,14 +1,5 @@
 //! [Day 16: The Floor Will Be Lava](https://adventofcode.com/2023/day/16)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 struct Puzzle {
     mirrors: Vec<Vec<char>>,
     beams: Vec<Vec<u8>>,
@@ -157,6 +148,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -175,12 +174,4 @@ mod test {
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part2(), 51);
     }
-}
-
-fn main() {
-    let args = Args::parse();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

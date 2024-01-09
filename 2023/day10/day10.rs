@@ -6,15 +6,7 @@ use geo_types::{Coord, LineString};
 
 use std::collections::{HashSet, VecDeque};
 
-use clap::Parser;
 use itertools::iproduct;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Puzzle {
     _grid: Vec<Vec<char>>,
@@ -182,7 +174,7 @@ mod test {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

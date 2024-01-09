@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.*", features = ["derive"] }
+aoc = { path = "../../aoc" }
 geo = "0.27.0"
 geo-types = "0.7.12"
 itertools = "0.12.0"

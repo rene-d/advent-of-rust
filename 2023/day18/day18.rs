@@ -1,14 +1,5 @@
 //! [Day 18: Lavaduct Lagoon](https://adventofcode.com/2023/day/18)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 /// Use the Shoelace and Pick formulas to compute polygon area.
 fn shoelace(points: &[(i64, i64)], contour_length: i64) -> i64 {
     let n = points.len();
@@ -123,7 +114,7 @@ mod test {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

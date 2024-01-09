@@ -2,19 +2,6 @@
 
 use std::collections::{HashMap, HashSet};
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// show animation until first repetition
-    #[arg(long, short, default_value_t = false)]
-    anim: bool,
-
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 /// Parabolic Reflector Dish.
 struct Dish {
     grid: Vec<Vec<char>>,
@@ -299,11 +286,11 @@ mod test {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
 
-    if args.anim {
+    if args.verbose {
         puzzle.anim();
     } else {
         println!("{}", puzzle.part1());

@@ -1,19 +1,11 @@
 //! [Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)
 
-use clap::Parser;
 use fraction::{GenericFraction, Zero};
 
 // i64 is not enough... 👺
 // thus, it's quite useless to use rationals
 // (it works in f64 too 😳)
 type Q128 = GenericFraction<i128>;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Hailstone {
     x: Q128, // for use in part 1
@@ -170,7 +162,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());
