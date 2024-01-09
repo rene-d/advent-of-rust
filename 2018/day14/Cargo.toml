@@ -1,5 +1,5 @@
 [package]
-name = "day6"
+name = "day14"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,5 +7,5 @@ edition = "2021"
 aoc = { path = "../../aoc" }
 
 [[bin]]
-name = "day6"
-path = "day6.rs"
+name = "day14"
+path = "day14.rs"

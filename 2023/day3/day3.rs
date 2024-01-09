@@ -25,7 +25,7 @@ impl Puzzle {
     /// Get the puzzle input.
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
-        self.grid = data.lines().map(|x| x.to_string()).collect::<Vec<_>>();
+        self.grid = data.lines().map(String::from).collect::<Vec<_>>();
 
         self.sx = self.grid[0].len() as i32;
         self.sy = self.grid.len() as i32;
@@ -111,6 +111,21 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+
+    let start = Instant::now();
+
+    puzzle.configure(args.path.as_str());
+    puzzle.parse();
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+
+    let duration: Duration = start.elapsed();
+    eprintln!("Time elapsed: {duration:?}");
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -131,18 +146,4 @@ mod test {
         puzzle.parse();
         assert_eq!(puzzle.part2(), 467835);
     }
-}
-
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-
-    let start = Instant::now();
-    puzzle.configure(args.path.as_str());
-    puzzle.parse();
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
-    let duration: Duration = start.elapsed();
-
-    eprintln!("Time elapsed: {:?}", duration);
 }

@@ -1,14 +1,6 @@
 //! [Day 4: Repose Record](https://adventofcode.com/2018/day/4)
 
-use clap::Parser;
 use std::collections::HashMap;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Puzzle {
     /// Number of minutes asleep for each minute from 00:00 to 00:59 by guard ID
@@ -96,7 +88,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

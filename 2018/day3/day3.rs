@@ -1,15 +1,7 @@
 //! [Day 3: No Matter How You Slice It](https://adventofcode.com/2018/day/3)
 
-use clap::Parser;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Puzzle {
     data: String,
@@ -109,6 +101,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -127,12 +127,4 @@ mod test {
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part2(), 3);
     }
-}
-
-fn main() {
-    let args = Args::parse();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

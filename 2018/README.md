@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2018](https://img.shields.io/badge/Advent_of_Code-2018-8A2BE2)
-![Stars: 26](https://img.shields.io/badge/Stars-26⭐-blue)
-![Rust: 13](https://img.shields.io/badge/Rust-13-cyan?logo=Rust)
+![Stars: 28](https://img.shields.io/badge/Stars-28⭐-blue)
+![Rust: 14](https://img.shields.io/badge/Rust-14-cyan?logo=Rust)
 ![Python: 2](https://img.shields.io/badge/Python-2-cyan?logo=Python)
 
-## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 26⭐
+## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 28⭐
 
 Puzzle                                                                               | Stars | Languages
 ------------------------------------------------------------------------------------ | ----- | -----------
@@ -22,3 +22,4 @@ Puzzle                                                                          
 [Day 11: Chronal Charge](https://adventofcode.com/2018/day/11)                       | ⭐⭐  | [Rust](../2018/day11/day11.rs)
 [Day 12: Subterranean Sustainability](https://adventofcode.com/2018/day/12)          | ⭐⭐  | [Rust](../2018/day12/day12.rs)
 [Day 13: Mine Cart Madness](https://adventofcode.com/2018/day/13)                    | ⭐⭐  | [Rust](../2018/day13/day13.rs)
+[Day 14: Chocolate Charts](https://adventofcode.com/2018/day/14)                     | ⭐⭐  | [Rust](../2018/day14/day14.rs)
