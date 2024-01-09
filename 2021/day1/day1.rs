@@ -1,39 +1,28 @@
 //! [Day 1: Sonar Sweep](https://adventofcode.com/2021/day/1)
 
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-
 fn main() {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
+    let input = aoc::load_input_data(1);
 
     let mut prev_num = 999_999_999_u32;
     let mut result = 0;
 
     let mut data = vec![];
 
-    // lecture du fichier et step 1
-    if let Ok(lines) = read_lines(filename) {
-        // Consumes the iterator, returns a String
-        for line in lines.flatten() {
-            // convertit string -> u32
-            let num: u32 = line.parse().unwrap();
+    // step 1
+    for line in input.lines() {
+        // convertit string -> u32
+        let num: u32 = line.parse().unwrap();
 
-            // step 1
-            // est-ce que on est en "increase" ?
-            if prev_num < num {
-                result += 1;
-            }
-            prev_num = num;
-
-            // pour le step 2
-            data.push(num);
+        // est-ce que on est en "increase" ?
+        if prev_num < num {
+            result += 1;
         }
+        prev_num = num;
+
+        // pour le step 2
+        data.push(num);
     }
+
     println!("{result}");
 
     // step 2
@@ -49,14 +38,4 @@ fn main() {
         prev_num = num;
     }
     println!("{result}");
-}
-
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
 }

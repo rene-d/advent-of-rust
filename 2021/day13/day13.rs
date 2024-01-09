@@ -1,6 +1,6 @@
 //! [Day 13: Transparent Origami](https://adventofcode.com/2021/day/13)
 
-use phf::phf_map;
+use aoc::ocr::ocr_5x6;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -83,7 +83,7 @@ fn main() {
         }
         crt.push('\n');
     }
-    println!("{}", ocr(&crt));
+    println!("{}", ocr_5x6(&crt));
 }
 
 // The output is wrapped in a Result to allow matching on errors
@@ -105,50 +105,4 @@ fn load_data(path: std::path::PathBuf) -> Vec<String> {
         }
     }
     data
-}
-
-static CHARSET_5X6: phf::Map<&'static str, char> = phf_map! {
-    ".##.. #..#. #..#. ####. #..#. #..#." => 'A',
-    "###.. #..#. ###.. #..#. #..#. ###.." => 'B',
-    ".##.. #..#. #.... #.... #..#. .##.." => 'C',
-    "####. #.... ###.. #.... #.... ####." => 'E',
-    "####. #.... ###.. #.... #.... #...." => 'F',
-    ".##.. #..#. #.... #.##. #..#. .###." => 'G',
-    "#..#. #..#. ####. #..#. #..#. #..#." => 'H',
-    ".###. ..#.. ..#.. ..#.. ..#.. .###." => 'I',
-    "..##. ...#. ...#. ...#. #..#. .##.." => 'J',
-    "#..#. #.#.. ##... #.#.. #.#.. #..#." => 'K',
-    "#.... #.... #.... #.... #.... ####." => 'L',
-    ".##.. #..#. #..#. #..#. #..#. .##.." => 'O',
-    "###.. #..#. #..#. ###.. #.... #...." => 'P',
-    "###.. #..#. #..#. ###.. #.#.. #..#." => 'R',
-    ".###. #.... #.... .##.. ...#. ###.." => 'S',
-    "#..#. #..#. #..#. #..#. #..#. .##.." => 'U',
-    "#...# #...# .#.#. ..#.. ..#.. ..#.." => 'Y',
-    "####. ...#. ..#.. .#... #.... ####." => 'Z',
-};
-
-fn ocr(text: &str) -> String {
-    let lines = text.lines().collect::<Vec<&str>>();
-
-    let width = lines.iter().map(|x| x.len()).min().unwrap();
-
-    let mut x = 0;
-    let mut result = String::new();
-
-    while x < width - 5 + 1 {
-        let key = (0..6)
-            .map(|y| &lines[y][x..(x + 5)])
-            .collect::<Vec<&str>>()
-            .join(" ");
-
-        if let Some(letter) = CHARSET_5X6.get(&key) {
-            result.push(*letter);
-            x += 5;
-        } else {
-            x += 1;
-        }
-    }
-
-    result
 }

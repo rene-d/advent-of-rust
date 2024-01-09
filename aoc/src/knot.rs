@@ -1,3 +1,6 @@
+//! Implements the 'knot hash' as described in [2017 day 10](https://adventofcode.com/2017/day/10)
+//! Also used in [2017 day 14](https://adventofcode.com/2017/day/14
+
 use crate::hex::HexDisplayExt;
 
 pub fn knot_tie(values: &[usize], sparse: &mut [u8], skip: &mut usize, pos: &mut usize) {

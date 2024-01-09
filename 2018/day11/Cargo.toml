@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.*", features = ["derive"] }
-aoc2018 = { path = "../aoc2018" }
+aoc = { path = "../../aoc" }
 
 [[bin]]
 name = "day11"

@@ -1,5 +1,6 @@
 //! [Day 10: The Stars Align](https://adventofcode.com/2018/day/10)
 
+use aoc::ocr::ocr_6x10;
 use clap::Parser;
 
 #[derive(Parser)]
@@ -101,7 +102,7 @@ impl Puzzle {
             .join("\n");
 
         if height == 10 {
-            self.message = aoc2018::ocr::ocr_6x10(&lcd);
+            self.message = ocr_6x10(&lcd);
         }
         if self.message.len() != 8 {
             println!("{lcd}");

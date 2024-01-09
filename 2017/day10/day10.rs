@@ -1,6 +1,6 @@
 //! [Day 10: Knot Hash](https://adventofcode.com/2017/day/10)
 
-use aoc2017::knot::*;
+use aoc::knot::*;
 use clap::Parser;
 
 #[derive(Parser)]
