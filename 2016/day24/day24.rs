@@ -1,16 +1,9 @@
 //! [Day 24: Air Duct Spelunking](https://adventofcode.com/2016/day/24)
 
 use aoc::{grid, grid::Grid};
-use clap::Parser;
+
 use itertools::Itertools;
 use std::collections::{HashSet, VecDeque};
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Puzzle {
     grid: Grid<char>,
@@ -90,7 +83,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

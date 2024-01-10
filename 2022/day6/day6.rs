@@ -2,15 +2,7 @@
 
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 
-use clap::Parser;
 use std::collections::HashSet;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Puzzle {
     /// Puzzle input
@@ -61,7 +53,7 @@ fn find_marker(data: &str, length: usize) -> usize {
 
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());

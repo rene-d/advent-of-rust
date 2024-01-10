@@ -1,18 +1,7 @@
 //! [Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)
 
-use clap::Parser;
 use regex::Regex;
 use std::collections::HashMap;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-
-    #[arg(short, long)]
-    verbose: bool,
-}
 
 struct Puzzle {
     valves: HashMap<String, u8>,
@@ -252,7 +241,7 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
 

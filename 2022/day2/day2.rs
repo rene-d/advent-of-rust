@@ -1,14 +1,5 @@
 //! [Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 const VALUE_ROCK: u32 = 1;
 const VALUE_PAPER: u32 = 2;
 const VALUE_SCISSORS: u32 = 3;
@@ -99,7 +90,7 @@ impl Puzzle {
 
 /// Solve the puzzle with the user input
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

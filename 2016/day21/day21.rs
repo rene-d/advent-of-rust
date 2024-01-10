@@ -1,14 +1,6 @@
 //! [Day 21: Scrambled Letters and Hash](https://adventofcode.com/2016/day/21)
 
-use clap::Parser;
 use regex::Regex;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 enum Operation {
     SwapPosition(usize, usize),
@@ -186,7 +178,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

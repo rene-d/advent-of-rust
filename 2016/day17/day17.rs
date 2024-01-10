@@ -1,14 +1,6 @@
 //! [Day 17: Two Steps Forward](https://adventofcode.com/2016/day/17)
 
-use clap::Parser;
 use std::collections::VecDeque;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Puzzle {
     password: String,
@@ -139,7 +131,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

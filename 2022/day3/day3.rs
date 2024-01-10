@@ -1,14 +1,5 @@
 //! [Day 3: Rucksack Reorganization](https://adventofcode.com/2022/day/3)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 struct Puzzle {
     rucksacks: Vec<String>,
 }
@@ -70,7 +61,7 @@ impl Puzzle {
 
 /// Solve the puzzle with the user input
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

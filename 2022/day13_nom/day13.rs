@@ -1,6 +1,5 @@
 //! [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)
 
-use clap::Parser as ClapParser;
 use nom::{
     branch::alt, bytes::complete::tag, character::complete::i32, combinator::map,
     multi::separated_list0, sequence::delimited, IResult,
@@ -52,14 +51,6 @@ impl Packet {
             }
         }
     }
-}
-
-/// Command-line arguments
-#[derive(ClapParser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
 }
 
 struct Puzzle {
@@ -118,7 +109,7 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());

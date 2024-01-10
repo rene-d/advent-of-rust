@@ -2,16 +2,8 @@
 
 // Nota: very slow implementation
 
-use clap::Parser;
 use itertools::Itertools;
 use std::collections::{HashSet, VecDeque};
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 const RTG: u8 = 1;
 const CHIP: u8 = 2;
@@ -49,7 +41,7 @@ impl State {
     fn key(&self) -> Vec<u32> {
         let mut s = vec![];
 
-        s.push(self.elevator as u32);
+        s.push(u32::try_from(self.elevator).unwrap());
 
         for i in &self.floors {
             s.push(u32::MAX);
@@ -281,18 +273,18 @@ impl Puzzle {
     fn part2(&self) -> u32 {
         let mut floors = self.floors.clone();
 
-        floors[0].generator.insert((0xffffe1e4, RTG)); // elerium
-        floors[0].microchip.insert((0xffffe1e4, CHIP));
+        floors[0].generator.insert((0xffff_e1e4, RTG)); // elerium
+        floors[0].microchip.insert((0xffff_e1e4, CHIP));
 
-        floors[0].generator.insert((0xffffd111, RTG)); // dilithium
-        floors[0].microchip.insert((0xffffd111, CHIP));
+        floors[0].generator.insert((0xffff_d111, RTG)); // dilithium
+        floors[0].microchip.insert((0xffff_d111, CHIP));
 
         solve(&floors)
     }
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

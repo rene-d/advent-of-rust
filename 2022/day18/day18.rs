@@ -1,14 +1,6 @@
 //! [Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)
 
-use clap::Parser;
 use std::collections::{HashMap, HashSet, VecDeque};
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 struct Puzzle {
     cubes: HashSet<(i32, i32, i32)>,
@@ -156,7 +148,7 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());

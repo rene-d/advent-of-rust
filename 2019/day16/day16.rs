@@ -67,7 +67,7 @@ fn part2(data: &[u8]) -> u32 {
 }
 
 fn main() {
-    let puzzle_input = std::fs::read_to_string("input.txt").unwrap();
+    let puzzle_input = aoc::load_input_data(16);
 
     let data = parse_data(&puzzle_input);
 
