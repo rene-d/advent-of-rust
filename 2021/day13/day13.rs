@@ -1,6 +1,6 @@
 //! [Day 13: Transparent Origami](https://adventofcode.com/2021/day/13)
 
-use aoc::ocr::ocr_5x6;
+use aoc::ocr::scan_5x6;
 
 /// main function
 fn main() {
@@ -70,5 +70,5 @@ fn main() {
         }
         crt.push('\n');
     }
-    println!("{}", ocr_5x6(&crt));
+    println!("{}", scan_5x6(&crt));
 }

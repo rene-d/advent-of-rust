@@ -3,7 +3,7 @@
 #![allow(clippy::manual_memcpy)]
 #![allow(clippy::needless_range_loop)] // assumed. code is much clearer
 
-use aoc::ocr::ocr_5x6;
+use aoc::ocr::scan_5x6;
 use regex::Regex;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
@@ -81,5 +81,5 @@ fn solve(data: &str) {
     }
 
     println!("{lit}"); // part 1
-    println!("{}", ocr_5x6(&crt)); // part 2
+    println!("{}", scan_5x6(&crt)); // part 2
 }

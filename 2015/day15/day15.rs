@@ -1,10 +1,6 @@
 //! [Day 15: Science for Hungry People](https://adventofcode.com/2015/day/15)
 
 use regex::Regex;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-use structopt::StructOpt;
 
 #[derive(Debug)]
 struct Ingredient {
@@ -16,24 +12,15 @@ struct Ingredient {
     calories: i64,
 }
 
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-}
-
 /// main function
 fn main() {
-    let args = Cli::from_args();
-    // println!("reading data from: {}", args.path.display());
-    let data = load_data(args.path);
+    let data = aoc::load_input_data(15);
 
     // load data
     let mut ingredients = Vec::new();
     let re = Regex::new(r"(\w+): capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)").unwrap();
 
-    for line in &data {
+    for line in data.lines() {
         re.captures(line).map(|cap| {
             let ingredient = Ingredient {
                 // name: cap[1].to_string(),
@@ -118,25 +105,4 @@ fn main() {
 
         println!("{score_max}");
     }
-}
-
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
-
-/// load data from file
-fn load_data(path: std::path::PathBuf) -> Vec<String> {
-    let mut data = vec![];
-    if let Ok(lines) = read_lines(path) {
-        for line in lines.flatten() {
-            data.push(line);
-        }
-    }
-    data
 }

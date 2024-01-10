@@ -2,16 +2,8 @@
 
 use std::collections::HashMap;
 
-use clap::Parser as ClapParser;
 use pest::Parser;
 use pest_derive::Parser as PestParser;
-
-#[derive(ClapParser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 #[derive(PestParser, Debug)]
 #[grammar = "day8.pest"]
@@ -99,6 +91,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(&args.path);
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -117,12 +117,4 @@ mod test {
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part2(), 10);
     }
-}
-
-fn main() {
-    let args = Args::parse();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

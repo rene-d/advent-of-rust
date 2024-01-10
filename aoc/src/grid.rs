@@ -37,6 +37,7 @@ impl Direction {
     }
 
     /// Returns the character used in puzzles of the direction.
+    #[must_use]
     pub fn arrow(&self) -> char {
         match &self {
             Direction::North => '^',
@@ -82,6 +83,7 @@ impl<T: Clone + Default> Grid<T> {
 
 impl<T: Copy> Grid<T> {
     /// Returns the content of a cell.
+    #[must_use]
     #[inline]
     pub fn cell(&self, x: usize, y: usize) -> T {
         let index = self.width * y + x;
@@ -106,6 +108,7 @@ impl<T> Grid<T> {
     }
 
     /// Returns a tuple with the dimensions (width, height) of the grid.
+    #[must_use]
     #[inline]
     pub fn size(&self) -> (usize, usize) {
         (self.width, self.height)
@@ -180,6 +183,8 @@ impl Grid<u8> {
 impl Grid<char> {
     /// Read a grid from a puzzle input.
     /// The grid is guaranteed to be rectangular even if lines are right stripped.
+    /// # Panics
+    /// If input is empty.
     #[must_use]
     pub fn parse(input: &str) -> Self {
         let lines: Vec<_> = input.lines().collect();

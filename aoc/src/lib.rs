@@ -14,6 +14,7 @@ pub struct Args {
 }
 
 /// Parse the command line arguments for puzzle.
+#[must_use]
 pub fn parse_args() -> Args {
     Args::parse()
 }
