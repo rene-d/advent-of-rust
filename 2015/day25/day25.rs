@@ -20,20 +20,14 @@ fn main() {
 }
 
 fn read_data() -> (i32, i32) {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
+    let mut data = aoc::load_input_data(25);
 
-    let data = std::fs::read_to_string(filename)
-        .unwrap()
-        .trim()
-        .to_string();
-    let data = data.split(' ').collect::<Vec<&str>>();
+    data.retain(|c| c.is_digit(10) || c.is_whitespace());
 
-    let row = data[16].strip_suffix(',').unwrap().parse::<i32>().unwrap();
-    let column = data[18].strip_suffix('.').unwrap().parse::<i32>().unwrap();
+    let data: Vec<_> = data.trim().split_ascii_whitespace().collect();
+
+    let row = data[0].parse::<i32>().unwrap();
+    let column = data[1].parse::<i32>().unwrap();
 
     (row, column)
 }

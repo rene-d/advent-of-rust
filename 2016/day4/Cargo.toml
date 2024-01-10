@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-regex = "1.7.1"
-lazy_static = "1.4.0"
+regex = "1"
+lazy_static = "1.4"
 
 [[bin]]
 name = "day4"

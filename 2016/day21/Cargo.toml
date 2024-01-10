@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aoc = { path = "../../aoc/" }
-regex = "1.10.2"
+aoc = { path = "../../aoc" }
+regex = "1"
 
 [[bin]]
 name = "day21"

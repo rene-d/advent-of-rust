@@ -5,8 +5,6 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-# regex = "*"
-# rand = "*"
 
 [[bin]]
 name = "day20"

@@ -2,13 +2,7 @@
 
 /// Solve the puzzle with the given input.
 fn main() {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
-
-    let data = std::fs::read_to_string(filename).unwrap();
+    let data = aoc::load_input_data(9);
 
     println!("{}", part1(&data));
     println!("{}", part2(&data));
