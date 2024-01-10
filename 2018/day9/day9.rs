@@ -1,6 +1,7 @@
 //! [Day 9: Marble Mania](https://adventofcode.com/2018/day/9)
 
-#[must_use] pub fn c_solve(elves: u32, points: u32) -> u32 {
+#[must_use]
+pub fn c_solve(elves: u32, points: u32) -> u32 {
     extern "C" {
         fn c_solve(elves: u32, points: u32) -> u32;
     }
