@@ -1,14 +1,6 @@
 //! [Day 13: A Maze of Twisty Little Cubicles](https://adventofcode.com/2016/day/13)
 
-use clap::Parser;
 use std::collections::{HashSet, VecDeque};
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 fn is_wall(x: u32, y: u32, designer_number: u32) -> bool {
     let v = x * x + 3 * x + 2 * x * y + y + y * y + designer_number;
@@ -113,7 +105,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

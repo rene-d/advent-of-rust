@@ -1,14 +1,6 @@
 //! [Day 14: Regolith Reservoir](https://adventofcode.com/2022/day/14)
 
-use clap::Parser;
 use std::collections::HashSet;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 #[derive(Eq, Hash, PartialEq, Debug)]
 struct Coord {
@@ -144,7 +136,7 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());

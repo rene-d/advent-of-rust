@@ -1,14 +1,5 @@
 //! [Day 18: Like a Rogue](https://adventofcode.com/2016/day/18)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 struct Puzzle {
     tiles: Vec<u32>,
 }
@@ -26,7 +17,7 @@ impl Puzzle {
     }
 
     fn parse(&mut self, tiles: &str) {
-        self.tiles = tiles.chars().map(|c| if c == '.' { 1 } else { 0 }).collect();
+        self.tiles = tiles.chars().map(|c| u32::from(c == '.')).collect();
     }
 
     fn guess(tiles: &mut [u32]) {
@@ -38,7 +29,8 @@ impl Puzzle {
             let right = if i == prev.len() - 1 { 1 } else { prev[i + 1] };
 
             tiles[i] = match (left, center, right) {
-                (0, 0, 1) | (1, 0, 0) | (0, 1, 1) | (1, 1, 0) => 0,
+                // (0, 0, 1) | (1, 0, 0) | (0, 1, 1) | (1, 1, 0) => 0,
+                (0, 0 | 1, 1) | (1, 0 | 1, 0) => 0,
                 _ => 1,
             };
         }
@@ -68,7 +60,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

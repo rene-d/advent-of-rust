@@ -2,15 +2,6 @@
 
 #![allow(clippy::unreadable_literal)]
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 // Calculates (n^x) % p
 fn modular_exponent(mut n: i128, mut x: i128, p: i128) -> i128 {
     let mut ans = 1;
@@ -216,7 +207,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

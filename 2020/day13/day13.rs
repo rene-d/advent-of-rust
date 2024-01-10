@@ -1,14 +1,5 @@
 //! [Day 13: Shuttle Search](https://adventofcode.com/2020/day/13)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 #[allow(clippy::many_single_char_names)]
 fn egcd(a: i64, b: i64) -> (i64, i64, i64) {
     if a == 0 {
@@ -100,6 +91,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -138,12 +137,4 @@ mod test {
         puzzle.set_buses("1789,37,47,1889");
         assert_eq!(puzzle.part2(), 1_202_161_486);
     }
-}
-
-fn main() {
-    let args = Args::parse();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

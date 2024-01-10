@@ -1,14 +1,5 @@
 //! [Day 11: Monkey in the Middle](https://adventofcode.com/2022/day/11)
 
-use clap::Parser;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
-
 #[derive(Copy, Clone, Debug)]
 enum Operation {
     Square,
@@ -176,7 +167,7 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());

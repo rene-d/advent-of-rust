@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.*", features = ["derive"] }
+aoc = { path = "../../aoc/" }
 strum = { version = "0.25.0", features = ["strum_macros", "derive"] }
 strum_macros = "0.25.3"
 

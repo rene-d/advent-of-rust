@@ -1,15 +1,7 @@
 //! [Day 22: Wizard Simulator 20XX](https://adventofcode.com/2015/day/22)
 
-use clap::Parser;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 enum CastResult {
     PlayerWins,
@@ -225,7 +217,7 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
     println!("{}", puzzle.part1());

@@ -1,14 +1,6 @@
 //! [Day 19: Monster Messages](https://adventofcode.com/2020/day/19)
 
-use clap::Parser;
 use std::collections::HashMap;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 enum Rule {
     Ch(char),
@@ -174,6 +166,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -192,12 +192,4 @@ mod test {
         puzzle.configure("test2.txt");
         assert_eq!(puzzle.part2(), 12);
     }
-}
-
-fn main() {
-    let args = Args::parse();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

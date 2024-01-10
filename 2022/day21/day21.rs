@@ -1,16 +1,8 @@
 //! [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)
 
-use clap::Parser;
 use num::Rational64;
 use std::collections::HashMap;
 use std::ops;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 enum Job {
     Number(i64),
@@ -131,7 +123,7 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());

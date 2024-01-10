@@ -1,15 +1,7 @@
 //! [Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)
 
-use clap::Parser;
 use regex::Regex;
 use std::collections::HashSet;
-
-#[derive(Parser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 /// Computes the [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) between two points
 fn manhattan(ax: i64, ay: i64, bx: i64, by: i64) -> i64 {
@@ -158,7 +150,7 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path, args.path == "test.txt");
     println!("{}", puzzle.part1());
