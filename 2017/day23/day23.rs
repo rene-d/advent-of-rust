@@ -113,7 +113,7 @@ impl Puzzle {
         let mut h = 0;
         for n in (b..=c).step_by(17) {
             if n % 2 == 0 {
-                h += 1
+                h += 1;
             } else {
                 let sqrt = ((n as f32).sqrt()).round() as i64;
                 for i in 3..=sqrt {

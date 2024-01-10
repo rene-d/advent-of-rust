@@ -34,7 +34,7 @@ impl Puzzle {
 
         knot::tie(&lengths, &mut sparse, &mut skip, &mut pos);
 
-        (sparse[0] as u32) * (sparse[1] as u32)
+        u32::from(sparse[0]) * u32::from(sparse[1])
     }
 
     /// Solve part two.

@@ -1,6 +1,6 @@
 //! [Day 9: Marble Mania](https://adventofcode.com/2018/day/9)
 
-pub fn c_solve(elves: u32, points: u32) -> u32 {
+#[must_use] pub fn c_solve(elves: u32, points: u32) -> u32 {
     extern "C" {
         fn c_solve(elves: u32, points: u32) -> u32;
     }
@@ -89,7 +89,7 @@ mod test {
     #[test]
     fn test02() {
         assert_eq!(solve(10, 1618), 8317);
-        assert_eq!(solve(13, 7999), 146373);
+        assert_eq!(solve(13, 7999), 146_373);
         assert_eq!(solve(21, 6111), 54718);
         assert_eq!(solve(30, 5807), 37305);
     }
@@ -97,7 +97,7 @@ mod test {
     #[test]
     fn test03() {
         assert_eq!(c_solve(10, 1618), 8317);
-        assert_eq!(c_solve(13, 7999), 146373);
+        assert_eq!(c_solve(13, 7999), 146_373);
         assert_eq!(c_solve(21, 6111), 54718);
         assert_eq!(c_solve(30, 5807), 37305);
     }

@@ -126,7 +126,7 @@ impl Puzzle {
             if state[p1..p2] == new_state[n1..n2] {
                 // state is now stable
                 // extrapolate the value at 5e9 seconds
-                return new_score + (new_score - score) * (50000000000 - seconds);
+                return new_score + (new_score - score) * (50_000_000_000 - seconds);
             }
 
             state = new_state;
@@ -161,6 +161,6 @@ mod test {
     fn test02() {
         let mut puzzle = Puzzle::new();
         puzzle.configure("test.txt");
-        assert_eq!(puzzle.part2(), 999999999374);
+        assert_eq!(puzzle.part2(), 999_999_999_374);
     }
 }

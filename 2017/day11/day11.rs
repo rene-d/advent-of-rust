@@ -80,6 +80,15 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    puzzle.solve();
+    println!("{}", puzzle.part1);
+    println!("{}", puzzle.part2);
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -111,13 +120,4 @@ mod test {
     fn test04() {
         test("se,sw,se,sw,sw", 3);
     }
-}
-
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    puzzle.solve();
-    println!("{}", puzzle.part1);
-    println!("{}", puzzle.part2);
 }
