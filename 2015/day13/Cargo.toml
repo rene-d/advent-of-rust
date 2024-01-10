@@ -5,8 +5,8 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-regex = "1.7.1"
-permutator = "0.4.3"
+regex = "1"
+permutator = "0.4"
 
 [[bin]]
 name = "day13"

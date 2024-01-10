@@ -6,7 +6,7 @@ build = "build.rs"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-fraction = "0.14.0"
+fraction = "0.15"
 z3 = "0.12.1"
 
 [[bin]]

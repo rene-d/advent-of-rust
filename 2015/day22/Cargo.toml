@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aoc = { path = "../../aoc/" }
-strum = { version = "0.25.0", features = ["strum_macros", "derive"] }
-strum_macros = "0.25.3"
+aoc = { path = "../../aoc" }
+strum = { version = "0.25", features = ["strum_macros", "derive"] }
+strum_macros = "0.25"
 
 [[bin]]
 name = "day22"

@@ -5,9 +5,9 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-lazy_static = "1.4.0"
-pest = "2.7.5"
-pest_derive = "2.7.5"
+lazy_static = "1.4"
+pest = "2.7"
+pest_derive = "2.7"
 
 [[bin]]
 name = "day8"

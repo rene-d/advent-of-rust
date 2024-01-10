@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-md5 = "0.7.0"
-num-traits = "0.2.15"
-indicatif = "0.17.2"
+md5 = "0.7"
+num-traits = "0.2"
+indicatif = "0.17"
 
 [[bin]]
 name = "day5"

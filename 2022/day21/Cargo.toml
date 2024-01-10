@@ -5,8 +5,8 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-fraction = "*"
-num = "*"
+fraction = "0.15"
+num = "0.4"
 
 [[bin]]
 name = "day21"

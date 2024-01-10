@@ -2,13 +2,7 @@
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
-
-    let data = std::fs::read_to_string(filename).unwrap();
+    let data = aoc::load_input_data(2);
 
     println!("{}", part1(&data));
     println!("{}", part2(&data));
