@@ -13,7 +13,11 @@ impl Puzzle {
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
 
-        self.program = data.trim().split(',').map(|s| s.to_string()).collect();
+        self.program = data
+            .trim()
+            .split(',')
+            .map(std::string::ToString::to_string)
+            .collect();
     }
 
     fn dance(&self, text: &mut [u8]) {

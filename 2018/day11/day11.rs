@@ -28,7 +28,7 @@ impl Puzzle {
                 let mut cell = 0;
                 for xx in x..(x + size) {
                     for yy in y..(y + size) {
-                        cell += power_level(xx, yy)
+                        cell += power_level(xx, yy);
                     }
                 }
 

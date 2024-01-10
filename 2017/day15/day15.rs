@@ -29,8 +29,8 @@ impl Puzzle {
         let mut b: u64 = self.b;
         let mut n = 0;
         for _ in 0..40_000_000 {
-            a = a.wrapping_mul(16807) % 2147483647;
-            b = b.wrapping_mul(48271) % 2147483647;
+            a = a.wrapping_mul(16807) % 2_147_483_647;
+            b = b.wrapping_mul(48271) % 2_147_483_647;
 
             if a & 0xffff == b & 0xffff {
                 n += 1;
@@ -46,13 +46,13 @@ impl Puzzle {
         let mut n = 0;
         for _ in 0..5_000_000 {
             loop {
-                a = a.wrapping_mul(16807) % 2147483647;
+                a = a.wrapping_mul(16807) % 2_147_483_647;
                 if a % 4 == 0 {
                     break;
                 }
             }
             loop {
-                b = b.wrapping_mul(48271) % 2147483647;
+                b = b.wrapping_mul(48271) % 2_147_483_647;
                 if b % 8 == 0 {
                     break;
                 }

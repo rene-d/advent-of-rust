@@ -1,6 +1,6 @@
 //! [Day 14: Disk Defragmentation](https://adventofcode.com/2017/day/14)
 
-use aoc::grid::*;
+use aoc::grid::Grid;
 use aoc::knot;
 
 fn count_ones(value: u8) -> u32 {
@@ -80,7 +80,7 @@ impl Puzzle {
 
                     for (nx, ny) in g.iter_directions((x, y)) {
                         if g[(nx, ny)] == 1 {
-                            q.push((nx, ny))
+                            q.push((nx, ny));
                         }
                     }
                 }
