@@ -74,7 +74,7 @@ impl State {
         None
     }
 
-    fn cast(&mut self, spell: Spell, hard_mode: bool) -> Option<CastResult> {
+    fn cast(&mut self, spell: &Spell, hard_mode: bool) -> Option<CastResult> {
         // player's turn
 
         if hard_mode {
@@ -190,7 +190,7 @@ impl Puzzle {
                 for spell in Spell::iter() {
                     let mut s = state.clone();
 
-                    match s.cast(spell, hard_mode) {
+                    match s.cast(&spell, hard_mode) {
                         Some(CastResult::PlayerWins) => {
                             mana_used = mana_used.min(s.mana_used);
                             break;

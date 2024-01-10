@@ -1,26 +1,15 @@
 //! [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)
 
-use clap::Parser as ClapParser;
 use pest::iterators::Pair;
 use pest::Parser;
 use pest_derive::Parser as PestParser;
 use std::cmp::Ordering;
-
-#[derive(ClapParser)]
-struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    path: String,
-}
 
 #[derive(PestParser, Debug)]
 #[grammar = "day13.pest"]
 struct PacketParser;
 
 fn cmp(a: &str, b: &str) -> Ordering {
-    let a = PacketParser::parse(Rule::value, a).unwrap().next().unwrap();
-    let b = PacketParser::parse(Rule::value, b).unwrap().next().unwrap();
-
     fn inner_cmp(a: Pair<Rule>, b: Pair<Rule>) -> Ordering {
         match (a.as_rule(), b.as_rule()) {
             (Rule::integer, Rule::integer) => {
@@ -72,6 +61,8 @@ fn cmp(a: &str, b: &str) -> Ordering {
         }
     }
 
+    let a = PacketParser::parse(Rule::value, a).unwrap().next().unwrap();
+    let b = PacketParser::parse(Rule::value, b).unwrap().next().unwrap();
     inner_cmp(a, b)
 }
 
@@ -127,19 +118,24 @@ impl Puzzle {
     }
 }
 
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test01() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("test.txt");
+        assert_eq!(puzzle.part1(), 13);
+        assert_eq!(puzzle.part2(), 140);
+    }
+}
+
 /// main function
 fn main() {
-    let args = Args::parse();
+    let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
-}
-
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
-    assert_eq!(puzzle.part1(), 13);
-    assert_eq!(puzzle.part2(), 140);
 }

@@ -17,6 +17,8 @@ pub fn tie(values: &[usize], sparse: &mut [u8], skip: &mut usize, pos: &mut usiz
 }
 
 /// Compute a [knot hash](https://adventofcode.com/2017/day/10).
+/// # Panics
+/// in case of bad input string.
 pub fn hash_raw(text: &str) -> [u8; 16] {
     let mut lengths: Vec<_> = text.chars().map(u32::from).map(|u| u as usize).collect();
 
@@ -40,6 +42,7 @@ pub fn hash_raw(text: &str) -> [u8; 16] {
 
 /// Compute a [knot hash](https://adventofcode.com/2017/day/10).
 /// and return its hexadecimal representation.
+#[must_use]
 pub fn hash(text: &str) -> String {
     hash_raw(text).hex_display().to_string()
 }

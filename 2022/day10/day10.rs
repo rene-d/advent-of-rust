@@ -1,6 +1,6 @@
 //! [Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/day/10)
 
-use aoc::ocr::ocr_5x6;
+use aoc::ocr::scan_5x6;
 use clap::Parser;
 
 #[derive(Parser)]
@@ -79,7 +79,7 @@ fn main() {
     puzzle.configure(&args.path);
     println!("{}", puzzle.part1());
     // println!("{}", puzzle.part2());
-    println!("{}", ocr_5x6(&puzzle.part2()));
+    println!("{}", scan_5x6(&puzzle.part2()));
 }
 
 #[cfg(test)]

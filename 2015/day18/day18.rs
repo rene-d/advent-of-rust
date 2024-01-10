@@ -1,39 +1,24 @@
 //! [Day 18: Like a GIF For Your Yard](https://adventofcode.com/2015/day/18)
 
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-use structopt::StructOpt;
-
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-
-    #[structopt(default_value = "100")]
-    steps: usize,
-}
+const STEPS: usize = 100;
 
 /// main function
 fn main() {
-    let args = Cli::from_args();
-    // println!("reading data from: {}", args.path.display());
-    let data = load_data(args.path);
+    let data = aoc::load_input_data_vec(18);
 
     // grid initialization
     let mut grid = [[0_u8; 100]; 100];
 
     // part 1
     init_lights(&mut grid, &data);
-    for _ in 0..args.steps {
+    for _ in 0..STEPS {
         switch_lights(&mut grid);
     }
     println!("{}", count_lights(&grid));
 
     // part 2
     init_lights(&mut grid, &data);
-    for _ in 0..args.steps {
+    for _ in 0..STEPS {
         corners_on(&mut grid);
         switch_lights(&mut grid);
     }
@@ -112,25 +97,4 @@ fn switch_lights(grid: &mut [[u8; 100]; 100]) {
             grid[y][x] = new_grid[y][x];
         }
     }
-}
-
-// The output is wrapped in a Result to allow matching on errors
-// Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where
-    P: AsRef<Path>,
-{
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
-
-/// load data from file
-fn load_data(path: std::path::PathBuf) -> Vec<String> {
-    let mut data = vec![];
-    if let Ok(lines) = read_lines(path) {
-        for line in lines.flatten() {
-            data.push(line);
-        }
-    }
-    data
 }

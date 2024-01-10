@@ -1,3 +1,5 @@
+#![allow(clippy::module_name_repetitions)]
+
 use std::fmt;
 
 pub struct HexSlice<'a>(&'a [u8]);
@@ -16,7 +18,7 @@ impl fmt::Display for HexSlice<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for byte in self.0 {
             // Decide if you want to pad the value or have spaces inbetween, etc.
-            write!(f, "{:02x}", byte)?;
+            write!(f, "{byte:02x}")?;
         }
         Ok(())
     }

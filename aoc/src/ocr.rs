@@ -21,7 +21,11 @@ static CHARSET_5X6: phf::Map<&'static str, char> = phf_map! {
     "####. ...#. ..#.. .#... #.... ####." => 'Z',
 };
 
-pub fn ocr_5x6(text: &str) -> String {
+/// Toto
+/// # Panics
+/// if no line in input string.
+#[must_use]
+pub fn scan_5x6(text: &str) -> String {
     let lines = text.lines().collect::<Vec<&str>>();
 
     let width = lines.iter().map(|x| x.len()).min().unwrap();
@@ -63,7 +67,11 @@ static CHARSET_6X10: phf::Map<&'static str, char> = phf_map! {
     "###### .....# .....# ....#. ...#.. ..#... .#.... #..... #..... ######" => 'Z',
 };
 
-pub fn ocr_6x10(text: &str) -> String {
+/// Toto
+/// # Panics
+/// if no line in input string.
+#[must_use]
+pub fn scan_6x10(text: &str) -> String {
     const CHAR_WIDTH: usize = 6;
     const CHAR_HEIGHT: usize = 10;
 
@@ -105,6 +113,6 @@ mod test {
 #....#..#.#..#.#....#....#.#..#..#.#.#..
 ####.#..#.###..####.####.#..#..##..#..#.
 ";
-        assert_eq!(ocr_5x6(crt), "EHBZLRJR");
+        assert_eq!(scan_5x6(crt), "EHBZLRJR");
     }
 }

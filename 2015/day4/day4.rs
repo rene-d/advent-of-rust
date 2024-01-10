@@ -1,22 +1,8 @@
 //! [Day 4: The Ideal Stocking Stuffer](https://adventofcode.com/2015/day/4)
 
-use structopt::StructOpt;
-
-/// parse command line arguments
-#[derive(StructOpt)]
-struct Cli {
-    #[structopt(default_value = "input.txt", parse(from_os_str))]
-    path: std::path::PathBuf,
-}
-
 /// main function
 fn main() {
-    let args = Cli::from_args();
-    // println!("reading data from: {}", args.path.display());
-    let data = std::fs::read_to_string(args.path)
-        .unwrap()
-        .trim()
-        .to_string();
+    let data = aoc::load_input_data(4).trim().to_string();
 
     let mut key = 0;
 
