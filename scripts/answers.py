@@ -56,6 +56,7 @@ class AocSession:
             if "anonymous user" in name:
                 name = f"anon-{self.user_id}"
 
+        self.user_name = name
         self.user_dir = self.data_dir / self.user_id
         self.user_dir.mkdir(parents=True, exist_ok=True)
 
@@ -566,7 +567,7 @@ def main():
         for session in AocSession.get_cookie_sessions():
             sess = AocSession(session, args.update, args.dry_run)
 
-            if args.user and sess.user != args.user:
+            if args.user and args.user not in (sess.user_id, sess.user_name):
                 continue
 
             if args.inputs:
