@@ -81,16 +81,6 @@ impl<T: Clone + Default> Grid<T> {
     }
 }
 
-impl<T: Copy> Grid<T> {
-    /// Returns the content of a cell.
-    #[must_use]
-    #[inline]
-    pub fn cell(&self, x: usize, y: usize) -> T {
-        let index = self.width * y + x;
-        self.g[index]
-    }
-}
-
 impl<T> Default for Grid<T> {
     fn default() -> Self {
         Self::new()
@@ -203,6 +193,17 @@ impl Grid<char> {
     }
 }
 
+//?????????
+// impl<T: Copy> Grid<T> {
+//     /// Returns the content of a cell.
+//     #[must_use]
+//     #[inline]
+//     pub fn cell(&self, xy: (usize, usize)) -> T {
+//         let index = self.width * xy.1 + xy.0;
+//         self.g[index]
+//     }
+// }
+
 impl<T> Index<(usize, usize)> for Grid<T> {
     type Output = T;
 
@@ -224,6 +225,18 @@ impl std::fmt::Display for Grid<char> {
         for y in 0..self.height {
             for x in 0..self.width {
                 write!(f, "{}", self.g[self.width * y + x])?;
+            }
+            writeln!(f)?;
+        }
+        Ok(())
+    }
+}
+
+impl std::fmt::Display for Grid<u8> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                write!(f, "{}", self.g[self.width * y + x] as char)?;
             }
             writeln!(f)?;
         }
