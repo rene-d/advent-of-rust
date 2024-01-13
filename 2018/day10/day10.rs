@@ -39,7 +39,7 @@ impl Puzzle {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self, verbose: bool) {
         let mut pos = self.pos.clone();
 
         let mut prev_height = i32::MAX;
@@ -93,6 +93,10 @@ impl Puzzle {
             .collect::<Vec<String>>()
             .join("\n");
 
+        if verbose {
+            println!("{lcd}");
+        }
+
         if height == 10 {
             self.message = scan_6x10(&lcd);
         }
@@ -118,7 +122,7 @@ fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
-    puzzle.solve();
+    puzzle.solve(args.verbose);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
