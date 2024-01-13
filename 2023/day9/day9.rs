@@ -1,7 +1,7 @@
 //! [Day 9: Mirage Maintenance](https://adventofcode.com/2023/day/9)
 
 struct Puzzle {
-    histories: Vec<Vec<i32>>,
+    histories: Vec<Vec<i64>>,
 }
 
 impl Puzzle {
@@ -16,13 +16,13 @@ impl Puzzle {
         for line in data.lines() {
             let history: Vec<_> = line
                 .split_whitespace()
-                .map(|x| x.parse::<i32>().unwrap())
+                .map(|x| x.parse::<i64>().unwrap())
                 .collect();
             self.histories.push(history);
         }
     }
 
-    fn history_diffs(history: &[i32]) -> Vec<Vec<i32>> {
+    fn history_diffs(history: &[i64]) -> Vec<Vec<i64>> {
         let mut diffs = vec![];
 
         let mut history = history.to_vec();
@@ -44,7 +44,7 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> i32 {
+    fn part1(&self) -> i64 {
         let mut result = 0;
 
         for history in &self.histories {
@@ -60,7 +60,7 @@ impl Puzzle {
     }
 
     /// Solve part two.
-    fn part2(&self) -> i32 {
+    fn part2(&self) -> i64 {
         self.histories
             .iter()
             .map(|history| {
@@ -69,7 +69,7 @@ impl Puzzle {
                     .rev()
                     .fold(0, |acc, x| x.first().unwrap() - acc)
             })
-            .sum::<i32>()
+            .sum::<i64>()
     }
 }
 
