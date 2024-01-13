@@ -1,6 +1,6 @@
 # https://adventofcode.com/2018
 
 [workspace]
-members = ["day16", "day22"]
+members = ["day16", "day22", "day18"]
 
 resolver = "2"

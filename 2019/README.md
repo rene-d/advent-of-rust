@@ -2,8 +2,8 @@
 
 ![AoC2019](https://img.shields.io/badge/Advent_of_Code-2019-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 2](https://img.shields.io/badge/Rust-2-cyan?logo=Rust)
-![Python: 24](https://img.shields.io/badge/Python-24-cyan?logo=Python)
+![Rust: 3](https://img.shields.io/badge/Rust-3-cyan?logo=Rust)
+![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
 ## 2019 ([Calendar](https://adventofcode.com/2019)) ([Solutions](../2019/)) : 50⭐
 
@@ -26,7 +26,7 @@ Puzzle                                                                          
 [Day 15: Oxygen System](https://adventofcode.com/2019/day/15)                    | ⭐⭐  | [Python](../2019/day15/day15.py)
 [Day 16: Flawed Frequency Transmission](https://adventofcode.com/2019/day/16)    | ⭐⭐  | [Rust](../2019/day16/day16.rs) [Python](../2019/day16/day16.py)
 [Day 17: Set and Forget](https://adventofcode.com/2019/day/17)                   | ⭐⭐  | [Python](../2019/day17/day17.py)
-[Day 18: Many-Worlds Interpretation](https://adventofcode.com/2019/day/18)       | ⭐⭐  | [Python](../2019/day18/day18.py)
+[Day 18: Many-Worlds Interpretation](https://adventofcode.com/2019/day/18)       | ⭐⭐  | [Rust](../2019/day18/src/main.rs)
 [Day 19: Tractor Beam](https://adventofcode.com/2019/day/19)                     | ⭐⭐  | [Python](../2019/day19/day19.py)
 [Day 20: Donut Maze](https://adventofcode.com/2019/day/20)                       | ⭐⭐  | [Python](../2019/day20/day20.py)
 [Day 21: Springdroid Adventure](https://adventofcode.com/2019/day/21)            | ⭐⭐  | [Python](../2019/day21/day21.py)

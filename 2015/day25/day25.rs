@@ -22,7 +22,7 @@ fn main() {
 fn read_data() -> (i32, i32) {
     let mut data = aoc::load_input_data(25);
 
-    data.retain(|c| c.is_digit(10) || c.is_whitespace());
+    data.retain(|c| c.is_ascii_digit() || c.is_whitespace());
 
     let data: Vec<_> = data.trim().split_ascii_whitespace().collect();
 

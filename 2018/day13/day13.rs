@@ -123,7 +123,7 @@ impl Puzzle {
             match nc.d {
                 Direction::West => {
                     nc.x -= 1;
-                    match self.grid.cell(nc.x, nc.y) {
+                    match self.grid[(nc.x, nc.y)] {
                         '-' => (),
                         '/' => nc.d = Direction::South,
                         '\\' => nc.d = Direction::North,
@@ -142,7 +142,7 @@ impl Puzzle {
 
                 Direction::East => {
                     nc.x += 1;
-                    match self.grid.cell(nc.x, nc.y) {
+                    match self.grid[(nc.x, nc.y)] {
                         '-' => (),
                         '/' => nc.d = Direction::North,
                         '\\' => nc.d = Direction::South,
@@ -161,7 +161,7 @@ impl Puzzle {
 
                 Direction::North => {
                     nc.y -= 1;
-                    match self.grid.cell(nc.x, nc.y) {
+                    match self.grid[(nc.x, nc.y)] {
                         '|' => (),
                         '/' => nc.d = Direction::East,
                         '\\' => nc.d = Direction::West,
@@ -180,7 +180,7 @@ impl Puzzle {
 
                 Direction::South => {
                     nc.y += 1;
-                    match self.grid.cell(nc.x, nc.y) {
+                    match self.grid[(nc.x, nc.y)] {
                         '|' => (),
                         '/' => nc.d = Direction::West,
                         '\\' => nc.d = Direction::East,

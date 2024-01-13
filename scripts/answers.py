@@ -18,7 +18,7 @@ class AocSession:
     last_submit_time = 0  # submissions must be at least 5 seconds apart
     rootdir = Path(__file__).parent.parent
 
-    def __init__(self, session, force_update=False, dry_run=False) -> None:
+    def __init__(self, cookie_session, force_update=False, dry_run=False) -> None:
         self.data_dir = self.rootdir / "data"
         self.stars = {}
         self.data_dir.mkdir(exist_ok=True, parents=True)
@@ -35,40 +35,34 @@ class AocSession:
             """
         )
 
-        if isinstance(session, tuple):
-            self.user, cookie = session
-            raise Exception("TODO - not supported ")
-
-        cookie = session
-        self.user = None
+        name = None
         self.user_id = ""
 
         self.sess = requests.Session()
-        self.sess.cookies["session"] = cookie
+        self.sess.cookies["session"] = cookie_session
 
         r_text = self.get("https://adventofcode.com/settings").decode()
 
         m = re.search(r'<div class="user">(.+?)\s*<', r_text)
         if m is None:
-            logging.error(f"Cannot retrieve session {cookie}")
-            self.user = "unknown"
+            logging.error(f"Cannot retrieve session {cookie_session}")
+            name = "unknown"
         else:
-            user = m[1]
+            name = m[1]
 
             m = re.search(r"<span>\(anonymous user #(\d+)\)</span>", r_text)
             self.user_id = m[1]
 
-            if "anonymous user" in user:
-                self.user = f"anon-{self.user_id}"
-            else:
-                self.user = user
+            if "anonymous user" in name:
+                name = f"anon-{self.user_id}"
 
         self.user_dir = self.data_dir / self.user_id
         self.user_dir.mkdir(parents=True, exist_ok=True)
 
-        self.prefix = f"\033[1;36m[{self.user:<15}]\033[0m "
+        self.prefix = f"\033[1;36m[{name:<15} {self.user_id:<6}]\033[0m "
 
-    def get_sessions():
+    def get_cookie_sessions():
+        """Return the list of cookie sessions from `session` file."""
         f = AocSession.rootdir / "session"
         sessions = []
         if f.exists():
@@ -379,6 +373,9 @@ class AocSession:
                 for f in day.glob("day*.*"):
                     if f.is_file():
                         sols.append(f)
+                f = day / "src" / "main.rs"
+                if f.is_file():
+                    sols.append(f)
         return sols
 
     @iter_all
@@ -409,7 +406,7 @@ class AocSession:
 
 
 def show_dstars(args):
-    sessions = AocSession.get_sessions()
+    sessions = AocSession.get_cookie_sessions()
 
     users = []
 
@@ -443,7 +440,7 @@ def show_dstars(args):
 
 
 def get_first_session(args):
-    sessions = AocSession.get_sessions()
+    sessions = AocSession.get_cookie_sessions()
 
     sess = None
     for session in sessions:
@@ -566,7 +563,7 @@ def main():
         show_dstars(args)
 
     else:
-        for session in AocSession.get_sessions():
+        for session in AocSession.get_cookie_sessions():
             sess = AocSession(session, args.update, args.dry_run)
 
             if args.user and sess.user != args.user:
