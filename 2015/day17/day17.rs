@@ -10,6 +10,7 @@ fn main() {
     // read data into an array
     let values = data
         .lines()
+        .filter(|line| !line.is_empty())
         .map(|s| s.parse::<u32>().unwrap())
         .collect::<Vec<u32>>();
 

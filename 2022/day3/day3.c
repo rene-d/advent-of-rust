@@ -21,12 +21,12 @@ int main(int argc, char *argv[])
     int part1 = 0;
     int part2 = 0;
 
-    f = fopen("input.txt", "r");
+    f = fopen(argc >= 2 ? argv[1] : "input.txt", "r");
     while (fgets(line, sizeof(line), f) != NULL)
     {
         memset(prio, 0, sizeof(prio));
 
-        for (int i = 0; i < strlen(line); ++i)
+        for (size_t i = 0; i < strlen(line); ++i)
         {
             int shift = (i < strlen(line) / 2) ? 0 : 1;
             char c = line[i];
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     fclose(f);
     printf("%d\n", part1);
 
-    f = fopen("input.txt", "r");
+    f = fopen(argc >= 2 ? argv[1] : "input.txt", "r");
     while (1)
     {
         memset(prio, 0, sizeof(prio));

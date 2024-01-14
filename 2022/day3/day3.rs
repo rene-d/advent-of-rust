@@ -44,6 +44,9 @@ impl Puzzle {
 
         // Iterate over rucksacks by triples
         for slice in self.rucksacks.chunks(3) {
+            if slice.len() == 2 {
+                continue;
+            }
             let first = &slice[0];
             let second = &slice[1];
             let third = &slice[2];

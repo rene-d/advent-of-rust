@@ -13,6 +13,8 @@ wall = set()
 floor = 0
 
 for line in lines:
+    if not line:
+        continue
     points = list(tuple(map(int, re.match(r"^(\d+),(\d+)$", p).groups())) for p in line.split(" -> "))
 
     for a, b in zip(points, points[1:]):

@@ -16,3 +16,6 @@ session
 *.log
 
 input.txt
+
+/build/
+build/

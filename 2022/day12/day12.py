@@ -8,7 +8,7 @@ from pathlib import Path
 filename = (
     "test.txt" if len(sys.argv) > 1 and sys.argv[1] == "-t" else sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 )
-data = Path(filename).read_text()
+data = Path(filename).read_text().strip()
 
 grid = []
 for y, line in enumerate(data.splitlines()):

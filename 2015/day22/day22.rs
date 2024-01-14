@@ -160,7 +160,7 @@ impl Puzzle {
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
 
-        for line in data.lines() {
+        for line in data.trim().lines() {
             if let Some(hp) = line.strip_prefix("Hit Points: ") {
                 self.boss_hp = hp.parse().unwrap();
             } else if let Some(dmg) = line.strip_prefix("Damage: ") {

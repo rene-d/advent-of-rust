@@ -6,6 +6,9 @@ fn main() {
     // load the blacklist and sort it ascending
     let mut blacklist = Vec::new();
     for line in data.lines() {
+        if line.is_empty() {
+            continue;
+        }
         let min_max = line.split('-').map(|x| x.parse::<u32>().unwrap()).collect::<Vec<u32>>();
 
         blacklist.push((min_max[0], min_max[1]));
