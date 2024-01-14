@@ -50,7 +50,7 @@ impl Puzzle {
     /// Loads data from input (one line)
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
-        let mut lines = data.split('\n');
+        let mut lines = data.trim().lines();
 
         // Nota: monkey definitions always start at id 0
 

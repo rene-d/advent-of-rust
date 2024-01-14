@@ -11,7 +11,7 @@ fn main() {
     let mut part1 = false;
 
     for line in &data {
-        if line.is_empty() {
+        if line.is_empty() || line.starts_with("fold") {
             break;
         }
         let (x, y) = line.split_once(',').unwrap();

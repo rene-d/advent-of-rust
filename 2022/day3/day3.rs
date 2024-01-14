@@ -20,8 +20,7 @@ impl Puzzle {
 
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
-        let mut lines = data.split('\n').collect::<Vec<_>>();
-        lines.pop();
+        let lines = data.trim().lines().collect::<Vec<_>>();
         self.rucksacks = lines.iter().map(std::string::ToString::to_string).collect();
     }
 
