@@ -2,7 +2,7 @@
 
 ![AoC2021](https://img.shields.io/badge/Advent_of_Code-2021-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 22](https://img.shields.io/badge/Rust-22-cyan?logo=Rust)
+![Rust: 23](https://img.shields.io/badge/Rust-23-cyan?logo=Rust)
 ![Python: 12](https://img.shields.io/badge/Python-12-cyan?logo=Python)
 
 ## 2021 ([Calendar](https://adventofcode.com/2021)) ([Solutions](../2021/)) : 50⭐
@@ -31,6 +31,6 @@ Puzzle                                                                  | Stars 
 [Day 20: Trench Map](https://adventofcode.com/2021/day/20)              | ⭐⭐  | [Rust](../2021/day20/day20.rs)
 [Day 21: Dirac Dice](https://adventofcode.com/2021/day/21)              | ⭐⭐  | [Rust](../2021/day21/day21.rs)
 [Day 22: Reactor Reboot](https://adventofcode.com/2021/day/22)          | ⭐⭐  | [Rust](../2021/day22/day22.rs)
-[Day 23: Amphipod](https://adventofcode.com/2021/day/23)                | ⭐⭐  | 
+[Day 23: Amphipod](https://adventofcode.com/2021/day/23)                | ⭐⭐  | [Rust](../2021/day23/day23.rs)
 [Day 24: Arithmetic Logic Unit](https://adventofcode.com/2021/day/24)   | ⭐⭐  | [Rust](../2021/day24/day24.rs)
 [Day 25: Sea Cucumber](https://adventofcode.com/2021/day/25)            | ⭐⭐  | [Rust](../2021/day25/day25.rs) [Python](../2021/day25/day25.py)
