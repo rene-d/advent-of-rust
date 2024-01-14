@@ -267,12 +267,13 @@ def main():
                 run_day(year, day, inputs, sols, problems, args.language)
                 save_cache()
 
-            print(
-                "=========================="  # prefix
-                " ==============================="  # language, status
-                " ========================================"  # answers
-                " =================================="  # input path
-            )
+            if filter_year == 0:
+                print(
+                    "=========================="  # prefix
+                    " ==============================="  # language, status
+                    " ========================================"  # answers
+                    " =================================="  # input path
+                )
 
     except KeyboardInterrupt:
         pass
