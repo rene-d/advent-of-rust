@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2020](https://img.shields.io/badge/Advent_of_Code-2020-8A2BE2)
-![Stars: 49](https://img.shields.io/badge/Stars-49⭐-blue)
+![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
 ![Rust: 3](https://img.shields.io/badge/Rust-3-cyan?logo=Rust)
 ![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
-## 2020 ([Calendar](https://adventofcode.com/2020)) ([Solutions](../2020/)) : 49⭐
+## 2020 ([Calendar](https://adventofcode.com/2020)) ([Solutions](../2020/)) : 50⭐
 
 Puzzle                                                                  | Stars | Languages
 ----------------------------------------------------------------------- | ----- | -----------
@@ -33,4 +33,4 @@ Puzzle                                                                  | Stars 
 [Day 22: Crab Combat](https://adventofcode.com/2020/day/22)             | ⭐⭐  | [Python](../2020/day22/day22.py)
 [Day 23: Crab Cups](https://adventofcode.com/2020/day/23)               | ⭐⭐  | [Rust](../2020/day23/day23.rs)
 [Day 24: Lobby Layout](https://adventofcode.com/2020/day/24)            | ⭐⭐  | [Python](../2020/day24/day24.py)
-[Day 25: Combo Breaker](https://adventofcode.com/2020/day/25)           | ⭐   | [Python](../2020/day25/day25.py)
+[Day 25: Combo Breaker](https://adventofcode.com/2020/day/25)           | ⭐⭐  | [Python](../2020/day25/day25.py)
