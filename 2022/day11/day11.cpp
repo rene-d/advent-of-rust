@@ -101,7 +101,7 @@ void read_data(const char *filename, std::vector<Monkey> &monkeys)
     std::ifstream f;
     std::string line;
 
-    f.open("input.txt");
+    f.open(filename);
 
     if (!f.is_open())
     {
@@ -170,11 +170,11 @@ void read_data(const char *filename, std::vector<Monkey> &monkeys)
     f.close();
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     std::vector<Monkey> monkeys;
 
-    read_data("input.txt", monkeys);
+    read_data(argc >= 2 ? argv[1] : "input.txt", monkeys);
 
     solve(monkeys, 20);
     solve(monkeys, 10000);

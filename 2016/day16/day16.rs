@@ -3,8 +3,8 @@
 fn main() {
     let data = aoc::load_input_data(16).trim().to_owned();
 
-    println!("{} ", checksum(&fill(&data, 272)));
-    println!("{} ", checksum(&fill(&data, 35_651_584)));
+    println!("{}", checksum(&fill(&data, 272)));
+    println!("{}", checksum(&fill(&data, 35_651_584)));
 }
 
 /// compute the checksum recursively

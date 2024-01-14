@@ -105,7 +105,7 @@ impl Puzzle {
                 .parse::<_>()
                 .unwrap();
 
-            lines.next().unwrap(); // skip the empty line after monkey definition
+            lines.next().unwrap_or_default(); // skip the empty line after monkey definition
 
             self.monkeys.push(monkey);
         }

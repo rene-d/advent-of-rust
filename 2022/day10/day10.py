@@ -19,7 +19,8 @@ for line in data.splitlines():
         X += int(line[5:])
         cycles.append(X)
     else:
-        raise ValueError
+        if line:
+            raise ValueError
 
 # part one
 signal_strength = 0

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import typing as t
 import argparse
 import logging
 import re
 import sqlite3
 import subprocess
 import time
+import typing as t
 import zlib
 from datetime import datetime
 from pathlib import Path
@@ -413,7 +413,7 @@ def show_dstars(args):
 
     for session in sessions:
         sess = AocSession(session, args.update, args.dry_run)
-        if args.user and sess.user != args.user:
+        if args.user and args.user not in (sess.user_id, sess.user_name):
             continue
         users.append(sess)
 
@@ -421,16 +421,16 @@ def show_dstars(args):
     def show_year(_self, year, _day):
         stars = {}
         for sess in users:
-            stars[sess.user] = []
+            stars[sess.user_name] = []
             for day in range(1, 26):
-                stars[sess.user].append(sess.get_stars(year, day))
+                stars[sess.user_name].append(sess.get_stars(year, day))
 
-        row = "|".join(f"\033[1;36m{sess.user:^12}\033[0m" for sess in users)
+        row = "|".join(f"\033[1;36m{sess.user_name:^12}\033[0m" for sess in users)
         print(f"  {year} |{row}")
         separator = "+".join("-" * 12 for _ in users)
         print(f"-------+{separator}")
         for day in range(1, 26):
-            row = "|".join(f"\033[1;33m{'*' *  stars[sess.user][day-1]:^12}\033[0m" for sess in users)
+            row = "|".join(f"\033[1;33m{'*' *  stars[sess.user_name][day-1]:^12}\033[0m" for sess in users)
             print(f"day {day:2} |{row}")
         print(f"-------+{separator}")
         print()
@@ -446,7 +446,7 @@ def get_first_session(args):
     sess = None
     for session in sessions:
         sess = AocSession(session, args.update, args.dry_run)
-        if args.user and sess.user != args.user:
+        if args.user and args.user not in (sess.user_id, sess.user_name):
             continue
         return sess
 

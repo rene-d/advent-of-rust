@@ -6,7 +6,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-int main()
+int main(int argc, char *argv[])
 {
     int8_t *data;
     int size;
@@ -19,14 +19,14 @@ int main()
     // read and parse the input
     //
 
-    f = fopen("input.txt", "r");     // no failure check
-    fseek(f, 0, SEEK_END);           // no failure check
-    m = ftell(f);                    // not really convenient to get the size
-    fseek(f, 0, SEEK_SET);           // rewind to the beginning
-    data = malloc(m);                // no failure check, no cast mandatory, and I imply the element is 1-byte wide
-    fread(data, 1, m, f);            // no check
-    fclose(f);                       // the compiler could guess itself the handle should be closed
-    for (size = 0; size < m; ++size) // silent (and implied) mix of types between long and int
+    f = fopen(argc >= 2 ? argv[1] : "input.txt", "r"); // inline notation, no failure check
+    fseek(f, 0, SEEK_END);                             // no failure check
+    m = ftell(f);                                      // not really convenient to get the size
+    fseek(f, 0, SEEK_SET);                             // rewind to the beginning
+    data = malloc(m);                                  // no failure check, no cast mandatory, and I imply the element is 1-byte wide
+    fread(data, 1, m, f);                              // no check
+    fclose(f);                                         // the compiler could guess itself the handle should be closed
+    for (size = 0; size < m; ++size)                   // silent (and implied) mix of types between long and int
     {
         if (data[size] >= '0' && data[size] <= '9') // actually it doesn't overflow because I have allocated enough memory
             data[size] -= '0';                      // but there is no check here, and it could be difficult to verify in a review
@@ -67,7 +67,7 @@ int main()
     // ugly but no way to do this shorter/comprehensive I think
     int offset = (((((data[0] * 10 + data[1]) * 10 + data[2]) * 10 + data[3]) * 10 + data[4]) * 10 + data[5]) * 10 + data[6];
     int n = size * 10000 - offset; // overflow, carry ?
-    printf("%d\n", n);
+    // printf("%d\n", n);
     p = malloc(n); // check, element type, cast ?
     t = malloc(n);
     for (int i = 0; i < n; ++i)

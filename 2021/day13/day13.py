@@ -15,7 +15,7 @@ n = 2000
 grid = [["." for _ in range(n)] for _ in range(n)]
 
 for line in data:
-    if not line:
+    if not line or line.startswith("fold"):
         break
     x, y = map(int, line.split(","))
     grid[y][x] = "#"

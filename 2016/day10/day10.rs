@@ -62,6 +62,9 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
     let mut moves: Vec<BotInstruction> = Vec::new();
 
     for line in data {
+        if line.is_empty() {
+            continue;
+        }
         if let Some(caps) = re_init.captures(line) {
             //
             let value = caps[1].parse::<u32>().unwrap();
