@@ -8,8 +8,11 @@ import time
 import typing as t
 from collections import defaultdict
 from copy import deepcopy
+from operator import itemgetter
 from pathlib import Path
 from zlib import crc32
+import itertools
+
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -79,15 +82,22 @@ def update_cache(key, timestamp: Path, elapsed, status, answers):
     return e
 
 
-def run(key: str, prog: Path, file: Path, solution: t.List):
+def run(key: str, prog: Path, file: Path, solution: t.List, refresh: bool):
     if not prog.is_file():
         return
 
     prog = prog.absolute()
-    if e := check_cache(key, prog):
+
+    if refresh:
+        e = None
+    else:
+        e = check_cache(key, prog)
+
+    if e:
         in_cache = True
     else:
         in_cache = False
+
         print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end="\r")
 
         start = time.time_ns()
@@ -178,7 +188,9 @@ def load_data():
     return inputs, solutions
 
 
-def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, filter_lang):
+def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, filter_lang, refresh):
+    elapsed = defaultdict(list)
+
     for crc, file in inputs[year, day].items():
         input_name = file.parent.parent.name.removeprefix("tmp-")[:16]
         prefix = f"[{year}-{day:02d}] {input_name:<16}"
@@ -197,7 +209,7 @@ def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, 
             prog = Path(pattern.format(year=year, day=day))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
-            e = run(key, prog, file, sols[year, day].get(crc))
+            e = run(key, prog, file, sols[year, day].get(crc), refresh)
 
             if not e:
                 continue
@@ -228,23 +240,26 @@ def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, 
 
             results.add(" ".join(e["answers"]))
 
+            elapsed[lang].append(e["elapsed"] / 1e9)
+
         if len(results) > 1:
             line = f"{prefix} {RED}{BLINK}MISMATCH BETWEEN SOLUTIONS{RESET}"
             print(line)
             problems.append(line)
 
+    return dict((lang, sum(t) / len(t)) for lang, t in elapsed.items())
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--language", type=str, metavar="LANG", help="filter by language")
+    parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
-    if len(args.n) > 2:
-        parser.error("too many args")
 
-    filter_year = 0 if len(args.n) == 0 else args.n[0]
-    filter_day = 0 if len(args.n) <= 1 else args.n[1]
+    filter_year = 0 if len(args.n) == 0 else args.n.pop(0)
+    filter_day = set(args.n)
     if args.language == "cpp":
         args.language = "c++"
 
@@ -255,17 +270,23 @@ def main():
         inputs, sols = load_data()
 
         problems = []
+        stats_elapsed = dict()
 
         for year in range(2015, 2024):
             if filter_year != 0 and year != filter_year:
                 continue
 
             for day in range(1, 26):
-                if filter_day != 0 and day != filter_day:
+                if filter_day and day not in filter_day:
                     continue
 
-                run_day(year, day, inputs, sols, problems, args.language)
+                elapsed = run_day(year, day, inputs, sols, problems, args.language, args.refresh)
                 save_cache()
+
+                if elapsed:
+                    print(f"--> ", " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())))
+                    for lang, e in elapsed.items():
+                        stats_elapsed[year, day, lang] = e
 
             if filter_year == 0:
                 print(
@@ -279,6 +300,42 @@ def main():
         pass
 
     finally:
+        print()
+        print("ELAPSED TIME:")
+        languages = sorted(set(map(itemgetter(2), stats_elapsed.keys())))
+        for lang in languages:
+            t = list(t for (_, _, i), t in stats_elapsed.items() if lang == i)
+            n = len(t)
+            t = sum(t)
+            print(
+                f"{YELLOW}{lang:<10}{RESET}"
+                f" : {GREEN}{t:7.3f}s{RESET} for {n:3} puzzles,"
+                f" average: {GREEN}{t/n:7.3f}s{RESET}"
+            )
+
+        print()
+        print("LANGUAGES COMPARISON:")
+        puzzles = set(map(itemgetter(0, 1), stats_elapsed.keys()))
+        for lang1, lang2 in itertools.combinations(languages, 2):
+            n, t1, t2 = 0, 0, 0
+            for y, d in puzzles:
+                t = dict((l, t) for (yy, dd, l), t in stats_elapsed.items() if (yy, dd) == (y, d))
+                if lang1 in t and lang2 in t:
+                    n += 1
+                    t1 += t[lang1]
+                    t2 += t[lang2]
+            if n > 0:
+                if t2 < t1:
+                    t1, t2 = t2, t1
+                    lang1, lang2 = lang2, lang1
+                slower = t2 / t1
+                print(
+                    f"{YELLOW}{lang1:<7}{RESET}"
+                    f" vs. {YELLOW}{lang2:<7}{RESET}:"
+                    f" {GREEN}{t1/n:7.3f}s{RESET} {GREEN}{t2/n:7.3f}s{RESET}"
+                    f" (x {slower:4.1f} slower) on {n:3} puzzles"
+                )
+
         if problems:
             print()
             print("LIST OF PROBLEMS:")
