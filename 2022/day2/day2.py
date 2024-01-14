@@ -3,7 +3,7 @@
 import sys
 
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
-data = open(filename).read()
+data = open(filename).read().strip()
 
 SCORE_WIN = 6
 SCORE_DRAW = 3
