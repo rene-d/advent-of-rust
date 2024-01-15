@@ -191,6 +191,8 @@ def load_data():
 def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, filter_lang, refresh):
     elapsed = defaultdict(list)
 
+    first = True
+
     for crc, file in inputs[year, day].items():
         input_name = file.parent.parent.name.removeprefix("tmp-")[:16]
         prefix = f"[{year}-{day:02d}] {input_name:<16}"
@@ -208,6 +210,11 @@ def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, 
 
             prog = Path(pattern.format(year=year, day=day))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
+
+            if lang.lower() == "rust" and first:
+                # under macOS, the first launch of a program is slower
+                first = False
+                subprocess.call([prog, "--help"], stdout=subprocess.DEVNULL)
 
             e = run(key, prog, file, sols[year, day].get(crc), refresh)
 
@@ -300,7 +307,7 @@ def main():
         pass
 
     except Exception as e:
-        print("ERROR",e)
+        print("ERROR", e)
 
     finally:
         if stats_elapsed:
