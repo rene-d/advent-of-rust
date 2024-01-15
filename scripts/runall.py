@@ -266,11 +266,11 @@ def main():
     try:
         os.chdir(Path(__file__).parent.parent)
 
-        build_all()
-        inputs, sols = load_data()
-
         problems = []
         stats_elapsed = dict()
+
+        build_all()
+        inputs, sols = load_data()
 
         for year in range(2015, 2024):
             if filter_year != 0 and year != filter_year:
@@ -299,42 +299,46 @@ def main():
     except KeyboardInterrupt:
         pass
 
-    finally:
-        print()
-        print("ELAPSED TIME:")
-        languages = sorted(set(map(itemgetter(2), stats_elapsed.keys())))
-        for lang in languages:
-            t = list(t for (_, _, i), t in stats_elapsed.items() if lang == i)
-            n = len(t)
-            t = sum(t)
-            print(
-                f"{YELLOW}{lang:<10}{RESET}"
-                f" : {GREEN}{t:7.3f}s{RESET} for {n:3} puzzles,"
-                f" average: {GREEN}{t/n:7.3f}s{RESET}"
-            )
+    except Exception as e:
+        print("ERROR",e)
 
-        print()
-        print("LANGUAGES COMPARISON:")
-        puzzles = set(map(itemgetter(0, 1), stats_elapsed.keys()))
-        for lang1, lang2 in itertools.combinations(languages, 2):
-            n, t1, t2 = 0, 0, 0
-            for y, d in puzzles:
-                t = dict((l, t) for (yy, dd, l), t in stats_elapsed.items() if (yy, dd) == (y, d))
-                if lang1 in t and lang2 in t:
-                    n += 1
-                    t1 += t[lang1]
-                    t2 += t[lang2]
-            if n > 0:
-                if t2 < t1:
-                    t1, t2 = t2, t1
-                    lang1, lang2 = lang2, lang1
-                slower = t2 / t1
+    finally:
+        if stats_elapsed:
+            print()
+            print("ELAPSED TIME:")
+            languages = sorted(set(map(itemgetter(2), stats_elapsed.keys())))
+            for lang in languages:
+                t = list(t for (_, _, i), t in stats_elapsed.items() if lang == i)
+                n = len(t)
+                t = sum(t)
                 print(
-                    f"{YELLOW}{lang1:<7}{RESET}"
-                    f" vs. {YELLOW}{lang2:<7}{RESET}:"
-                    f" {GREEN}{t1/n:7.3f}s{RESET} {GREEN}{t2/n:7.3f}s{RESET}"
-                    f" (x {slower:4.1f} slower) on {n:3} puzzles"
+                    f"{YELLOW}{lang:<10}{RESET}"
+                    f" : {GREEN}{t:7.3f}s{RESET} for {n:3} puzzles,"
+                    f" average: {GREEN}{t/n:7.3f}s{RESET}"
                 )
+
+            print()
+            print("LANGUAGES COMPARISON:")
+            puzzles = set(map(itemgetter(0, 1), stats_elapsed.keys()))
+            for lang1, lang2 in itertools.combinations(languages, 2):
+                n, t1, t2 = 0, 0, 0
+                for y, d in puzzles:
+                    t = dict((l, t) for (yy, dd, l), t in stats_elapsed.items() if (yy, dd) == (y, d))
+                    if lang1 in t and lang2 in t:
+                        n += 1
+                        t1 += t[lang1]
+                        t2 += t[lang2]
+                if n > 0:
+                    if t2 < t1:
+                        t1, t2 = t2, t1
+                        lang1, lang2 = lang2, lang1
+                    slower = t2 / t1
+                    print(
+                        f"{YELLOW}{lang1:<7}{RESET}"
+                        f" vs. {YELLOW}{lang2:<7}{RESET}:"
+                        f" {GREEN}{t1/n:7.3f}s{RESET} {GREEN}{t2/n:7.3f}s{RESET}"
+                        f" (x {slower:4.1f} slower) on {n:3} puzzles"
+                    )
 
         if problems:
             print()
