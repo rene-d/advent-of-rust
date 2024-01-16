@@ -2,6 +2,17 @@
 
 use std::ops::{Index, IndexMut};
 
+const NEIGHBORS: [(isize, isize); 8] = [
+    (-1, -1),
+    (-1, 0),
+    (-1, 1),
+    (0, -1),
+    (0, 1),
+    (1, -1),
+    (1, 0),
+    (1, 1),
+];
+
 /// The four directions
 #[derive(PartialEq, Clone, Copy, Eq, Debug)]
 pub enum Direction {
@@ -63,6 +74,7 @@ macro_rules! grid {
 }
 
 /// A rectangular grid of elements, used to store various data including mazes.
+#[derive(Clone)]
 pub struct Grid<T> {
     width: usize,
     height: usize,
@@ -78,6 +90,14 @@ impl<T: Clone + Default> Grid<T> {
             height,
             g: vec![T::default(); width * height],
         }
+    }
+
+    /// Resize the grid in-place.
+    /// If the grid is extended, new cells are filled with the default value of T.
+    pub fn resize(&mut self, width: usize, height: usize) {
+        self.width = width;
+        self.height = height;
+        self.g.resize(width * height, T::default());
     }
 }
 
@@ -141,6 +161,23 @@ impl<T> Grid<T> {
                 Some((x + 1, y))
             } else if d == &Direction::West && x > 0 {
                 Some((x - 1, y))
+            } else {
+                None
+            }
+        })
+    }
+
+    /// Returns an iterator over the all eight neighbors, within the limits of the grid.
+    pub fn iter_neighbors(
+        &self,
+        (x, y): (usize, usize),
+    ) -> impl Iterator<Item = (usize, usize)> + '_ {
+        NEIGHBORS.iter().filter_map(move |(dx, dy)| {
+            let x = isize::try_from(x).unwrap() + *dx;
+            let y = isize::try_from(y).unwrap() + *dy;
+
+            if 0 <= x && x < (self.width as isize) && 0 <= y && y < (self.height as isize) {
+                Some((x as usize, y as usize))
             } else {
                 None
             }
@@ -241,5 +278,16 @@ impl std::fmt::Display for Grid<u8> {
             writeln!(f)?;
         }
         Ok(())
+    }
+}
+
+impl Grid<u8> {
+    pub fn zz(&self) -> Vec<u8> {
+        let mut s = Vec::new();
+
+        for (_, _, &c) in self.iter() {
+            s.push(c);
+        }
+        s
     }
 }
