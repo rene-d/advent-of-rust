@@ -280,14 +280,3 @@ impl std::fmt::Display for Grid<u8> {
         Ok(())
     }
 }
-
-impl Grid<u8> {
-    pub fn zz(&self) -> Vec<u8> {
-        let mut s = Vec::new();
-
-        for (_, _, &c) in self.iter() {
-            s.push(c);
-        }
-        s
-    }
-}
