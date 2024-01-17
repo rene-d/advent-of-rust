@@ -159,7 +159,7 @@ fn test09() {
 }
 
 fn main() {
-    let args=aoc::parse_args();
+    let args = aoc::parse_args();
 
     let mut puzzle = Puzzle::new();
 
