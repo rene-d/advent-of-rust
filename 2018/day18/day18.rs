@@ -140,7 +140,7 @@ impl Puzzle {
                 let cycle_start = seen.get(&hashable(&area)).unwrap();
                 let cycle_end = i;
 
-                let n = 1000000000;
+                let n = 1_000_000_000;
                 let cycle = cycle_end - cycle_start;
                 return values[cycle_start + (n - cycle_end) % cycle as usize];
             }

@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2018](https://img.shields.io/badge/Advent_of_Code-2018-8A2BE2)
-![Stars: 36](https://img.shields.io/badge/Stars-36⭐-blue)
-![Rust: 18](https://img.shields.io/badge/Rust-18-cyan?logo=Rust)
+![Stars: 39](https://img.shields.io/badge/Stars-39⭐-blue)
+![Rust: 20](https://img.shields.io/badge/Rust-20-cyan?logo=Rust)
 ![Python: 4](https://img.shields.io/badge/Python-4-cyan?logo=Python)
 
-## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 36⭐
+## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 39⭐
 
 Puzzle                                                                               | Stars | Languages
 ------------------------------------------------------------------------------------ | ----- | -----------
@@ -24,6 +24,8 @@ Puzzle                                                                          
 [Day 13: Mine Cart Madness](https://adventofcode.com/2018/day/13)                    | ⭐⭐  | [Rust](../2018/day13/day13.rs)
 [Day 14: Chocolate Charts](https://adventofcode.com/2018/day/14)                     | ⭐⭐  | [Rust](../2018/day14/day14.rs)
 [Day 16: Chronal Classification](https://adventofcode.com/2018/day/16)               | ⭐⭐  | [Rust](../2018/day16/day16.rs) [Python](../2018/day16/day16.py)
+[Day 17: Reservoir Research](https://adventofcode.com/2018/day/17)                   | ⭐⭐  | [Rust](../2018/day17/day17.rs)
 [Day 18: Settlers of The North Pole](https://adventofcode.com/2018/day/18)           | ⭐⭐  | [Rust](../2018/day18/day18.rs) [Python](../2018/day18/day18.py)
 [Day 19: Go With The Flow](https://adventofcode.com/2018/day/19)                     | ⭐⭐  | [Rust](../2018/day19/day19.rs)
 [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)                   | ⭐⭐  | [Rust](../2018/day21/day21.rs)
+[Day 25: Four-Dimensional Adventure](https://adventofcode.com/2018/day/25)           | ⭐   | [Rust](../2018/day25/day25.rs)
