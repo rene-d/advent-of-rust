@@ -67,13 +67,8 @@ fn compute_paths(data: &[&str], small_twice: bool) -> u32 {
 
 /// main function
 fn main() {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
-
-    let data = std::fs::read_to_string(filename).unwrap();
+    let args = aoc::parse_args();
+    let data = std::fs::read_to_string(args.path).unwrap();
     let data = data.lines().collect::<Vec<_>>();
 
     let small_once = compute_paths(&data, false);

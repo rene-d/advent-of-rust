@@ -3,13 +3,8 @@
 use std::collections::HashMap;
 
 fn main() {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
-
-    let data = std::fs::read_to_string(filename).unwrap();
+    let args = aoc::parse_args();
+    let data = std::fs::read_to_string(args.path).unwrap();
     let mut data = data.lines();
 
     let player = data

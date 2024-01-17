@@ -159,7 +159,7 @@ def build_all():
             make(year, src, f"day{day}_c", "cc -std=c11")
 
             src = year / f"day{day}" / f"day{day}.cpp"
-            print(f"{FEINT}{ITALIC}compile {src}{RESET}",end="\033[0K\r")
+            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end="\033[0K\r")
             make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
@@ -191,14 +191,14 @@ def load_data():
     return inputs, solutions
 
 
-def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, filter_lang, refresh):
+def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, problems: t.Set, filter_lang, refresh):
     elapsed = defaultdict(list)
 
     first = True
 
     for crc, file in inputs[year, day].items():
         input_name = file.parent.parent.name.removeprefix("tmp-")[:16]
-        prefix = f"[{year}-{day:02d}] {input_name:<16}"
+        prefix = f"[{year}-{day:02d}{mday.removeprefix(str(day))}] {input_name:<16}"
 
         if day % 2 == 1:
             prefix = f"{BLUE}{prefix}{RESET}"
@@ -211,8 +211,8 @@ def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, 
             if filter_lang and lang.lower() != filter_lang.lower():
                 continue
 
-            prog = Path(pattern.format(year=year, day=day))
-            key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
+            prog = Path(pattern.format(year=year, day=mday))
+            key = ":".join(map(str, (year, mday, crc, prog, lang.lower())))
 
             if lang.lower() == "rust" and first and prog.is_file():
                 # under macOS, the first launch of a program is slower
@@ -290,13 +290,16 @@ def main():
                 if filter_day and day not in filter_day:
                     continue
 
-                elapsed = run_day(year, day, inputs, sols, problems, args.language, args.refresh)
-                save_cache()
+                for mday in list(Path(f"{year}").glob(f"day{day}")) + list(Path(f"{year}").glob(f"day{day}_*")):
+                    mday = mday.name.removeprefix("day")
 
-                if elapsed:
-                    print(f"--> ", " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())))
-                    for lang, e in elapsed.items():
-                        stats_elapsed[year, day, lang] = e
+                    elapsed = run_day(year, day, mday, inputs, sols, problems, args.language, args.refresh)
+                    save_cache()
+
+                    if elapsed:
+                        print(f"--> ", " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())))
+                        for lang, e in elapsed.items():
+                            stats_elapsed[year, day, lang] = e
 
             if filter_year == 0:
                 print(

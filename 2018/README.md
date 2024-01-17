@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2018](https://img.shields.io/badge/Advent_of_Code-2018-8A2BE2)
-![Stars: 34](https://img.shields.io/badge/Stars-34⭐-blue)
-![Rust: 17](https://img.shields.io/badge/Rust-17-cyan?logo=Rust)
+![Stars: 36](https://img.shields.io/badge/Stars-36⭐-blue)
+![Rust: 18](https://img.shields.io/badge/Rust-18-cyan?logo=Rust)
 ![Python: 4](https://img.shields.io/badge/Python-4-cyan?logo=Python)
 
-## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 34⭐
+## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 36⭐
 
 Puzzle                                                                               | Stars | Languages
 ------------------------------------------------------------------------------------ | ----- | -----------
@@ -26,3 +26,4 @@ Puzzle                                                                          
 [Day 16: Chronal Classification](https://adventofcode.com/2018/day/16)               | ⭐⭐  | [Rust](../2018/day16/day16.rs) [Python](../2018/day16/day16.py)
 [Day 18: Settlers of The North Pole](https://adventofcode.com/2018/day/18)           | ⭐⭐  | [Rust](../2018/day18/day18.rs) [Python](../2018/day18/day18.py)
 [Day 19: Go With The Flow](https://adventofcode.com/2018/day/19)                     | ⭐⭐  | [Rust](../2018/day19/day19.rs)
+[Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)                   | ⭐⭐  | [Rust](../2018/day21/day21.rs)
