@@ -11,7 +11,7 @@ lazy_static! {
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let args=aoc::parse_args();
+    let args = aoc::parse_args();
     let data = std::fs::read_to_string(args.path).unwrap();
 
     println!("{}", part1(&data));

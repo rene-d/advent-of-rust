@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 /// Solve the day 14 puzzle.
 fn main() {
-    let args=aoc::parse_args();
+    let args = aoc::parse_args();
 
     let data = std::fs::read_to_string(args.path).unwrap();
     let data = data.trim();
