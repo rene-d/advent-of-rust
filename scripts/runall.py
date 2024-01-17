@@ -150,16 +150,16 @@ def build_all():
             continue
         m = year / "Cargo.toml"
         if year.is_dir() and m.is_file():
-            print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end="\r")
+            print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end="\033[0K\r")
             subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
 
         for day in range(1, 26):
             src = year / f"day{day}" / f"day{day}.c"
-            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end="\r")
+            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end="\033[0K\r")
             make(year, src, f"day{day}_c", "cc -std=c11")
 
             src = year / f"day{day}" / f"day{day}.cpp"
-            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end="\r")
+            print(f"{FEINT}{ITALIC}compile {src}{RESET}",end="\033[0K\r")
             make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
@@ -214,7 +214,7 @@ def run_day(year: int, day: int, inputs: t.Dict, sols: t.Dict, problems: t.Set, 
             prog = Path(pattern.format(year=year, day=day))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
-            if lang.lower() == "rust" and first:
+            if lang.lower() == "rust" and first and prog.is_file():
                 # under macOS, the first launch of a program is slower
                 first = False
                 subprocess.call([prog, "--help"], stdout=subprocess.DEVNULL)

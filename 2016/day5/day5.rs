@@ -10,13 +10,9 @@ const TICK_CHARS: &str = "\u{280b}\u{2819}\u{2839}\u{2838}\u{283c}\u{2834}\u{282
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
+    let args=aoc::parse_args();
 
-    let door_id = std::fs::read_to_string(filename).unwrap();
+    let door_id = std::fs::read_to_string(args.path).unwrap();
     let door_id = door_id.trim();
 
     // let now = Instant::now();

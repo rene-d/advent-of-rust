@@ -5,13 +5,9 @@ use std::collections::HashMap;
 
 /// Solve the day 14 puzzle.
 fn main() {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
+    let args=aoc::parse_args();
 
-    let data = std::fs::read_to_string(filename).unwrap();
+    let data = std::fs::read_to_string(args.path).unwrap();
     let data = data.trim();
 
     // let now = Instant::now();

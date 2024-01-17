@@ -1,6 +1,5 @@
 //! [Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)
 
-use std::env;
 use std::fs;
 
 struct Puzzle {
@@ -14,7 +13,7 @@ impl Puzzle {
 
     fn configure(&mut self, filename: &str) {
         let mut data: Vec<String> = fs::read_to_string(filename)
-            .expect("Failed to read input file")
+            .expect("Failed to read input file {filename}")
             .lines()
             .map(ToString::to_string)
             .collect();
@@ -160,10 +159,11 @@ fn test09() {
 }
 
 fn main() {
+    let args=aoc::parse_args();
+
     let mut puzzle = Puzzle::new();
 
-    let args: Vec<String> = env::args().collect();
-    puzzle.configure(args.get(1).expect("No input file"));
+    puzzle.configure(&args.path);
 
     let result = puzzle.part1();
     println!("{result}");
