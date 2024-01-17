@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+aoc = { path = "../../aoc" }
 scan_fmt = "0.2"
 
 [[bin]]

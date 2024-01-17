@@ -12,13 +12,9 @@ fn solve(bunny_vm: &mut BunnyVM, c: i32) -> i32 {
 }
 
 fn main() {
-    let filename = if let Some(x) = std::env::args().collect::<Vec<String>>().get(1) {
-        x.clone()
-    } else {
-        "input.txt".to_string()
-    };
+    let args = aoc::parse_args();
 
-    let data = std::fs::read_to_string(filename).unwrap();
+    let data = std::fs::read_to_string(args.path).unwrap();
 
     let mut bunny_vm = BunnyVM::new(&data);
 
