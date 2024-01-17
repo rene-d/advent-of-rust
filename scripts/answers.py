@@ -141,6 +141,7 @@ class AocSession:
 
     def get_stars(self, year, day, force_update=False):
         stars = self.stars.get(year)
+
         if not stars or force_update:
             r_text = self.get(f"https://adventofcode.com/{year}", force_update).decode()
 
@@ -157,12 +158,18 @@ class AocSession:
 
     @iter_all
     def get_answers(self, year=None, day=None):
+        logging.debug(f"get_answers {year} {day}")
+
         nb_stars = self.get_stars(year, day)
+
+        logging.debug(f"nb_stars {nb_stars}")
 
         if nb_stars > 0:
             f = self.user_dir / str(year)
             f.mkdir(parents=True, exist_ok=True)
             f /= f"{day}.ok"
+
+            logging.debug(f"f {f} {f.exists()}")
 
             if f.exists():
                 nfound = len(f.read_text().splitlines())
@@ -175,6 +182,17 @@ class AocSession:
                 answers = [
                     answer for answer in re.findall(r"<p>Your puzzle answer was <code>([\w,=-]+)</code>", r_text)
                 ]
+
+                logging.debug("answers", answers)
+
+                if len(answers) == 0:
+                    r_text = self.get(url, True).decode()
+                    answers = [
+                        answer for answer in re.findall(r"<p>Your puzzle answer was <code>([\w,=-]+)</code>", r_text)
+                    ]
+
+                    logging.debug("answers", answers)
+
                 # print(nb_stars, len(answers),day)
                 # assert (len(answers) == nb_stars) or (len(answers) == 1 and nb_stars == 2 and day == 25)
                 if len(answers) > 0:
@@ -539,7 +557,7 @@ def main():
 
     args = parser.parse_args()
 
-    if True or args.verbose:
+    if args.verbose:
         logging.basicConfig(format="\033[2m%(asctime)s - %(levelname)s - %(message)s\033[0m", level=logging.DEBUG)
 
     cwd = Path.cwd()

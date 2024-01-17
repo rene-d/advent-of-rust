@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import itertools
 import json
 import os
 import subprocess
@@ -11,8 +12,6 @@ from copy import deepcopy
 from operator import itemgetter
 from pathlib import Path
 from zlib import crc32
-import itertools
-
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -260,7 +259,10 @@ def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, proble
             print(line)
             problems.append(line)
 
-    return dict((lang, sum(t) / len(t)) for lang, t in elapsed.items())
+    nb_samples = set(len(t) for _, t in elapsed.items())
+    assert len(nb_samples) == 1
+
+    return dict((lang, sum(t) / len(t)) for lang, t in elapsed.items()), nb_samples.pop()
 
 
 def main():
@@ -296,11 +298,15 @@ def main():
                 for mday in list(Path(f"{year}").glob(f"day{day}")) + list(Path(f"{year}").glob(f"day{day}_*")):
                     mday = mday.name.removeprefix("day")
 
-                    elapsed = run_day(year, day, mday, inputs, sols, problems, args.language, args.refresh)
+                    elapsed, nb_samples = run_day(year, day, mday, inputs, sols, problems, args.language, args.refresh)
                     save_cache()
 
                     if elapsed:
-                        print(f"--> ", " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())))
+                        print(
+                            "--> ",
+                            " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())),
+                            f"{FEINT}({nb_samples} input{'s' if nb_samples>1 else ''}){RESET}",
+                        )
                         for lang, e in elapsed.items():
                             stats_elapsed[year, day, lang] = e
 
@@ -316,7 +322,7 @@ def main():
         pass
 
     except Exception as e:
-        print("ERROR", e)
+        print(f"{RED}ERROR {e}{RESET}")
 
     finally:
         if stats_elapsed:
@@ -339,7 +345,7 @@ def main():
             for lang1, lang2 in itertools.combinations(languages, 2):
                 n, t1, t2 = 0, 0, 0
                 for y, d in puzzles:
-                    t = dict((l, t) for (yy, dd, l), t in stats_elapsed.items() if (yy, dd) == (y, d))
+                    t = dict((lang, t) for (yy, dd, lang), t in stats_elapsed.items() if (yy, dd) == (y, d))
                     if lang1 in t and lang2 in t:
                         n += 1
                         t1 += t[lang1]
@@ -348,12 +354,12 @@ def main():
                     if t2 < t1:
                         t1, t2 = t2, t1
                         lang1, lang2 = lang2, lang1
-                    slower = t2 / t1
+                    faster = t2 / t1
                     print(
                         f"{YELLOW}{lang1:<7}{RESET}"
                         f" vs. {YELLOW}{lang2:<7}{RESET}:"
-                        f" {GREEN}{t1/n:7.3f}s{RESET} {GREEN}{t2/n:7.3f}s{RESET}"
-                        f" (x {slower:4.1f} slower) on {n:3} puzzles"
+                        f" {GREEN}{t1/n:7.3f}s{RESET} vs. {GREEN}{t2/n:7.3f}s{RESET}"
+                        f" (x {faster:4.1f} faster) on {n:3} puzzle{'s' if n>1 else ''}"
                     )
 
         if problems:

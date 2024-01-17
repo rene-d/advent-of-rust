@@ -94,9 +94,7 @@ impl Puzzle {
                 break;
             }
 
-            if ip >= self.program.len() {
-                panic!();
-            }
+            assert!(ip < self.program.len());
 
             self.program[ip].run(&mut regs);
             regs[self.ip_reg] += 1;
