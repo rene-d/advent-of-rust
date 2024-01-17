@@ -150,13 +150,16 @@ def build_all():
             continue
         m = year / "Cargo.toml"
         if year.is_dir() and m.is_file():
+            print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end="\r")
             subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
 
         for day in range(1, 26):
             src = year / f"day{day}" / f"day{day}.c"
+            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end="\r")
             make(year, src, f"day{day}_c", "cc -std=c11")
 
             src = year / f"day{day}" / f"day{day}.cpp"
+            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end="\r")
             make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
