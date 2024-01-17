@@ -196,9 +196,12 @@ def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, proble
 
     first = True
 
+    day_suffix = mday.removeprefix(str(day))
+    name_max_len = 16 - len(day_suffix)
+
     for crc, file in inputs[year, day].items():
         input_name = file.parent.parent.name.removeprefix("tmp-")[:16]
-        prefix = f"[{year}-{day:02d}{mday.removeprefix(str(day))}] {input_name:<16}"
+        prefix = f"[{year}-{day:02d}{day_suffix}] {input_name[:name_max_len]:<{name_max_len}}"
 
         if day % 2 == 1:
             prefix = f"{BLUE}{prefix}{RESET}"
@@ -212,7 +215,7 @@ def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, proble
                 continue
 
             prog = Path(pattern.format(year=year, day=mday))
-            key = ":".join(map(str, (year, mday, crc, prog, lang.lower())))
+            key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
             if lang.lower() == "rust" and first and prog.is_file():
                 # under macOS, the first launch of a program is slower
@@ -236,7 +239,7 @@ def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, proble
                 f" {YELLOW}{lang:<7}{RESET}:"
                 f" {status_color}{e['status']:7}{RESET}"
                 f" {WHITE}{e['elapsed']/1e9:7.3f}s"
-                f" {GRAY}{'cache' if e['cache'] else '':<5}"
+                f" {GRAY}{'☽' if e['cache'] else ' '}"
                 f" {status_color}{str(e['answers']):<40}{RESET}"
                 f"{info}"
             )
