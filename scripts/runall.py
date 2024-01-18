@@ -335,7 +335,7 @@ def main():
                 t = sum(t)
                 print(
                     f"{YELLOW}{lang:<10}{RESET}"
-                    f" : {GREEN}{t:7.3f}s{RESET} for {n:3} puzzles,"
+                    f" : {GREEN}{t:7.3f}s{RESET} for {n:3} puzzle{'s' if n>1 else ' '},"
                     f" average: {GREEN}{t/n:7.3f}s{RESET}"
                 )
 
