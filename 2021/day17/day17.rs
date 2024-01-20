@@ -1,8 +1,6 @@
 //! [Day 17: Trick Shot](https://adventofcode.com/2021/day/17)
 
 use std::cmp::Ordering;
-use std::env;
-use std::fs;
 use text_io::scan;
 
 /// main function
@@ -12,29 +10,33 @@ fn main() {
     let ord_min: i32;
     let ord_max: i32;
 
-    let args: Vec<String> = env::args().collect();
+    let data = aoc::load_input_data(17);
+    scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
+    abs_min, abs_max, ord_min, ord_max);
 
-    match args.len() {
-        5 => {
-            abs_min = args[1].parse::<i32>().unwrap();
-            abs_max = args[2].parse::<i32>().unwrap();
-            ord_min = args[3].parse::<i32>().unwrap();
-            ord_max = args[4].parse::<i32>().unwrap();
-        }
-        2 => {
-            let data = fs::read_to_string(&args[1]).unwrap();
-            scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
-                  abs_min, abs_max, ord_min, ord_max);
-        }
-        1 => {
-            let data = fs::read_to_string("input.txt").unwrap();
-            scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
-                  abs_min, abs_max, ord_min, ord_max);
-        }
-        _ => {
-            panic!("Invalid number of arguments");
-        }
-    }
+    // let args: Vec<String> = std::env::args().collect();
+
+    // match args.len() {
+    //     5 => {
+    //         abs_min = args[1].parse::<i32>().unwrap();
+    //         abs_max = args[2].parse::<i32>().unwrap();
+    //         ord_min = args[3].parse::<i32>().unwrap();
+    //         ord_max = args[4].parse::<i32>().unwrap();
+    //     }
+    //     2 => {
+    //         let data = fs::read_to_string(&args[1]).unwrap();
+    //         scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
+    //               abs_min, abs_max, ord_min, ord_max);
+    //     }
+    //     1 => {
+    //         let data = std::fs::read_to_string("input.txt").unwrap();
+    //         scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
+    //               abs_min, abs_max, ord_min, ord_max);
+    //     }
+    //     _ => {
+    //         panic!("Invalid number of arguments");
+    //     }
+    // }
     // println!("target area: x={}..{}, y={}..{}", abs_min, abs_max, ord_min, ord_max);
 
     let parts = solve(abs_min, abs_max, ord_min, ord_max);
@@ -67,7 +69,7 @@ fn solve(abs_min: i32, abs_max: i32, ord_min: i32, ord_max: i32) -> (i32, i32) {
                 match vx.cmp(&0) {
                     Ordering::Greater => vx -= 1,
                     Ordering::Less => vx += 1,
-                    _ => (),
+                    Ordering::Equal => (),
                 }
 
                 vy -= 1; // the probe's y velocity decreases by 1.
