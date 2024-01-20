@@ -12,6 +12,8 @@ from copy import deepcopy
 from operator import itemgetter
 from pathlib import Path
 from zlib import crc32
+from datetime import timedelta
+
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -26,6 +28,7 @@ RESET = "\033[0m"
 FEINT = "\033[2m"
 ITALIC = "\033[3m"
 BLINK = "\033[6m"
+CLEAR_EOL = "\033[0K"
 
 LANGUAGES = {
     "Python": "{year}/day{day}/day{day}.py",
@@ -36,6 +39,7 @@ LANGUAGES = {
 
 
 def get_cache():
+    """Retrieve the cache instance from memory or load it from disk."""
     cache = globals().get("_cache")
     if cache is None:
         cache_file = Path(__file__).parent.parent / "data" / "cache.json"
@@ -58,14 +62,22 @@ def save_cache():
         print(f"{FEINT}{ITALIC}cache commited{RESET}")
 
 
-def check_cache(key, timestamp: Path):
+def check_cache(key, file_timestamp: Path):
     cache = get_cache()
     key = str(key)
     e = cache.get(key, None)
     if e:
-        timestamp = timestamp.stat().st_mtime_ns
+        timestamp = file_timestamp.stat().st_mtime_ns
         if e["timestamp"] == timestamp:
             return e
+        else:
+            seconds = round((timestamp - e["timestamp"]) / 1000000000)
+            delta = timedelta(seconds=seconds)
+
+            print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end="\r")
+
+    else:
+        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end="\r")
 
 
 def update_cache(key, timestamp: Path, elapsed, status, answers):
@@ -96,8 +108,6 @@ def run(key: str, prog: Path, file: Path, solution: t.List, refresh: bool):
         in_cache = True
     else:
         in_cache = False
-
-        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end="\r")
 
         start = time.time_ns()
         out = subprocess.run([prog, file.absolute()], cwd=prog.parent, stdout=subprocess.PIPE)
@@ -149,16 +159,16 @@ def build_all():
             continue
         m = year / "Cargo.toml"
         if year.is_dir() and m.is_file():
-            print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end="\033[0K\r")
+            print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=f"{CLEAR_EOL}\r")
             subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
 
         for day in range(1, 26):
             src = year / f"day{day}" / f"day{day}.c"
-            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end="\033[0K\r")
+            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}\r")
             make(year, src, f"day{day}_c", "cc -std=c11")
 
             src = year / f"day{day}" / f"day{day}.cpp"
-            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end="\033[0K\r")
+            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}\r")
             make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
@@ -190,7 +200,9 @@ def load_data():
     return inputs, solutions
 
 
-def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, problems: t.Set, filter_lang, refresh):
+def run_day(
+    year: int, day: int, mday: str, day_inputs: t.Dict, day_sols: t.Dict, problems: t.Set, filter_lang, refresh
+):
     elapsed = defaultdict(list)
 
     first = True
@@ -198,7 +210,7 @@ def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, proble
     day_suffix = mday.removeprefix(str(day))
     name_max_len = 16 - len(day_suffix)
 
-    for crc, file in inputs[year, day].items():
+    for crc, file in sorted(day_inputs.items(), key=itemgetter(1)):
         input_name = file.parent.parent.name.removeprefix("tmp-")[:16]
         prefix = f"[{year}-{day:02d}{day_suffix}] {input_name[:name_max_len]:<{name_max_len}}"
 
@@ -221,12 +233,12 @@ def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, proble
                 first = False
                 subprocess.call([prog, "--help"], stdout=subprocess.DEVNULL)
 
-            e = run(key, prog, file, sols[year, day].get(crc), refresh)
+            e = run(key, prog, file, day_sols.get(crc), refresh)
 
             if not e:
                 continue
 
-            if e["status"] in ["unknown", "fail"]:
+            if e["status"] != "ok":
                 info = f" {file}"
             else:
                 info = ""
@@ -234,6 +246,7 @@ def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, proble
             status_color = {"fail": MAGENTA, "unknown": GRAY, "error": RED, "ok": GREEN}[e["status"]]
 
             line = (
+                f"\r{RESET}{CLEAR_EOL}"
                 f"{prefix}"
                 f" {YELLOW}{lang:<7}{RESET}:"
                 f" {status_color}{e['status']:7}{RESET}"
@@ -244,7 +257,7 @@ def run_day(year: int, day: int, mday: str, inputs: t.Dict, sols: t.Dict, proble
             )
             print(line)
 
-            if e["status"] == "fail":
+            if e["status"] == "fail" or e["status"] == "error":
                 problems.append(line)
 
             if not e["cache"] and e["elapsed"] / 1e9 > 5:
@@ -298,7 +311,9 @@ def main():
                 for mday in list(Path(f"{year}").glob(f"day{day}")) + list(Path(f"{year}").glob(f"day{day}_*")):
                     mday = mday.name.removeprefix("day")
 
-                    elapsed, nb_samples = run_day(year, day, mday, inputs, sols, problems, args.language, args.refresh)
+                    elapsed, nb_samples = run_day(
+                        year, day, mday, inputs[year, day], sols[year, day], problems, args.language, args.refresh
+                    )
                     save_cache()
 
                     if elapsed:
