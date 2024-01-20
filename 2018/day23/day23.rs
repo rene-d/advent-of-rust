@@ -1,6 +1,8 @@
 //! [Day 23: Experimental Emergency Teleportation](https://adventofcode.com/2018/day/23)
 
 use regex::Regex;
+use std::ops::AddAssign;
+use z3::ast::Int;
 
 struct Nanobot {
     x: i64,
@@ -57,45 +59,52 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> i64 {
-        use z3::ast;
-
         let cfg = z3::Config::new();
         let ctx = z3::Context::new(&cfg);
 
         let o = z3::Optimize::new(&ctx);
 
-        let x = ast::Int::new_const(&ctx, "x");
-        let y = ast::Int::new_const(&ctx, "y");
-        let z = ast::Int::new_const(&ctx, "z");
+        let x = Int::new_const(&ctx, "x");
+        let y = Int::new_const(&ctx, "y");
+        let z = Int::new_const(&ctx, "z");
+
+        let one = Int::from_u64(&ctx, 1);
+        let zero = Int::from_u64(&ctx, 0);
+        let mut count = Int::from_u64(&ctx, 0);
+
+        let dist = |px, py, pz| -> _ {
+            let px = Int::from_i64(&ctx, px);
+            let py = Int::from_i64(&ctx, py);
+            let pz = Int::from_i64(&ctx, pz);
+
+            let dx = x
+                .ge(&px) // x-px if x>=px, px-x otherwises
+                .ite(&Int::sub(&ctx, &[&x, &px]), &Int::sub(&ctx, &[&px, &x]));
+
+            let dy = y
+                .ge(&py)
+                .ite(&Int::sub(&ctx, &[&y, &py]), &Int::sub(&ctx, &[&py, &y]));
+
+            let dz = z
+                .ge(&pz)
+                .ite(&Int::sub(&ctx, &[&z, &pz]), &Int::sub(&ctx, &[&pz, &z]));
+
+            Int::add(&ctx, &[&dx, &dy, &dz])
+        };
 
         for bot in &self.nanobots {
-            let px = ast::Int::from_i64(&ctx, bot.x);
-            let py = ast::Int::from_i64(&ctx, bot.y);
-            let pz = ast::Int::from_i64(&ctx, bot.z);
+            let d = dist(bot.x, bot.y, bot.z);
 
-            // px.gt(&x).implies(other)
-
-            let dx = x.gt(&px).ite(
-                &ast::Int::sub(&ctx, &[&x, &px]),
-                &ast::Int::sub(&ctx, &[&px, &x]),
+            count.add_assign(
+                d // manhattan distance
+                    .le(&Int::from_u64(&ctx, bot.r)) // <=r
+                    .ite(&one, &zero), // count of
             );
-
-            let dy = y.gt(&py).ite(
-                &ast::Int::sub(&ctx, &[&y, &py]),
-                &ast::Int::sub(&ctx, &[&py, &y]),
-            );
-
-            let dz = z.gt(&pz).ite(
-                &ast::Int::sub(&ctx, &[&z, &pz]),
-                &ast::Int::sub(&ctx, &[&pz, &z]),
-            );
-
-            let manhattan = ast::Int::add(&ctx, &[&dx, &dy, &dz]);
-
-            let cond = manhattan.le(&ast::Int::from_u64(&ctx, bot.r));
-
-            o.assert_soft(&cond, 1, None);
         }
+
+        o.maximize(&count);
+
+        o.minimize(&dist(0, 0, 0));
 
         match o.check(&[]) {
             z3::SatResult::Sat => {
@@ -106,8 +115,8 @@ impl Puzzle {
                     return xx.as_i64().unwrap() + yy.as_i64().unwrap() + zz.as_i64().unwrap();
                 }
             }
-            z3::SatResult::Unsat => eprintln!("z3::SatResult::Unsat"),
-            z3::SatResult::Unknown => eprintln!("z3::SatResult::Unknown"),
+            z3::SatResult::Unsat => eprintln!("result Unsat"),
+            z3::SatResult::Unknown => eprintln!("result Unknown"),
         }
 
         0
