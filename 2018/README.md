@@ -2,7 +2,7 @@
 
 ![AoC2018](https://img.shields.io/badge/Advent_of_Code-2018-8A2BE2)
 ![Stars: 43](https://img.shields.io/badge/Stars-43⭐-blue)
-![Rust: 22](https://img.shields.io/badge/Rust-22-cyan?logo=Rust)
+![Rust: 23](https://img.shields.io/badge/Rust-23-cyan?logo=Rust)
 ![Python: 4](https://img.shields.io/badge/Python-4-cyan?logo=Python)
 
 ## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 43⭐
