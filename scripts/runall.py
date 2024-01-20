@@ -29,6 +29,7 @@ FEINT = "\033[2m"
 ITALIC = "\033[3m"
 BLINK = "\033[6m"
 CLEAR_EOL = "\033[0K"
+CR = "\r"
 
 LANGUAGES = {
     "Python": "{year}/day{day}/day{day}.py",
@@ -74,10 +75,10 @@ def check_cache(key, file_timestamp: Path):
             seconds = round((timestamp - e["timestamp"]) / 1000000000)
             delta = timedelta(seconds=seconds)
 
-            print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end="\r")
+            print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end=f"{CR}")
 
     else:
-        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end="\r")
+        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end=f"{CR}")
 
 
 def update_cache(key, timestamp: Path, elapsed, status, answers):
@@ -152,27 +153,31 @@ def make(year: Path, source: Path, dest: Path, cmd: str):
     subprocess.check_call(cmdline, shell=True)
 
 
-def build_all():
+def build_all(filter_year):
     for year in range(2015, 2024):
+        if filter_year != 0 and year != filter_year:
+            continue
         year = Path(str(year))
         if not year.is_dir():
             continue
         m = year / "Cargo.toml"
         if year.is_dir() and m.is_file():
-            print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=f"{CLEAR_EOL}\r")
+            print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=f"{CLEAR_EOL}{CR}")
             subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
 
         for day in range(1, 26):
             src = year / f"day{day}" / f"day{day}.c"
-            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}\r")
-            make(year, src, f"day{day}_c", "cc -std=c11")
+            if src.is_file():
+                print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}{CR}")
+                make(year, src, f"day{day}_c", "cc -std=c11")
 
             src = year / f"day{day}" / f"day{day}.cpp"
-            print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}\r")
-            make(year, src, f"day{day}_cpp", "c++ -std=c++17")
+            if src.is_file():
+                print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}{CR}")
+                make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
-def load_data():
+def load_data(filter_year):
     inputs = defaultdict(dict)
     solutions = defaultdict(dict)
 
@@ -181,6 +186,9 @@ def load_data():
 
         year = int(f.parent.name)
         day = int(f.stem)
+
+        if filter_year != 0 and year != filter_year:
+            continue
 
         e = check_cache(f, f)
         if e:
@@ -246,7 +254,7 @@ def run_day(
             status_color = {"fail": MAGENTA, "unknown": GRAY, "error": RED, "ok": GREEN}[e["status"]]
 
             line = (
-                f"\r{RESET}{CLEAR_EOL}"
+                f"{CR}{RESET}{CLEAR_EOL}"
                 f"{prefix}"
                 f" {YELLOW}{lang:<7}{RESET}:"
                 f" {status_color}{e['status']:7}{RESET}"
@@ -297,8 +305,8 @@ def main():
         problems = []
         stats_elapsed = dict()
 
-        build_all()
-        inputs, sols = load_data()
+        build_all(filter_year)
+        inputs, sols = load_data(filter_year)
 
         for year in range(2015, 2024):
             if filter_year != 0 and year != filter_year:
@@ -350,7 +358,7 @@ def main():
                 t = sum(t)
                 print(
                     f"{YELLOW}{lang:<10}{RESET}"
-                    f" : {GREEN}{t:7.3f}s{RESET} for {n:3} puzzle{'s' if n>1 else ' '},"
+                    f" : {GREEN}{t:7.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ' '},"
                     f" average: {GREEN}{t/n:7.3f}s{RESET}"
                 )
 
@@ -374,7 +382,7 @@ def main():
                         f"{YELLOW}{lang1:<7}{RESET}"
                         f" vs. {YELLOW}{lang2:<7}{RESET}:"
                         f" {GREEN}{t1/n:7.3f}s{RESET} vs. {GREEN}{t2/n:7.3f}s{RESET}"
-                        f" (x {faster:4.1f} faster) on {n:3} puzzle{'s' if n>1 else ''}"
+                        f" (x {faster:4.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ''}"
                     )
 
         if problems:

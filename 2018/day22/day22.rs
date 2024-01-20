@@ -1,0 +1,248 @@
+//! [Day 22: Mode Maze](https://adventofcode.com/2018/day/22)
+
+use aoc::grid::Direction;
+use std::collections::{BinaryHeap, HashMap, HashSet};
+
+const ROCKY: u32 = 0;
+const WET: u32 = 1;
+const NARROW: u32 = 2;
+
+const TORCH: u8 = 0;
+const CLIMBING_GEAR: u8 = 1;
+const NEITHER: u8 = 2;
+
+#[derive(PartialEq, Eq, Hash, Clone, Debug)]
+struct Node {
+    x: u32,
+    y: u32,
+    item: u8,
+    time: u32,
+    heuristic: u32,
+}
+
+impl PartialOrd for Node {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Node {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        other.heuristic.cmp(&self.heuristic)
+    }
+}
+
+impl Node {
+    /// Construct the initial node.
+    /// Start at position (0,0) with a torch
+    fn init(target: (u32, u32)) -> Self {
+        Node {
+            x: 0,
+            y: 0,
+            item: TORCH,
+            time: 0,
+            heuristic: manhattan(0, 0, target),
+        }
+    }
+
+    /// Switch item, with a cost of 7 seconds.
+    fn switch_item(&self, target: (u32, u32), region: u32) -> Self {
+        let new_item = match (region, self.item) {
+            (ROCKY, TORCH) | (WET, NEITHER) => CLIMBING_GEAR,
+            (WET, CLIMBING_GEAR) | (NARROW, TORCH) => NEITHER,
+            (ROCKY, CLIMBING_GEAR) | (NARROW, NEITHER) => TORCH,
+            _ => panic!(),
+        };
+
+        let new_time = self.time + 7;
+
+        Self {
+            x: self.x,
+            y: self.y,
+            item: new_item,
+            time: new_time,
+            heuristic: manhattan(self.x, self.y, target) + new_time,
+        }
+    }
+
+    /// Move to a position with a cost of 1 second.
+    /// No verification that the movement is legal or not
+    fn move_to(&self, target: (u32, u32), x: u32, y: u32) -> Self {
+        Self {
+            x,
+            y,
+            item: self.item,
+            time: self.time + 1,
+            heuristic: manhattan(x, y, target) + self.time + 1,
+        }
+    }
+}
+
+/// Compute Manhattan distance to target.
+fn manhattan(x: u32, y: u32, target: (u32, u32)) -> u32 {
+    x.abs_diff(target.0) + y.abs_diff(target.1)
+}
+
+struct Puzzle {
+    depth: u32,
+    target: (u32, u32),
+
+    lru: HashMap<(u32, u32), u32>,
+}
+
+impl Puzzle {
+    fn new() -> Puzzle {
+        Puzzle {
+            depth: 0,
+            target: (0, 0),
+            lru: HashMap::new(),
+        }
+    }
+
+    fn geologic_index(&mut self, x: u32, y: u32) -> u32 {
+        if let Some(index) = self.lru.get(&(x, y)) {
+            *index
+        } else {
+            let index = if (x, y) == (0, 0) || (x, y) == self.target {
+                0
+            } else if y == 0 {
+                x * 16807
+            } else if x == 0 {
+                y * 48271
+            } else {
+                self.erosion_level(x - 1, y) * self.erosion_level(x, y - 1)
+            };
+
+            self.lru.insert((x, y), index);
+            index
+        }
+    }
+
+    fn erosion_level(&mut self, x: u32, y: u32) -> u32 {
+        (self.geologic_index(x, y) + self.depth) % 20183
+    }
+
+    fn region(&mut self, x: u32, y: u32) -> u32 {
+        self.erosion_level(x, y) % 3
+    }
+
+    fn show(&mut self) {
+        for y in 0..16 {
+            for x in 0..16 {
+                let c = if (x, y) == (0, 0) {
+                    'M'
+                } else if (x, y) == self.target {
+                    'T'
+                } else {
+                    match self.region(x, y) {
+                        ROCKY => '.',
+                        WET => '=',
+                        NARROW => '|',
+                        _ => panic!(),
+                    }
+                };
+
+                print!("{c}");
+            }
+
+            println!();
+        }
+    }
+}
+
+impl Puzzle {
+    /// Get the puzzle input.
+    fn configure(&mut self, path: &str) {
+        let data = std::fs::read_to_string(path).unwrap();
+
+        for line in data.lines() {
+            if let Some(target) = line.strip_prefix("target: ") {
+                let (x, y) = target.split_once(',').unwrap();
+                self.target = (x.parse().unwrap(), y.parse().unwrap());
+            } else if let Some(depth) = line.strip_prefix("depth: ") {
+                self.depth = depth.parse().unwrap();
+            }
+        }
+    }
+
+    /// Solve part one.
+    fn part1(&mut self) -> u32 {
+        (0..=self.target.0)
+            .map(|x| (0..=self.target.1).map(|y| self.region(x, y)).sum::<u32>())
+            .sum()
+    }
+
+    /// Solve part two.
+    fn part2(&mut self) -> u32 {
+        // A star algorithm
+        let mut open_set = BinaryHeap::new();
+        let mut closed_list = HashSet::new();
+
+        open_set.push(Node::init(self.target));
+
+        while let Some(e) = open_set.pop() {
+            // if current node is at goal (target and torch)
+            // we have found our path
+            if (e.x, e.y) == self.target && e.item == TORCH {
+                return e.time;
+            }
+
+            if closed_list.contains(&(e.x, e.y, e.item)) {
+                continue;
+            }
+            closed_list.insert((e.x, e.y, e.item));
+
+            // switch item
+            let n = e.switch_item(self.target, self.region(e.x, e.y));
+            open_set.push(n);
+
+            // move
+            for (nx, ny, _) in Direction::iter(e.x, e.y, u32::MAX, u32::MAX) {
+                let can_move = match self.region(nx, ny) {
+                    ROCKY => e.item != NEITHER,
+                    WET => e.item != TORCH,
+                    NARROW => e.item != CLIMBING_GEAR,
+                    _ => panic!(),
+                };
+
+                if can_move && !closed_list.contains(&(nx, ny, e.item)) {
+                    open_set.push(e.move_to(self.target, nx, ny));
+                }
+            }
+        }
+        0
+    }
+}
+
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+
+    if args.verbose {
+        puzzle.show();
+    }
+
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
+/// Test from puzzle input
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test01() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("test.txt");
+        assert_eq!(puzzle.part1(), 114);
+    }
+
+    #[test]
+    fn test02() {
+        let mut puzzle = Puzzle::new();
+        puzzle.configure("test.txt");
+        assert_eq!(puzzle.part2(), 45);
+    }
+}
