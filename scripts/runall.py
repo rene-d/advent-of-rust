@@ -33,6 +33,7 @@ CR = "\r"
 
 LANGUAGES = {
     "Python": "{year}/day{day}/day{day}.py",
+    "PyPy": "{year}/day{day}/day{day}.py",
     "Rust": "{year}/target/release/day{day}",
     "C": "{year}/build/day{day}_c",
     "C++": "{year}/build/day{day}_cpp",
@@ -63,13 +64,13 @@ def save_cache():
         print(f"{FEINT}{ITALIC}cache commited{RESET}")
 
 
-def check_cache(key, file_timestamp: Path):
+def check_cache(key, file_timestamp: Path, no_check=False):
     cache = get_cache()
     key = str(key)
     e = cache.get(key, None)
     if e:
         timestamp = file_timestamp.stat().st_mtime_ns
-        if e["timestamp"] == timestamp:
+        if e["timestamp"] == timestamp or no_check:
             return e
         else:
             seconds = round((timestamp - e["timestamp"]) / 1000000000)
@@ -94,24 +95,30 @@ def update_cache(key, timestamp: Path, elapsed, status, answers):
     return e
 
 
-def run(key: str, prog: Path, file: Path, solution: t.List, refresh: bool):
+def run(key: str, prog: Path, lang: str, file: Path, solution: t.List, refresh: bool, dry_run: bool):
     if not prog.is_file():
         return
 
-    prog = prog.absolute()
+    cmd = [prog.absolute().as_posix()]
+
+    if lang == "Python":
+        cmd.insert(0, "python3")
+    elif lang == "PyPy":
+        cmd.insert(0, "pypy3")
 
     if refresh:
         e = None
     else:
-        e = check_cache(key, prog)
-
+        e = check_cache(key, prog, dry_run)
+        if dry_run and not e:
+            return None
     if e:
         in_cache = True
     else:
         in_cache = False
 
         start = time.time_ns()
-        out = subprocess.run([prog, file.absolute()], cwd=prog.parent, stdout=subprocess.PIPE)
+        out = subprocess.run(cmd + [file.absolute()], stdout=subprocess.PIPE)
         elapsed = time.time_ns() - start
         answers = out.stdout.decode().strip()
 
@@ -209,7 +216,7 @@ def load_data(filter_year):
 
 
 def run_day(
-    year: int, day: int, mday: str, day_inputs: t.Dict, day_sols: t.Dict, problems: t.Set, filter_lang, refresh
+    year: int, day: int, mday: str, day_inputs: t.Dict, day_sols: t.Dict, problems: t.Set, filter_lang, refresh, dry_run
 ):
     elapsed = defaultdict(list)
 
@@ -241,7 +248,7 @@ def run_day(
                 first = False
                 subprocess.call([prog, "--help"], stdout=subprocess.DEVNULL)
 
-            e = run(key, prog, file, day_sols.get(crc), refresh)
+            e = run(key, prog, lang, file, day_sols.get(crc), refresh, dry_run)
 
             if not e:
                 continue
@@ -281,15 +288,17 @@ def run_day(
             problems.append(line)
 
     nb_samples = set(len(t) for _, t in elapsed.items())
-    assert len(nb_samples) == 1
+    assert len(nb_samples) == 1 or len(nb_samples) == 0
+    nb_samples = 0 if len(nb_samples) == 0 else nb_samples.pop()
 
-    return dict((lang, sum(t) / len(t)) for lang, t in elapsed.items()), nb_samples.pop()
+    return dict((lang, sum(t) / len(t)) for lang, t in elapsed.items()), nb_samples
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--language", type=str, metavar="LANG", help="filter by language")
     parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
+    parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
@@ -320,7 +329,15 @@ def main():
                     mday = mday.name.removeprefix("day")
 
                     elapsed, nb_samples = run_day(
-                        year, day, mday, inputs[year, day], sols[year, day], problems, args.language, args.refresh
+                        year,
+                        day,
+                        mday,
+                        inputs[year, day],
+                        sols[year, day],
+                        problems,
+                        args.language,
+                        args.refresh,
+                        args.dry_run,
                     )
                     save_cache()
 
@@ -344,8 +361,8 @@ def main():
     except KeyboardInterrupt:
         pass
 
-    except Exception as e:
-        print(f"{RED}ERROR {e}{RESET}")
+    # except Exception as e:
+    #     print(f"{RED}ERROR {e}{RESET}")
 
     finally:
         if stats_elapsed:
