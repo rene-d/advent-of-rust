@@ -1,0 +1,4 @@
+networkx
+sympy
+curtsies
+shapely
