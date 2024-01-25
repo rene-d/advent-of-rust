@@ -248,4 +248,4 @@ fetch_input
 fetch_samples
 create_python
 create_rust
-open_if_available
+# open_if_available

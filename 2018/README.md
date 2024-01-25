@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2018](https://img.shields.io/badge/Advent_of_Code-2018-8A2BE2)
-![Stars: 43](https://img.shields.io/badge/Stars-43⭐-blue)
+![Stars: 45](https://img.shields.io/badge/Stars-45⭐-blue)
 ![Rust: 23](https://img.shields.io/badge/Rust-23-cyan?logo=Rust)
 ![Python: 4](https://img.shields.io/badge/Python-4-cyan?logo=Python)
 
-## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 43⭐
+## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 45⭐
 
 Puzzle                                                                               | Stars | Languages
 ------------------------------------------------------------------------------------ | ----- | -----------
@@ -27,6 +27,7 @@ Puzzle                                                                          
 [Day 17: Reservoir Research](https://adventofcode.com/2018/day/17)                   | ⭐⭐  | [Rust](../2018/day17/day17.rs)
 [Day 18: Settlers of The North Pole](https://adventofcode.com/2018/day/18)           | ⭐⭐  | [Rust](../2018/day18/day18.rs) [Python](../2018/day18/day18.py)
 [Day 19: Go With The Flow](https://adventofcode.com/2018/day/19)                     | ⭐⭐  | [Rust](../2018/day19/day19.rs)
+[Day 20: A Regular Map](https://adventofcode.com/2018/day/20)                        | ⭐⭐  | [Rust](../2018/day20/day20.rs)
 [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)                   | ⭐⭐  | [Rust](../2018/day21/day21.rs)
 [Day 22: Mode Maze](https://adventofcode.com/2018/day/22)                            | ⭐⭐  | [Rust](../2018/day22/day22.rs)
 [Day 23: Experimental Emergency Teleportation](https://adventofcode.com/2018/day/23) | ⭐⭐  | [Rust](../2018/day23/day23.rs)
