@@ -1,37 +1,80 @@
 //! [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)
 
 use std::collections::HashSet;
-
-const OPCODES: [&str; 16] = [
-    "addi", "addr", "bani", "banr", "bori", "borr", "eqir", "eqri", "eqrr", "gtir", "gtri", "gtrr",
-    "muli", "mulr", "seti", "setr",
-];
-
-fn emulate(opcode: &'static str, a: u64, b: u64, c: u64, regs: &mut [u64]) {
-    regs[c as usize] = match opcode {
-        "addr" => regs[a as usize] + regs[b as usize],
-        "addi" => regs[a as usize] + b,
-        "mulr" => regs[a as usize] * regs[b as usize],
-        "muli" => regs[a as usize] * b,
-        "banr" => regs[a as usize] & regs[b as usize],
-        "bani" => regs[a as usize] & b,
-        "borr" => regs[a as usize] | regs[b as usize],
-        "bori" => regs[a as usize] | b,
-        "setr" => regs[a as usize],
-        "seti" => a,
-        "gtir" => u64::from(a > regs[b as usize]),
-        "gtri" => u64::from(regs[a as usize] > b),
-        "gtrr" => u64::from(regs[a as usize] > regs[b as usize]),
-        "eqir" => u64::from(a == regs[b as usize]),
-        "eqri" => u64::from(regs[a as usize] == b),
-        "eqrr" => u64::from(regs[a as usize] == regs[b as usize]),
-        _ => panic!("bad opcode {opcode}"),
-    };
-}
+use std::fmt::Error;
 
 #[derive(Debug)]
+enum OpCodes {
+    Addi,
+    Addr,
+    Bani,
+    Banr,
+    Bori,
+    Borr,
+    Eqir,
+    Eqri,
+    Eqrr,
+    Gtir,
+    Gtri,
+    Gtrr,
+    Muli,
+    Mulr,
+    Seti,
+    Setr,
+}
+
+impl std::str::FromStr for OpCodes {
+    type Err = Box<Error>;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let opcode = match s {
+            "addr" => OpCodes::Addr,
+            "addi" => OpCodes::Addi,
+            "mulr" => OpCodes::Mulr,
+            "muli" => OpCodes::Muli,
+            "banr" => OpCodes::Banr,
+            "bani" => OpCodes::Bani,
+            "borr" => OpCodes::Borr,
+            "bori" => OpCodes::Bori,
+            "setr" => OpCodes::Setr,
+            "seti" => OpCodes::Seti,
+            "gtir" => OpCodes::Gtir,
+            "gtri" => OpCodes::Gtri,
+            "gtrr" => OpCodes::Gtrr,
+            "eqir" => OpCodes::Eqir,
+            "eqri" => OpCodes::Eqri,
+            "eqrr" => OpCodes::Eqrr,
+            _ => panic!("unknown opcode {s}"),
+        };
+
+        Ok(opcode)
+    }
+}
+
+impl OpCodes {
+    fn emulate(&self, a: u64, b: u64, c: u64, regs: &mut [u64]) {
+        regs[c as usize] = match &self {
+            OpCodes::Addr => regs[a as usize] + regs[b as usize],
+            OpCodes::Addi => regs[a as usize] + b,
+            OpCodes::Mulr => regs[a as usize] * regs[b as usize],
+            OpCodes::Muli => regs[a as usize] * b,
+            OpCodes::Banr => regs[a as usize] & regs[b as usize],
+            OpCodes::Bani => regs[a as usize] & b,
+            OpCodes::Borr => regs[a as usize] | regs[b as usize],
+            OpCodes::Bori => regs[a as usize] | b,
+            OpCodes::Setr => regs[a as usize],
+            OpCodes::Seti => a,
+            OpCodes::Gtir => u64::from(a > regs[b as usize]),
+            OpCodes::Gtri => u64::from(regs[a as usize] > b),
+            OpCodes::Gtrr => u64::from(regs[a as usize] > regs[b as usize]),
+            OpCodes::Eqir => u64::from(a == regs[b as usize]),
+            OpCodes::Eqri => u64::from(regs[a as usize] == b),
+            OpCodes::Eqrr => u64::from(regs[a as usize] == regs[b as usize]),
+        };
+    }
+}
+
 struct Instr {
-    opcode: &'static str,
+    opcode: OpCodes,
     a: u64,
     b: u64,
     c: u64,
@@ -39,13 +82,27 @@ struct Instr {
 
 impl Instr {
     fn run(&self, regs: &mut [u64]) {
-        emulate(self.opcode, self.a, self.b, self.c, regs);
+        self.opcode.emulate(self.a, self.b, self.c, regs);
+    }
+}
+
+impl std::str::FromStr for Instr {
+    type Err = Box<Error>;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s: Vec<_> = s.split_ascii_whitespace().collect();
+
+        let opcode = s[0].parse().unwrap();
+        let a = s[1].parse().unwrap();
+        let b = s[2].parse().unwrap();
+        let c = s[3].parse().unwrap();
+
+        Ok(Instr { opcode, a, b, c })
     }
 }
 
 impl std::fmt::Display for Instr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {} {} {}", self.opcode, self.a, self.b, self.c)
+        write!(f, "{:?} {} {} {}", self.opcode, self.a, self.b, self.c)
     }
 }
 
@@ -72,16 +129,7 @@ impl Puzzle {
             if let Some(value) = line.strip_prefix("#ip ") {
                 self.ip_reg = value.parse::<usize>().unwrap();
             } else {
-                let line: Vec<_> = line.split_ascii_whitespace().collect();
-
-                let opcode = OPCODES.iter().find(|&&opcode| opcode == line[0]).unwrap();
-                let a = line[1].parse::<u64>().unwrap();
-                let b = line[2].parse::<u64>().unwrap();
-                let c = line[3].parse::<u64>().unwrap();
-
-                let instr = Instr { opcode, a, b, c };
-
-                self.program.push(instr);
+                self.program.push(line.parse().unwrap());
             }
         }
     }
