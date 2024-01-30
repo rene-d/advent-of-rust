@@ -1,5 +1,7 @@
 //! [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)
 
+#![allow(clippy::cast_possible_truncation)]
+
 use std::collections::HashSet;
 use std::fmt::Error;
 
