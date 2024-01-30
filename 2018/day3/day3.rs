@@ -7,7 +7,6 @@ struct Puzzle {
     data: String,
 }
 
-#[allow(clippy::many_single_char_names)]
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
@@ -23,7 +22,6 @@ impl Puzzle {
     }
 
     /// Solve part one.
-
     fn part1(&self) -> usize {
         let re = Regex::new(r"^#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)$").unwrap();
 
@@ -40,11 +38,11 @@ impl Puzzle {
                 let x = s[0];
                 let y = s[1];
 
-                let w = s[2];
-                let h = s[3];
+                let width = s[2];
+                let height = s[3];
 
-                for i in x..(x + w) {
-                    for j in y..(y + h) {
+                for i in x..(x + width) {
+                    for j in y..(y + height) {
                         *squares.entry((i, j)).or_insert(0) += 1u32;
                     }
                 }
@@ -74,13 +72,13 @@ impl Puzzle {
                 let x = s[1];
                 let y = s[2];
 
-                let w = s[3];
-                let h = s[4];
+                let width = s[3];
+                let height = s[4];
 
                 intact.insert(id);
 
-                for i in x..(x + w) {
-                    for j in y..(y + h) {
+                for i in x..(x + width) {
+                    for j in y..(y + height) {
                         let key = (i, j);
 
                         if let std::collections::hash_map::Entry::Vacant(e) = squares_id.entry(key)
