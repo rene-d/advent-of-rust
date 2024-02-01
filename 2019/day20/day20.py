@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 # [Day 20: Donut Maze](https://adventofcode.com/2019/day/20)
 
-from pathlib import Path
-from copy import deepcopy
-from collections import defaultdict, deque, namedtuple, Counter
-import sys, re, math, itertools, time
-from functools import reduce
-import re
+import sys
 import unittest
-from dataclasses import dataclass
-
+from collections import defaultdict, deque
+from pathlib import Path
 
 verbose = "-v" in sys.argv
 if verbose:

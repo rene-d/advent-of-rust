@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 # [Day 8: Memory Maneuver](https://adventofcode.com/2018/day/8)
 
+import sys
 from pathlib import Path
-from copy import deepcopy
-from collections import defaultdict, deque, namedtuple, Counter
-import sys, re, math, itertools, time
-from functools import reduce
-import re
-import unittest
 
 verbose = "-v" in sys.argv
 if verbose:
@@ -54,7 +49,7 @@ def rec2(pos):
         value = 0
         for n in nodes[pos : pos + metadata]:
             if 0 < n <= len(values):
-                value += values[n-1]
+                value += values[n - 1]
 
     pos += metadata
     return pos, value
