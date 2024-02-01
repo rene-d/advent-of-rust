@@ -38,7 +38,7 @@ fn adjacent(x: usize, y: usize) -> Vec<(usize, usize)> {
     vec![(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
 }
 
-fn parse_target(targets: &[Unit], race: char) -> HashMap<(usize, usize), Vec<usize>> {
+fn get_opponents(targets: &[Unit], race: char) -> HashMap<(usize, usize), Vec<usize>> {
     let mut target_mapping: HashMap<(usize, usize), Vec<usize>> = HashMap::new();
 
     for (i, t) in targets.iter().enumerate() {
@@ -192,13 +192,12 @@ impl Puzzle {
                     continue;
                 }
 
-                let target_mapping = parse_target(&units, units[u].race);
+                let opponents = get_opponents(&units, units[u].race);
 
-                if !target_mapping.contains_key(&(units[u].x, units[u].y)) {
-                    // not in target range
+                if !opponents.contains_key(&(units[u].x, units[u].y)) {
+                    // not in range
 
-                    let target_adj: HashSet<(usize, usize)> =
-                        target_mapping.keys().copied().collect();
+                    let target_adj: HashSet<(usize, usize)> = opponents.keys().copied().collect();
 
                     if let Some(xy) = next_pos(u, &units, &target_adj, wall) {
                         units[u].x = xy.0;
@@ -206,11 +205,11 @@ impl Puzzle {
                     }
                 }
 
-                if target_mapping.contains_key(&(units[u].x, units[u].y)) {
+                if opponents.contains_key(&(units[u].x, units[u].y)) {
                     // attack
                     let damage = units[u].attack_power;
 
-                    let target_indices = target_mapping.get(&(units[u].x, units[u].y)).unwrap();
+                    let target_indices = opponents.get(&(units[u].x, units[u].y)).unwrap();
 
                     let &target_index = target_indices
                         .iter()
@@ -261,9 +260,6 @@ fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.configure(args.path.as_str());
-
-    // print!("\x1b[H\x1b[2J\x1b]1337;ClearScrollback\x07");
-
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
