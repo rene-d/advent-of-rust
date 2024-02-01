@@ -2,13 +2,12 @@
 # [Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)
 
 import sys
-from collections import Counter, namedtuple
+from collections import namedtuple
 
 # from fractions import Fraction
 from pathlib import Path
 
 import sympy
-
 
 verbose = "-v" in sys.argv
 if verbose:

@@ -9,11 +9,10 @@ import time
 import typing as t
 from collections import defaultdict
 from copy import deepcopy
+from datetime import timedelta
 from operator import itemgetter
 from pathlib import Path
 from zlib import crc32
-from datetime import timedelta
-
 
 RED = "\033[91m"
 GREEN = "\033[92m"

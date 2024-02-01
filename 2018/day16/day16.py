@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 # [Day 16: Chronal Classification](https://adventofcode.com/2018/day/16)
 
-from pathlib import Path
-from copy import deepcopy
-from collections import defaultdict, deque, namedtuple, Counter
-import sys, re, math, itertools, time
-from functools import reduce
-import re
-import unittest
+import sys
 import typing as t
+from collections import defaultdict
+from copy import deepcopy
+from pathlib import Path
 
 OPCODES = (
     "addi",

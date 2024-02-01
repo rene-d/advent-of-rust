@@ -2,3 +2,4 @@ networkx
 sympy
 curtsies
 shapely
+tabulate

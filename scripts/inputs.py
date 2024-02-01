@@ -5,7 +5,6 @@ from pathlib import Path
 
 import tabulate
 
-
 RED = "\033[91m"
 GREEN = "\033[92m"
 BLUE = "\033[94m"
