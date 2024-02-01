@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2018](https://img.shields.io/badge/Advent_of_Code-2018-8A2BE2)
-![Stars: 45](https://img.shields.io/badge/Stars-45⭐-blue)
-![Rust: 23](https://img.shields.io/badge/Rust-23-cyan?logo=Rust)
+![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
+![Rust: 25](https://img.shields.io/badge/Rust-25-cyan?logo=Rust)
 ![Python: 4](https://img.shields.io/badge/Python-4-cyan?logo=Python)
 
-## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 45⭐
+## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 50⭐
 
 Puzzle                                                                               | Stars | Languages
 ------------------------------------------------------------------------------------ | ----- | -----------
@@ -23,6 +23,7 @@ Puzzle                                                                          
 [Day 12: Subterranean Sustainability](https://adventofcode.com/2018/day/12)          | ⭐⭐  | [Rust](../2018/day12/day12.rs)
 [Day 13: Mine Cart Madness](https://adventofcode.com/2018/day/13)                    | ⭐⭐  | [Rust](../2018/day13/day13.rs)
 [Day 14: Chocolate Charts](https://adventofcode.com/2018/day/14)                     | ⭐⭐  | [Rust](../2018/day14/day14.rs)
+[Day 15: Beverage Bandits](https://adventofcode.com/2018/day/15)                     | ⭐⭐  | [Rust](../2018/day15/day15.rs)
 [Day 16: Chronal Classification](https://adventofcode.com/2018/day/16)               | ⭐⭐  | [Rust](../2018/day16/day16.rs) [Python](../2018/day16/day16.py)
 [Day 17: Reservoir Research](https://adventofcode.com/2018/day/17)                   | ⭐⭐  | [Rust](../2018/day17/day17.rs)
 [Day 18: Settlers of The North Pole](https://adventofcode.com/2018/day/18)           | ⭐⭐  | [Rust](../2018/day18/day18.rs) [Python](../2018/day18/day18.py)
@@ -31,4 +32,5 @@ Puzzle                                                                          
 [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)                   | ⭐⭐  | [Rust](../2018/day21/day21.rs)
 [Day 22: Mode Maze](https://adventofcode.com/2018/day/22)                            | ⭐⭐  | [Rust](../2018/day22/day22.rs)
 [Day 23: Experimental Emergency Teleportation](https://adventofcode.com/2018/day/23) | ⭐⭐  | [Rust](../2018/day23/day23.rs)
-[Day 25: Four-Dimensional Adventure](https://adventofcode.com/2018/day/25)           | ⭐   | [Rust](../2018/day25/day25.rs)
+[Day 24: Immune System Simulator 20XX](https://adventofcode.com/2018/day/24)         | ⭐⭐  | [Rust](../2018/day24/src/main.rs)
+[Day 25: Four-Dimensional Adventure](https://adventofcode.com/2018/day/25)           | ⭐⭐  | [Rust](../2018/day25/day25.rs)
