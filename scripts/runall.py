@@ -33,11 +33,13 @@ CR = "\r"
 
 LANGUAGES = {
     "Python": "{year}/day{day}/day{day}.py",
-    # "PyPy": "{year}/day{day}/day{day}.py",
+    "PyPy": "{year}/day{day}/day{day}.py",
     "Rust": "{year}/target/release/day{day}",
     "C": "{year}/build/day{day}_c",
     "C++": "{year}/build/day{day}_cpp",
 }
+
+DEFAULT_LANGUAGES = {"Python", "Rust"}
 
 INTERPRETERS = {
     "Python": "python3",
@@ -258,7 +260,12 @@ def run_day(
         results = set()
 
         for lang, pattern in LANGUAGES.items():
-            if filter_lang and lang.lower() != filter_lang.lower():
+            if filter_lang == "all":
+                pass
+            elif filter_lang:
+                if lang.lower() != filter_lang.lower():
+                    continue
+            elif lang not in DEFAULT_LANGUAGES:
                 continue
 
             prog = Path(pattern.format(year=year, day=mday))
