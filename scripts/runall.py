@@ -13,6 +13,7 @@ from datetime import timedelta
 from operator import itemgetter
 from pathlib import Path
 from zlib import crc32
+import sqlite3
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -32,10 +33,15 @@ CR = "\r"
 
 LANGUAGES = {
     "Python": "{year}/day{day}/day{day}.py",
-    "PyPy": "{year}/day{day}/day{day}.py",
+    # "PyPy": "{year}/day{day}/day{day}.py",
     "Rust": "{year}/target/release/day{day}",
     "C": "{year}/build/day{day}_c",
     "C++": "{year}/build/day{day}_cpp",
+}
+
+INTERPRETERS = {
+    "Python": "python3",
+    "PyPy": "pypy3",
 }
 
 
@@ -43,103 +49,112 @@ def get_cache():
     """Retrieve the cache instance from memory or load it from disk."""
     cache = globals().get("_cache")
     if cache is None:
-        cache_file = Path(__file__).parent.parent / "data" / "cache.json"
-        if cache_file.is_file():
-            cache = json.loads(cache_file.read_bytes())
-        else:
-            cache = {}
+        cache_file = Path(__file__).parent.parent / "data" / "cache.db"
+
+        cache_db = sqlite3.connect(cache_file)
+
+        cache_db.executescript(
+            "create table if not exists solutions ("
+            " key text primary key not null,"
+            " mtime_ns int,"
+            " elapsed float,"
+            " status text,"
+            " answers text);"
+        )
+        cache = {"db": cache_db, "modified": False}
         globals()["_cache"] = cache
-        cache["modified"] = False
+
     return cache
 
 
 def save_cache():
-    cache = get_cache()
-    if cache["modified"]:
-        cache.pop("modified")
-        cache_file = Path(__file__).parent.parent / "data" / "cache.json"
-        cache_file.write_text(json.dumps(cache, indent=2, ensure_ascii=True))
-        cache["modified"] = False
-        print(f"{FEINT}{ITALIC}cache commited{RESET}")
+    pass
+    # cache = get_cache()
+    # if cache["modified"]:
+    #     cache["db"].commit()
+    #     cache["modified"] = False
+    #     print(f"{FEINT}{ITALIC}cache commited{RESET}")
 
 
-def check_cache(key, file_timestamp: Path, no_check=False):
+def check_cache(key, file_timestamp: Path, no_age_check=False):
     cache = get_cache()
     key = str(key)
-    e = cache.get(key, None)
-    if e:
+    db = cache["db"]
+    cursor = db.execute("select mtime_ns,elapsed,status,answers from solutions where key=?", (key,))
+    row = cursor.fetchone()
+    if row:
         timestamp = file_timestamp.stat().st_mtime_ns
-        if e["timestamp"] == timestamp or no_check:
-            return e
+        if row[0] == timestamp or no_age_check:
+            return {
+                "elapsed": row[1],
+                "status": row[2],
+                "answers": row[3].split("\n"),
+            }
         else:
-            seconds = round((timestamp - e["timestamp"]) / 1000000000)
-            delta = timedelta(seconds=seconds)
+            # seconds = round((timestamp - e["timestamp"]) / 1000000000)
+            # delta = timedelta(seconds=seconds)
+            # print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end=f"{CR}")
 
-            print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end=f"{CR}")
+            print(f"{FEINT}{ITALIC}entry {key} is out of date{RESET}", end=f"{CR}")
 
     else:
-        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end=f"{CR}")
+        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end=f"{CLEAR_EOL}{CR}")
 
 
-def update_cache(key, timestamp: Path, elapsed, status, answers):
+def update_cache(key, timestamp: Path, elapsed: float, status: str, answers: t.Iterable):
     cache = get_cache()
+    db = cache["db"]
     key = str(key)
-    e = cache.get(key, {})
-    e["timestamp"] = timestamp.stat().st_mtime_ns
-    e["elapsed"] = elapsed
-    e["status"] = status
-    e["answers"] = answers
-    cache[key] = e
-    cache["modified"] = True
-    return e
+
+    db.execute(
+        "insert or replace into solutions (key,mtime_ns,elapsed,status,answers) values (?,?,?,?,?)",
+        (key, timestamp.stat().st_mtime_ns, elapsed, status, "\n".join(answers)),
+    )
+
+    # cache["modified"] = True
+    db.commit()
+
+    return {
+        "elapsed": elapsed,
+        "status": status,
+        "answers": answers,
+    }
 
 
-def run(key: str, prog: Path, lang: str, file: Path, solution: t.List, refresh: bool, dry_run: bool):
+def run(prog: Path, lang: str, file: Path, solution: t.List, warmup: bool) -> t.Dict[str, t.Any]:
     if not prog.is_file():
         return
 
     cmd = [prog.absolute().as_posix()]
 
-    if lang == "Python":
-        cmd.insert(0, "python3")
-    elif lang == "PyPy":
-        cmd.insert(0, "pypy3")
+    # add the interpreter
+    interpreter = INTERPRETERS.get(lang)
+    if interpreter:
+        cmd.insert(0, interpreter)
 
-    if refresh:
-        e = None
-    else:
-        e = check_cache(key, prog, dry_run)
-        if dry_run and not e:
-            return None
-    if e:
-        in_cache = True
-    else:
-        in_cache = False
+    if warmup and lang == "Rust":
+        # under macOS, the first launch of a Rust program is slower (why ???)
+        subprocess.call(cmd + ["--help"], stdout=subprocess.DEVNULL)
 
-        start = time.time_ns()
-        out = subprocess.run(cmd + [file.absolute()], stdout=subprocess.PIPE)
-        elapsed = time.time_ns() - start
-        answers = out.stdout.decode().strip()
+    start = time.time_ns()
+    out = subprocess.run(cmd + [file.absolute()], stdout=subprocess.PIPE)
+    elapsed = time.time_ns() - start
+    answers = out.stdout.decode().strip()
 
-        status = "unknown"
-        if solution:
-            solution = solution.read_text()
-            if answers == solution.strip():
-                status = "ok"
-            else:
-                status = "error"
+    status = "unknown"
+    if solution:
+        solution = solution.read_text()
+        if answers == solution.strip():
+            status = "ok"
         else:
-            if answers == "":
-                status = "fail"
-            else:
-                status = "unknown"
+            status = "error"
+    else:
+        if answers == "":
+            status = "missing"
+        else:
+            status = "unknown"
 
-        e = update_cache(key, prog, elapsed, status, answers.split("\n"))
-
-    e = deepcopy(e)
-    e["cache"] = in_cache
-
-    return e
+    return {"elapsed": elapsed, "status": status, "answers": answers.split("\n")}
 
 
 def make(year: Path, source: Path, dest: Path, cmd: str):
@@ -155,11 +170,11 @@ def make(year: Path, source: Path, dest: Path, cmd: str):
         return
 
     cmdline = f"{cmd} -o {output} -Wall -Wextra -O3 -DSTANDALONE -I{source.parent} {source}"
-    print(cmdline)
+    print(f"{CR}{cmdline}", end="")
     subprocess.check_call(cmdline, shell=True)
 
 
-def build_all(filter_year):
+def build_all(filter_year: int):
     for year in range(2015, 2024):
         if filter_year != 0 and year != filter_year:
             continue
@@ -183,12 +198,19 @@ def build_all(filter_year):
                 make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
-def load_data(filter_year):
+def load_data(filter_year, filter_user):
     inputs = defaultdict(dict)
     solutions = defaultdict(dict)
 
     for f in Path("data").rglob("*.in"):
+
+        if f.name.startswith("._"):
+            continue
+
         assert len(f.parts) == 4
+
+        if filter_user and f.parent.parent.name != filter_user:
+            continue
 
         year = int(f.parent.name)
         day = int(f.stem)
@@ -201,7 +223,7 @@ def load_data(filter_year):
             crc = e["status"]
         else:
             crc = hex(crc32(f.read_bytes().strip()) & 0xFFFFFFFF)
-            update_cache(f, f, 0, crc, 0)
+            update_cache(f, f, 0, crc, [])
 
         if crc not in inputs[year, day]:
             inputs[year, day][crc] = f
@@ -219,7 +241,7 @@ def run_day(
 ):
     elapsed = defaultdict(list)
 
-    first = True
+    warmup = defaultdict(lambda: True)
 
     day_suffix = mday.removeprefix(str(day))
     name_max_len = 16 - len(day_suffix)
@@ -242,12 +264,20 @@ def run_day(
             prog = Path(pattern.format(year=year, day=mday))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
-            if lang.lower() == "rust" and first and prog.is_file():
-                # under macOS, the first launch of a program is slower
-                first = False
-                subprocess.call([prog, "--help"], stdout=subprocess.DEVNULL)
+            if refresh:
+                e = None
+                in_cache = False
+            else:
+                e = check_cache(key, prog, dry_run)
+                in_cache = e is not None
 
-            e = run(key, prog, lang, file, day_sols.get(crc), refresh, dry_run)
+            if not in_cache and not dry_run:
+
+                e = run(prog, lang, file, day_sols.get(crc), warmup[lang])
+
+                if e:
+                    warmup[lang] = False
+                    e = update_cache(key, prog, e["elapsed"], e["status"], e["answers"])
 
             if not e:
                 continue
@@ -257,7 +287,7 @@ def run_day(
             else:
                 info = ""
 
-            status_color = {"fail": MAGENTA, "unknown": GRAY, "error": RED, "ok": GREEN}[e["status"]]
+            status_color = {"missing": MAGENTA, "unknown": GRAY, "error": RED, "ok": GREEN}[e["status"]]
 
             line = (
                 f"{CR}{RESET}{CLEAR_EOL}"
@@ -265,16 +295,16 @@ def run_day(
                 f" {YELLOW}{lang:<7}{RESET}:"
                 f" {status_color}{e['status']:7}{RESET}"
                 f" {WHITE}{e['elapsed']/1e9:7.3f}s"
-                f" {GRAY}{'☽' if e['cache'] else ' '}"
+                f" {GRAY}{'☽' if in_cache else ' '}"
                 f" {status_color}{str(e['answers']):<40}{RESET}"
                 f"{info}"
             )
             print(line)
 
-            if e["status"] == "fail" or e["status"] == "error":
+            if e["status"] == "missing" or e["status"] == "error":
                 problems.append(line)
 
-            if not e["cache"] and e["elapsed"] / 1e9 > 5:
+            if not in_cache and e["elapsed"] / 1e9 > 5:
                 save_cache()
 
             results.add(" ".join(e["answers"]))
@@ -298,11 +328,13 @@ def main():
     parser.add_argument("-l", "--language", type=str, metavar="LANG", help="filter by language")
     parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
+    parser.add_argument("--no-build", action="store_true", help="do not build")
+    parser.add_argument("-u", "--user", dest="filter_user", type=str, help="filter by user id")
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
 
-    filter_year = 0 if len(args.n) == 0 else args.n.pop(0)
+    filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
     filter_day = set(args.n)
     if args.language == "cpp":
         args.language = "c++"
@@ -313,8 +345,11 @@ def main():
         problems = []
         stats_elapsed = dict()
 
-        build_all(filter_year)
-        inputs, sols = load_data(filter_year)
+        if not args.no_build:
+            build_all(filter_year)
+            print(end=f"{CR}{CLEAR_EOL}")
+
+        inputs, sols = load_data(filter_year, args.filter_user)
 
         for year in range(2015, 2024):
             if filter_year != 0 and year != filter_year:
@@ -342,7 +377,7 @@ def main():
 
                     if elapsed:
                         print(
-                            "--> ",
+                            f"{CLEAR_EOL}--> ",
                             " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())),
                             f"{FEINT}({nb_samples} input{'s' if nb_samples>1 else ''}){RESET}",
                         )
