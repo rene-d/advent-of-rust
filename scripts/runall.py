@@ -2,7 +2,6 @@
 
 import argparse
 import itertools
-import json
 import os
 import subprocess
 import time
@@ -14,6 +13,7 @@ from operator import itemgetter
 from pathlib import Path
 from zlib import crc32
 import sqlite3
+import shutil
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -33,17 +33,20 @@ CR = "\r"
 
 LANGUAGES = {
     "Python": "{year}/day{day}/day{day}.py",
-    "PyPy": "{year}/day{day}/day{day}.py",
     "Rust": "{year}/target/release/day{day}",
     "C": "{year}/build/day{day}_c",
     "C++": "{year}/build/day{day}_cpp",
 }
 
-DEFAULT_LANGUAGES = {"Python", "Rust"}
-
 INTERPRETERS = {
-    "Python": "python3",
-    "PyPy": "pypy3",
+    "Python": {
+        "Python": "python3",
+        "PyPy": ".pypy3.10/bin/python",
+        "Py3.10": ".py3.10/bin/python",
+        "Py3.11": ".py3.11/bin/python",
+        "Py3.12": ".py3.12/bin/python",
+        "Py3.13": ".py3.13/bin/python",
+    }
 }
 
 
@@ -61,7 +64,13 @@ def get_cache():
             " mtime_ns int,"
             " elapsed float,"
             " status text,"
-            " answers text);"
+            " answers text"
+            ");"
+            "create table if not exists inputs ("
+            " key text primary key not null,"
+            " mtime_ns int,"
+            " crc32 text"
+            ");"
         )
         cache = {"db": cache_db, "modified": False}
         globals()["_cache"] = cache
@@ -78,20 +87,18 @@ def save_cache():
     #     print(f"{FEINT}{ITALIC}cache commited{RESET}")
 
 
-def check_cache(key, file_timestamp: Path, no_age_check=False):
+def check_cache(key, file_timestamp: Path, table: str, columns: t.Iterable[str], no_age_check=False):
     cache = get_cache()
     key = str(key)
     db = cache["db"]
-    cursor = db.execute("select mtime_ns,elapsed,status,answers from solutions where key=?", (key,))
+    db.row_factory = sqlite3.Row
+    cursor = db.execute(f"select * from `{table}` where key=?", (key,))
     row = cursor.fetchone()
     if row:
         timestamp = file_timestamp.stat().st_mtime_ns
-        if row[0] == timestamp or no_age_check:
-            return {
-                "elapsed": row[1],
-                "status": row[2],
-                "answers": row[3].split("\n"),
-            }
+        if row["mtime_ns"] == timestamp or no_age_check:
+            return dict((column, row[column]) for column in columns)
+
         else:
             # seconds = round((timestamp - e["timestamp"]) / 1000000000)
             # delta = timedelta(seconds=seconds)
@@ -103,34 +110,40 @@ def check_cache(key, file_timestamp: Path, no_age_check=False):
         print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end=f"{CLEAR_EOL}{CR}")
 
 
-def update_cache(key, timestamp: Path, elapsed: float, status: str, answers: t.Iterable):
+def update_cache(key, timestamp: Path, table: str, row: t.Dict[str, t.Union[str, int]]) -> None:
     cache = get_cache()
     db = cache["db"]
-    key = str(key)
 
-    db.execute(
-        "insert or replace into solutions (key,mtime_ns,elapsed,status,answers) values (?,?,?,?,?)",
-        (key, timestamp.stat().st_mtime_ns, elapsed, status, "\n".join(answers)),
-    )
+    sql = f"insert or replace into `{table}` (key,mtime_ns"
+    values = [str(key), timestamp.stat().st_mtime_ns]
 
-    # cache["modified"] = True
+    for k, v in row.items():
+        sql += f",`{k}`"
+        values.append(v)
+
+    sql += ") values (?,?"
+    sql += ",?" * len(row)
+    sql += ")"
+
+    db.execute(sql, values)
+
     db.commit()
 
-    return {
-        "elapsed": elapsed,
-        "status": status,
-        "answers": answers,
-    }
 
-
-def run(prog: Path, lang: str, file: Path, solution: t.List, warmup: bool) -> t.Dict[str, t.Any]:
+def run(
+    prog: Path,
+    lang: str,
+    interpreter: t.Union[None, str],
+    file: Path,
+    solution: t.List,
+    warmup: bool,
+) -> t.Dict[str, t.Any]:
     if not prog.is_file():
         return
 
     cmd = [prog.absolute().as_posix()]
 
     # add the interpreter
-    interpreter = INTERPRETERS.get(lang)
     if interpreter:
         cmd.insert(0, interpreter)
 
@@ -156,7 +169,7 @@ def run(prog: Path, lang: str, file: Path, solution: t.List, warmup: bool) -> t.
         else:
             status = "unknown"
 
-    return {"elapsed": elapsed, "status": status, "answers": answers.split("\n")}
+    return {"elapsed": elapsed, "status": status, "answers": answers}
 
 
 def make(year: Path, source: Path, dest: Path, cmd: str):
@@ -211,7 +224,9 @@ def load_data(filter_year, filter_user):
 
         assert len(f.parts) == 4
 
-        if filter_user and f.parent.parent.name != filter_user:
+        user = f.parent.parent.name
+
+        if filter_user and user != filter_user:
             continue
 
         year = int(f.parent.name)
@@ -220,12 +235,14 @@ def load_data(filter_year, filter_user):
         if filter_year != 0 and year != filter_year:
             continue
 
-        e = check_cache(f, f)
+        key = f"{year}:{day}:{user}"
+
+        e = check_cache(key, f, "inputs", ("crc32",))
         if e:
-            crc = e["status"]
+            crc = e["crc32"]
         else:
             crc = hex(crc32(f.read_bytes().strip()) & 0xFFFFFFFF)
-            update_cache(f, f, 0, crc, [])
+            update_cache(key, f, "inputs", {"crc32": crc})
 
         if crc not in inputs[year, day]:
             inputs[year, day][crc] = f
@@ -239,7 +256,15 @@ def load_data(filter_year, filter_user):
 
 
 def run_day(
-    year: int, day: int, mday: str, day_inputs: t.Dict, day_sols: t.Dict, problems: t.Set, filter_lang, refresh, dry_run
+    year: int,
+    day: int,
+    mday: str,
+    day_inputs: t.Dict,
+    day_sols: t.Dict,
+    languages: dict,
+    problems: t.Set,
+    refresh: bool,
+    dry_run: bool,
 ):
     elapsed = defaultdict(list)
 
@@ -259,14 +284,7 @@ def run_day(
 
         results = set()
 
-        for lang, pattern in LANGUAGES.items():
-            if filter_lang == "all":
-                pass
-            elif filter_lang:
-                if lang.lower() != filter_lang.lower():
-                    continue
-            elif lang not in DEFAULT_LANGUAGES:
-                continue
+        for lang, (pattern, interpreter) in languages.items():
 
             prog = Path(pattern.format(year=year, day=mday))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
@@ -275,16 +293,16 @@ def run_day(
                 e = None
                 in_cache = False
             else:
-                e = check_cache(key, prog, dry_run)
+                e = check_cache(key, prog, "solutions", ("elapsed", "status", "answers"), dry_run)
                 in_cache = e is not None
 
             if not in_cache and not dry_run:
 
-                e = run(prog, lang, file, day_sols.get(crc), warmup[lang])
+                e = run(prog, lang, interpreter, file, day_sols.get(crc), warmup[lang])
 
                 if e:
                     warmup[lang] = False
-                    e = update_cache(key, prog, e["elapsed"], e["status"], e["answers"])
+                    update_cache(key, prog, "solutions", e)
 
             if not e:
                 continue
@@ -296,6 +314,8 @@ def run_day(
 
             status_color = {"missing": MAGENTA, "unknown": GRAY, "error": RED, "ok": GREEN}[e["status"]]
 
+            answers = e["answers"].split("\n")
+
             line = (
                 f"{CR}{RESET}{CLEAR_EOL}"
                 f"{prefix}"
@@ -303,7 +323,7 @@ def run_day(
                 f" {status_color}{e['status']:7}{RESET}"
                 f" {WHITE}{e['elapsed']/1e9:7.3f}s"
                 f" {GRAY}{'☽' if in_cache else ' '}"
-                f" {status_color}{str(e['answers']):<40}{RESET}"
+                f" {status_color}{str(answers):<40}{RESET}"
                 f"{info}"
             )
             print(line)
@@ -314,7 +334,7 @@ def run_day(
             if not in_cache and e["elapsed"] / 1e9 > 5:
                 save_cache()
 
-            results.add(" ".join(e["answers"]))
+            results.add(" ".join(answers))
 
             elapsed[lang].append(e["elapsed"] / 1e9)
 
@@ -330,9 +350,83 @@ def run_day(
     return dict((lang, sum(t) / len(t)) for lang, t in elapsed.items()), nb_samples
 
 
+def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Union[str, None]]]:
+
+    filter_lang = set(map(str.casefold, filter_lang or ()))
+
+    languages = {}
+    for lang, v in LANGUAGES.items():
+
+        if lang in INTERPRETERS:
+            for lang2, interpreter in INTERPRETERS[lang].items():
+
+                if filter_lang and lang2.casefold() not in filter_lang:
+                    continue
+
+                if "/" not in interpreter and "\\" not in interpreter:
+                    interpreter = shutil.which(interpreter)
+                    languages[lang2] = (v, interpreter)
+                else:
+                    interpreter = Path(interpreter).expanduser().absolute()
+                    if interpreter.is_file() and (interpreter.stat().st_mode & os.X_OK) != 0:
+                        languages[lang2] = (v, interpreter.as_posix())
+                    else:
+                        # print(f"language {lang2} : interpreter {interpreter} not found")
+                        pass
+        else:
+
+            if filter_lang and lang.casefold() not in filter_lang:
+                continue
+            languages[lang] = (v, None)
+
+    return languages
+
+
+def install_venv(interpreter: Path):
+
+    try:
+        slug = 'import sys;print(((hasattr(sys, "subversion") and getattr(sys, "subversion")) or ("Py",))[0] + f"{sys.version_info.major}.{sys.version_info.minor}")'
+
+        slug = subprocess.check_output([interpreter, "-c", slug]).decode().strip()
+
+        venv = "." + slug.lower()
+
+        # subprocess.check_call([interpreter, "-mensurepip"])
+        subprocess.check_output([interpreter, "-mvenv", venv])
+        subprocess.check_call(
+            [
+                f"{venv}/bin/python3",
+                "-mpip",
+                "install",
+                "--no-input",
+                "--quiet",
+                "--upgrade",
+                "pip",
+            ]
+        )
+        subprocess.check_call(
+            [
+                f"{venv}/bin/python3",
+                "-mpip",
+                "install",
+                "--no-input",
+                "--quiet",
+                "--upgrade",
+                "-r",
+                "scripts/requirements.txt",
+            ]
+        )
+
+        print(f"Virtual environment for {MAGENTA}{interpreter}{RESET} installed into: {GREEN}{venv}{RESET}")
+
+    except subprocess.CalledProcessError as e:
+        print(e)
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-l", "--language", type=str, metavar="LANG", help="filter by language")
+    parser.add_argument("--venv", type=Path, help="install virtual environment")
+    parser.add_argument("-l", "--language", type=str, action="append", metavar="LANG", help="filter by language")
     parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("--no-build", action="store_true", help="do not build")
@@ -341,20 +435,23 @@ def main():
 
     args = parser.parse_args()
 
-    filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
-    filter_day = set(args.n)
-    if args.language == "cpp":
-        args.language = "c++"
-
     try:
-        os.chdir(Path(__file__).parent.parent)
-
         problems = []
         stats_elapsed = dict()
+
+        os.chdir(Path(__file__).parent.parent)
+
+        if args.venv:
+            return install_venv(args.venv)
+
+        filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
+        filter_day = set(args.n)
 
         if not args.no_build:
             build_all(filter_year)
             print(end=f"{CR}{CLEAR_EOL}")
+
+        languages = get_languages(args.language)
 
         inputs, sols = load_data(filter_year, args.filter_user)
 
@@ -375,8 +472,8 @@ def main():
                         mday,
                         inputs[year, day],
                         sols[year, day],
+                        languages,
                         problems,
-                        args.language,
                         args.refresh,
                         args.dry_run,
                     )
