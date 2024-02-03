@@ -8,7 +8,7 @@ import time
 import typing as t
 from collections import defaultdict
 from copy import deepcopy
-from datetime import timedelta
+from datetime import timedelta, datetime
 from operator import itemgetter
 from pathlib import Path
 from zlib import crc32
@@ -41,11 +41,11 @@ LANGUAGES = {
 INTERPRETERS = {
     "Python": {
         "Python": "python3",
-        "PyPy": ".pypy3.10/bin/python",
-        "Py3.10": ".py3.10/bin/python",
-        "Py3.11": ".py3.11/bin/python",
-        "Py3.12": ".py3.12/bin/python",
-        "Py3.13": ".py3.13/bin/python",
+        "PyPy": ".venv/pypy3.10/bin/python",
+        "Py3.10": ".venv/py3.10/bin/python",
+        "Py3.11": ".venv/py3.11/bin/python",
+        "Py3.12": ".venv/py3.12/bin/python",
+        "Py3.13": ".venv/py3.13/bin/python",
     }
 }
 
@@ -154,12 +154,12 @@ def run(
     start = time.time_ns()
     out = subprocess.run(cmd + [file.absolute()], stdout=subprocess.PIPE)
     elapsed = time.time_ns() - start
-    answers = out.stdout.decode().strip()
+    answers = " ".join(out.stdout.decode().strip().split("\n"))
 
     status = "unknown"
     if solution:
-        solution = solution.read_text()
-        if answers == solution.strip():
+        solution = " ".join(solution.read_text().strip().split("\n"))
+        if answers == solution:
             status = "ok"
         else:
             status = "error"
@@ -169,7 +169,13 @@ def run(
         else:
             status = "unknown"
 
-    return {"elapsed": elapsed, "status": status, "answers": answers}
+    result = {"elapsed": elapsed, "status": status, "answers": answers}
+
+    with Path("run.log").open("at") as f:
+        line = f"{datetime.now()} {lang} {cmd} {file.absolute()} {elapsed} {status} '{solution or ''}' '{answers}'"
+        print(line, file=f)
+
+    return result
 
 
 def make(year: Path, source: Path, dest: Path, cmd: str):
@@ -314,7 +320,7 @@ def run_day(
 
             status_color = {"missing": MAGENTA, "unknown": GRAY, "error": RED, "ok": GREEN}[e["status"]]
 
-            answers = e["answers"].split("\n")
+            answers = e["answers"]
 
             line = (
                 f"{CR}{RESET}{CLEAR_EOL}"
@@ -334,7 +340,7 @@ def run_day(
             if not in_cache and e["elapsed"] / 1e9 > 5:
                 save_cache()
 
-            results.add(" ".join(answers))
+            results.add(answers)
 
             elapsed[lang].append(e["elapsed"] / 1e9)
 
@@ -389,7 +395,7 @@ def install_venv(interpreter: Path):
 
         slug = subprocess.check_output([interpreter, "-c", slug]).decode().strip()
 
-        venv = "." + slug.lower()
+        venv = f".venv/{slug.lower()}"
 
         # subprocess.check_call([interpreter, "-mensurepip"])
         subprocess.check_output([interpreter, "-mvenv", venv])
