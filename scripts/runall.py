@@ -11,9 +11,11 @@ from copy import deepcopy
 from datetime import timedelta, datetime
 from operator import itemgetter
 from pathlib import Path
-from zlib import crc32
+
+# from zlib import crc32
 import sqlite3
 import shutil
+import hashlib
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -151,8 +153,10 @@ def run(
         # under macOS, the first launch of a Rust program is slower (why ???)
         subprocess.call(cmd + ["--help"], stdout=subprocess.DEVNULL)
 
+    cmd.append(file.absolute().as_posix())
+
     start = time.time_ns()
-    out = subprocess.run(cmd + [file.absolute()], stdout=subprocess.PIPE)
+    out = subprocess.run(cmd, stdout=subprocess.PIPE)
     elapsed = time.time_ns() - start
     answers = " ".join(out.stdout.decode().strip().split("\n"))
 
@@ -172,7 +176,8 @@ def run(
     result = {"elapsed": elapsed, "status": status, "answers": answers}
 
     with Path("run.log").open("at") as f:
-        line = f"{datetime.now()} {lang} {cmd} {file.absolute()} {elapsed} {status} '{solution or ''}' '{answers}'"
+        line = f"{datetime.now()} {lang} {cmd} {elapsed/1e9} {status} '{answers}'"
+        line = line.replace(Path(__file__).parent.parent.as_posix() + "/", "")
         print(line, file=f)
 
     return result
@@ -219,7 +224,7 @@ def build_all(filter_year: int):
                 make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
-def load_data(filter_year, filter_user):
+def load_data(filter_year, filter_user, filter_yearday):
     inputs = defaultdict(dict)
     solutions = defaultdict(dict)
 
@@ -241,13 +246,18 @@ def load_data(filter_year, filter_user):
         if filter_year != 0 and year != filter_year:
             continue
 
+        if filter_yearday and f"{year}:{day}" in filter_yearday:
+            continue
+
         key = f"{year}:{day}:{user}"
 
         e = check_cache(key, f, "inputs", ("crc32",))
         if e:
             crc = e["crc32"]
         else:
-            crc = hex(crc32(f.read_bytes().strip()) & 0xFFFFFFFF)
+            # crc = hex(crc32(f.read_bytes().strip()) & 0xFFFFFFFF)
+            crc = hashlib.sha256(f.read_bytes().strip()).hexdigest()
+
             update_cache(key, f, "inputs", {"crc32": crc})
 
         if crc not in inputs[year, day]:
@@ -430,13 +440,15 @@ def install_venv(interpreter: Path):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=28))
+
     parser.add_argument("--venv", type=Path, help="install virtual environment")
     parser.add_argument("-l", "--language", type=str, action="append", metavar="LANG", help="filter by language")
+    parser.add_argument("-x", "--exclude", type=str, action="append", metavar="Y:D", help="exclude day")
     parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("--no-build", action="store_true", help="do not build")
-    parser.add_argument("-u", "--user", dest="filter_user", type=str, help="filter by user id")
+    parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
@@ -459,7 +471,7 @@ def main():
 
         languages = get_languages(args.language)
 
-        inputs, sols = load_data(filter_year, args.filter_user)
+        inputs, sols = load_data(filter_year, args.filter_user, args.exclude)
 
         for year in range(2015, 2024):
             if filter_year != 0 and year != filter_year:
