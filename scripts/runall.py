@@ -237,7 +237,10 @@ def load_data(filter_year, filter_user, filter_yearday):
 
         user = f.parent.parent.name
 
-        if filter_user and user != filter_user:
+        if filter_user == "me":
+            if not user.isdigit():
+                continue
+        elif filter_user and user != filter_user:
             continue
 
         year = int(f.parent.name)
@@ -449,6 +452,7 @@ def main():
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("--no-build", action="store_true", help="do not build")
     parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
+    parser.add_argument("--no-slow", action="store_true", help="exlude slow solutions")
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
@@ -462,14 +466,26 @@ def main():
         if args.venv:
             return install_venv(args.venv)
 
+        languages = get_languages(args.language)
+
+        if args.no_slow:
+            args.exclude = args.exclude or []
+            args.exclude.extend(
+                " -x 2016:5 -x 2016:11 -x 2016:14 -x 2016:23"
+                " -x 2018:21 -x 2018:23 "
+                " -x 2019:25"  # no generic solution
+                " -x 2020:15"
+                " -x 2021:18"
+                " -x 2022:15"
+                " -x 2023:5 -x 2023:10 -x 2023:23".split()
+            )
+
         filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
         filter_day = set(args.n)
 
         if not args.no_build:
             build_all(filter_year)
             print(end=f"{CR}{CLEAR_EOL}")
-
-        languages = get_languages(args.language)
 
         inputs, sols = load_data(filter_year, args.filter_user, args.exclude)
 
