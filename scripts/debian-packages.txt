@@ -1,0 +1,6 @@
+clang
+llvm
+z3
+libgeos-dev
+libssl-dev
+libbz2-dev
