@@ -199,28 +199,33 @@ def make(year: Path, source: Path, dest: Path, cmd: str):
     subprocess.check_call(cmdline, shell=True)
 
 
-def build_all(filter_year: int):
+def build_all(filter_year: int, filter_lang: t.Iterable[str]):
     for year in range(2015, 2024):
         if filter_year != 0 and year != filter_year:
             continue
         year = Path(str(year))
         if not year.is_dir():
             continue
-        m = year / "Cargo.toml"
-        if year.is_dir() and m.is_file():
-            print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=f"{CLEAR_EOL}{CR}")
-            subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
+
+        if not filter_lang or "rust" in filter_lang:
+            m = year / "Cargo.toml"
+            if year.is_dir() and m.is_file():
+                print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=f"{CLEAR_EOL}{CR}")
+                subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
 
         for day in range(1, 26):
-            src = year / f"day{day}" / f"day{day}.c"
-            if src.is_file():
-                print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}{CR}")
-                make(year, src, f"day{day}_c", "cc -std=c11")
 
-            src = year / f"day{day}" / f"day{day}.cpp"
-            if src.is_file():
-                print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}{CR}")
-                make(year, src, f"day{day}_cpp", "c++ -std=c++17")
+            if not filter_lang or "c" in filter_lang:
+                src = year / f"day{day}" / f"day{day}.c"
+                if src.is_file():
+                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}{CR}")
+                    make(year, src, f"day{day}_c", "cc -std=c11")
+
+            if not filter_lang or "c++" in filter_lang:
+                src = year / f"day{day}" / f"day{day}.cpp"
+                if src.is_file():
+                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}{CR}")
+                    make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
 def load_data(filter_year, filter_user, filter_yearday):
@@ -366,7 +371,6 @@ def run_day(
 
 
 def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Union[str, None]]]:
-    filter_lang = set(map(str.casefold, filter_lang or ()))
 
     languages = {}
     for lang, v in LANGUAGES.items():
@@ -377,6 +381,16 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
 
                 if "/" not in interpreter and "\\" not in interpreter:
                     interpreter = shutil.which(interpreter)
+                    if not interpreter:
+                        continue
+
+                    if lang == "Python":
+                        hexversion = int(
+                            subprocess.check_output([interpreter, "-c", "import sys;print(sys.hexversion)"]).decode()
+                        )
+                        if hexversion < 0x30A0000:  # 3.10.x
+                            continue
+
                     languages[lang2] = (v, interpreter)
                 else:
                     interpreter = Path(interpreter).expanduser().absolute()
@@ -458,7 +472,9 @@ def main():
         if args.venv:
             return install_venv(args.venv)
 
-        languages = get_languages(args.language)
+        filter_lang = set(map(str.casefold, args.language or ()))
+
+        languages = get_languages(filter_lang)
 
         args.exclude = args.exclude or []
         if args.no_slow:
@@ -471,16 +487,12 @@ def main():
                 " -x 2022:15"
                 " -x 2023:5 -x 2023:10 -x 2023:23".split()
             )
-        if args.no_64:
-            args.exclude.extend(
-                " -x 2016:9 -x 2016:15" " -x 2022:11 -x 2022:20" " -x 2020:23" " -x 2023:8 -x 2023:11 -x 2023:21"
-            )
 
         filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
         filter_day = set(args.n)
 
         if not args.no_build:
-            build_all(filter_year)
+            build_all(filter_year, filter_lang)
             print(end=f"{CR}{CLEAR_EOL}")
 
         inputs, sols = load_data(filter_year, args.filter_user, args.exclude)
@@ -510,18 +522,22 @@ def main():
                     save_cache()
 
                     if elapsed:
-                        print(
-                            f"{CLEAR_EOL}--> ",
-                            " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())),
-                            f"{FEINT}({nb_samples} input{'s' if nb_samples>1 else ''}){RESET}",
-                        )
+                        if nb_samples > 1:
+                            print(
+                                f"{CR}{CLEAR_EOL}--> ",
+                                " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())),
+                                f"{FEINT}({nb_samples} input{'s' if nb_samples>1 else ''}){RESET}",
+                            )
+                        else:
+                            print(end=f"{CR}{CLEAR_EOL}")
+
                         for lang, e in elapsed.items():
                             stats_elapsed[year, day, lang] = e
 
             if filter_year == 0:
                 print(
                     "=========================="  # prefix
-                    " ==============================="  # language, status
+                    " ==========================="  # language, status
                     " ========================================"  # answers
                     " =================================="  # input path
                 )

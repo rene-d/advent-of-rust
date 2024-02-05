@@ -91,7 +91,7 @@ void solve(const std::vector<Monkey> &monkeys_orig, int rounds)
               {
                   return a.inspections > b.inspections;
               });
-    uint64_t monkey_business_level = monkeys[0].inspections * monkeys[1].inspections;
+    uint64_t monkey_business_level = (uint64_t)monkeys[0].inspections * (uint64_t)monkeys[1].inspections;
 
     std::cout << monkey_business_level << std::endl;
 }

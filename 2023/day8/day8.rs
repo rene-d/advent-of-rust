@@ -3,7 +3,7 @@
 use num::Integer;
 use std::collections::HashMap;
 
-fn lcm(values: &Vec<usize>) -> usize {
+fn lcm(values: &Vec<u64>) -> u64 {
     let mut m = 1;
     for x in values {
         m = m.lcm(x);
@@ -44,7 +44,7 @@ impl Puzzle {
         }
     }
 
-    fn solve(&self, part1: bool) -> usize {
+    fn solve(&self, part1: bool) -> u64 {
         let start = u32::from_str_radix(if part1 { "AAA" } else { "A" }, 36).unwrap();
         let stop = u32::from_str_radix(if part1 { "ZZZ" } else { "Z" }, 36).unwrap();
         let mask = if part1 { 36 * 36 * 36 } else { 36 };
@@ -81,10 +81,10 @@ impl Puzzle {
                 *node = new_node;
 
                 if new_node % mask == stop {
-                    z.insert(i, n);
+                    z.insert(i, n as u64);
 
                     if z.len() == size {
-                        let z = z.values().copied().collect::<Vec<usize>>();
+                        let z: Vec<_> = z.values().copied().collect();
                         return lcm(&z);
                     }
                 }
@@ -93,12 +93,12 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> usize {
+    fn part1(&self) -> u64 {
         self.solve(true)
     }
 
     /// Solve part two.
-    fn part2(&self) -> usize {
+    fn part2(&self) -> u64 {
         self.solve(false)
     }
 }

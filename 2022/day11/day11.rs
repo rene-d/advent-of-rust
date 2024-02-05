@@ -112,17 +112,17 @@ impl Puzzle {
     }
 
     /// Solves part one
-    fn part1(&self) -> usize {
+    fn part1(&self) -> u64 {
         self.solve(20)
     }
 
     /// Solve part two
-    fn part2(&self) -> usize {
+    fn part2(&self) -> u64 {
         self.solve(10000)
     }
 
     /// Solve the puzzle
-    fn solve(&self, rounds: usize) -> usize {
+    fn solve(&self, rounds: usize) -> u64 {
         // we need to clone the monkeys array since we modify the starting item lists
         let mut monkeys = self.monkeys.clone();
 
@@ -161,7 +161,7 @@ impl Puzzle {
             .map(|x| x.inspections)
             .collect::<Vec<usize>>();
         monkey_business.sort_by(|a, b| b.cmp(a));
-        monkey_business[0] * monkey_business[1]
+        (monkey_business[0] as u64) * (monkey_business[1] as u64)
     }
 }
 
