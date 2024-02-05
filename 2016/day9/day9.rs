@@ -9,12 +9,12 @@ fn main() {
 }
 
 /// Do part 1 of the puzzle
-fn part1(data: &str) -> usize {
-    data.split('\n').fold(0, |acc, line| acc + expand_v1(line).len())
+fn part1(data: &str) -> u64 {
+    data.split('\n').fold(0, |acc, line| acc + expand_v1(line).len() as u64)
 }
 
 /// Do part 2 of the puzzle
-fn part2(data: &str) -> usize {
+fn part2(data: &str) -> u64 {
     data.split('\n').fold(0, |acc, line| acc + expand_v2(line))
 }
 
@@ -53,12 +53,12 @@ fn expand_v1(s: &str) -> String {
 }
 
 /// ``expand_v2`` returns the length of expanded string according to the format v2.
-fn expand_v2(s: &str) -> usize {
+fn expand_v2(s: &str) -> u64 {
     expand(s, 2)
 }
 
 /// ``expand`` returns the length of the expanded string (v1 or v2).
-fn expand(s: &str, version: u8) -> usize {
+fn expand(s: &str, version: u8) -> u64 {
     let mut new_len = 0;
     let mut chars = s.chars();
 
@@ -76,13 +76,13 @@ fn expand(s: &str, version: u8) -> usize {
                 .by_ref()
                 .take_while(|c| *c != ')')
                 .collect::<String>()
-                .parse::<usize>()
+                .parse::<u64>()
                 .unwrap();
 
             let taken = chars.by_ref().take(take);
 
             let count = if version == 1 {
-                taken.count()
+                taken.count() as u64
             } else {
                 expand(taken.collect::<String>().as_str(), version)
             };
@@ -101,7 +101,7 @@ fn expand(s: &str, version: u8) -> usize {
 fn test_expand_v1() {
     fn test_v1(s: &str, expected: &str) {
         assert_eq!(expand_v1(s), expected);
-        assert_eq!(expand(s, 1), expected.len());
+        assert_eq!(expand(s, 1), expected.len() as u64);
     }
     test_v1("ADVENT", "ADVENT");
     test_v1("A(1x5)BC", "ABBBBBC");

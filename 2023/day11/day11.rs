@@ -1,9 +1,9 @@
 //! [Day 11: Cosmic Expansion](https://adventofcode.com/2023/day/11)
 
 struct Puzzle {
-    galaxies: Vec<(usize, usize)>,
-    empty_rows: Vec<usize>,
-    empty_cols: Vec<usize>,
+    galaxies: Vec<(u64, u64)>,
+    empty_rows: Vec<u64>,
+    empty_cols: Vec<u64>,
 }
 
 impl Puzzle {
@@ -21,9 +21,9 @@ impl Puzzle {
 
         let mut grid = vec![];
 
-        for (y, line) in data.lines().enumerate() {
+        for (line, y) in data.lines().zip(0..) {
             let row: Vec<_> = line.chars().collect();
-            for (x, &c) in row.iter().enumerate() {
+            for (&c, x) in row.iter().zip(0..) {
                 if c == '#' {
                     self.galaxies.push((x, y));
                 }
@@ -38,12 +38,12 @@ impl Puzzle {
 
         for x in 0..grid[0].len() {
             if (0..grid.len()).all(|y| grid[y][x] == '.') {
-                self.empty_cols.push(x);
+                self.empty_cols.push(x as u64);
             }
         }
     }
 
-    fn solve(&self, expansion_factor: usize) -> usize {
+    fn solve(&self, expansion_factor: u64) -> u64 {
         let expansion_factor = expansion_factor - 1;
         let mut result = 0;
         for (i, &(x1, y1)) in self.galaxies.iter().enumerate() {
@@ -55,7 +55,7 @@ impl Puzzle {
                     .empty_cols
                     .iter()
                     .filter(|&&col| x1.min(x2) <= col && col <= x1.max(x2))
-                    .count()
+                    .count() as u64
                     * expansion_factor;
 
                 // expand empty spaces vertically
@@ -63,7 +63,7 @@ impl Puzzle {
                     .empty_rows
                     .iter()
                     .filter(|&&row| y1.min(y2) <= row && row <= y1.max(y2))
-                    .count()
+                    .count() as u64
                     * expansion_factor;
 
                 result += distance;
@@ -74,12 +74,12 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> usize {
+    fn part1(&self) -> u64 {
         self.solve(2)
     }
 
     /// Solve part two.
-    fn part2(&self) -> usize {
+    fn part2(&self) -> u64 {
         self.solve(1_000_000)
     }
 }

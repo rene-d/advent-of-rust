@@ -57,7 +57,7 @@ impl Puzzle {
     }
 
     // Solves part one
-    fn part1(&self) -> usize {
+    fn part1(&self) -> u32 {
         let bx_min = self.beacons.iter().map(|x| x.0).min().unwrap() - self.max_d;
         let bx_max = self.beacons.iter().map(|x| x.0).max().unwrap() + self.max_d;
 
@@ -90,7 +90,7 @@ impl Puzzle {
     }
 
     // Solve part two
-    fn part2(&self) -> usize {
+    fn part2(&self) -> i64 {
         for y in 0..=self.field_size {
             // each sensor defines a zone where there is only one beacon
             // this zone is all points at a distance less than or equal to the Manhattan distance to its beacon
@@ -140,7 +140,7 @@ impl Puzzle {
 
             if column.len() > 1 {
                 let x = column.first().unwrap().1;
-                return (x * 4_000_000 + y) as usize;
+                return x * 4_000_000 + y;
             }
         }
 

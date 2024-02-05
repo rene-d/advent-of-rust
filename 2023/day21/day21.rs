@@ -63,7 +63,7 @@ impl Puzzle {
         self.garden[usize::try_from(i).unwrap()]
     }
 
-    fn count(&self, n: i32) -> usize {
+    fn count(&self, n: i32) -> u64 {
         // nota: still not really optimized, could probably memoize something
         let mut p = HashSet::new();
         p.insert((self.start_x, self.start_y));
@@ -116,10 +116,10 @@ impl Puzzle {
             p = np;
         }
 
-        p.len()
+        p.len() as u64
     }
 
-    fn big_count(&self, n: i32) -> usize {
+    fn big_count(&self, n: i32) -> u64 {
         // the step count curve is parabolic
         let (t, x0) = n.div_rem(&self.n);
 
@@ -138,18 +138,18 @@ impl Puzzle {
         let a = y2 - 2 * y1 + y0;
         let b = y1 - y0;
 
-        let t = usize::try_from(t).unwrap();
+        let t = u64::try_from(t).unwrap();
 
         a * t * (t - 1) / 2 + b * t + y0
     }
 
     /// Solve part one.
-    fn part1(&self) -> usize {
+    fn part1(&self) -> u64 {
         self.count(64)
     }
 
     /// Solve part two.
-    fn part2(&self) -> usize {
+    fn part2(&self) -> u64 {
         self.big_count(26_501_365)
     }
 }

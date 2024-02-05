@@ -20,7 +20,7 @@ impl Puzzle {
             .collect();
     }
 
-    fn solve(&self, nb_cups: usize, nb_moves: usize) -> usize {
+    fn solve(&self, nb_cups: usize, nb_moves: usize) -> u64 {
         // cups are labeled from 1 to 9 (and from 10 to ncups), cup no. 0 is *unused*
 
         let cups = |i: usize| {
@@ -68,13 +68,13 @@ impl Puzzle {
 
         if nb_cups > self.cups.len() {
             // answer for part 2
-            (pos[pos[1]]) * (pos[1])
+            (pos[pos[1]] as u64) * (pos[1] as u64)
         } else {
             // answer for part 1
             let mut result = 0;
             let mut cup = pos[1];
             while cup != 1 {
-                result = result * 10 + cup;
+                result = result * 10 + cup as u64;
                 cup = pos[cup];
             }
             result
@@ -82,12 +82,12 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> usize {
+    fn part1(&self) -> u64 {
         self.solve(self.cups.len(), 100)
     }
 
     /// Solve part two.
-    fn part2(&self) -> usize {
+    fn part2(&self) -> u64 {
         self.solve(1_000_000, 10_000_000)
     }
 }

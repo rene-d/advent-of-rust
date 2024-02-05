@@ -38,25 +38,25 @@ impl Puzzle {
     fn decrypt(&self, key: i64, rounds: usize) -> i64 {
         let mut q = VecDeque::new();
 
-        q.extend(self.numbers.iter().map(|x| (*x) * key).enumerate());
+        q.extend(self.numbers.iter().map(|x| (*x) * key).zip(0..));
 
-        let nb = self.numbers.len();
+        let nb = self.numbers.len() as i64;
 
         for _ in 0..rounds {
             for i in 0..nb {
-                let mut shift = (0usize, 0i64);
+                let mut shift = (0, 0);
 
                 while let Some(e) = q.pop_front() {
-                    if e.0 == i {
+                    if e.1 == i {
                         shift = e;
                         break;
                     }
                     q.push_back(e);
                 }
 
-                match shift.1 {
-                    o if o > 0 => q.rotate_left((o as usize) % (nb - 1)),
-                    o if o < 0 => q.rotate_right((-o as usize) % (nb - 1)),
+                match shift.0 {
+                    o if o > 0 => q.rotate_left(((o) % (nb - 1)) as usize),
+                    o if o < 0 => q.rotate_right(((-o) % (nb - 1)) as usize),
                     _ => (),
                 }
 
@@ -64,11 +64,11 @@ impl Puzzle {
             }
         }
 
-        for (i, v) in q.iter().enumerate() {
-            if v.1 == 0 {
-                return q.get((i + 1000) % nb).unwrap().1
-                    + q.get((i + 2000) % nb).unwrap().1
-                    + q.get((i + 3000) % nb).unwrap().1;
+        for (v, i) in q.iter().zip(0..) {
+            if v.0 == 0 {
+                return q.get(((i + 1000) % nb) as usize).unwrap().0
+                    + q.get(((i + 2000) % nb) as usize).unwrap().0
+                    + q.get(((i + 3000) % nb) as usize).unwrap().0;
             }
         }
         0
