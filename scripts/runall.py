@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 
 import argparse
+import hashlib
 import itertools
 import os
+import shutil
+import sqlite3
 import subprocess
 import time
 import typing as t
 from collections import defaultdict
-from copy import deepcopy
-from datetime import timedelta, datetime
+from datetime import datetime
 from operator import itemgetter
 from pathlib import Path
 
 # from zlib import crc32
-import sqlite3
-import shutil
-import hashlib
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -229,7 +228,6 @@ def load_data(filter_year, filter_user, filter_yearday):
     solutions = defaultdict(dict)
 
     for f in Path("data").rglob("*.in"):
-
         if f.name.startswith("._"):
             continue
 
@@ -304,7 +302,6 @@ def run_day(
         results = set()
 
         for lang, (pattern, interpreter) in languages.items():
-
             prog = Path(pattern.format(year=year, day=mday))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
@@ -316,7 +313,6 @@ def run_day(
                 in_cache = e is not None
 
             if not in_cache and not dry_run:
-
                 e = run(prog, lang, interpreter, file, day_sols.get(crc), warmup[lang])
 
                 if e:
@@ -370,15 +366,12 @@ def run_day(
 
 
 def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Union[str, None]]]:
-
     filter_lang = set(map(str.casefold, filter_lang or ()))
 
     languages = {}
     for lang, v in LANGUAGES.items():
-
         if lang in INTERPRETERS:
             for lang2, interpreter in INTERPRETERS[lang].items():
-
                 if filter_lang and lang2.casefold() not in filter_lang:
                     continue
 
@@ -393,7 +386,6 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
                         # print(f"language {lang2} : interpreter {interpreter} not found")
                         pass
         else:
-
             if filter_lang and lang.casefold() not in filter_lang:
                 continue
             languages[lang] = (v, None)
@@ -402,7 +394,6 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
 
 
 def install_venv(interpreter: Path):
-
     try:
         slug = 'import sys;print(((hasattr(sys, "subversion") and getattr(sys, "subversion")) or ("Py",))[0] + f"{sys.version_info.major}.{sys.version_info.minor}")'
 
@@ -452,7 +443,8 @@ def main():
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("--no-build", action="store_true", help="do not build")
     parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
-    parser.add_argument("--no-slow", action="store_true", help="exlude slow solutions")
+    parser.add_argument("--no-slow", action="store_true", help="exclude slow solutions")
+    parser.add_argument("--no-64", action="store_true", help="exclude 64-bit only solutions")
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
@@ -468,8 +460,8 @@ def main():
 
         languages = get_languages(args.language)
 
+        args.exclude = args.exclude or []
         if args.no_slow:
-            args.exclude = args.exclude or []
             args.exclude.extend(
                 " -x 2016:5 -x 2016:11 -x 2016:14 -x 2016:23"
                 " -x 2018:21 -x 2018:23 "
@@ -478,6 +470,10 @@ def main():
                 " -x 2021:18"
                 " -x 2022:15"
                 " -x 2023:5 -x 2023:10 -x 2023:23".split()
+            )
+        if args.no_64:
+            args.exclude.extend(
+                " -x 2016:9 -x 2016:15" " -x 2022:11 -x 2022:20" " -x 2020:23" " -x 2023:8 -x 2023:11 -x 2023:21"
             )
 
         filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
