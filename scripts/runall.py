@@ -137,6 +137,7 @@ def run(
     interpreter: t.Union[None, str],
     file: Path,
     solution: t.List,
+    nb_expected: int,
     warmup: bool,
 ) -> t.Dict[str, t.Any]:
     if not prog.is_file():
@@ -157,7 +158,10 @@ def run(
     start = time.time_ns()
     out = subprocess.run(cmd, stdout=subprocess.PIPE)
     elapsed = time.time_ns() - start
-    answers = " ".join(out.stdout.decode().strip().split("\n"))
+
+    answers = out.stdout.decode().strip().split("\n")
+    nb_answers = len(answers)
+    answers = " ".join(answers)
 
     status = "unknown"
     if solution:
@@ -170,7 +174,10 @@ def run(
         if answers == "":
             status = "missing"
         else:
-            status = "unknown"
+            if nb_answers != nb_expected:
+                status = "error"
+            else:
+                status = "unknown"
 
     result = {"elapsed": elapsed, "status": status, "answers": answers}
 
@@ -318,7 +325,8 @@ def run_day(
                 in_cache = e is not None
 
             if not in_cache and not dry_run:
-                e = run(prog, lang, interpreter, file, day_sols.get(crc), warmup[lang])
+                nb_expected = 2 if day <= 24 else 1
+                e = run(prog, lang, interpreter, file, day_sols.get(crc), nb_expected, warmup[lang])
 
                 if e:
                     warmup[lang] = False
