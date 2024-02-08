@@ -16,7 +16,7 @@ fields_data, your_tickets, tickets = data.split("\n\n")
 
 fields = []
 for line in fields_data.splitlines():
-    name, a, b, c, d = re.match("^([\w ]+): (\d+)-(\d+) or (\d+)-(\d+)$", line).groups()
+    name, a, b, c, d = re.match(r"^([\w ]+): (\d+)-(\d+) or (\d+)-(\d+)$", line).groups()
     a, b, c, d = map(int, (a, b, c, d))
     fields.append((name, a, b, c, d))
 

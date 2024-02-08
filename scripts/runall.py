@@ -239,7 +239,7 @@ def load_data(filter_year, filter_user, filter_yearday):
     inputs = defaultdict(dict)
     solutions = defaultdict(dict)
 
-    for f in Path("data").rglob("*.in"):
+    for f in sorted(Path("data").rglob("*.in")):
         if f.name.startswith("._"):
             continue
 
