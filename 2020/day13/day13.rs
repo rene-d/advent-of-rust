@@ -29,7 +29,7 @@ fn chinese_remainder(residues: &[i64], modulii: &[i64]) -> Option<i64> {
         sum += residue * mod_inv(p, modulus)? * p;
     }
 
-    Some(sum % prod)
+    Some(sum.rem_euclid(prod))
 }
 
 struct Puzzle {
@@ -78,10 +78,9 @@ impl Puzzle {
         let mut residues = vec![];
         let mut modulii = vec![];
 
-        for (t, id) in self.buses.iter().enumerate() {
+        for (id, t) in self.buses.iter().zip(0..) {
             if id != "x" {
                 let id: i64 = id.parse().unwrap();
-                let t = i64::try_from(t).unwrap();
                 modulii.push(id);
                 residues.push(id - t);
             }

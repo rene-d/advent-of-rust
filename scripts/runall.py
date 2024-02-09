@@ -335,6 +335,11 @@ def run_day(
             if not e:
                 continue
 
+            # if e["status"] == "unknown" and day_sols.get(crc):
+            #     with open("solve_unknown.sh", "at") as f:
+            #         u = Path(day_sols.get(crc)).parent.parent.stem
+            #         print(f"./scripts/runall.py --no-build -u {u} -r {year} {day}", file=f)
+
             if e["status"] != "ok":
                 info = f" {file}"
             else:
