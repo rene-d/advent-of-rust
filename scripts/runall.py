@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import argparse
 import hashlib
 import itertools
@@ -31,6 +32,8 @@ ITALIC = "\033[3m"
 BLINK = "\033[6m"
 CLEAR_EOL = "\033[0K"
 CR = "\r"
+TRANSIENT = f"{CLEAR_EOL}{CR}"
+
 
 LANGUAGES = {
     "Python": "{year}/day{day}/day{day}.py",
@@ -41,13 +44,13 @@ LANGUAGES = {
 
 INTERPRETERS = {
     "Python": {
-        "Python": "python3",
-        "PyPy": ".venv/pypy3.10/bin/python",
-        "Py3.10": ".venv/py3.10/bin/python",
-        "Py3.11": ".venv/py3.11/bin/python",
-        "Py3.12": ".venv/py3.12/bin/python",
-        "Py3.13": ".venv/py3.13/bin/python",
-    }
+        "Python": (".venv/python/bin/python3", "python3"),
+        "PyPy": ".venv/pypy3.10/bin/python3",
+        "Py3.10": ".venv/py3.10/bin/python3",
+        "Py3.11": ".venv/py3.11/bin/python3",
+        "Py3.12": ".venv/py3.12/bin/python3",
+        "Py3.13": ".venv/py3.13/bin/python3",
+    },
 }
 
 
@@ -105,10 +108,10 @@ def check_cache(key, file_timestamp: Path, table: str, columns: t.Iterable[str],
             # delta = timedelta(seconds=seconds)
             # print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end=f"{CR}")
 
-            print(f"{FEINT}{ITALIC}entry {key} is out of date{RESET}", end=f"{CR}")
+            print(f"{FEINT}{ITALIC}entry {key} is out of date{RESET}", end=TRANSIENT)
 
     else:
-        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end=f"{CLEAR_EOL}{CR}")
+        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end=TRANSIENT)
 
 
 def update_cache(key, timestamp: Path, table: str, row: t.Dict[str, t.Union[str, int]]) -> None:
@@ -136,12 +139,10 @@ def run(
     lang: str,
     interpreter: t.Union[None, str],
     file: Path,
-    solution: t.List,
+    answer: t.List,
     nb_expected: int,
     warmup: bool,
 ) -> t.Dict[str, t.Any]:
-    if not prog.is_file():
-        return
 
     cmd = [prog.absolute().as_posix()]
 
@@ -164,9 +165,9 @@ def run(
     answers = " ".join(answers)
 
     status = "unknown"
-    if solution:
-        solution = " ".join(solution.read_text().strip().split("\n"))
-        if answers == solution:
+    if answer:
+        answer = " ".join(answer.read_text().strip().split("\n"))
+        if answers == answer:
             status = "ok"
         else:
             status = "error"
@@ -202,7 +203,7 @@ def make(year: Path, source: Path, dest: Path, cmd: str):
         return
 
     cmdline = f"{cmd} -o {output} -Wall -Wextra -O3 -DSTANDALONE -I{source.parent} {source}"
-    print(f"{CR}{cmdline}", end="")
+    print(f"{CR}{CLEAR_EOL}{cmdline}", end="")
     subprocess.check_call(cmdline, shell=True)
 
 
@@ -217,7 +218,7 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str]):
         if not filter_lang or "rust" in filter_lang:
             m = year / "Cargo.toml"
             if year.is_dir() and m.is_file():
-                print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=f"{CLEAR_EOL}{CR}")
+                print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
                 subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
 
         for day in range(1, 26):
@@ -225,36 +226,36 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str]):
             if not filter_lang or "c" in filter_lang:
                 src = year / f"day{day}" / f"day{day}.c"
                 if src.is_file():
-                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}{CR}")
+                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
                     make(year, src, f"day{day}_c", "cc -std=c11")
 
             if not filter_lang or "c++" in filter_lang:
                 src = year / f"day{day}" / f"day{day}.cpp"
                 if src.is_file():
-                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=f"{CLEAR_EOL}{CR}")
+                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
                     make(year, src, f"day{day}_cpp", "c++ -std=c++17")
 
 
-def load_data(filter_year, filter_user, filter_yearday):
+def load_data(filter_year, filter_user, filter_yearday, with_answers):
     inputs = defaultdict(dict)
-    solutions = defaultdict(dict)
+    answers = defaultdict(dict)
 
-    for f in sorted(Path("data").rglob("*.in")):
-        if f.name.startswith("._"):
+    for input in sorted(Path("data").rglob("*.in")):
+        if input.name.startswith("._"):
             continue
 
-        assert len(f.parts) == 4
+        assert len(input.parts) == 4
 
-        user = f.parent.parent.name
+        user = input.parent.parent.name
 
         if filter_user == "me":
             if not user.isdigit():
                 continue
-        elif filter_user and user != filter_user:
+        elif filter_user and user != filter_user and user != f"tmp-{filter_user}":
             continue
 
-        year = int(f.parent.name)
-        day = int(f.stem)
+        year = int(input.parent.name)
+        day = int(input.stem)
 
         if filter_year != 0 and year != filter_year:
             continue
@@ -262,26 +263,30 @@ def load_data(filter_year, filter_user, filter_yearday):
         if filter_yearday and f"{year}:{day}" in filter_yearday:
             continue
 
+        answer = input.with_suffix(".ok")
+        if not answer.is_file():
+            answer = None
+
+        if not answer and with_answers:
+            continue
+
         key = f"{year}:{day}:{user}"
 
-        e = check_cache(key, f, "inputs", ("crc32",))
+        e = check_cache(key, input, "inputs", ("crc32",))
         if e:
             crc = e["crc32"]
         else:
             # crc = hex(crc32(f.read_bytes().strip()) & 0xFFFFFFFF)
-            crc = hashlib.sha256(f.read_bytes().strip()).hexdigest()
+            crc = hashlib.sha256(input.read_bytes().strip()).hexdigest()
 
-            update_cache(key, f, "inputs", {"crc32": crc})
+            update_cache(key, input, "inputs", {"crc32": crc})
 
         if crc not in inputs[year, day]:
-            inputs[year, day][crc] = f
-
-        s = f.with_suffix(".ok")
-        if s.is_file():
-            solutions[year, day][crc] = s
+            inputs[year, day][crc] = input
+            answers[year, day][crc] = answer
 
     save_cache()
-    return inputs, solutions
+    return inputs, answers
 
 
 def run_day(
@@ -289,7 +294,7 @@ def run_day(
     day: int,
     mday: str,
     day_inputs: t.Dict,
-    day_sols: t.Dict,
+    day_answers: t.Dict,
     languages: dict,
     problems: t.Set,
     refresh: bool,
@@ -317,6 +322,9 @@ def run_day(
             prog = Path(pattern.format(year=year, day=mday))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
+            if not prog.is_file():
+                continue
+
             if refresh:
                 e = None
                 in_cache = False
@@ -326,7 +334,7 @@ def run_day(
 
             if not in_cache and not dry_run:
                 nb_expected = 2 if day <= 24 else 1
-                e = run(prog, lang, interpreter, file, day_sols.get(crc), nb_expected, warmup[lang])
+                e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected, warmup[lang])
 
                 if e:
                     warmup[lang] = False
@@ -335,10 +343,17 @@ def run_day(
             if not e:
                 continue
 
-            # if e["status"] == "unknown" and day_sols.get(crc):
-            #     with open("solve_unknown.sh", "at") as f:
-            #         u = Path(day_sols.get(crc)).parent.parent.stem
-            #         print(f"./scripts/runall.py --no-build -u {u} -r {year} {day}", file=f)
+            if (e["status"] == "unknown" and day_answers.get(crc)) or e["status"] in ("error", "missing"):
+                script = Path(f"resolve_{e['status']}.sh")
+                if not globals().get(script):
+                    with script.open("wt") as f:
+                        print("#!/bin/sh", file=f)
+                    script.chmod(0o755)
+                    globals()[script] = True
+
+                with script.open("at") as f:
+                    script = Path(day_answers.get(crc)).parent.parent.stem
+                    print(f"./scripts/runall.py --no-build -u {script} -l {lang} -r {year} {day}", file=f)
 
             if e["status"] != "ok":
                 info = f" {file}"
@@ -441,40 +456,69 @@ def install_venv(interpreter: Path):
                 "pip",
             ]
         )
-        subprocess.check_call(
-            [
-                f"{venv}/bin/python3",
-                "-mpip",
-                "install",
-                "--no-input",
-                "--quiet",
-                "--upgrade",
-                "-r",
-                "scripts/requirements.txt",
-            ]
-        )
 
-        print(f"Virtual environment for {MAGENTA}{interpreter}{RESET} installed into: {GREEN}{venv}{RESET}")
+        print(f"Virtual environment for {MAGENTA}{interpreter}{RESET} created into: {GREEN}{venv}{RESET}")
+
+        install_requirements(venv)
 
     except subprocess.CalledProcessError as e:
         print(e)
 
 
+def install_requirements(venv: Path = None):
+    if venv is None:
+        for venv in Path(".venv").glob("*"):
+            if venv.is_dir() and (venv / "bin" / "python3").is_file():
+                install_requirements(venv)
+    else:
+        try:
+            subprocess.check_call(
+                [
+                    f"{venv}/bin/python3",
+                    "-mpip",
+                    "install",
+                    "--no-input",
+                    "--quiet",
+                    "--upgrade",
+                    "-r",
+                    "scripts/requirements.txt",
+                ]
+            )
+
+            print(f"Requirements installed into virtual environment: {GREEN}{venv}{RESET}")
+
+        except subprocess.CalledProcessError as e:
+            print(e)
+
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=28))
 
-    parser.add_argument("--venv", type=Path, help="install virtual environment")
+    parser.add_argument("--venv", type=Path, help="create and install virtual environment")
+    parser.add_argument("--reqs", action="store_true", help="install requirements into virtual environments")
+
+    parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
     parser.add_argument("-l", "--language", type=str, action="append", metavar="LANG", help="filter by language")
     parser.add_argument("-x", "--exclude", type=str, action="append", metavar="Y:D", help="exclude day")
+    parser.add_argument("--verified", action="store_true", help="only inputs with solution")
+    parser.add_argument("--no-slow", action="store_true", help="exclude slow solutions")
+
     parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("--no-build", action="store_true", help="do not build")
-    parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
-    parser.add_argument("--no-slow", action="store_true", help="exclude slow solutions")
-    parser.add_argument("--no-64", action="store_true", help="exclude 64-bit only solutions")
+
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
+
+    if not sys.stdout.isatty():
+        global RED, GREEN, BLUE, DARK_GREEN, GRAY, MAGENTA, CYAN, WHITE, YELLOW
+        RED = GREEN = BLUE = DARK_GREEN = GRAY = MAGENTA = CYAN = WHITE = YELLOW = ""
+
+        global RESET, FEINT, ITALIC, BLINK, CLEAR_EOL, CR, TRANSIENT
+        RESET = FEINT = ITALIC = BLINK = CLEAR_EOL = ""
+        TRANSIENT = "\n"
+        CR = ""
 
     try:
         problems = []
@@ -482,34 +526,62 @@ def main():
 
         os.chdir(Path(__file__).parent.parent)
 
+        # actions
         if args.venv:
             return install_venv(args.venv)
+        if args.reqs:
+            return install_requirements()
 
+        # resolve interpreters
+        for lang, variants in INTERPRETERS.items():
+            for variant in list(variants.keys()):
+                interpreters = variants[variant]
+
+                if isinstance(interpreters, tuple | list):
+                    for prog in interpreters:
+                        prog = shutil.which(prog)
+                        if prog:
+                            variants[variant] = prog
+                            break
+                    else:
+                        variants.pop(variant)
+                else:
+                    if not shutil.which(interpreters):
+                        variants.pop(variant)
+
+        # prepare the language filtering
         filter_lang = set(map(str.casefold, args.language or ()))
-
         languages = get_languages(filter_lang)
 
+        # set the exclude list
         args.exclude = args.exclude or []
         if args.no_slow:
             args.exclude.extend(
                 " -x 2016:5 -x 2016:11 -x 2016:14 -x 2016:23"
-                " -x 2018:21 -x 2018:23 "
-                " -x 2019:25"  # no generic solution
+                " -x 2018:21 -x 2018:23"
+                " -x 2019:25"  # no generic solution yet
                 " -x 2020:15"
                 " -x 2021:18"
                 " -x 2022:15"
                 " -x 2023:5 -x 2023:10 -x 2023:23".split()
             )
 
+        # prepare the filtering by date
         filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
         filter_day = set(args.n)
 
+        # build the solutions if needed
         if not args.no_build:
             build_all(filter_year, filter_lang)
             print(end=f"{CR}{CLEAR_EOL}")
 
-        inputs, sols = load_data(filter_year, args.filter_user, args.exclude)
+        # load inputs and answers
+        inputs, answers = load_data(filter_year, args.filter_user, args.exclude, args.verified)
 
+        for script in Path(".").glob("resolve_*.sh"):
+            script.unlink()
+
+        # here we go!
         for year in range(2015, 2024):
             if filter_year != 0 and year != filter_year:
                 continue
@@ -526,7 +598,7 @@ def main():
                         day,
                         mday,
                         inputs[year, day],
-                        sols[year, day],
+                        answers[year, day],
                         languages,
                         problems,
                         args.refresh,
@@ -545,7 +617,7 @@ def main():
                             print(end=f"{CR}{CLEAR_EOL}")
 
                         for lang, e in elapsed.items():
-                            stats_elapsed[year, day, lang] = e
+                            stats_elapsed[year, day, lang] = (e, nb_samples)
 
             if filter_year == 0:
                 print(
@@ -563,18 +635,47 @@ def main():
 
     finally:
         if stats_elapsed:
+            languages = sorted(set(map(itemgetter(2), stats_elapsed.keys())))
+
+            nb_puzzles = len(set((y, d) for y, d, _ in stats_elapsed.keys()))
+            nb_solutions = 0
+
             print()
             print("ELAPSED TIME:")
-            languages = sorted(set(map(itemgetter(2), stats_elapsed.keys())))
+            total_time = 0
             for lang in languages:
-                t = list(t for (_, _, i), t in stats_elapsed.items() if lang == i)
+                t = list(t for (_, _, i), (t, _) in stats_elapsed.items() if lang == i)
                 n = len(t)
                 t = sum(t)
                 print(
                     f"{YELLOW}{lang:<10}{RESET}"
-                    f" : {GREEN}{t:7.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ' '},"
+                    f" : {GREEN}{t:9.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ' '},"
                     f" average: {GREEN}{t/n:7.3f}s{RESET}"
                 )
+                total_time += t
+                nb_solutions += n
+
+            print(
+                "total     "
+                f" : {GREEN}{total_time:9.3f}s{RESET}"
+                f" for {WHITE}{nb_puzzles:3}{RESET} puzzle{'s' if nb_puzzles>1 else ' '}"
+                f" and {WHITE}{nb_solutions:5}{RESET} solution{'s' if nb_solutions>1 else ''}"
+            )
+
+            overall_total_time = sum(t * ns for t, ns in stats_elapsed.values())
+            overall_nb_solutions = sum(ns for _, ns in stats_elapsed.values())
+            if overall_nb_solutions != nb_solutions:
+                inputs_per_puzzle = round(overall_nb_solutions / nb_solutions, 1)
+                inputs_per_puzzle = f" with {inputs_per_puzzle} inputs/puzzle"
+            else:
+                inputs_per_puzzle = ""
+            print(
+                "overall   "
+                f" : {GREEN}{overall_total_time:9.3f}s{RESET}"
+                f" for {WHITE}{nb_puzzles:3}{RESET} puzzle{'s' if nb_puzzles>1 else ' '}"
+                f" and {WHITE}{overall_nb_solutions:5}{RESET} solution{'s' if overall_nb_solutions>1 else ''}"
+                f"{inputs_per_puzzle}"
+            )
 
             print()
             print("LANGUAGES COMPARISON:")
@@ -582,7 +683,7 @@ def main():
             for lang1, lang2 in itertools.combinations(languages, 2):
                 n, t1, t2 = 0, 0, 0
                 for y, d in puzzles:
-                    t = dict((lang, t) for (yy, dd, lang), t in stats_elapsed.items() if (yy, dd) == (y, d))
+                    t = dict((lang, t) for (yy, dd, lang), (t, _) in stats_elapsed.items() if (yy, dd) == (y, d))
                     if lang1 in t and lang2 in t:
                         n += 1
                         t1 += t[lang1]
