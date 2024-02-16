@@ -12,7 +12,7 @@ from intcode.Intcode import Computer  # noqa
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", action="store_true")
-parser.add_argument("-m", "--manual", action="store_true", help="play the game")
+parser.add_argument("-s", "--solve", action="store_true", help="solve my input")
 parser.add_argument("input", nargs="?", default="input.txt")
 args = parser.parse_args()
 
@@ -24,7 +24,7 @@ computer.load(software)
 computer.start()
 
 
-if not args.manual:
+if args.solve:
     if reduce(lambda a, b: a ^ b, computer.program) != -2251798974787211:
         print("work only for my puzzle input", file=sys.stderr)
         exit(2)

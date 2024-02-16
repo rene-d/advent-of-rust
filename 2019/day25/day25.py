@@ -4,133 +4,186 @@
 import argparse
 import re
 import sys
-from functools import reduce
+from collections import defaultdict
 from pathlib import Path
+import typing as t
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
 from intcode.Intcode import Computer  # noqa
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-v", "--verbose", action="store_true")
-parser.add_argument("-m", "--manual", action="store_true", help="play the game")
-parser.add_argument("input", nargs="?", default="input.txt")
-args = parser.parse_args()
 
-software = Path(args.input).read_text()
+def run(computer, command=None):
 
+    computer.flush_io()
 
-computer = Computer()
-computer.load(software)
-computer.start()
-
-
-if not args.manual:
-    if reduce(lambda a, b: a ^ b, computer.program) != -2251798974787211:
-        print("work only for my puzzle input", file=sys.stderr)
-        exit(2)
-
-    # explore the spacecraft and take items - works only for my puzzle input
-    explore_cmds = (
-        "east,east,take semiconductor,north,take planetoid,west,take food ration,west,west,"
-        + "take monolith,east,east,north,take space law space brochure,north,north,"
-        + "take weather machine,south,south,south,east,north,take antenna,east,north,"
-        + "south,north,west,east,south,south,east,north,south,west,east,west,south,east,"
-        + "south,south,south,east,inv,west,west,west,north,north,west,north,north,south,"
-        + "west,north,east,take jam,west,south,east,south,east,south,south,east,inv"
-    ).split(",")
-
-    # try all combinations of items - works only for my puzzle input
-    solve_cmds = []
-    items = "food ration,weather machine,antenna,space law space brochure,jam,semiconductor,planetoid,monolith".split(
-        ","
-    )
-    for k in range(8):
-        solve_cmds.append("drop " + items[k])
-
-    previous = 0
-    for i in range(1, 256):
-        for k in range(8):
-            if i & (1 << k) != 0:
-                if previous & (1 << k) == 0:
-                    solve_cmds.append("take " + items[k])
-            if i & (1 << k) == 0:
-                if (previous & (1 << k)) != 0:
-                    solve_cmds.append("drop " + items[k])
-        solve_cmds.append("inv")
-        solve_cmds.append("east")
-        previous = i
-
-    # let's go
-    for cmd in explore_cmds + solve_cmds:
-        if args.verbose:
-            print(f"> {cmd}")
-
-        computer.input.extend(map(ord, cmd))
+    if command:
+        computer.input.extend(map(ord, command))
         computer.input.append(10)
-        state = computer.resume()
 
-        t = "".join(map(chr, computer.output))
-        if args.verbose:
-            print(f"\033[2m{t}\033[0m")
+    computer.resume()
 
-        computer.flush_io()
+    return "".join(map(chr, computer.output))
 
-        if state != "read":
-            answer = re.search(
-                r"Oh, hello! You should be able to get in by typing (\d+) on the keypad at the main airlock.", t
-            )
-            if answer:
-                answer = answer[1]
-            break
 
-    print(answer)
+def parse(out: str) -> t.Tuple[str, t.List, t.List]:
 
-else:
-    shortcuts = {
-        "n": "north",
-        "s": "south",
-        "e": "east",
-        "w": "west",
-    }
+    room = None
+    dirs = []
+    items = []
 
-    log = Path("moves.log").open("w")
-
-    state = computer.run()
-    while state == "read":
-        t = "".join(map(chr, computer.output))
-        print(f"\033[2m{t}\033[0m")
-        computer.flush_io()
-
-        # 't' to take the current item
-        w = ""
-        take = ""
-        for line in t.splitlines():
-            if line.startswith("Items here:"):
-                w = "items"
-            elif line.startswith("- ") and w == "items":
-                take = "take " + line[2:]
-                break
+    for line in out.splitlines():
+        if line.startswith("== ") and line.endswith(" =="):
+            if not room:
+                room = line[3:-3]
+        if line.startswith("- "):
+            line = line.removeprefix("- ")
+            if line in ("north", "east", "south", "west"):
+                dirs.append(line)
             else:
-                w = ""
+                items.append(line)
 
-        while True:
-            value = input("input> ")
-            if value.strip() == "":
-                continue
+    return room, dirs, items
 
-            if take and value == "t":
-                value = take
-            else:
-                value = shortcuts.get(value, value)
 
-            print(value, file=log)
-            log.flush()
+def reverse(dir: str) -> str:
+    match dir:
+        case "north":
+            return "south"
+        case "south":
+            return "north"
+        case "east":
+            return "west"
+        case "west":
+            return "east"
 
-            computer.input.extend(map(ord, value))
-            computer.input.append(10)
-            break
+    raise ValueError(dir)
 
-        state = computer.resume()
 
-    t = "".join(map(chr, computer.output))
-    print(f"\033[2m{t}\033[0m")
+def explore(computer, map, out):
+
+    room, dirs, items = parse(out)
+
+    for dir in dirs:
+        if dir in map[room]:
+            continue
+
+        # go next room
+        out = run(computer, dir)
+
+        newroom, _, _ = parse(out)
+        known = newroom in map
+
+        map[room][dir] = newroom
+        map[newroom][reverse(dir)] = room
+
+        if "A loud" in out:
+            continue
+
+        if not known:
+            explore(computer, map, out)
+
+        # go back
+        out = run(computer, reverse(dir))
+
+    for item in items:
+
+        cmd = f"take {item}"
+
+        temp_computer = computer.clone()
+        temp_computer.max_iterations = 10000  # prevent infinite loop
+        run(temp_computer, cmd)
+
+        if temp_computer._state == "read":
+            out = run(temp_computer, "inv")
+            if "Items in your inventory" in out:
+                run(computer, cmd)
+
+
+def find_path(map, current, target, seen=set()) -> t.List[str]:
+
+    seen.add(current)
+    if current == target:
+        return []
+
+    for dir, cell in map[current].items():
+        if cell not in seen:
+            if (path := find_path(map, cell, target, seen)) is not None:
+                return [dir] + path
+
+
+def find_weight(computer, inventory, checkpoint_dir) -> str:
+
+    prev_code = 0
+    for cod in range(1 << len(inventory)):
+
+        gray_code = cod ^ (cod >> 1)
+
+        diff = gray_code - prev_code
+
+        if diff != 0:
+            cmd = "drop" if diff > 0 else "take"
+            diff = abs(diff)
+            item = 0
+            while diff & 1 == 0:
+                diff >>= 1
+                item += 1
+            run(computer, f"{cmd} {inventory[item]}")
+
+        out = run(computer, checkpoint_dir)
+        answer = re.search(r"You should be able to get in by typing (\d+) on the keypad at the main airlock.", out)
+        if answer:
+            return answer[1]
+
+        prev_code = gray_code
+
+
+def solve(software):
+
+    computer = Computer()
+    computer.load(software)
+    computer.start()
+
+    map = defaultdict(dict)
+
+    # start up
+    out = run(computer)
+    start_room, _, _ = parse(out)
+
+    # visit all rooms and take items
+    explore(computer, map, out)
+
+    # find path to the detection room
+    path = find_path(map, start_room, "Pressure-Sensitive Floor")
+
+    # the diretion to get to Security Checkpoint from Pressure-Sensitive Floor
+    checkpoint_dir = [k for k, v in map["Security Checkpoint"].items() if v == "Pressure-Sensitive Floor"][0]
+
+    # go to the pre
+    for step in path:
+        run(computer, step)
+
+    # the inventory
+    out = run(computer, "inv")
+    inventory = [s.removeprefix("- ") for s in out.splitlines() if s.startswith("- ")]
+
+    # get the unlock code
+    unlock = find_weight(computer, inventory, checkpoint_dir)
+
+    print(unlock)
+
+
+def main():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-m", "--manual", action="store_true", help="play the game")
+    parser.add_argument("input", nargs="?", default="input.txt")
+    args = parser.parse_args()
+
+    software = Path(args.input).read_text()
+
+    solve(software)
+
+
+if __name__ == "__main__":
+    main()

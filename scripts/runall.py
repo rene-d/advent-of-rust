@@ -559,7 +559,6 @@ def main():
             args.exclude.extend(
                 " -x 2016:5 -x 2016:11 -x 2016:14 -x 2016:23"
                 " -x 2018:21 -x 2018:23"
-                " -x 2019:25"  # no generic solution yet
                 " -x 2020:15"
                 " -x 2021:18"
                 " -x 2022:15"
