@@ -25,22 +25,24 @@ ENV PATH "/usr/local/cargo/bin:$PATH"
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     rustup component add rust-src && \
-    chmod 777 /usr/local/cargo
+    chmod -R 777 /usr/local/cargo
 
-# PyPy
-RUN curl -sL https://downloads.python.org/pypy/pypy3.10-v7.3.15-aarch64.tar.bz2 | tar -C /opt -xj && \
-    /opt/pypy3.10-v7.3.15-aarch64/bin/pypy3 -mensurepip
+# PyPy 3.10
+RUN if [ $(uname -m) = aarch64 ] ; then arch=aarch64 ; else arch=linux64 ; fi && \
+    curl -sL https://downloads.python.org/pypy/pypy3.10-v7.3.15-$arch.tar.bz2 | tar -C /opt -xj && \
+    /opt/pypy3.10-*/bin/pypy3 -mensurepip
+
 
 # Python 3.10 → 3.13
 COPY allpython.sh /
 RUN /allpython.sh
 
 # Virtual Environments
-RUN /opt/python/Python-3.10.13/bin/python3.10 -mvenv /venv/py3.10
-RUN /opt/python/Python-3.11.7/bin/python3.11 -mvenv /venv/py3.11
-RUN /opt/python/Python-3.12.1/bin/python3.12 -mvenv /venv/py3.12
-RUN /opt/python/Python-3.13.0a3/bin/python3.13 -mvenv /venv/py3.13
-RUN /opt/pypy3.10-v7.3.15-aarch64/bin/pypy3.10 -mvenv /venv/pypy3.10
+RUN /opt/python/Python-3.10.*/bin/python3.10 -mvenv /venv/py3.10
+RUN /opt/python/Python-3.11.*/bin/python3.11 -mvenv /venv/py3.11
+RUN /opt/python/Python-3.12.*/bin/python3.12 -mvenv /venv/py3.12
+RUN /opt/python/Python-3.13.*/bin/python3.13 -mvenv /venv/py3.13
+RUN /opt/pypy3.10-*/bin/pypy3.10 -mvenv /venv/pypy3.10
 RUN python3 -mvenv /venv/python
 
 # User environment
