@@ -31,6 +31,7 @@ Operand = namedtuple("operand", ["value", "addr"])
 
 class Computer:
     def __init__(self):
+        self.max_iterations = 0
         self.load("99")
 
     def load(self, data):
@@ -150,6 +151,7 @@ class Computer:
 
     def clone(self):
         clone = Computer()
+        clone.max_iterations = self.max_iterations
         clone.program = self.program
         clone._debug = self._debug
         clone._ip = self._ip
@@ -183,7 +185,14 @@ class Computer:
         assert self._state in ["start", "pause", "yield", "read"]
         self._state = ""
 
+        iterations = 0
+
         while ip < len(self._text):
+
+            iterations += 1
+            if self.max_iterations != 0 and iterations > self.max_iterations:
+                return ip, f"infinite loop detected at ip {ip}"
+
             if self._debug:
                 print()
                 print(self.disasm(debugger=ip))
