@@ -4,8 +4,7 @@
 import sys
 import time
 from pathlib import Path
-
-from curtsies import Input
+import argparse
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
 from intcode.Intcode import Computer  # noqa
@@ -16,6 +15,8 @@ def chunker(seq, size):
 
 
 def getch():
+    from curtsies import Input
+
     with Input(keynames="curses") as input_generator:
         for e in input_generator:
             return e
@@ -32,6 +33,18 @@ class ArcadeCabinet:
         self.computer = Computer()
         self.computer.load(program)
 
+        self.flag_auto = True
+        self.flag_show = False
+
+        self.colorize = str.maketrans(
+            {
+                "W": "\033[93m" "█" "\033[0m",
+                "x": "\033[92m" "☁︎" "\033[0m",
+                "o": "\033[91m" "✿" "\033[0m",
+                "=": "\033[96m" "▄" "\033[0m",
+            }
+        )
+
     def part1(self):
         state = self.computer.run()
         assert state == "halted"
@@ -41,13 +54,10 @@ class ArcadeCabinet:
     def show(self):
         print("\x1b\x5b\x48\x1b\x5b\x32\x4a")  # tput clear
         for row in self.screen:
-            print("".join(row))
+            print("".join(row).translate(self.colorize))
         print(f"[ score: {self.score} ]".center(self.width, "~"))
 
-    def part2(self, mode="solve"):
-        self.flag_auto = mode != "player"
-        self.flag_show = mode != "solve"
-
+    def part2(self):
         self.computer.flush_io()
         self.computer.start(output_mode="buffered")
         self.computer._poke(0, 2)  # play for free
@@ -110,10 +120,27 @@ class ArcadeCabinet:
                     return 0
 
 
-filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
-software = Path(filename).read_text()
+def main():
 
-game = ArcadeCabinet(software)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-p", "--play", action="store_true", help="play the game")
+    parser.add_argument("input", nargs="?", default="input.txt")
+    args = parser.parse_args()
 
-print(game.part1())
-print(game.part2())
+    software = Path(args.input).read_text()
+
+    game = ArcadeCabinet(software)
+
+    if args.verbose:
+        game.flag_show = True
+    if args.play:
+        game.flag_show = True
+        game.flag_auto = False
+
+    print(game.part1())
+    print(game.part2())
+
+
+if __name__ == "__main__":
+    main()
