@@ -176,7 +176,6 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", action="store_true")
-    parser.add_argument("-m", "--manual", action="store_true", help="play the game")
     parser.add_argument("input", nargs="?", default="input.txt")
     args = parser.parse_args()
 

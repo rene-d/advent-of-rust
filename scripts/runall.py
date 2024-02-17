@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-import sys
 import argparse
 import hashlib
 import itertools
+import logging
 import os
 import shutil
 import sqlite3
 import subprocess
+import sys
 import time
 import typing as t
 from collections import defaultdict
@@ -46,7 +47,7 @@ LANGUAGES = {
 
 INTERPRETERS = {
     "Python": {
-        "Python": (".venv/python/bin/python3", "python3"),
+        "Python": ".venv/python/bin/python3",
         "PyPy": ".venv/pypy3.10/bin/python3",
         "Py3.10": ".venv/py3.10/bin/python3",
         "Py3.11": ".venv/py3.11/bin/python3",
@@ -56,11 +57,11 @@ INTERPRETERS = {
 }
 
 
-def get_cache():
+def get_cache(cache_file: Path = None):
     """Retrieve the cache instance from memory or load it from disk."""
     cache = globals().get("_cache")
     if cache is None:
-        cache_file = Path(__file__).parent.parent / "data" / "cache.db"
+        cache_file = cache_file or Path(__file__).parent.parent / "data" / "cache.db"
 
         cache_db = sqlite3.connect(cache_file)
 
@@ -80,6 +81,8 @@ def get_cache():
         )
         cache = {"db": cache_db, "modified": False}
         globals()["_cache"] = cache
+
+        logging.debug(f"using cache file {cache_file}")
 
     return cache
 
@@ -141,11 +144,10 @@ def run(
     lang: str,
     interpreter: t.Union[None, str],
     file: Path,
-    answer: t.List,
+    expected: t.List,
     nb_expected: int,
     warmup: bool,
 ) -> t.Dict[str, t.Any]:
-
     cmd = [prog.absolute().as_posix()]
 
     # add the interpreter
@@ -162,25 +164,20 @@ def run(
     out = subprocess.run(cmd, stdout=subprocess.PIPE)
     elapsed = time.time_ns() - start
 
-    answers = out.stdout.decode().strip().split("\n")
-    nb_answers = len(answers)
-    answers = " ".join(answers)
-
-    status = "unknown"
-    if answer:
-        answer = " ".join(answer.read_text().strip().split("\n"))
-        if answers == answer:
-            status = "ok"
-        else:
-            status = "error"
+    if out.returncode != 0:
+        status = "error"
+        answers = ""
     else:
-        if answers == "":
-            status = "missing"
+        answers = out.stdout.decode().strip().split("\n")
+        nb_answers = len(answers)
+        answers = " ".join(answers)
+
+        status = "unknown"
+        if expected:
+            expected = " ".join(expected.read_text().strip().split("\n"))
+            status = "ok" if answers == expected else "failed"
         else:
-            if nb_answers != nb_expected:
-                status = "error"
-            else:
-                status = "unknown"
+            status = "unknown" if nb_answers == nb_expected else "failed"
 
     result = {"elapsed": elapsed, "status": status, "answers": answers}
 
@@ -224,7 +221,6 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str]):
                 subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
 
         for day in range(1, 26):
-
             if not filter_lang or "c" in filter_lang:
                 src = year / f"day{day}" / f"day{day}.c"
                 if src.is_file():
@@ -345,7 +341,7 @@ def run_day(
             if not e:
                 continue
 
-            if (e["status"] == "unknown" and day_answers.get(crc)) or e["status"] in ("error", "missing"):
+            if (e["status"] == "unknown" and day_answers.get(crc)) or e["status"] in ("error", "failed"):
                 script = Path(f"resolve_{e['status']}.sh")
                 if not globals().get(script):
                     with script.open("wt") as f:
@@ -354,15 +350,19 @@ def run_day(
                     globals()[script] = True
 
                 with script.open("at") as f:
-                    script = Path(day_answers.get(crc)).parent.parent.stem
-                    print(f"./scripts/runall.py --no-build -u {script} -l {lang} -r {year} {day}", file=f)
+                    print(f"./scripts/runall.py --no-build -u {input_name} -l {lang} -r {year} {day}", file=f)
 
             if e["status"] != "ok":
                 info = f" {file}"
             else:
                 info = ""
 
-            status_color = {"missing": MAGENTA, "unknown": GRAY, "error": RED, "ok": GREEN}[e["status"]]
+            status_color = {
+                "ok": GREEN,
+                "unknown": GRAY,
+                "failed": MAGENTA,
+                "error": RED,
+            }[e["status"]]
 
             answers = e["answers"]
 
@@ -380,7 +380,7 @@ def run_day(
             else:
                 print(line)
 
-            if e["status"] == "missing" or e["status"] == "error":
+            if e["status"] in ("error", "failed"):
                 problems.append(line)
 
             if not in_cache and e["elapsed"] / 1e9 > 5:
@@ -403,7 +403,6 @@ def run_day(
 
 
 def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Union[str, None]]]:
-
     languages = {}
     for lang, v in LANGUAGES.items():
         if lang in INTERPRETERS:
@@ -441,9 +440,12 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
 
 def install_venv(interpreter: Path):
     try:
-        slug = 'import sys;print(((hasattr(sys, "subversion") and getattr(sys, "subversion")) or ("Py",))[0] + f"{sys.version_info.major}.{sys.version_info.minor}")'
-
-        slug = subprocess.check_output([interpreter, "-c", slug]).decode().strip()
+        if interpreter.as_posix() == "python3":
+            slug = "python"
+        else:
+            # determine the Python version
+            slug = 'import sys;print(((hasattr(sys, "subversion") and getattr(sys, "subversion")) or ("Py",))[0] + f"{sys.version_info.major}.{sys.version_info.minor}")'
+            slug = subprocess.check_output([interpreter, "-c", slug]).decode().strip()
 
         venv = f".venv/{slug.lower()}"
 
@@ -496,7 +498,6 @@ def install_requirements(venv: Path = None):
 
 
 def consistency(filter_year, filter_day):
-
     import numpy as np
     import tabulate
 
@@ -542,7 +543,7 @@ def consistency(filter_year, filter_day):
 
             for elapsed, hash in v:
                 deviation = (elapsed - µ) / σ
-                if abs(deviation) > 1.5:
+                if deviation > 1.5:
                     year, day, lang = k
                     user = inputs[hash]
                     cmd = f"./scripts/runall.py -u {user:<22} -l {lang:<8} {year} {day:<2} -r"
@@ -567,6 +568,9 @@ def consistency(filter_year, filter_day):
 def main():
     parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=28))
 
+    parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
+    parser.add_argument("--cache", type=Path, help="cache database")
+
     parser.add_argument("--venv", type=Path, help="create and install virtual environment")
     parser.add_argument("--reqs", action="store_true", help="install requirements into virtual environments")
     parser.add_argument("-c", "--consistency", action="store_true", help="verify timings consistency")
@@ -584,6 +588,14 @@ def main():
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
+
+    if args.verbose:
+        logging.basicConfig(format="\033[2m%(asctime)s - %(levelname)s - %(message)s\033[0m", level=logging.DEBUG)
+    else:
+        logging.basicConfig(format="\033[2m%(asctime)s - %(levelname)s - %(message)s\033[0m", level=logging.INFO)
+
+    if args.cache:
+        get_cache(args.cache.resolve())
 
     if not sys.stdout.isatty():
         global RED, GREEN, BLUE, DARK_GREEN, GRAY, MAGENTA, CYAN, WHITE, YELLOW
@@ -631,7 +643,7 @@ def main():
             for variant in list(variants.keys()):
                 interpreters = variants[variant]
 
-                if isinstance(interpreters, tuple | list):
+                if isinstance(interpreters, tuple) or isinstance(interpreters, list):
                     for prog in interpreters:
                         prog = shutil.which(prog)
                         if prog:
