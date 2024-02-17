@@ -34,6 +34,8 @@ CLEAR_EOL = "\033[0K"
 CR = "\r"
 TRANSIENT = f"{CLEAR_EOL}{CR}"
 
+TERMINAL_COLS = 80
+
 
 LANGUAGES = {
     "Python": "{year}/day{day}/day{day}.py",
@@ -372,9 +374,11 @@ def run_day(
                 f" {WHITE}{e['elapsed']/1e9:7.3f}s"
                 f" {GRAY}{'☽' if in_cache else ' '}"
                 f" {status_color}{str(answers):<40}{RESET}"
-                f"{info}"
             )
-            print(line)
+            if TERMINAL_COLS >= 130:
+                print(line, info)
+            else:
+                print(line)
 
             if e["status"] == "missing" or e["status"] == "error":
                 problems.append(line)
@@ -491,11 +495,81 @@ def install_requirements(venv: Path = None):
             print(e)
 
 
+def consistency(filter_year, filter_day):
+
+    import numpy as np
+    import tabulate
+
+    db = get_cache()["db"]  # sqlite3.connect("data/cache.db")
+
+    timings = defaultdict(list)
+    cursor = db.execute("select key,elapsed from solutions where status!='error'")
+    for key, elapsed in cursor:
+        year, day, hash, prog, lang = key.split(":")
+        if filter_year:
+            if filter_year != int(year):
+                continue
+            if filter_day and int(day) not in filter_day:
+                continue
+        timings[int(year), int(day), lang].append((round(elapsed / 1e9, 3), hash))
+    cursor.close()
+
+    inputs = dict()
+    for hash, key in db.execute("select crc32,key from inputs"):
+        _, _, user = key.split(":")
+        if hash not in inputs or user.isdigit():
+            inputs[hash] = user
+
+    rows = list()
+    cmds = list()
+
+    for k, v in sorted(timings.items()):
+        a = np.array(list(map(itemgetter(0), v)))
+
+        # coefficient of variation
+        µ, σ = a.mean(), a.std()
+        cv = σ / µ
+        cv = round(cv * 100, 1)
+
+        # quartile coefficient of dispersion
+        q1 = np.percentile(a, 25)
+        q3 = np.percentile(a, 75)
+        qcd = (q3 - q1) / (q3 + q1)
+        qcd = round(qcd * 100, 1)
+
+        if µ > 3 and (cv > 15 or qcd > 10):
+            rows.append((" ".join(map(str, k)), µ, σ, cv, qcd, a))
+
+            for elapsed, hash in v:
+                deviation = (elapsed - µ) / σ
+                if abs(deviation) > 1.5:
+                    year, day, lang = k
+                    user = inputs[hash]
+                    cmd = f"./scripts/runall.py -u {user:<22} -l {lang:<8} {year} {day:<2} -r"
+                    # comment = f"{RESET}  # t={YELLOW}{elapsed:7.3f}{RESET} µ={GREEN}{µ:7.3f}{RESET} d={YELLOW}{deviation:4.1f}{RESET} σ"
+                    comment = f"  # t={elapsed:7.3f} µ={µ:7.3f} d={deviation:4.1f} σ"
+                    cmds.append(((year, day, user), cmd + comment))
+
+    print(tabulate.tabulate(rows, headers=("solution", "µ", "σ", "CV", "qcd", "values"), tablefmt="fancy_grid"))
+
+    cmds = sorted(cmds)
+
+    previous_key = None
+    flip_color = 0
+    for key, cmd in cmds:
+        if key != previous_key:
+            flip_color = 1 - flip_color
+            previous_key = key
+        color = [BLUE, CYAN][flip_color]
+        print(f"{color}{cmd}{RESET}")
+
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=28))
 
     parser.add_argument("--venv", type=Path, help="create and install virtual environment")
     parser.add_argument("--reqs", action="store_true", help="install requirements into virtual environments")
+    parser.add_argument("-c", "--consistency", action="store_true", help="verify timings consistency")
 
     parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
     parser.add_argument("-l", "--language", type=str, action="append", metavar="LANG", help="filter by language")
@@ -520,17 +594,37 @@ def main():
         TRANSIENT = "\n"
         CR = ""
 
+    # the terminal size
+    cols = subprocess.getoutput("tput cols")
+    if cols.isdigit():
+        global TERMINAL_COLS
+        TERMINAL_COLS = int(cols)
+
     try:
         problems = []
         stats_elapsed = dict()
 
+        # if in subdirectoy "<year>/day<day>" set the filter
+        if len(args.n) == 0:
+            cwd = Path.cwd()
+            if cwd.name.isdigit():
+                args.n.append(int(cwd.name))
+            elif cwd.name.startswith("day") and cwd.parent.name.isdigit():
+                args.n.extend((int(cwd.parent.name), int(cwd.name.removeprefix("day"))))
+
         os.chdir(Path(__file__).parent.parent)
+
+        # prepare the filtering by date
+        filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
+        filter_day = set(args.n)
 
         # actions
         if args.venv:
             return install_venv(args.venv)
         if args.reqs:
             return install_requirements()
+        if args.consistency:
+            return consistency(filter_year, filter_day)
 
         # resolve interpreters
         for lang, variants in INTERPRETERS.items():
@@ -564,10 +658,6 @@ def main():
                 " -x 2022:15"
                 " -x 2023:5 -x 2023:10 -x 2023:23".split()
             )
-
-        # prepare the filtering by date
-        filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
-        filter_day = set(args.n)
 
         # build the solutions if needed
         if not args.no_build:
