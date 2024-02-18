@@ -8,6 +8,7 @@ import subprocess
 import time
 import typing as t
 import zlib
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
@@ -528,11 +529,140 @@ def make_readme(args):
         md = "\n".join(md)
 
         if args.write:
-            (Path(session.rootdir) / str(year) / "README.md").write_text(md)
+            readme = Path(session.rootdir) / str(year) / "README.md"
+            if not readme.is_file() or md != readme.read_text():
+                readme.write_text(md)
+                print(f"{readme} written")
         else:
             print(md)
 
     readme(None, args.year, 0)
+
+
+def make_readme_main(args):
+    session = get_first_session(args)
+
+    puzzles = []
+
+    @AocSession.iter_all
+    def parse(_self, year, _day):
+        for day in range(1, 26):
+            stars = session.get_stars(year, day)
+            title = session.get_title(year, day)
+            sols = session.get_solutions(year, day)
+            puzzles.append((year, day, stars, title, sols))
+
+    parse(None, None, 0)
+
+    stars = sum(n for _year, _day, n, _title, _sols in puzzles)
+    rust = sum(1 for _year, _day, _stars, _title, sols in puzzles for f in sols if f.suffix == ".rs")
+    python = sum(1 for _year, _day, _stars, _title, sols in puzzles for f in sols if f.suffix == ".py")
+
+    rust = defaultdict(lambda: 0)
+    python = defaultdict(lambda: 0)
+    all_stars = defaultdict(lambda: 0)
+
+    for year, day, stars, title, sols in puzzles:
+        if any(f.suffix == ".rs" for f in sols):
+            rust[year] += 1
+        if any(f.suffix == ".py" for f in sols):
+            python[year] += 1
+        all_stars[year] += stars
+
+    total_rust = sum(rust.values())
+    total_python = sum(python.values())
+    total_stars = sum(all_stars.values())
+    current_calendar = max(all_stars.keys())
+
+    rows = []
+    for year in sorted(all_stars.keys(), reverse=True):
+        row = [
+            f"[Advent of Code {year}](https://adventofcode.com/{year})",
+            f"[Solutions]({year}/README.md)",
+            f"{all_stars[year]:>3}⭐",
+            f"{rust[year]:>3}",
+            f"{python[year]:>3}",
+        ]
+        rows.append(" | ".join(row))
+
+    readme = Path(__file__).parent.parent / "README.md"
+
+    md = []
+    skip = False
+    for line in readme.read_text().splitlines():
+
+        if skip:
+            if line.startswith("##"):
+                skip = False
+            else:
+                continue
+
+        if line == "## All years":
+            skip = True
+            md.append(line)
+            md.append("")
+            md.append(" | ".join(("Calendar", "Solutions", "Stars", "Rust", "Python")))
+            md.append(" | ".join(("--------", "---------", "-----", "----", "------")))
+            md.extend(rows)
+            md.append("")
+            continue
+
+        if line.startswith("## Current year"):
+            skip = True
+            line = (
+                f"## Current year"
+                f" ([Calendar](https://adventofcode.com/{current_calendar}))"
+                f" ([Solutions]({current_calendar}/)) :"
+                f" {all_stars[current_calendar]}⭐"
+            )
+            md.append(line)
+            md.append("")
+
+            width = 10
+            for year, day, stars, title, sols in puzzles:
+                if year != current_calendar:
+                    continue
+                width = max(width, len(title))
+
+            md.append(f"{'Puzzle':<{width}} | Stars | Languages")
+            md.append("-" * width + " | ----- | -----------")
+
+            year_dir = session.rootdir / str(year)
+            for year, day, stars, title, sols in puzzles:
+                if year != current_calendar:
+                    continue
+
+                if stars > 0:
+                    stars = "⭐" * stars
+
+                    files = []
+                    files.extend(f"[Rust]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rs")
+                    files.extend(f"[Python]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".py")
+                    files = " ".join(files)
+
+                    md.append(f"{title:<{width}} | {stars:<2}  | {files}")
+
+            md.append("")
+            continue
+
+        if line.startswith("![Stars:"):
+            line = f"![Stars: {total_stars}](https://img.shields.io/badge/Stars-{total_stars}⭐-blue)"
+
+        elif line.startswith("![Rust:"):
+            line = f"![Rust: {total_rust}](https://img.shields.io/badge/Rust-{total_rust}-cyan?logo=Rust)"
+
+        elif line.startswith("![Python:"):
+            line = f"![Python: {total_python}](https://img.shields.io/badge/Python-{total_python}-cyan?logo=Python)"
+
+        md.append(line)
+
+    if args.write:
+        md = "\n".join(md)
+        if not readme.is_file() or md != readme.read_text():
+            readme.write_text(md)
+            print(f"{readme} written")
+    else:
+        print("\n".join(md))
 
 
 def main():
@@ -569,6 +699,8 @@ def main():
 
     if args.readme:
         make_readme(args)
+        if args.write or args.year is None:
+            make_readme_main(args)
 
     elif args.get_titles:
         session = get_first_session(args)

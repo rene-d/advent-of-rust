@@ -20,4 +20,4 @@ input.txt
 /build/
 build/
 
-.venv/
+.venv
