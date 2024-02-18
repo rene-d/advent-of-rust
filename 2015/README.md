@@ -2,7 +2,7 @@
 
 ![AoC2015](https://img.shields.io/badge/Advent_of_Code-2015-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 22](https://img.shields.io/badge/Rust-22-cyan?logo=Rust)
+![Rust: 24](https://img.shields.io/badge/Rust-24-cyan?logo=Rust)
 ![Python: 5](https://img.shields.io/badge/Python-5-cyan?logo=Python)
 
 ## 2015 ([Calendar](https://adventofcode.com/2015)) ([Solutions](../2015/)) : 50⭐
@@ -31,6 +31,6 @@ Puzzle                                                                          
 [Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)   | ⭐⭐  | [Rust](../2015/day20/day20.rs)
 [Day 21: RPG Simulator 20XX](https://adventofcode.com/2015/day/21)                   | ⭐⭐  | [Python](../2015/day21/day21.py)
 [Day 22: Wizard Simulator 20XX](https://adventofcode.com/2015/day/22)                | ⭐⭐  | [Rust](../2015/day22/day22.rs)
-[Day 23: Opening the Turing Lock](https://adventofcode.com/2015/day/23)              | ⭐⭐  | [Python](../2015/day23/day23.py)
-[Day 24: It Hangs in the Balance](https://adventofcode.com/2015/day/24)              | ⭐⭐  | [Python](../2015/day24/day24.py)
+[Day 23: Opening the Turing Lock](https://adventofcode.com/2015/day/23)              | ⭐⭐  | [Rust](../2015/day23/day23.rs) [Python](../2015/day23/day23.py)
+[Day 24: It Hangs in the Balance](https://adventofcode.com/2015/day/24)              | ⭐⭐  | [Rust](../2015/day24/day24.rs) [Python](../2015/day24/day24.py)
 [Day 25: Let It Snow](https://adventofcode.com/2015/day/25)                          | ⭐⭐  | [Rust](../2015/day25/day25.rs)
