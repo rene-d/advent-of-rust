@@ -2,7 +2,7 @@
 
 ![AoC2020](https://img.shields.io/badge/Advent_of_Code-2020-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 5](https://img.shields.io/badge/Rust-5-cyan?logo=Rust)
+![Rust: 7](https://img.shields.io/badge/Rust-7-cyan?logo=Rust)
 ![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
 ## 2020 ([Calendar](https://adventofcode.com/2020)) ([Solutions](../2020/)) : 50⭐
@@ -11,10 +11,10 @@ Puzzle                                                                  | Stars 
 ----------------------------------------------------------------------- | ----- | -----------
 [Day 1: Report Repair](https://adventofcode.com/2020/day/1)             | ⭐⭐  | [Rust](../2020/day1/day1.rs) [Python](../2020/day1/day1.py)
 [Day 2: Password Philosophy](https://adventofcode.com/2020/day/2)       | ⭐⭐  | [Rust](../2020/day2/day2.rs) [Python](../2020/day2/day2.py)
-[Day 3: Toboggan Trajectory](https://adventofcode.com/2020/day/3)       | ⭐⭐  | [Python](../2020/day3/day3.py)
+[Day 3: Toboggan Trajectory](https://adventofcode.com/2020/day/3)       | ⭐⭐  | [Rust](../2020/day3/day3.rs) [Python](../2020/day3/day3.py)
 [Day 4: Passport Processing](https://adventofcode.com/2020/day/4)       | ⭐⭐  | [Python](../2020/day4/day4.py)
 [Day 5: Binary Boarding](https://adventofcode.com/2020/day/5)           | ⭐⭐  | [Python](../2020/day5/day5.py)
-[Day 6: Custom Customs](https://adventofcode.com/2020/day/6)            | ⭐⭐  | [Python](../2020/day6/day6.py)
+[Day 6: Custom Customs](https://adventofcode.com/2020/day/6)            | ⭐⭐  | [Rust](../2020/day6/day6.rs) [Python](../2020/day6/day6.py)
 [Day 7: Handy Haversacks](https://adventofcode.com/2020/day/7)          | ⭐⭐  | [Python](../2020/day7/day7.py)
 [Day 8: Handheld Halting](https://adventofcode.com/2020/day/8)          | ⭐⭐  | [Python](../2020/day8/day8.py)
 [Day 9: Encoding Error](https://adventofcode.com/2020/day/9)            | ⭐⭐  | [Python](../2020/day9/day9.py)
