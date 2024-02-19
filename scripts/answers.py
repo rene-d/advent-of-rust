@@ -9,7 +9,7 @@ import time
 import typing as t
 import zlib
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 
 import requests
@@ -93,14 +93,14 @@ class AocSession:
 
         self.db.execute(
             "insert into cache (url,user,last_modified,content) values (?,?,?,?)",
-            (url, self.user_id or self.sess.cookies["session"], datetime.utcnow(), zlib.compress(r.content)),
+            (url, self.user_id or self.sess.cookies["session"], datetime.now(UTC), zlib.compress(r.content)),
         )
         self.db.commit()
 
         return r.content
 
     def is_available(year, day):
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
         if (year > now.year) or (
             year == now.year and (now.month < 12 or now.day < day or (day == now.day and now.hour < 5))
         ):
@@ -110,7 +110,7 @@ class AocSession:
     def iter_all(func):
         def wrapper(self, year=None, day=None, *args, **kwargs):
             if year is None:
-                now = datetime.utcnow()
+                now = datetime.now(UTC)
                 last_year = now.year
                 if AocSession.is_available(last_year, 1):
                     last_year += 1
