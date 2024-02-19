@@ -2,14 +2,14 @@
 
 ![AoC2019](https://img.shields.io/badge/Advent_of_Code-2019-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 3](https://img.shields.io/badge/Rust-3-cyan?logo=Rust)
+![Rust: 4](https://img.shields.io/badge/Rust-4-cyan?logo=Rust)
 ![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
 ## 2019 ([Calendar](https://adventofcode.com/2019)) ([Solutions](../2019/)) : 50⭐
 
 Puzzle                                                                           | Stars | Languages
 -------------------------------------------------------------------------------- | ----- | -----------
-[Day 1: The Tyranny of the Rocket Equation](https://adventofcode.com/2019/day/1) | ⭐⭐  | [Python](../2019/day1/day1.py)
+[Day 1: The Tyranny of the Rocket Equation](https://adventofcode.com/2019/day/1) | ⭐⭐  | [Rust](../2019/day1/day1.rs) [Python](../2019/day1/day1.py)
 [Day 2: 1202 Program Alarm](https://adventofcode.com/2019/day/2)                 | ⭐⭐  | [Python](../2019/day2/day2.py)
 [Day 3: Crossed Wires](https://adventofcode.com/2019/day/3)                      | ⭐⭐  | [Python](../2019/day3/day3.py)
 [Day 4: Secure Container](https://adventofcode.com/2019/day/4)                   | ⭐⭐  | [Python](../2019/day4/day4.py)
