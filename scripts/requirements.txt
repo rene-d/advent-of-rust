@@ -3,3 +3,4 @@ sympy
 curtsies
 shapely
 tabulate
+parse
