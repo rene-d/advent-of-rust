@@ -91,14 +91,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test1.txt");
+        puzzle.configure("sample_1.txt");
         assert_eq!(puzzle.part1(), 142);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test2.txt");
+        puzzle.configure("sample_2.txt");
         assert_eq!(puzzle.part2(), 281);
     }
 }

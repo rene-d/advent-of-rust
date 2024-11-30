@@ -93,7 +93,12 @@ class AocSession:
 
         self.db.execute(
             "insert into cache (url,user,last_modified,content) values (?,?,?,?)",
-            (url, self.user_id or self.sess.cookies["session"], datetime.now(UTC), zlib.compress(r.content)),
+            (
+                url,
+                self.user_id or self.sess.cookies["session"],
+                datetime.now(UTC).isoformat(),
+                zlib.compress(r.content),
+            ),
         )
         self.db.commit()
 
@@ -572,7 +577,7 @@ def make_readme_main(args):
     total_rust = sum(rust.values())
     total_python = sum(python.values())
     total_stars = sum(all_stars.values())
-    current_calendar = max(all_stars.keys())
+    current_calendar = 2024  # max(all_stars.keys())
 
     rows = []
     for year in sorted(all_stars.keys(), reverse=True):
@@ -597,7 +602,7 @@ def make_readme_main(args):
             else:
                 continue
 
-        if line == "## All years":
+        if line == "## Paste years":
             skip = True
             md.append(line)
             md.append("")
@@ -607,10 +612,10 @@ def make_readme_main(args):
             md.append("")
             continue
 
-        if line.startswith("## Current year"):
+        if line.startswith("## Current year") or "current event" in line:
             skip = True
             line = (
-                f"## Current year"
+                f"## {current_calendar} (current event)"
                 f" ([Calendar](https://adventofcode.com/{current_calendar}))"
                 f" ([Solutions]({current_calendar}/)) :"
                 f" {all_stars[current_calendar]}⭐"

@@ -5,9 +5,9 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-geo = "0.27"
+geo = "0.29"
 geo-types = "0.7"
-itertools = "0.12"
+itertools = "0.13"
 
 [[bin]]
 name = "day10"
