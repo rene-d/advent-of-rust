@@ -59,7 +59,8 @@ fetch_input()
     session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/session)
 
     now=$(date -u +%Y%m%d%H%M%S)
-    if [[ $now == ${year}12${day}050000 ]] || [[ $now > ${year}12${day}050000 ]] ; then
+    local ts=$(printf "%04d%02d%02d%02d%02d%02d" $year 12 $day 5 0 0)
+    if [[ $now == $ts ]] || [[ $now > $ts ]] ; then
         curl "https://adventofcode.com/$year/day/$day/input" \
             -H "Cookie: session=$session" -o input.txt
         head input.txt
