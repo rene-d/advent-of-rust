@@ -484,7 +484,11 @@ def make_readme(args):
     @AocSession.iter_all
     def readme(_self, year, _day):
         puzzles = []
+        now = datetime.now(UTC)
         for day in range(1, 26):
+            available_date = datetime(year, 12, day, 5, 0, 0, 0, tzinfo=UTC)
+            if available_date > now:
+                continue
             stars = session.get_stars(year, day)
             title = session.get_title(year, day)
             sols = session.get_solutions(year, day)
@@ -551,7 +555,11 @@ def make_readme_main(args):
 
     @AocSession.iter_all
     def parse(_self, year, _day):
+        now = datetime.now(UTC)
         for day in range(1, 26):
+            available_date = datetime(year, 12, day, 5, 0, 0, 0, tzinfo=UTC)
+            if available_date > now:
+                continue
             stars = session.get_stars(year, day)
             title = session.get_title(year, day)
             sols = session.get_solutions(year, day)
