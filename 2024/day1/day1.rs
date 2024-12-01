@@ -31,7 +31,7 @@ impl Puzzle {
             }
         }
 
-        // sort the both vectors
+        // Sort both arrays
         self.left.sort();
         self.right.sort();
     }
