@@ -43,6 +43,14 @@ LANGUAGES = {
     "Rust": "{year}/target/release/day{day}",
     "C": "{year}/build/day{day}_c",
     "C++": "{year}/build/day{day}_cpp",
+    "Lua": "{year}/day{day}/day{day}.lua",
+    "Node": "{year}/day{day}/day{day}.js",
+    "Ruby": "{year}/day{day}/day{day}.rb",
+    "Bash": "{year}/day{day}/day{day}.sh",
+    "Java": "{year}/build/day{day}.class",
+    "Go": "{year}/build/day{day}_go",
+    "C#": "{year}/build/day{day}_cs.exe",
+    "Swift": "{year}/build/day{day}_swift",
 }
 
 INTERPRETERS = {
@@ -148,7 +156,16 @@ def run(
     nb_expected: int,
     warmup: bool,
 ) -> t.Dict[str, t.Any]:
-    cmd = [prog.absolute().as_posix()]
+    """
+    TODO
+    """
+
+    if prog.suffix == ".class":
+        cmd = ["java", "-cp", prog.parent, prog.stem]
+    elif prog.suffix == ".exe":
+        cmd = ["mono", prog.absolute().as_posix()]
+    else:
+        cmd = [prog.absolute().as_posix()]
 
     # add the interpreter
     if interpreter:
@@ -189,11 +206,11 @@ def run(
     return result
 
 
-def make(year: Path, source: Path, dest: Path, cmd: str):
+def make(year: int, source: Path, dest: Path, language: str):
     if not source.is_file():
         return
 
-    build = year / "build"
+    build = Path(str(year)) / "build"
     build.mkdir(parents=True, exist_ok=True)
 
     output = build / dest
@@ -201,37 +218,78 @@ def make(year: Path, source: Path, dest: Path, cmd: str):
     if output.is_file() and output.stat().st_mtime_ns >= source.stat().st_mtime_ns:
         return
 
-    cmdline = f"{cmd} -o {output} -Wall -Wextra -O3 -DSTANDALONE -I{source.parent} {source}"
+    if language == "C":
+        cmd = "cc -std=c11"
+        cmdline = f"{cmd} -o {output} -Wall -Wextra -O3 -DSTANDALONE -I{source.parent} {source}"
+    elif language == "C++":
+        cmd = "c++ -std=c++17"
+        cmdline = f"{cmd} -o {output} -Wall -Wextra -O3 -DSTANDALONE -I{source.parent} {source}"
+    elif language == "Java":
+        cmdline = f"javac -d {build} {source}"
+    elif language == "Go":
+        cmdline = f"go build -o {output} {source}"
+    elif language == "C#":
+        cmdline = f"mcs -out:{output} {source}"
+    elif language == "Swift":
+        cmdline = f"swiftc -o {output} {source}"
+    else:
+        raise ValueError(language)
+
     print(f"{CR}{CLEAR_EOL}{cmdline}", end="")
     subprocess.check_call(cmdline, shell=True)
 
 
 def build_all(filter_year: int, filter_lang: t.Iterable[str]):
-    for year in range(2015, 2024):
+    for year in range(2015, 2025):
         if filter_year != 0 and year != filter_year:
             continue
-        year = Path(str(year))
-        if not year.is_dir():
-            continue
+
+        # year = Path(str(year))
+        # if not year.is_dir():
+        #     continue
 
         if not filter_lang or "rust" in filter_lang:
-            m = year / "Cargo.toml"
-            if year.is_dir() and m.is_file():
+            m = Path(str(year)) / "Cargo.toml"
+            if m.is_file():
                 print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
                 subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
 
         for day in range(1, 26):
             if not filter_lang or "c" in filter_lang:
-                src = year / f"day{day}" / f"day{day}.c"
+                src = Path(str(year)) / f"day{day}" / f"day{day}.c"
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_c", "cc -std=c11")
+                    make(year, src, f"day{day}_c", "C")
 
             if not filter_lang or "c++" in filter_lang:
-                src = year / f"day{day}" / f"day{day}.cpp"
+                src = Path(str(year)) / f"day{day}" / f"day{day}.cpp"
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_cpp", "c++ -std=c++17")
+                    make(year, src, f"day{day}_cpp", "C++")
+
+            if not filter_lang or "java" in filter_lang:
+                src = Path(str(year)) / f"day{day}" / f"day{day}.java"
+                if src.is_file():
+                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}.class", "Java")
+
+            if not filter_lang or "go" in filter_lang:
+                src = Path(str(year)) / f"day{day}" / f"day{day}.go"
+                if src.is_file():
+                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}_go", "Go")
+
+            if not filter_lang or "c#" in filter_lang:
+                src = Path(str(year)) / f"day{day}" / f"day{day}.cs"
+                if src.is_file():
+                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}_cs.exe", "C#")
+
+            if not filter_lang or "swift" in filter_lang:
+                src = Path(str(year)) / f"day{day}" / f"day{day}.swift"
+                if src.is_file():
+                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}_swift", "Swift")
 
 
 def load_data(filter_year, filter_user, filter_yearday, with_answers):
@@ -683,7 +741,7 @@ def main():
             script.unlink()
 
         # here we go!
-        for year in range(2015, 2024):
+        for year in range(2015, 2025):
             if filter_year != 0 and year != filter_year:
                 continue
 
@@ -741,21 +799,27 @@ def main():
             nb_puzzles = len(set((y, d) for y, d, _ in stats_elapsed.keys()))
             nb_solutions = 0
 
-            print()
-            print("ELAPSED TIME:")
+            # compute elapsed time by language
             total_time = 0
+            lines = []
             for lang in languages:
                 t = list(t for (_, _, i), (t, _) in stats_elapsed.items() if lang == i)
                 n = len(t)
                 t = sum(t)
-                print(
-                    f"{YELLOW}{lang:<10}{RESET}"
-                    f" : {GREEN}{t:9.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ' '},"
-                    f" average: {GREEN}{t/n:7.3f}s{RESET}"
+                lines.append(
+                    (
+                        t,
+                        f"{YELLOW}{lang:<10}{RESET}"
+                        f" : {GREEN}{t:9.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ' '},"
+                        f" average: {GREEN}{t/n:7.3f}s{RESET}",
+                    )
                 )
                 total_time += t
                 nb_solutions += n
 
+            print()
+            print("ELAPSED TIME:")
+            print("\n".join(map(itemgetter(1), sorted(lines))))
             print(
                 "total     "
                 f" : {GREEN}{total_time:9.3f}s{RESET}"
@@ -778,8 +842,8 @@ def main():
                 f"{inputs_per_puzzle}"
             )
 
-            print()
-            print("LANGUAGES COMPARISON:")
+            # compute languages comparison
+            lines = []
             puzzles = set(map(itemgetter(0, 1), stats_elapsed.keys()))
             for lang1, lang2 in itertools.combinations(languages, 2):
                 n, t1, t2 = 0, 0, 0
@@ -794,12 +858,19 @@ def main():
                         t1, t2 = t2, t1
                         lang1, lang2 = lang2, lang1
                     faster = t2 / t1
-                    print(
-                        f"{YELLOW}{lang1:<7}{RESET}"
-                        f" vs. {YELLOW}{lang2:<7}{RESET}:"
-                        f" {GREEN}{t1/n:7.3f}s{RESET} vs. {GREEN}{t2/n:7.3f}s{RESET}"
-                        f" (x {faster:4.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ''}"
+                    lines.append(
+                        (
+                            t1 / n,
+                            t2 / n,
+                            f"{YELLOW}{lang1:<7}{RESET}"
+                            f" vs. {YELLOW}{lang2:<7}{RESET}:"
+                            f" {GREEN}{t1/n:7.3f}s{RESET} vs. {GREEN}{t2/n:7.3f}s{RESET}"
+                            f" (x {faster:4.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ''}",
+                        )
                     )
+            print()
+            print("LANGUAGES COMPARISON:")
+            print("\n".join(map(itemgetter(2), sorted(lines))))
 
         if problems:
             print()
