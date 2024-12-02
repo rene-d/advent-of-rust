@@ -1,24 +1,25 @@
 # Advent of Code in Rust 🦀
 
-![Stars: 452](https://img.shields.io/badge/Stars-452⭐-blue)
-![Rust: 172](https://img.shields.io/badge/Rust-172-cyan?logo=Rust)
-![Python: 114](https://img.shields.io/badge/Python-114-cyan?logo=Python)
+![Stars: 454](https://img.shields.io/badge/Stars-454⭐-blue)
+![Rust: 173](https://img.shields.io/badge/Rust-173-cyan?logo=Rust)
+![Python: 115](https://img.shields.io/badge/Python-115-cyan?logo=Python)
 
 Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/).
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2024 (current event) ([Calendar](https://adventofcode.com/2024)) ([Solutions](2024/)) : 2⭐
+## 2024 (current event) ([Calendar](https://adventofcode.com/2024)) ([Solutions](2024/)) : 4⭐
 
 Puzzle                                                           | Stars | Languages
 ---------------------------------------------------------------- | ----- | -----------
 [Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1) | ⭐⭐  | [Rust](2024/day1/day1.rs) [Python](2024/day1/day1.py)
+[Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)  | ⭐⭐  | [Rust](2024/day2/day2.rs) [Python](2024/day2/day2.py)
 
 ## Paste years
 
 Calendar | Solutions | Stars | Rust | Python
 -------- | --------- | ----- | ---- | ------
-[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |   2⭐ |   1 |   1
+[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |   4⭐ |   2 |   2
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](2023/README.md) |  50⭐ |  24 |  11
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) |  50⭐ |  24 |  18
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) |  50⭐ |  23 |  12
