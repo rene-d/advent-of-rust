@@ -9,5 +9,5 @@
 
 Puzzle                                                           | Stars | Languages
 ---------------------------------------------------------------- | ----- | -----------
-[Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1) | ⭐⭐  | [Rust](../2024/day1/day1.rs) [Python](../2024/day1/day1.py)
+[Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1) | ⭐⭐  | [Rust](../2024/day1/day1.rs) [Python](../2024/day1/day1.py) [C](../2024/day1/day1.c) [Go](../2024/day1/day1.go) [Ruby](../2024/day1/day1.rb) [JS](../2024/day1/day1.js) [Bash](../2024/day1/day1.sh) [Lua](../2024/day1/day1.lua) [C#](../2024/day1/day1.cs)
 [Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)  | ⭐⭐  | [Rust](../2024/day2/day2.rs) [Python](../2024/day2/day2.py)
