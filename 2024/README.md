@@ -1,12 +1,13 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 2](https://img.shields.io/badge/Stars-2⭐-blue)
-![Rust: 1](https://img.shields.io/badge/Rust-1-cyan?logo=Rust)
-![Python: 1](https://img.shields.io/badge/Python-1-cyan?logo=Python)
+![Stars: 4](https://img.shields.io/badge/Stars-4⭐-blue)
+![Rust: 2](https://img.shields.io/badge/Rust-2-cyan?logo=Rust)
+![Python: 2](https://img.shields.io/badge/Python-2-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 2⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 4⭐
 
 Puzzle                                                           | Stars | Languages
 ---------------------------------------------------------------- | ----- | -----------
 [Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1) | ⭐⭐  | [Rust](../2024/day1/day1.rs) [Python](../2024/day1/day1.py)
+[Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)  | ⭐⭐  | [Rust](../2024/day2/day2.rs) [Python](../2024/day2/day2.py)
