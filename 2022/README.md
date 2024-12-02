@@ -11,7 +11,7 @@ Puzzle                                                                   | Stars
 ------------------------------------------------------------------------ | ----- | -----------
 [Day 1: Calorie Counting](https://adventofcode.com/2022/day/1)           | ⭐⭐  | [Rust](../2022/day1/day1.rs) [Python](../2022/day1/day1_oneliner.py) [Python](../2022/day1/day1.py)
 [Day 2: Rock Paper Scissors](https://adventofcode.com/2022/day/2)        | ⭐⭐  | [Rust](../2022/day2/day2.rs) [Python](../2022/day2/day2.py)
-[Day 3: Rucksack Reorganization](https://adventofcode.com/2022/day/3)    | ⭐⭐  | [Rust](../2022/day3/day3.rs) [Python](../2022/day3/day3.py)
+[Day 3: Rucksack Reorganization](https://adventofcode.com/2022/day/3)    | ⭐⭐  | [Rust](../2022/day3/day3.rs) [Python](../2022/day3/day3.py) [C](../2022/day3/day3.c)
 [Day 4: Camp Cleanup](https://adventofcode.com/2022/day/4)               | ⭐⭐  | [Rust](../2022/day4/day4.rs) [Python](../2022/day4/day4.py)
 [Day 5: Supply Stacks](https://adventofcode.com/2022/day/5)              | ⭐⭐  | [Rust](../2022/day5/day5.rs) [Python](../2022/day5/day5.py)
 [Day 6: Tuning Trouble](https://adventofcode.com/2022/day/6)             | ⭐⭐  | [Rust](../2022/day6/day6.rs) [Python](../2022/day6/day6.py)
@@ -19,7 +19,7 @@ Puzzle                                                                   | Stars
 [Day 8: Treetop Tree House](https://adventofcode.com/2022/day/8)         | ⭐⭐  | [Rust](../2022/day8/day8.rs) [Python](../2022/day8/day8.py)
 [Day 9: Rope Bridge](https://adventofcode.com/2022/day/9)                | ⭐⭐  | [Rust](../2022/day9/day9.rs) [Python](../2022/day9/day9.py)
 [Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/day/10)         | ⭐⭐  | [Rust](../2022/day10/day10.rs) [Python](../2022/day10/day10.py)
-[Day 11: Monkey in the Middle](https://adventofcode.com/2022/day/11)     | ⭐⭐  | [Rust](../2022/day11/day11.rs) [Python](../2022/day11/day11.py)
+[Day 11: Monkey in the Middle](https://adventofcode.com/2022/day/11)     | ⭐⭐  | [Rust](../2022/day11/day11.rs) [Python](../2022/day11/day11.py) [C++](../2022/day11/day11.cpp)
 [Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/day/12)  | ⭐⭐  | [Rust](../2022/day12/day12.rs) [Python](../2022/day12/day12.py)
 [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)          | ⭐⭐  | [Rust](../2022/day13/day13.rs) [Rust](../2022/day13_nom/day13.rs) [Python](../2022/day13/day13.py)
 [Day 14: Regolith Reservoir](https://adventofcode.com/2022/day/14)       | ⭐⭐  | [Rust](../2022/day14/day14.rs) [Python](../2022/day14/day14.py)

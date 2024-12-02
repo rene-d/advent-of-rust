@@ -17,7 +17,7 @@ Puzzle                                                                          
 [Day 6: Chronal Coordinates](https://adventofcode.com/2018/day/6)                    | ⭐⭐  | [Rust](../2018/day6/day6.rs)
 [Day 7: The Sum of Its Parts](https://adventofcode.com/2018/day/7)                   | ⭐⭐  | [Rust](../2018/day7/day7.rs)
 [Day 8: Memory Maneuver](https://adventofcode.com/2018/day/8)                        | ⭐⭐  | [Rust](../2018/day8/day8.rs) [Python](../2018/day8/day8.py)
-[Day 9: Marble Mania](https://adventofcode.com/2018/day/9)                           | ⭐⭐  | [Rust](../2018/day9/day9.rs)
+[Day 9: Marble Mania](https://adventofcode.com/2018/day/9)                           | ⭐⭐  | [Rust](../2018/day9/day9.rs) [C](../2018/day9/day9.c)
 [Day 10: The Stars Align](https://adventofcode.com/2018/day/10)                      | ⭐⭐  | [Rust](../2018/day10/day10.rs)
 [Day 11: Chronal Charge](https://adventofcode.com/2018/day/11)                       | ⭐⭐  | [Rust](../2018/day11/day11.rs)
 [Day 12: Subterranean Sustainability](https://adventofcode.com/2018/day/12)          | ⭐⭐  | [Rust](../2018/day12/day12.rs)
