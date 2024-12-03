@@ -478,6 +478,34 @@ def get_first_session(args):
     exit(2)
 
 
+def get_languages(sols, year, year_dir, path_to_home):
+    files = []
+
+    for lang, suffix, icon in (
+        ("Rust", ".rs", "rust"),
+        ("Python", ".py", "python"),
+        ("C", ".c", "c"),
+        ("C++", ".cpp", "cpp"),
+        ("Go", ".go", "go"),
+        ("Ruby", ".rb", "ruby"),
+        ("Perl", ".pl", "perl"),
+        ("Lua", ".lua", "lua"),
+        ("JS", ".js", "javascript"),
+        ("Bash", ".sh", "bash"),
+        ("Swift", ".swift", "swift"),
+        ("Java", ".java", "java"),
+        ("C#", ".cs", "csharp"),
+    ):
+
+        files.extend(
+            f"[![{lang}]({path_to_home}/scripts/assets/{icon}.png)]({path_to_home}/{year}/{f.relative_to(year_dir)})"
+            for f in sols
+            if f.suffix == suffix
+        )
+
+    return " ".join(files)
+
+
 def make_readme(args):
     session = get_first_session(args)
 
@@ -522,20 +550,7 @@ def make_readme(args):
             if stars > 0:
                 stars = "⭐" * stars
 
-                files = []
-                files.extend(f"[Rust](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rs")
-                files.extend(f"[Python](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".py")
-
-                files.extend(f"[C](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".c")
-                files.extend(f"[C++](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".cpp")
-                files.extend(f"[Go](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".go")
-                files.extend(f"[Ruby](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rb")
-                files.extend(f"[JS](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".js")
-                files.extend(f"[Bash](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".sh")
-                files.extend(f"[Lua](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".lua")
-                files.extend(f"[C#](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".cs")
-
-                files = " ".join(files)
+                files = get_languages(sols, year, year_dir, "..")
 
                 md.append(f"{title:<{width}} | {stars:<2}  | {files}")
 
@@ -658,21 +673,7 @@ def make_readme_main(args):
                 if stars > 0:
                     stars = "⭐" * stars
 
-                    files = []
-                    files.extend(f"[![Rust](scripts/assets/rust.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rs")
-                    files.extend(f"[![Python](scripts/assets/python.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".py")
-
-                    files.extend(f"[![C](scripts/assets/c.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".c")
-                    files.extend(f"[![C++](scripts/assets/cpp.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".cpp")
-                    files.extend(f"[![Go](scripts/assets/go.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".go")
-                    files.extend(f"[![Ruby](scripts/assets/ruby.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rb")
-                    files.extend(f"[![Lua](scripts/assets/lua.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".lua")
-                    files.extend(f"[![JavaScript](scripts/assets/javascript.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".js")
-                    files.extend(f"[![Bash](scripts/assets/bash.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".sh")
-                    files.extend(f"[![Java](scripts/assets/java.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".java")
-                    files.extend(f"[![C#](scripts/assets/csharp.png)]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".cs")
-
-                    files = " ".join(files)
+                    files = get_languages(sols, year, year_dir, ".")
 
                     md.append(f"{title:<{width}} | {stars:<2}  | {files}")
 

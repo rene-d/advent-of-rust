@@ -21,3 +21,5 @@ input.txt
 build/
 
 .venv
+
+resolve_error.sh

@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strconv"
@@ -12,37 +11,21 @@ import (
 
 // solve computes valid mul() operations.
 // If part1 is false, obey to the do()/don't() statements.
-func solve(data string, part1 bool) int {
+func solve(data string, part1 bool) int64 {
 	var enabled bool = true
-	var totalSum int
-	i := 0
+	var totalSum int64
 
-	re := regexp.MustCompile(`^mul\((\d+),(\d+)\)`)
+	re := regexp.MustCompile(`mul\((\d+),(\d+)\)|do\(\)|don't\(\)`)
 
-	for i < len(data) {
-		if i+4 <= len(data) && data[i:i+4] == "do()" {
+	for _, m := range re.FindAllStringSubmatch(data, -1) {
+		if m[0] == "do()" {
 			enabled = true
-			i += 4
-
-		} else if i+7 <= len(data) && data[i:i+7] == "don't()" {
+		} else if m[0] == "don't()" {
 			enabled = false
-			i += 7
-
-		} else if i+4 <= len(data) && data[i:i+4] == "mul(" {
-			matches := re.FindStringSubmatch(data[i:])
-			if matches != nil {
-				if enabled || part1 {
-					x, _ := strconv.Atoi(matches[1])
-					y, _ := strconv.Atoi(matches[2])
-					totalSum += x * y
-				}
-				i += len(matches[0])
-			} else {
-				i += 4
-			}
-
-		} else {
-			i++
+		} else if enabled || part1 {
+			x, _ := strconv.ParseInt(m[1], 10, 0)
+			y, _ := strconv.ParseInt(m[2], 10, 0)
+			totalSum += x * y
 		}
 	}
 
@@ -56,7 +39,7 @@ func main() {
 		inputFile = os.Args[1]
 	}
 
-	data, err := ioutil.ReadFile(inputFile)
+	data, err := os.ReadFile(inputFile)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 		return

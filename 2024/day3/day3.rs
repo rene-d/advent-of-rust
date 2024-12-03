@@ -19,34 +19,22 @@ impl Puzzle {
     }
 
     /// Compute valid mul() operations.
-    /// if part1 is false, take care of do()/don't() statements.
-    fn solve(data: &str, part1: bool) -> u64 {
+    /// if part2 is true, take care of do()/don't() statements.
+    fn solve(data: &str, part2: bool) -> i32 {
         let mut enabled = true;
         let mut total_sum = 0;
-        let mut i = 0;
 
-        let pattern = Regex::new(r"^mul\((\d+),(\d+)\).*").unwrap();
+        let pattern = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)").unwrap();
 
-        while i < data.len() {
-            if i + 4 < data.len() && &data[i..i + 4] == "do()" {
+        for m in pattern.captures_iter(data) {
+            if m.get(0).unwrap().as_str() == "do()" {
                 enabled = true;
-                i += 4;
-            } else if i + 7 < data.len() && &data[i..i + 7] == "don't()" {
+            } else if m.get(0).unwrap().as_str() == "don't()" {
                 enabled = false;
-                i += 7;
-            } else if i + 4 < data.len() && &data[i..i + 4] == "mul(" {
-                if let Some(caps) = pattern.captures(&data[i..]) {
-                    let x: u64 = caps[1].parse().unwrap();
-                    let y: u64 = caps[2].parse().unwrap();
-                    if enabled || part1 {
-                        total_sum += x * y;
-                    }
-                    i += caps.len();
-                } else {
-                    i += 4;
-                }
-            } else {
-                i += 1;
+            } else if enabled || part2 == false {
+                let x = m[1].parse::<i32>().unwrap();
+                let y = m[2].parse::<i32>().unwrap();
+                total_sum += x * y;
             }
         }
 
@@ -54,13 +42,13 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> u64 {
-        Self::solve(&self.data, true)
+    fn part1(&self) -> i32 {
+        Self::solve(&self.data, false)
     }
 
     /// Solve part two.
-    fn part2(&self) -> u64 {
-        Self::solve(&self.data, false)
+    fn part2(&self) -> i32 {
+        Self::solve(&self.data, true)
     }
 }
 
