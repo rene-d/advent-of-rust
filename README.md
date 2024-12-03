@@ -1,25 +1,26 @@
 # Advent of Code in Rust 🦀
 
-![Stars: 454](https://img.shields.io/badge/Stars-454⭐-blue)
-![Rust: 173](https://img.shields.io/badge/Rust-173-cyan?logo=Rust)
-![Python: 115](https://img.shields.io/badge/Python-115-cyan?logo=Python)
+![Stars: 456](https://img.shields.io/badge/Stars-456⭐-blue)
+![Rust: 174](https://img.shields.io/badge/Rust-174-cyan?logo=Rust)
+![Python: 116](https://img.shields.io/badge/Python-116-cyan?logo=Python)
 
 Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/).
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2024 (current event) ([Calendar](https://adventofcode.com/2024)) ([Solutions](2024/)) : 4⭐
+## 2024 (current event) ([Calendar](https://adventofcode.com/2024)) ([Solutions](2024/)) : 6⭐
 
 Puzzle                                                           | Stars | Languages
 ---------------------------------------------------------------- | ----- | -----------
 [Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1) | ⭐⭐  | [Rust](2024/day1/day1.rs) [Python](2024/day1/day1.py) [C](../2024/day1/day1.c) [Go](../2024/day1/day1.go)
 [Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)  | ⭐⭐  | [Rust](2024/day2/day2.rs) [Python](2024/day2/day2.py)
+[Day 3: Mull It Over](https://adventofcode.com/2024/day/3)       | ⭐⭐  | [Rust](2024/day3/day3.rs) [Python](2024/day3/day3.py)
 
 ## Paste years
 
 Calendar | Solutions | Stars | Rust | Python
 -------- | --------- | ----- | ---- | ------
-[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |   4⭐ |   2 |   2
+[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |   6⭐ |   3 |   3
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](2023/README.md) |  50⭐ |  24 |  11
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) |  50⭐ |  24 |  18
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) |  50⭐ |  23 |  12
