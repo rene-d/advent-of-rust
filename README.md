@@ -13,7 +13,7 @@ Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twit
 Puzzle                                                           | Stars | Languages
 ---------------------------------------------------------------- | ----- | -----------
 [Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1) | ⭐⭐  | [Rust](2024/day1/day1.rs) [Python](2024/day1/day1.py) [C](2024/day1/day1.c) [C++](2024/day1/day1.cpp) [Go](2024/day1/day1.go)
-[Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)  | ⭐⭐  | [Rust](2024/day2/day2.rs) [Python](2024/day2/day2.py)
+[Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)  | ⭐⭐  | [Rust](2024/day2/day2.rs) [Python](2024/day2/day2.py) [Go](2024/day2/day2.go)
 [Day 3: Mull It Over](https://adventofcode.com/2024/day/3)       | ⭐⭐  | [Rust](2024/day3/day3.rs) [Python](2024/day3/day3.py)
 
 ## Paste years
