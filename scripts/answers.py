@@ -662,14 +662,14 @@ def make_readme_main(args):
                     files.extend(f"[Rust]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rs")
                     files.extend(f"[Python]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".py")
 
-                    files.extend(f"[C](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".c")
-                    files.extend(f"[C++](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".cpp")
-                    files.extend(f"[Go](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".go")
-                    # files.extend(f"[Ruby](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rb")
-                    # files.extend(f"[JS](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".js")
-                    # files.extend(f"[Bash](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".sh")
-                    # files.extend(f"[Lua](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".lua")
-                    # files.extend(f"[C#](../{year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".cs")
+                    files.extend(f"[C]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".c")
+                    files.extend(f"[C++]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".cpp")
+                    files.extend(f"[Go]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".go")
+                    # files.extend(f"[Ruby]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".rb")
+                    # files.extend(f"[JS]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".js")
+                    # files.extend(f"[Bash]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".sh")
+                    # files.extend(f"[Lua]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".lua")
+                    # files.extend(f"[C#]({year}/{f.relative_to(year_dir)})" for f in sols if f.suffix == ".cs")
 
                     files = " ".join(files)
 
