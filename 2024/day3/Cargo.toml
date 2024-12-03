@@ -1,0 +1,12 @@
+[package]
+name = "day3"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aoc = { path = "../../aoc" }
+regex = "*"
+
+[[bin]]
+name = "day3"
+path = "day3.rs"

@@ -220,10 +220,10 @@ def make(year: int, source: Path, dest: Path, language: str):
 
     if language == "C":
         cmd = "cc -std=c11"
-        cmdline = f"{cmd} -o {output} -Wall -Wextra -O3 -DSTANDALONE -I{source.parent} {source}"
+        cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
     elif language == "C++":
-        cmd = "c++ -std=c++17"
-        cmdline = f"{cmd} -o {output} -Wall -Wextra -O3 -DSTANDALONE -I{source.parent} {source}"
+        cmd = "c++ -std=c++23"
+        cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
     elif language == "Java":
         cmdline = f"javac -d {build} {source}"
     elif language == "Go":
