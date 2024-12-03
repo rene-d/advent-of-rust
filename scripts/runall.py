@@ -46,6 +46,7 @@ LANGUAGES = {
     "Lua": "{year}/day{day}/day{day}.lua",
     "Node": "{year}/day{day}/day{day}.js",
     "Ruby": "{year}/day{day}/day{day}.rb",
+    "Perl": "{year}/day{day}/day{day}.pl",
     "Bash": "{year}/day{day}/day{day}.sh",
     "Java": "{year}/build/day{day}.class",
     "Go": "{year}/build/day{day}_go",

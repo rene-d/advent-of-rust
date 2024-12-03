@@ -13,42 +13,29 @@ if self_tests := "-T" in sys.argv:
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 
 
-def solve(data: str, part1: bool):
+def part1(data: str) -> int:
+    return sum(int(m[1]) * int(m[2]) for m in re.finditer(r"mul\((\d+),(\d+)\)", data))
 
+
+def part2(data: str) -> int:
     enabled = True
     total_sum = 0
-    i = 0
-
-    while i < len(data):
-
-        if data[i : i + 4] == "do()":
+    for m in re.finditer(r"mul\((\d+),(\d+)\)|don't\(\)|do\(\)", data):
+        if m[0] == "do()":
             enabled = True
-            i += 4
-
-        elif data[i : i + 7] == "don't()":
+        elif m[0] == "don't()":
             enabled = False
-            i += 7
-
-        elif data[i : i + 4] == "mul(":
-            if m := re.match(r"mul\((\d+),(\d+)\)", data[i:]):
-                x, y = map(int, m.groups())
-                if enabled or part1:
-                    total_sum += x * y
-                i += len(m.group(0))
-            else:
-                i += 4
-
-        else:
-            i += 1
+        elif enabled:
+            total_sum += int(m[1]) * int(m[2])
 
     return total_sum
 
 
 if self_tests:
-    assert solve(Path("sample_1.txt").read_text(), True) == 161
-    assert solve(Path("sample_2.txt").read_text(), False) == 48
+    assert part1(Path("sample_1.txt").read_text()) == 161
+    assert part2(Path("sample_2.txt").read_text()) == 48
 
 else:
     data = Path(filename).read_text().strip()
-    print(solve(data, True))
-    print(solve(data, False))
+    print(part1(data))
+    print(part2(data))
