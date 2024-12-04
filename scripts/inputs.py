@@ -36,7 +36,7 @@ def transpose(m):
 datadir = Path(__file__).parent.parent / "data"
 
 t = []
-for year in range(2015, 2024):
+for year in range(2015, 2025):
     row = [f"{year}"]
 
     min_inputs = float("inf")
@@ -79,7 +79,7 @@ t.pop(0)
 print(
     tabulate.tabulate(
         t,
-        headers=["Day"] + [year for year in range(2015, 2024)],
+        headers=["Day"] + [year for year in range(2015, 2025)],
         stralign="right",
         tablefmt="rounded_outline",
     )
