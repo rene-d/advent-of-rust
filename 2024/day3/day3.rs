@@ -18,8 +18,8 @@ impl Puzzle {
         self.data = std::fs::read_to_string(path).unwrap();
     }
 
-    /// Compute valid mul() operations.
-    /// if part2 is true, take care of do()/don't() statements.
+    /// Compute valid `mul()` operations.
+    /// if part2 is true, take care of `do()`/`don't()` statements.
     fn solve(data: &str, part2: bool) -> i32 {
         let mut enabled = true;
         let mut total_sum = 0;
@@ -31,7 +31,7 @@ impl Puzzle {
                 enabled = true;
             } else if m.get(0).unwrap().as_str() == "don't()" {
                 enabled = false;
-            } else if enabled || part2 == false {
+            } else if enabled || !part2 {
                 let x = m[1].parse::<i32>().unwrap();
                 let y = m[2].parse::<i32>().unwrap();
                 total_sum += x * y;

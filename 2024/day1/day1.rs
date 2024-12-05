@@ -32,8 +32,8 @@ impl Puzzle {
         }
 
         // Sort both arrays
-        self.left.sort();
-        self.right.sort();
+        self.left.sort_unstable();
+        self.right.sort_unstable();
     }
 
     /// Solve part one.

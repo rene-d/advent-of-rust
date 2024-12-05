@@ -87,8 +87,7 @@ impl Puzzle {
                 let hs: HashSet<i32> = pu.iter().copied().take(i).collect();
 
                 if hs.intersection(or).count() != 0 {
-
-                    pu.swap(i-1, i);
+                    pu.swap(i - 1, i);
 
                     i = 0;
                     reorder = true;
