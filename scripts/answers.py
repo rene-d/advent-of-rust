@@ -495,6 +495,7 @@ def get_languages(sols, year, year_dir, path_to_home):
         ("Swift", ".swift", "swift"),
         ("Java", ".java", "java"),
         ("C#", ".cs", "csharp"),
+        ("SQLite", ".sql", "sqlite"),
     ):
 
         files.extend(
