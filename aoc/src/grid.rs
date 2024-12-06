@@ -14,7 +14,7 @@ const NEIGHBORS: [(isize, isize); 8] = [
 ];
 
 /// The four directions
-#[derive(PartialEq, Clone, Copy, Eq, Debug)]
+#[derive(PartialEq, Clone, Copy, Eq, Hash, Debug)]
 pub enum Direction {
     North,
     East,
