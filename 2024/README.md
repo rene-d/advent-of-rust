@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 10](https://img.shields.io/badge/Stars-10⭐-blue)
-![Rust: 5](https://img.shields.io/badge/Rust-5-cyan?logo=Rust)
+![Stars: 12](https://img.shields.io/badge/Stars-12⭐-blue)
+![Rust: 6](https://img.shields.io/badge/Rust-6-cyan?logo=Rust)
 ![Python: 4](https://img.shields.io/badge/Python-4-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 10⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 12⭐
 
 Puzzle                                                           | Stars | Languages
 ---------------------------------------------------------------- | ----- | -----------
@@ -14,3 +14,4 @@ Puzzle                                                           | Stars | Langu
 [Day 3: Mull It Over](https://adventofcode.com/2024/day/3)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day3/day3.rs) [![Python](../scripts/assets/python.png)](../2024/day3/day3.py) [![Go](../scripts/assets/go.png)](../2024/day3/day3.go) [![Perl](../scripts/assets/perl.png)](../2024/day3/day3.pl)
 [Day 4: Ceres Search](https://adventofcode.com/2024/day/4)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day4/day4.rs) [![Python](../scripts/assets/python.png)](../2024/day4/day4.py)
 [Day 5: Print Queue](https://adventofcode.com/2024/day/5)        | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day5/day5.rs)
+[Day 6: Guard Gallivant](https://adventofcode.com/2024/day/6)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day6/day6.rs)
