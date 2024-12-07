@@ -2,7 +2,7 @@
 
 ![Stars: 464](https://img.shields.io/badge/Stars-464⭐-blue)
 ![Rust: 178](https://img.shields.io/badge/Rust-178-cyan?logo=Rust)
-![Python: 117](https://img.shields.io/badge/Python-117-cyan?logo=Python)
+![Python: 118](https://img.shields.io/badge/Python-118-cyan?logo=Python)
 
 Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/).
 
@@ -18,13 +18,13 @@ Puzzle                                                           | Stars | Langu
 [Day 4: Ceres Search](https://adventofcode.com/2024/day/4)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day4/day4.rs) [![Python](./scripts/assets/python.png)](./2024/day4/day4.py)
 [Day 5: Print Queue](https://adventofcode.com/2024/day/5)        | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day5/day5.rs)
 [Day 6: Guard Gallivant](https://adventofcode.com/2024/day/6)    | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day6/day6.rs)
-[Day 7: Bridge Repair](https://adventofcode.com/2024/day/7)      | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day7/day7.rs)
+[Day 7: Bridge Repair](https://adventofcode.com/2024/day/7)      | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day7/day7.rs) [![Python](./scripts/assets/python.png)](./2024/day7/day7.py) [![Go](./scripts/assets/go.png)](./2024/day7/day7.go)
 
 ## Paste years
 
 Calendar | Solutions | Stars | Rust | Python
 -------- | --------- | ----- | ---- | ------
-[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |  14⭐ |   7 |   4
+[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |  14⭐ |   7 |   5
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](2023/README.md) |  50⭐ |  24 |  11
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) |  50⭐ |  24 |  18
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) |  50⭐ |  23 |  12
