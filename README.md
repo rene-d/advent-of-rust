@@ -1,30 +1,31 @@
-# Advent of Code in Rust 🦀
+# [Advent of Code](https://adventofcode.com) in Rust 🦀
 
-![Stars: 464](https://img.shields.io/badge/Stars-464⭐-blue)
-![Rust: 178](https://img.shields.io/badge/Rust-178-cyan?logo=Rust)
-![Python: 118](https://img.shields.io/badge/Python-118-cyan?logo=Python)
+![Stars: 466](https://img.shields.io/badge/Stars-466⭐-blue)
+![Rust: 179](https://img.shields.io/badge/Rust-179-cyan?logo=Rust)
+![Python: 119](https://img.shields.io/badge/Python-119-cyan?logo=Python)
 
-Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/).
+Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) and other languages.
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2024 (current event) ([Calendar](https://adventofcode.com/2024)) ([Solutions](2024/)) : 14⭐
+## 2024 (current event) ([Calendar](https://adventofcode.com/2024)) ([Solutions](2024/)) : 16⭐
 
-Puzzle                                                           | Stars | Languages
----------------------------------------------------------------- | ----- | -----------
-[Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1) | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day1/day1.rs) [![Python](./scripts/assets/python.png)](./2024/day1/day1.py) [![C](./scripts/assets/c.png)](./2024/day1/day1.c) [![C++](./scripts/assets/cpp.png)](./2024/day1/day1.cpp) [![Go](./scripts/assets/go.png)](./2024/day1/day1.go) [![Ruby](./scripts/assets/ruby.png)](./2024/day1/day1.rb) [![Lua](./scripts/assets/lua.png)](./2024/day1/day1.lua) [![JS](./scripts/assets/javascript.png)](./2024/day1/day1.js) [![Bash](./scripts/assets/bash.png)](./2024/day1/day1.sh) [![Swift](./scripts/assets/swift.png)](./2024/day1/day1.swift) [![Java](./scripts/assets/java.png)](./2024/day1/day1.java) [![C#](./scripts/assets/csharp.png)](./2024/day1/day1.cs) [![SQLite](./scripts/assets/sqlite.png)](./2024/day1/day1.sql)
-[Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)  | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day2/day2.rs) [![Python](./scripts/assets/python.png)](./2024/day2/day2.py) [![Go](./scripts/assets/go.png)](./2024/day2/day2.go)
-[Day 3: Mull It Over](https://adventofcode.com/2024/day/3)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day3/day3.rs) [![Python](./scripts/assets/python.png)](./2024/day3/day3.py) [![Go](./scripts/assets/go.png)](./2024/day3/day3.go) [![Perl](./scripts/assets/perl.png)](./2024/day3/day3.pl)
-[Day 4: Ceres Search](https://adventofcode.com/2024/day/4)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day4/day4.rs) [![Python](./scripts/assets/python.png)](./2024/day4/day4.py)
-[Day 5: Print Queue](https://adventofcode.com/2024/day/5)        | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day5/day5.rs)
-[Day 6: Guard Gallivant](https://adventofcode.com/2024/day/6)    | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day6/day6.rs)
-[Day 7: Bridge Repair](https://adventofcode.com/2024/day/7)      | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day7/day7.rs) [![Python](./scripts/assets/python.png)](./2024/day7/day7.py) [![Go](./scripts/assets/go.png)](./2024/day7/day7.go)
+Puzzle                                                              | Stars | Languages
+------------------------------------------------------------------- | ----- | -----------
+[Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1)    | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day1/day1.rs) [![Python](./scripts/assets/python.png)](./2024/day1/day1.py) [![C](./scripts/assets/c.png)](./2024/day1/day1.c) [![C++](./scripts/assets/cpp.png)](./2024/day1/day1.cpp) [![Go](./scripts/assets/go.png)](./2024/day1/day1.go) [![Ruby](./scripts/assets/ruby.png)](./2024/day1/day1.rb) [![Lua](./scripts/assets/lua.png)](./2024/day1/day1.lua) [![JS](./scripts/assets/javascript.png)](./2024/day1/day1.js) [![Bash](./scripts/assets/bash.png)](./2024/day1/day1.sh) [![Swift](./scripts/assets/swift.png)](./2024/day1/day1.swift) [![Java](./scripts/assets/java.png)](./2024/day1/day1.java) [![C#](./scripts/assets/csharp.png)](./2024/day1/day1.cs) [![SQLite](./scripts/assets/sqlite.png)](./2024/day1/day1.sql)
+[Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)     | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day2/day2.rs) [![Python](./scripts/assets/python.png)](./2024/day2/day2.py) [![Go](./scripts/assets/go.png)](./2024/day2/day2.go)
+[Day 3: Mull It Over](https://adventofcode.com/2024/day/3)          | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day3/day3.rs) [![Python](./scripts/assets/python.png)](./2024/day3/day3.py) [![Go](./scripts/assets/go.png)](./2024/day3/day3.go) [![Perl](./scripts/assets/perl.png)](./2024/day3/day3.pl)
+[Day 4: Ceres Search](https://adventofcode.com/2024/day/4)          | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day4/day4.rs) [![Python](./scripts/assets/python.png)](./2024/day4/day4.py)
+[Day 5: Print Queue](https://adventofcode.com/2024/day/5)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day5/day5.rs)
+[Day 6: Guard Gallivant](https://adventofcode.com/2024/day/6)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day6/day6.rs)
+[Day 7: Bridge Repair](https://adventofcode.com/2024/day/7)         | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day7/day7.rs) [![Python](./scripts/assets/python.png)](./2024/day7/day7.py) [![Go](./scripts/assets/go.png)](./2024/day7/day7.go)
+[Day 8: Resonant Collinearity](https://adventofcode.com/2024/day/8) | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day8/day8.rs) [![Python](./scripts/assets/python.png)](./2024/day8/day8.py)
 
 ## Paste years
 
 Calendar | Solutions | Stars | Rust | Python
 -------- | --------- | ----- | ---- | ------
-[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |  14⭐ |   7 |   5
+[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |  16⭐ |   8 |   6
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](2023/README.md) |  50⭐ |  24 |  11
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) |  50⭐ |  24 |  18
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) |  50⭐ |  23 |  12
