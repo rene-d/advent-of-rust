@@ -3,21 +3,21 @@
 use itertools::Itertools;
 use std::{
     collections::{HashMap, HashSet},
-    ops::Range,
+    ops::RangeInclusive,
 };
 
 struct Puzzle {
     antennas: HashMap<char, Vec<(i32, i32)>>,
-    width: Range<i32>,
-    height: Range<i32>,
+    width: RangeInclusive<i32>,
+    height: RangeInclusive<i32>,
 }
 
 impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
             antennas: HashMap::new(),
-            width: 0..1,
-            height: 0..1,
+            width: 0..=0,
+            height: 0..=0,
         }
     }
 
@@ -40,8 +40,8 @@ impl Puzzle {
             max_y = y;
         }
 
-        self.width = 0..(max_x + 1);
-        self.height = 0..(max_y + 1);
+        self.width = 0..=max_x;
+        self.height = 0..=max_y;
     }
 
     /// Solve part one.
@@ -49,7 +49,7 @@ impl Puzzle {
         let mut uniq = HashSet::new();
 
         for positions in self.antennas.values() {
-            for it in positions.into_iter().combinations(2) {
+            for it in positions.iter().combinations(2) {
                 let a = it[0];
                 let b = it[1];
 
@@ -75,7 +75,7 @@ impl Puzzle {
         let mut uniq = HashSet::new();
 
         for positions in self.antennas.values() {
-            for it in positions.into_iter().combinations(2) {
+            for it in positions.iter().combinations(2) {
                 let a = it[0];
                 let b = it[1];
                 let dx = b.0 - a.0;
