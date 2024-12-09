@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 16](https://img.shields.io/badge/Stars-16⭐-blue)
-![Rust: 8](https://img.shields.io/badge/Rust-8-cyan?logo=Rust)
+![Stars: 18](https://img.shields.io/badge/Stars-18⭐-blue)
+![Rust: 9](https://img.shields.io/badge/Rust-9-cyan?logo=Rust)
 ![Python: 6](https://img.shields.io/badge/Python-6-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 16⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 18⭐
 
 Puzzle                                                              | Stars | Languages
 ------------------------------------------------------------------- | ----- | -----------
@@ -17,3 +17,4 @@ Puzzle                                                              | Stars | La
 [Day 6: Guard Gallivant](https://adventofcode.com/2024/day/6)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day6/day6.rs)
 [Day 7: Bridge Repair](https://adventofcode.com/2024/day/7)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day7/day7.rs) [![Python](../scripts/assets/python.png)](../2024/day7/day7.py) [![Go](../scripts/assets/go.png)](../2024/day7/day7.go)
 [Day 8: Resonant Collinearity](https://adventofcode.com/2024/day/8) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day8/day8.rs) [![Python](../scripts/assets/python.png)](../2024/day8/day8.py)
+[Day 9: Disk Fragmenter](https://adventofcode.com/2024/day/9)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day9/day9.rs)
