@@ -22,9 +22,9 @@ impl Puzzle {
 
         self.grid = aoc::grid::Grid::<char>::parse(&data);
 
-        for (x, y, p) in self.grid.iter() {
+        for (xy, p) in self.grid.iter() {
             if p == &'^' {
-                self.start = (x, y);
+                self.start = xy;
                 break;
             }
         }
@@ -115,17 +115,17 @@ impl Puzzle {
 
         let mut stuck = 0;
 
-        for (ox, oy, c) in self.grid.iter() {
+        for (xy, c) in self.grid.iter() {
             // optimization: if the guard never walks to this position,
             // an obstruction cannot deviate him
-            if !normal_walk.contains(&(ox, oy)) {
+            if !normal_walk.contains(&xy) {
                 continue;
             }
 
             if c == &'.' {
                 // can choose this position for the obstruction
 
-                let obstruction = (ox, oy);
+                let obstruction = xy;
 
                 let (mut x, mut y) = self.start;
                 let mut direction = grid::Direction::North;

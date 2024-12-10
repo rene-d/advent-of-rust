@@ -124,19 +124,19 @@ impl<T> Grid<T> {
         (self.width, self.height)
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (usize, usize, &T)> {
+    pub fn iter(&self) -> impl Iterator<Item = ((usize, usize), &T)> {
         self.g.iter().enumerate().map(move |(i, c)| {
             let x = i % self.width;
             let y = i / self.width;
-            (x, y, c)
+            ((x, y), c)
         })
     }
 
-    pub fn iter_mut(&mut self) -> impl Iterator<Item = (usize, usize, &mut T)> {
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = ((usize, usize), &mut T)> {
         self.g.iter_mut().enumerate().map(|(i, c)| {
             let x = i % self.width;
             let y = i / self.width;
-            (x, y, c)
+            ((x, y), c)
         })
     }
 
