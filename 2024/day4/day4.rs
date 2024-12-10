@@ -23,7 +23,7 @@ impl Puzzle {
     fn part1(&self) -> u32 {
         let mut n = 0;
         let (sx, sy) = self.grid.size();
-        for (x, y, _p) in self.grid.iter().filter(|p| p.2 == &'X') {
+        for ((x, y), _p) in self.grid.iter().filter(|(_, p)| *p == &'X') {
             //
             if x <= sx - 4 && (1..4).all(|i| self.grid[(x + i, y)] == ['M', 'A', 'S'][i - 1]) {
                 n += 1;
