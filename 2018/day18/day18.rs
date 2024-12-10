@@ -15,12 +15,12 @@ type Area = Grid<u8>;
 fn collect(area: &Area) -> Area {
     let mut new_area = Grid::<u8>::with_size(area.size().0, area.size().1);
 
-    for (x, y, acre) in area.iter() {
+    for (xy, acre) in area.iter() {
         let (trees, lumberyards) = {
             let mut trees = 0;
             let mut lumberyards = 0;
 
-            for c in area.iter_neighbors((x, y)) {
+            for c in area.iter_neighbors(xy) {
                 match area[c] {
                     TREE => trees += 1,
                     LUMBERYARD => lumberyards += 1,
@@ -52,7 +52,7 @@ fn collect(area: &Area) -> Area {
             _ => (),
         }
 
-        new_area[(x, y)] = acre;
+        new_area[xy] = acre;
     }
 
     new_area
@@ -62,7 +62,7 @@ fn value(area: &Area) -> u32 {
     let mut trees = 0;
     let mut lumberyards = 0;
 
-    for (_, _, c) in area.iter() {
+    for (_, c) in area.iter() {
         match *c {
             TREE => trees += 1,
             LUMBERYARD => lumberyards += 1,
@@ -76,7 +76,7 @@ fn value(area: &Area) -> u32 {
 fn hashable(area: &Area) -> Vec<u8> {
     let mut s = Vec::new();
 
-    for (_, _, &c) in area.iter() {
+    for (_, &c) in area.iter() {
         s.push(c);
     }
     s

@@ -46,7 +46,7 @@ impl Puzzle {
 
         self.grid = Grid::<char>::parse(&data);
 
-        for (x, y, c) in self.grid.iter_mut() {
+        for ((x, y), c) in self.grid.iter_mut() {
             match c {
                 '<' => {
                     self.carts.push(Cart {
@@ -100,13 +100,13 @@ impl Puzzle {
             .map(|cart| ((cart.x, cart.y), cart.d))
             .collect::<HashMap<_, _>>();
 
-        for (x, y, c) in self.grid.iter() {
-            if let Some(d) = carts.get(&(x, y)) {
+        for (xy, c) in self.grid.iter() {
+            if let Some(d) = carts.get(&xy) {
                 print!("\x1b[32m{}\x1b[0m", d.arrow());
             } else {
                 print!("{c}");
             }
-            if x == self.grid.size().0 - 1 {
+            if xy.0 == self.grid.size().0 - 1 {
                 println!();
             }
         }

@@ -105,7 +105,7 @@ def show(data, show_date):
 
 
 def cookie():
-    session_file = Path(__file__).parent.parent / "session"
+    session_file = Path(__file__).parent.parent / ".session"
     if not session_file.is_file():
         click.echo("session file not found", err=True)
 

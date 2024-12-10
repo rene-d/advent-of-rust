@@ -56,7 +56,7 @@ fetch_input()
     local opening
     local waiting
 
-    session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/session)
+    session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/.session)
 
     now=$(date -u +%Y%m%d%H%M%S)
     local ts=$(printf "%04d%02d%02d%02d%02d%02d" $year 12 $day 5 0 0)
@@ -85,7 +85,7 @@ fetch_samples()
 
     [[ $available ]] || return 0
 
-    session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/session)
+    session=$(awk '/^[^#].*/{ if (! session) session=$1 } END{print session}' < $rootdir/.session)
 
     curl -s "https://adventofcode.com/$year/day/$day" \
         -H "Cookie: session=$session" | python3 -EB -c '

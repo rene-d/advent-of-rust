@@ -24,9 +24,9 @@ impl Puzzle {
     fn solve(&self) -> (u32, u32) {
         let mut points = vec![];
 
-        for (x, y, c) in self.grid.iter() {
+        for (xy, c) in self.grid.iter() {
             if c.is_ascii_digit() {
-                points.push((x, y));
+                points.push(xy);
             }
         }
 

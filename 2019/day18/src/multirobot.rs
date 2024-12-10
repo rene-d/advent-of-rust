@@ -11,7 +11,7 @@ impl Multirobot for Grid<u8> {
     fn update(&mut self) {
         let (x, y) = self
             .iter()
-            .find_map(|(x, y, c)| if c.is_entrance() { Some((x, y)) } else { None })
+            .find_map(|(xy, c)| if c.is_entrance() { Some(xy) } else { None })
             .unwrap();
 
         self[(x, y)].set_wall();
