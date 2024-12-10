@@ -56,7 +56,7 @@ fn get_all_paths(maze: &Grid<u8>) -> (u8, HashMap<u8, Vec<Path>>) {
 
     let mut num_robots = 0;
 
-    for (x, y, c) in maze.iter() {
+    for (xy, c) in maze.iter() {
         let mut c = *c;
 
         if c.is_entrance() || c.is_key() {
@@ -65,7 +65,7 @@ fn get_all_paths(maze: &Grid<u8>) -> (u8, HashMap<u8, Vec<Path>>) {
                 c = b'0' + num_robots;
             }
 
-            all_paths.insert(c, get_paths_from(maze, (x, y)));
+            all_paths.insert(c, get_paths_from(maze, xy));
         }
     }
 
@@ -76,8 +76,8 @@ impl Dijkstra for Grid<u8> {
     fn search(&self) -> usize {
         let all_keys = self
             .iter()
-            .filter(|(_, _, c)| c.is_key())
-            .fold(0, |all_keys, (_, _, c)| all_keys | 1 << (c - b'a'));
+            .filter(|(_, c)| c.is_key())
+            .fold(0, |all_keys, (_, c)| all_keys | 1 << (c - b'a'));
 
         let (num_robots, all_paths) = get_all_paths(self);
 

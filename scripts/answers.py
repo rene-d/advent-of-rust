@@ -65,7 +65,7 @@ class AocSession:
 
     def get_cookie_sessions():
         """Return the list of cookie sessions from `session` file."""
-        f = AocSession.rootdir / "session"
+        f = AocSession.rootdir / ".session"
         sessions = []
         if f.exists():
             for line in f.read_text().splitlines():
@@ -716,8 +716,8 @@ def main():
     parser.add_argument("--ystars", action="store_true", help="show stars by year")
     parser.add_argument("--yes", action="store_true", help="always yes")
     parser.add_argument("--inputs", action="store_true", help="download inputs")
-    parser.add_argument("--titles", action="store_true", help="set puzzlz titles")
-    parser.add_argument("--get-titles", action="store_true", help="get puzzlz title")
+    parser.add_argument("--titles", action="store_true", help="set puzzle titles")
+    parser.add_argument("--get-titles", action="store_true", help="get puzzle title")
     parser.add_argument("--readme", action="store_true", help="make readme")
     parser.add_argument("-w", "--write", action="store_true", help="write the readme")
 

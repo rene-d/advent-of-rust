@@ -151,19 +151,19 @@ impl Puzzle {
 
         let grid = Grid::parse(&data);
 
-        for (x, y, u) in grid.iter() {
+        for (xy, u) in grid.iter() {
             match u {
                 &GOBLIN | &ELF => {
                     self.units.push(Unit {
-                        x,
-                        y,
+                        x: xy.0,
+                        y: xy.1,
                         hit_points: 200,
                         attack_power: 3,
                         race: *u,
                     });
                 }
                 &WALL => {
-                    self.wall.insert((x, y));
+                    self.wall.insert(xy);
                 }
                 _ => (),
             }

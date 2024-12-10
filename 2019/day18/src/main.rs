@@ -28,9 +28,9 @@ impl Puzzle {
         let mut entrance = (0, 0);
         let mut all_keys = 0u32;
 
-        for (x, y, c) in self.maze.iter() {
+        for (xy, c) in self.maze.iter() {
             match c {
-                b'@' => entrance = (x, y),
+                b'@' => entrance = xy,
                 b'a'..=b'z' => all_keys |= 1 << u32::from(*c - b'a'),
                 _ => (),
             }
