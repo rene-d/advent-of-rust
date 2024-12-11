@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # [Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 verbose = "-v" in sys.argv
 if verbose:

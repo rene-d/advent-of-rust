@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # [Day 8: Resonant Collinearity](https://adventofcode.com/2024/day/8)
 
-from pathlib import Path
+import itertools
+import sys
 from collections import defaultdict
-import sys, itertools
+from pathlib import Path
 
 verbose = "-v" in sys.argv
 if verbose:
