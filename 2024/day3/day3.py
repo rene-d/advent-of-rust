@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # [Day 3: Mull It Over](https://adventofcode.com/2024/day/3)
 
-from pathlib import Path
-import sys, re
 import re
-
+import sys
+from pathlib import Path
 
 if verbose := "-v" in sys.argv:
     sys.argv.remove("-v")

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # [Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1)
 
-from pathlib import Path
-from collections import Counter
 import sys
+from collections import Counter
+from pathlib import Path
 
 verbose = "-v" in sys.argv
 if verbose:
