@@ -19,4 +19,4 @@ Puzzle                                                              | Stars | La
 [Day 8: Resonant Collinearity](https://adventofcode.com/2024/day/8) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day8/day8.rs) [![Python](../scripts/assets/python.png)](../2024/day8/day8.py)
 [Day 9: Disk Fragmenter](https://adventofcode.com/2024/day/9)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day9/day9.rs)
 [Day 10: Hoof It](https://adventofcode.com/2024/day/10)             | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day10/day10.rs)
-[Day 11: Plutonian Pebbles](https://adventofcode.com/2024/day/11)   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day11/day11.rs)
+[Day 11: Plutonian Pebbles](https://adventofcode.com/2024/day/11)   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day11/day11.rs) [![Go](../scripts/assets/go.png)](../2024/day11/day11.go)
