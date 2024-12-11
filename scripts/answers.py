@@ -9,7 +9,7 @@ import time
 import typing as t
 import zlib
 from collections import defaultdict
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from pathlib import Path
 
 import requests
@@ -396,7 +396,7 @@ class AocSession:
         for day in days:
             if day.is_dir():
                 for f in day.glob("day*.*"):
-                    if f.is_file():
+                    if f.is_file() or (f.is_dir() and any(f.iterdir())):
                         sols.append(f)
                 f = day / "src" / "main.rs"
                 if f.is_file():
@@ -496,6 +496,7 @@ def get_languages(sols, year, year_dir, path_to_home):
         ("Java", ".java", "java"),
         ("C#", ".cs", "csharp"),
         ("SQLite", ".sql", "sqlite"),
+        ("Linux Kernel", ".kernel", "kernel"),
     ):
 
         files.extend(
