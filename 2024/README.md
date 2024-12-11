@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 20](https://img.shields.io/badge/Stars-20⭐-blue)
-![Rust: 10](https://img.shields.io/badge/Rust-10-cyan?logo=Rust)
+![Stars: 22](https://img.shields.io/badge/Stars-22⭐-blue)
+![Rust: 11](https://img.shields.io/badge/Rust-11-cyan?logo=Rust)
 ![Python: 6](https://img.shields.io/badge/Python-6-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 20⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 22⭐
 
 Puzzle                                                              | Stars | Languages
 ------------------------------------------------------------------- | ----- | -----------
@@ -19,3 +19,4 @@ Puzzle                                                              | Stars | La
 [Day 8: Resonant Collinearity](https://adventofcode.com/2024/day/8) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day8/day8.rs) [![Python](../scripts/assets/python.png)](../2024/day8/day8.py)
 [Day 9: Disk Fragmenter](https://adventofcode.com/2024/day/9)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day9/day9.rs)
 [Day 10: Hoof It](https://adventofcode.com/2024/day/10)             | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day10/day10.rs)
+[Day 11: Plutonian Pebbles](https://adventofcode.com/2024/day/11)   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day11/day11.rs)
