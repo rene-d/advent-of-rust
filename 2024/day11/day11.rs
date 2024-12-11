@@ -21,6 +21,10 @@ impl Puzzle {
             .collect();
     }
 
+    /// Blink all stone within the frequency map according to the blink process:
+    /// - stone 0 becomes stone 1
+    /// - stone with a even length number splits into two
+    /// - otherwise stone number is multiplied by 2024
     fn blink(stone_counts: &HashMap<u64, u64>) -> HashMap<u64, u64> {
         let mut new_counts = HashMap::new();
 
@@ -54,6 +58,7 @@ impl Puzzle {
         new_counts
     }
 
+    /// Blink `blinks` times and returns the total number of stones.
     fn solve(&self, blinks: usize) -> u64 {
         let mut stone_counts = HashMap::new();
 
