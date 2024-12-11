@@ -48,7 +48,7 @@ fn solve(abs_min: i32, abs_max: i32, ord_min: i32, ord_max: i32) -> (i32, i32) {
     let mut part1 = 0;
     let mut part2 = 0;
 
-    for vx0 in 0..300 {
+    for vx0 in 0..400 {
         for vy0 in -300..2000 {
             let mut hit = false;
             let mut y_max = 0;
