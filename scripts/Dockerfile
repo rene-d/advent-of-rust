@@ -9,11 +9,9 @@ RUN apt-get update && \
 # dependency for some puzzles
 RUN apt-get install -y z3
 
-# to compile Python 3.x
-RUN apt-get install -y libssl-dev liblzma-dev
 
-# seems to be mandatory/useful to compile Python 3.13
-RUN apt-get install -y libreadline-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev libb2-dev
+# seems to be mandatory/useful to compile Python 3.x
+RUN apt-get install -y libssl-dev liblzma-dev libreadline-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libbz2-dev libffi-dev zlib1g-dev
 
 # required to build shapely and numpy, if needed
 RUN apt-get install -y libgeos-dev gfortran libopenblas-dev liblapack-dev

@@ -18,6 +18,7 @@ i()
     curl -sL $url | tar -C /tmp -xJ
     cd /tmp/Python-$v
     ./configure --prefix=/opt/python/Python-$v --enable-optimizations
+    cat config.log | grep "^py_cv_module_" | grep -Ev "=(yes|n/a)$" | ! grep -q ^
     make -j$(nproc --ignore=1)
     make altinstall
     # /opt/python/Python-$v/bin/python$m -mensurepip
@@ -31,10 +32,10 @@ i()
 
 a()
 {
-    i 3.10.13
-    i 3.11.8
-    i 3.12.2
-    i 3.13.0
+    i 3.10.16
+    i 3.11.11
+    i 3.12.8
+    i 3.13.1
 }
 
 if [ ${1-} ]; then
