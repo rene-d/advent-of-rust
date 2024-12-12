@@ -167,6 +167,33 @@ impl<T> Grid<T> {
         })
     }
 
+    /// Returns an iterator over the all four directions, within the limits of the grid.
+    pub fn iter_directions_full(
+        &self,
+        (x, y): (usize, usize),
+    ) -> impl Iterator<Item = (Direction, Option<(usize, usize)>)> + '_ {
+        [
+            Direction::North,
+            Direction::East,
+            Direction::South,
+            Direction::West,
+        ]
+        .iter()
+        .map(move |&d| {
+            if d == Direction::North && y > 0 {
+                (d, Some((x, y - 1)))
+            } else if d == Direction::East && x < self.width - 1 {
+                (d, Some((x + 1, y)))
+            } else if d == Direction::South && y < self.height - 1 {
+                (d, Some((x, y + 1)))
+            } else if d == Direction::West && x > 0 {
+                (d, Some((x - 1, y)))
+            } else {
+                (d, None)
+            }
+        })
+    }
+
     /// Returns an iterator over the all eight neighbors, within the limits of the grid.
     pub fn iter_neighbors(
         &self,
