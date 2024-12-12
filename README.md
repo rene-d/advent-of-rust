@@ -1,14 +1,14 @@
 # [Advent of Code](https://adventofcode.com) in Rust 🦀
 
-![Stars: 472](https://img.shields.io/badge/Stars-472⭐-blue)
-![Rust: 182](https://img.shields.io/badge/Rust-182-cyan?logo=Rust)
+![Stars: 474](https://img.shields.io/badge/Stars-474⭐-blue)
+![Rust: 183](https://img.shields.io/badge/Rust-183-cyan?logo=Rust)
 ![Python: 119](https://img.shields.io/badge/Python-119-cyan?logo=Python)
 
 Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) and other languages.
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2024 (current event) ([Calendar](https://adventofcode.com/2024)) ([Solutions](2024/)) : 22⭐
+## 2024 (current event) ([Calendar](https://adventofcode.com/2024)) ([Solutions](2024/)) : 24⭐
 
 Puzzle                                                              | Stars | Languages
 ------------------------------------------------------------------- | ----- | -----------
@@ -23,12 +23,13 @@ Puzzle                                                              | Stars | La
 [Day 9: Disk Fragmenter](https://adventofcode.com/2024/day/9)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day9/day9.rs)
 [Day 10: Hoof It](https://adventofcode.com/2024/day/10)             | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day10/day10.rs)
 [Day 11: Plutonian Pebbles](https://adventofcode.com/2024/day/11)   | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day11/day11.rs) [![Go](./scripts/assets/go.png)](./2024/day11/day11.go)
+[Day 12: Garden Groups](https://adventofcode.com/2024/day/12)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day12/day12.rs)
 
 ## Paste years
 
 Calendar | Solutions | Stars | Rust | Python
 -------- | --------- | ----- | ---- | ------
-[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |  22⭐ |  11 |   6
+[Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |  24⭐ |  12 |   6
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](2023/README.md) |  50⭐ |  24 |  11
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) |  50⭐ |  24 |  18
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) |  50⭐ |  23 |  12
