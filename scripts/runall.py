@@ -681,7 +681,10 @@ def main():
             if cwd.name.isdigit():
                 args.n.append(int(cwd.name))
             elif cwd.name.startswith("day") and cwd.parent.name.isdigit():
-                args.n.extend((int(cwd.parent.name), int(cwd.name.removeprefix("day"))))
+                day = cwd.name.removeprefix("day")
+                if "_" in day:
+                    day = day[: day.find("_")]
+                args.n.extend((int(cwd.parent.name), int(day)))
 
         os.chdir(Path(__file__).parent.parent)
 

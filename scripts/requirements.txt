@@ -4,3 +4,4 @@ curtsies
 shapely
 tabulate
 parse
+z3-solver
