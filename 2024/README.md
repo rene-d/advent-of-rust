@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 24](https://img.shields.io/badge/Stars-24⭐-blue)
-![Rust: 12](https://img.shields.io/badge/Rust-12-cyan?logo=Rust)
-![Python: 6](https://img.shields.io/badge/Python-6-cyan?logo=Python)
+![Stars: 26](https://img.shields.io/badge/Stars-26⭐-blue)
+![Rust: 14](https://img.shields.io/badge/Rust-14-cyan?logo=Rust)
+![Python: 7](https://img.shields.io/badge/Python-7-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 24⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 26⭐
 
 Puzzle                                                              | Stars | Languages
 ------------------------------------------------------------------- | ----- | -----------
@@ -21,3 +21,4 @@ Puzzle                                                              | Stars | La
 [Day 10: Hoof It](https://adventofcode.com/2024/day/10)             | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day10/day10.rs)
 [Day 11: Plutonian Pebbles](https://adventofcode.com/2024/day/11)   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day11/day11.rs) [![Go](../scripts/assets/go.png)](../2024/day11/day11.go)
 [Day 12: Garden Groups](https://adventofcode.com/2024/day/12)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day12/day12.rs)
+[Day 13: Claw Contraption](https://adventofcode.com/2024/day/13)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day13/day13.rs) [![Rust](../scripts/assets/rust.png)](../2024/day13_z3/day13.rs) [![Python](../scripts/assets/python.png)](../2024/day13_z3/day13.py)
