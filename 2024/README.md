@@ -22,4 +22,4 @@ Puzzle                                                              | Stars | La
 [Day 11: Plutonian Pebbles](https://adventofcode.com/2024/day/11)   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day11/day11.rs) [![Go](../scripts/assets/go.png)](../2024/day11/day11.go)
 [Day 12: Garden Groups](https://adventofcode.com/2024/day/12)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day12/day12.rs)
 [Day 13: Claw Contraption](https://adventofcode.com/2024/day/13)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day13/day13.rs) [![Rust](../scripts/assets/rust.png)](../2024/day13_z3/day13.rs) [![Python](../scripts/assets/python.png)](../2024/day13_z3/day13.py)
-[Day 14: Restroom Redoubt](https://adventofcode.com/2024/day/14)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day14/day14.rs) [![Python](../scripts/assets/python.png)](../2024/day14/day14.py)
+[Day 14: Restroom Redoubt](https://adventofcode.com/2024/day/14)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day14/day14.rs) [![Python](../scripts/assets/python.png)](../2024/day14/day14.py) [🎄](../2024/day14/README.md)
