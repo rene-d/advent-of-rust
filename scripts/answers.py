@@ -79,6 +79,7 @@ class AocSession:
 
         if force_update or self.force_update:
             self.db.execute("delete from cache where url=? and user=?", (url, self.user_id))
+            self.db.commit()
         else:
             cursor = self.db.execute(
                 "select last_modified,content from cache where url=? and user=?",
@@ -280,6 +281,8 @@ class AocSession:
                             return
                         if resp.lower() in "yan":
                             break
+                        if resp.lower() in "qx":
+                            exit(0)
                 else:
                     resp = "y"
 
