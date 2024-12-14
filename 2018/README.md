@@ -26,7 +26,7 @@ Puzzle                                                                          
 [Day 15: Beverage Bandits](https://adventofcode.com/2018/day/15)                     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day15/day15.rs)
 [Day 16: Chronal Classification](https://adventofcode.com/2018/day/16)               | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day16/day16.rs) [![Python](../scripts/assets/python.png)](../2018/day16/day16.py)
 [Day 17: Reservoir Research](https://adventofcode.com/2018/day/17)                   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day17/day17.rs)
-[Day 18: Settlers of The North Pole](https://adventofcode.com/2018/day/18)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day18/day18.rs) [![Python](../scripts/assets/python.png)](../2018/day18/day18.py)
+[Day 18: Settlers of The North Pole](https://adventofcode.com/2018/day/18)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day18/day18.rs) [![Python](../scripts/assets/python.png)](../2018/day18/day18.py) [🎄](../2018/day18/README.md)
 [Day 19: Go With The Flow](https://adventofcode.com/2018/day/19)                     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day19/day19.rs)
 [Day 20: A Regular Map](https://adventofcode.com/2018/day/20)                        | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day20/day20.rs)
 [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)                   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day21/day21.rs)

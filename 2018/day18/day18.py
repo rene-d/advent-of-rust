@@ -7,11 +7,11 @@ from collections import Counter
 from copy import deepcopy
 from pathlib import Path
 
-verbose = "-v" in sys.argv
-if verbose:
+if animation := "-a" in sys.argv:
+    sys.argv.remove("-a")
+if verbose := "-v" in sys.argv:
     sys.argv.remove("-v")
-self_tests = "-T" in sys.argv
-if self_tests:
+if self_tests := "-T" in sys.argv:
     sys.argv.remove("-T")
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text().strip()
@@ -87,6 +87,33 @@ def animate(area):
         print("\033[H\033[2J", show(a))
         time.sleep(0.010)
         a = collect(a)
+
+
+if animation:
+    import os
+
+    from imgcat import imgcat
+    from PIL import Image
+
+    frames = []
+    a = deepcopy(area)
+    for i in range(500):
+
+        frame = Image.new("RGB", (N * 4, N * 4))
+        for x in range(N):
+            for y in range(N):
+                c = ((0, 0, 0), (0, 255, 0), (165, 42, 42))[a[y * N + x]]
+                for k in range(16):
+                    frame.putpixel((x * 4 + k // 4, y * 4 + k % 4), c)
+
+        frame.save(f"frame{i}.png")
+        frames.append(f"frame{i}.png")
+
+        a = collect(a)
+
+    os.system("magick -delay 3 -loop 0 " + " ".join(frames) + " lumberarea.gif")
+    for f in frames:
+        os.unlink(f)
 
 
 if verbose:
