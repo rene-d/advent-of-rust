@@ -380,6 +380,10 @@ def run_day(
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
             if not prog.is_file():
+                # special case for day13_alt/day13.py
+                if "_" in prog.stem and prog.stem == prog.parent.name:
+                    prog = prog.with_stem(prog.stem[: prog.stem.find("_")])
+            if not prog.is_file():
                 continue
 
             if refresh:

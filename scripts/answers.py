@@ -733,7 +733,9 @@ def main():
     cwd = Path.cwd()
     if cwd.name.startswith("day") and args.day is None:
         args.year = int(cwd.parent.name)
-        args.day = int(cwd.name[3:])
+        n = cwd.name.removeprefix("day")
+        n = n[: n.find("_")] if "_" in n else n
+        args.day = int(n)
     if cwd.name.isdigit() and args.year is None:
         args.year = int(cwd.name)
 
