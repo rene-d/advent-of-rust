@@ -18,7 +18,7 @@ Puzzle                                                                        | 
 [Day 7: Camel Cards](https://adventofcode.com/2023/day/7)                     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2023/day7/day7.rs)
 [Day 8: Haunted Wasteland](https://adventofcode.com/2023/day/8)               | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2023/day8/day8.rs)
 [Day 9: Mirage Maintenance](https://adventofcode.com/2023/day/9)              | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2023/day9/day9.rs) [![Python](../scripts/assets/python.png)](../2023/day9/day9.py)
-[Day 10: Pipe Maze](https://adventofcode.com/2023/day/10)                     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2023/day10/day10.rs) [![Python](../scripts/assets/python.png)](../2023/day10/day10.py)
+[Day 10: Pipe Maze](https://adventofcode.com/2023/day/10)                     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2023/day10/day10.rs) [![Python](../scripts/assets/python.png)](../2023/day10/day10.py) [🎄](../2023/day10/README.md)
 [Day 11: Cosmic Expansion](https://adventofcode.com/2023/day/11)              | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2023/day11/day11.rs)
 [Day 12: Hot Springs](https://adventofcode.com/2023/day/12)                   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2023/day12/day12.rs)
 [Day 13: Point of Incidence](https://adventofcode.com/2023/day/13)            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2023/day13/day13.rs)
