@@ -27,12 +27,12 @@ class ClawMachine:
     p_x: int
     p_y: int
 
-    def price(self):
+    def price(self, p_offset=0):
         a = z3.Int("a")
         b = z3.Int("b")
         s = z3.Solver()
-        s.add(a * self.a_x + b * self.b_x == self.p_x)
-        s.add(a * self.a_y + b * self.b_y == self.p_y)
+        s.add(a * self.a_x + b * self.b_x == self.p_x + p_offset)
+        s.add(a * self.a_y + b * self.b_y == self.p_y + p_offset)
         s.add(a >= 0)
         s.add(b >= 0)
         if s.check() == z3.sat:
@@ -54,9 +54,4 @@ for i in data.split("\n\n"):
 
 print(sum(machine.price() for machine in machines))
 
-prices = 0
-for machine in machines:
-    machine.p_x += 10000000000000
-    machine.p_y += 10000000000000
-    prices += machine.price()
-print(prices)
+print(sum(machine.price(10000000000000) for machine in machines))
