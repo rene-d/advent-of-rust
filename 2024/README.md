@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 28](https://img.shields.io/badge/Stars-28⭐-blue)
-![Rust: 15](https://img.shields.io/badge/Rust-15-cyan?logo=Rust)
+![Stars: 30](https://img.shields.io/badge/Stars-30⭐-blue)
+![Rust: 16](https://img.shields.io/badge/Rust-16-cyan?logo=Rust)
 ![Python: 8](https://img.shields.io/badge/Python-8-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 28⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 30⭐
 
 Puzzle                                                              | Stars | Languages
 ------------------------------------------------------------------- | ----- | -----------
@@ -23,3 +23,4 @@ Puzzle                                                              | Stars | La
 [Day 12: Garden Groups](https://adventofcode.com/2024/day/12)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day12/day12.rs)
 [Day 13: Claw Contraption](https://adventofcode.com/2024/day/13)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day13/day13.rs) [![Rust](../scripts/assets/rust.png)](../2024/day13_z3/day13.rs) [![Python](../scripts/assets/python.png)](../2024/day13_z3/day13.py)
 [Day 14: Restroom Redoubt](https://adventofcode.com/2024/day/14)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day14/day14.rs) [![Python](../scripts/assets/python.png)](../2024/day14/day14.py) [🎄](../2024/day14/README.md)
+[Day 15: Warehouse Woes](https://adventofcode.com/2024/day/15)      | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day15/src/main.rs) [🎄](../2024/day15/README.md)

@@ -508,7 +508,10 @@ def get_languages(sols, year, year_dir, path_to_home):
             if f.suffix == suffix
         )
 
-    f = sols[0].parent / "README.md"
+    sol_dir = sols[0].parent
+    if sol_dir.name == "src":
+        sol_dir = sol_dir.parent
+    f = sol_dir / "README.md"
     if f.is_file():
         files.append(f"[🎄]({path_to_home}/{year}/{f.relative_to(year_dir)})")
 
