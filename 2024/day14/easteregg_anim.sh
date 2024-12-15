@@ -13,5 +13,5 @@ for input in ../../data/*/2024/14.in ; do
     frames+=(frame$i.png)
 done
 
-magick -delay 50 -loop 0 ${frames[*]} christmastree.gif
+magick -delay 60 -loop 0 ${frames[*]} christmastree.gif
 rm ${frames[*]}
