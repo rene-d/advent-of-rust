@@ -1,0 +1,11 @@
+[package]
+name = "day15"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aoc = { path = "../../aoc" }
+image="*"
+
+[[bin]]
+name = "day15"
