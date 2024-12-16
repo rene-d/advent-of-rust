@@ -605,12 +605,13 @@ def make_readme_main(args):
     parse(None, None, 0)
 
     stars = sum(n for _year, _day, n, _title, _sols in puzzles)
-    rust = sum(1 for _year, _day, _stars, _title, sols in puzzles for f in sols if f.suffix == ".rs")
-    python = sum(1 for _year, _day, _stars, _title, sols in puzzles for f in sols if f.suffix == ".py")
+    # rust = sum(1 for _year, _day, _stars, _title, sols in puzzles for f in sols if f.suffix == ".rs")
+    # python = sum(1 for _year, _day, _stars, _title, sols in puzzles for f in sols if f.suffix == ".py")
 
     rust = defaultdict(lambda: 0)
     python = defaultdict(lambda: 0)
     all_stars = defaultdict(lambda: 0)
+    bonus = defaultdict(lambda: 0)
 
     for year, day, stars, title, sols in puzzles:
         if any(f.suffix == ".rs" for f in sols):
@@ -618,6 +619,12 @@ def make_readme_main(args):
         if any(f.suffix == ".py" for f in sols):
             python[year] += 1
         all_stars[year] += stars
+
+        n = sols[0].parent
+        if n.name == "src":
+            n = n.parent
+        if (n / "README.md").is_file():
+            bonus[year] += 1
 
     total_rust = sum(rust.values())
     total_python = sum(python.values())
@@ -632,6 +639,7 @@ def make_readme_main(args):
             f"{all_stars[year]:>3}⭐",
             f"{rust[year]:>3}",
             f"{python[year]:>3}",
+            f"{bonus[year] or '':>3}",
         ]
         rows.append(" | ".join(row))
 
@@ -651,8 +659,8 @@ def make_readme_main(args):
             skip = True
             md.append(line)
             md.append("")
-            md.append(" | ".join(("Calendar", "Solutions", "Stars", "Rust", "Python")))
-            md.append(" | ".join(("--------", "---------", "-----", "----", "------")))
+            md.append(" | ".join(("Calendar", "Solutions", "Stars", "Rust", "Python", "🎄")))
+            md.append(" | ".join(("--------", "---------", "-----", "----", "------", "--")))
             md.extend(rows)
             md.append("")
             continue
