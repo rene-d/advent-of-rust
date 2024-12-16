@@ -118,20 +118,22 @@ create_python()
 from pathlib import Path
 from copy import deepcopy
 from collections import defaultdict, deque, namedtuple, Counter
-import sys, re, math, itertools, time
+import sys, re, math, itertools, time, re
 from functools import reduce
-import re
-import unittest
+from operator import mul
+from argparse import ArgumentParser
 
-verbose = "-v" in sys.argv
-if verbose:
-    sys.argv.remove("-v")
-self_tests = "-T" in sys.argv
-if self_tests:
-    sys.argv.remove("-T")
-filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
-data = Path(filename).read_text().strip()
+parser = ArgumentParser()
+parser.add_argument("-v", "--verbose", action="store_true")
+parser.add_argument("-t", "--test", action="store_true")
+parser.add_argument("filename", nargs="?", type=Path, default="input.txt")
+args = parser.parse_args()
+if args.test:
+    args.filename = Path("test.txt")
+
+data = args.filename.read_text().strip()
 lines = data.splitlines()
+
 EOF
     chmod a+x day$day.py
 

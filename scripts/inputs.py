@@ -37,7 +37,7 @@ datadir = Path(__file__).parent.parent / "data"
 
 t = []
 for year in range(2015, 2025):
-    row = [f"{year}"]
+    values = []
 
     min_inputs = float("inf")
     max_inputs = 0
@@ -47,25 +47,32 @@ for year in range(2015, 2025):
         inputs = Counter()
 
         for f in datadir.glob("*"):
+            # if not f.stem.isdigit():
+            #     continue
             if f.is_dir():
                 f = f / f"{year}" / f"{day}.in"
                 if f.is_file():
                     inputs.update([f.read_text().strip()])
 
         v = list(inputs.values())
-        if len(v) == sum(v):
-            # row.append(f"{len(v)} *")
-            # row.append(f"{GREEN}{len(v):2} / {sum(v):2}{RESET}")
-            row.append(f"{len(v)} / --")
-        else:
-            row.append(f"{len(v):2} / {sum(v):2}")
-        # row.append(len(v))
+        values.append((len(v), sum(v)))
 
         min_inputs = min(min_inputs, len(v))
         max_inputs = max(max_inputs, len(v))
         nb_inputs = max(nb_inputs, sum(v))
 
-    row.append(f"{YELLOW}{min_inputs:2} → {max_inputs:2}{RESET}")
+    row = [f"{year}"]
+    for a, b in values:
+        if a == min_inputs == max_inputs:
+            a = f"\033[34m{a}{RESET}"
+        elif a == min_inputs:
+            a = f"{GREEN}{a}{RESET}"
+        elif a == max_inputs:
+            a = f"{MAGENTA}{a}{RESET}"
+        b = f"{YELLOW}{b}{RESET}" if b == nb_inputs else f"{b}"
+        row.append(f"{a} / {b}")
+
+    row.append(f"{GREEN}{min_inputs:2}{RESET} → {MAGENTA}{max_inputs:2}{RESET}")
     row.append(f"{YELLOW}{nb_inputs:2}{RESET}")
 
     t.append(row)
@@ -73,7 +80,9 @@ for year in range(2015, 2025):
 
 # print(tabulate.tabulate(t, headers=["Year"] + [day for day in range(1, 26)], tablefmt="rounded_outline"))
 
-t.insert(0, ["year"] + list(range(1, 26)) + [f"{YELLOW}↑↓{RESET}", f"{YELLOW}nb{RESET}"])
+t.insert(0, ["year"] + list(range(1, 26)) + [f"{GREEN}↓{MAGENTA}↑{RESET} ≠", f"{YELLOW}max{RESET}"])
+
+
 t = transpose(t)
 t.pop(0)
 print(
