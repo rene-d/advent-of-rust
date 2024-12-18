@@ -620,11 +620,12 @@ def make_readme_main(args):
             python[year] += 1
         all_stars[year] += stars
 
-        n = sols[0].parent
-        if n.name == "src":
-            n = n.parent
-        if (n / "README.md").is_file():
-            bonus[year] += 1
+        if sols:
+            n = sols[0].parent
+            if n.name == "src":
+                n = n.parent
+            if (n / "README.md").is_file():
+                bonus[year] += 1
 
     total_rust = sum(rust.values())
     total_python = sum(python.values())
