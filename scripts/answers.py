@@ -611,7 +611,7 @@ def make_readme_main(args):
     rust = defaultdict(lambda: 0)
     python = defaultdict(lambda: 0)
     all_stars = defaultdict(lambda: 0)
-    bonus = defaultdict(lambda: 0)
+    bonus = defaultdict(list)
 
     for year, day, stars, title, sols in puzzles:
         if any(f.suffix == ".rs" for f in sols):
@@ -624,8 +624,9 @@ def make_readme_main(args):
             n = sols[0].parent
             if n.name == "src":
                 n = n.parent
-            if (n / "README.md").is_file():
-                bonus[year] += 1
+            n = n / "README.md"
+            if n.is_file():
+                bonus[year].append(n)
 
     total_rust = sum(rust.values())
     total_python = sum(python.values())
@@ -640,7 +641,7 @@ def make_readme_main(args):
             f"{all_stars[year]:>3}⭐",
             f"{rust[year]:>3}",
             f"{python[year]:>3}",
-            f"{bonus[year] or '':>3}",
+            f"{len(bonus[year]) or '':>3}",
         ]
         rows.append(" | ".join(row))
 
@@ -656,7 +657,23 @@ def make_readme_main(args):
             else:
                 continue
 
-        if line == "## Paste years":
+        if line == "## Bonus 🎄":
+            skip = True
+            md.append(line)
+            md.append("")
+            md.append(" | ".join(("Year", "Count", "Days")))
+            md.append(" | ".join(("----", "-----", "--------------------")))
+            for year in reversed(sorted(bonus)):
+                if bonus[year]:
+                    s = f"{year} | {len(bonus[year]):5} |"
+                    for b in bonus[year]:
+                        day = b.parent.stem.removeprefix("day")
+                        s += f" [{day}]({b.relative_to(readme.parent)})"
+                    md.append(s)
+            md.append("")
+            continue
+
+        if line == "## All years":
             skip = True
             md.append(line)
             md.append("")
