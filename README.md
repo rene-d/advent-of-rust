@@ -32,7 +32,7 @@ Puzzle                                                                 | Stars |
 [Day 18: RAM Run](https://adventofcode.com/2024/day/18)                | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day18/day18.rs) [![Go](./scripts/assets/go.png)](./2024/day18/day18.go)
 [Day 19: Linen Layout](https://adventofcode.com/2024/day/19)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day19/day19.rs)
 
-## Paste years
+## All years
 
 Calendar | Solutions | Stars | Rust | Python | 🎄
 -------- | --------- | ----- | ---- | ------ | --
@@ -46,3 +46,12 @@ Calendar | Solutions | Stars | Rust | Python | 🎄
 [Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) |  50⭐ |  15 |  17 |    
 [Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](2016/README.md) |  50⭐ |  25 |   0 |    
 [Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/README.md) |  50⭐ |  24 |   5 |    
+
+## Bonus 🎄
+
+Year | Count | Days
+---- | ----- | --------------------
+2024 |     3 | [14](2024/day14/README.md) [15](2024/day15/README.md) [16](2024/day16/README.md)
+2023 |     1 | [10](2023/day10/README.md)
+2019 |     2 | [13](2019/day13/README.md) [15](2019/day15/README.md)
+2018 |     1 | [18](2018/day18/README.md)
