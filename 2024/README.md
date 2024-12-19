@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 36](https://img.shields.io/badge/Stars-36⭐-blue)
-![Rust: 19](https://img.shields.io/badge/Rust-19-cyan?logo=Rust)
+![Stars: 38](https://img.shields.io/badge/Stars-38⭐-blue)
+![Rust: 20](https://img.shields.io/badge/Rust-20-cyan?logo=Rust)
 ![Python: 8](https://img.shields.io/badge/Python-8-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 36⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 38⭐
 
 Puzzle                                                                 | Stars | Languages
 ---------------------------------------------------------------------- | ----- | -----------
@@ -27,3 +27,4 @@ Puzzle                                                                 | Stars |
 [Day 16: Reindeer Maze](https://adventofcode.com/2024/day/16)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day16/src/main.rs) [🎄](../2024/day16/README.md)
 [Day 17: Chronospatial Computer](https://adventofcode.com/2024/day/17) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day17/day17.rs)
 [Day 18: RAM Run](https://adventofcode.com/2024/day/18)                | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day18/day18.rs) [![Go](../scripts/assets/go.png)](../2024/day18/day18.go)
+[Day 19: Linen Layout](https://adventofcode.com/2024/day/19)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day19/day19.rs)
