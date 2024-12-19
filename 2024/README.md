@@ -26,5 +26,5 @@ Puzzle                                                                 | Stars |
 [Day 15: Warehouse Woes](https://adventofcode.com/2024/day/15)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day15/src/main.rs) [🎄](../2024/day15/README.md)
 [Day 16: Reindeer Maze](https://adventofcode.com/2024/day/16)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day16/src/main.rs) [🎄](../2024/day16/README.md)
 [Day 17: Chronospatial Computer](https://adventofcode.com/2024/day/17) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day17/day17.rs)
-[Day 18: RAM Run](https://adventofcode.com/2024/day/18)                | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day18/day18.rs) [![Go](../scripts/assets/go.png)](../2024/day18/day18.go)
+[Day 18: RAM Run](https://adventofcode.com/2024/day/18)                | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day18/day18.rs) [![C++](../scripts/assets/cpp.png)](../2024/day18/day18.cpp) [![Go](../scripts/assets/go.png)](../2024/day18/day18.go)
 [Day 19: Linen Layout](https://adventofcode.com/2024/day/19)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day19/day19.rs)
