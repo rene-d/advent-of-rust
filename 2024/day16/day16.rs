@@ -1,10 +1,8 @@
 //! [Day 16: Reindeer Maze](https://adventofcode.com/2024/day/16)
 
-pub mod coord;
-
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
-use coord::Coord;
+use aoc24::coord::Coord;
 
 const ZERO: Coord = Coord { x: 0, y: 0 };
 const EAST: Coord = Coord { x: 1, y: 0 }; // starting direction

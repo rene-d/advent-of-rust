@@ -8,7 +8,9 @@ anim = []
 
 [dependencies]
 aoc = { path = "../../aoc" }
+aoc24 = { path = "../aoc24" }
 image = "*"
 
 [[bin]]
 name = "day16"
+path = "day16.rs"

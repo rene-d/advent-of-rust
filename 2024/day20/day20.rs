@@ -1,11 +1,9 @@
 //! [Day 20: Race Condition](https://adventofcode.com/2024/day/20)
 
-// use std::collections::{HashMap,HashSet};
-
 use std::collections::{BinaryHeap, HashMap};
 
-use ::day20::coord::Coord;
-use ::day20::grid::Grid;
+use aoc24::coord::Coord;
+use aoc24::grid::Grid;
 
 struct Puzzle {
     // input

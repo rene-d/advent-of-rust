@@ -2,7 +2,7 @@
 
 use std::collections::{HashSet, VecDeque};
 
-use day15::grid::{Coord, Grid};
+use aoc24::grid::{Coord, Grid};
 
 fn score(grid: &Grid) -> i32 {
     grid.iter()
