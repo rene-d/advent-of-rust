@@ -5,7 +5,9 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-image="*"
+aoc24 = { path = "../aoc24" }
+image = "*"
 
 [[bin]]
 name = "day15"
+path = "day15.rs"
