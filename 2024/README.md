@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 40](https://img.shields.io/badge/Stars-40⭐-blue)
-![Rust: 21](https://img.shields.io/badge/Rust-21-cyan?logo=Rust)
+![Stars: 42](https://img.shields.io/badge/Stars-42⭐-blue)
+![Rust: 22](https://img.shields.io/badge/Rust-22-cyan?logo=Rust)
 ![Python: 8](https://img.shields.io/badge/Python-8-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 40⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 42⭐
 
 Puzzle                                                                 | Stars | Languages
 ---------------------------------------------------------------------- | ----- | -----------
@@ -29,3 +29,4 @@ Puzzle                                                                 | Stars |
 [Day 18: RAM Run](https://adventofcode.com/2024/day/18)                | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day18/day18.rs) [![C++](../scripts/assets/cpp.png)](../2024/day18/day18.cpp) [![Go](../scripts/assets/go.png)](../2024/day18/day18.go)
 [Day 19: Linen Layout](https://adventofcode.com/2024/day/19)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day19/day19.rs)
 [Day 20: Race Condition](https://adventofcode.com/2024/day/20)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day20/day20.rs)
+[Day 21: Keypad Conundrum](https://adventofcode.com/2024/day/21)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day21/day21.rs)
