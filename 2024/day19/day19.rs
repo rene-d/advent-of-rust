@@ -19,8 +19,14 @@ impl Puzzle {
 
         let (patterns, designs) = data.split_once("\n\n").unwrap();
 
-        self.patterns = patterns.split(", ").map(|x| x.to_string()).collect();
-        self.designs = designs.lines().map(|x| x.to_string()).collect();
+        self.patterns = patterns
+            .split(", ")
+            .map(std::string::ToString::to_string)
+            .collect();
+        self.designs = designs
+            .lines()
+            .map(std::string::ToString::to_string)
+            .collect();
     }
 
     fn count_design_ways(&self, design: &str) -> u64 {

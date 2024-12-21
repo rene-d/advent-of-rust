@@ -42,20 +42,18 @@ impl Puzzle {
             let opcode = self.program[ip];
             let literal = self.program[ip + 1];
 
-            let combo = || {
-                return match literal {
-                    0 | 1 | 2 | 3 => literal,
-                    4 => a,
-                    5 => b,
-                    6 => c,
-                    _ => panic!(),
-                };
+            let combo = || match literal {
+                0..=3 => literal,
+                4 => a,
+                5 => b,
+                6 => c,
+                _ => panic!(),
             };
 
             match opcode {
                 0 => {
                     // adv
-                    a = a >> literal;
+                    a >>= literal;
                 }
                 1 => {
                     //bxl
@@ -120,7 +118,7 @@ impl Puzzle {
                 1 => (format!("bxl {literal}"), format!("b ^= {literal}")),
                 2 => (format!("bst {combo}"), format!("b = {combo} % 8")),
                 3 => (format!("jnz {literal}"), format!("jump {literal} if a≠0")),
-                4 => (format!("bxc"), format!("b ^= c")),
+                4 => ("bxc".to_string(), "b ^= c".to_string()),
                 5 => (format!("out {combo}"), format!("out {combo} % 8")),
                 6 => (format!("bdv {combo}"), format!("b = a >> {combo}")),
                 7 => (format!("cdv {combo}"), format!("c = a >> {combo}")),
@@ -137,7 +135,7 @@ impl Puzzle {
 
         output
             .iter()
-            .map(|x| x.to_string())
+            .map(std::string::ToString::to_string)
             .collect::<Vec<String>>()
             .join(",")
     }
@@ -153,9 +151,9 @@ impl Puzzle {
     //     jump 0 if a≠0
 
     fn quine(&self, a: u64, i: usize, xor1: u64, xor2: u64) -> u64 {
-        let target = self.program[i] as u64;
+        let target = u64::from(self.program[i]);
 
-        let start_octal = if i == self.program.len() - 1 { 1 } else { 0 };
+        let start_octal = u64::from(i == self.program.len() - 1);
 
         for octal in start_octal..8 {
             let new_a = (a * 8) | octal;
@@ -189,10 +187,10 @@ impl Puzzle {
             return 0;
         }
 
-        let xor1 = xors[0] as u64;
-        let xor2 = xors[1] as u64;
+        let xor_1 = u64::from(xors[0]);
+        let xor_2 = u64::from(xors[1]);
 
-        return self.quine(0, self.program.len() - 1, xor1, xor2);
+        self.quine(0, self.program.len() - 1, xor_1, xor_2)
     }
 }
 
