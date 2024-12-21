@@ -9,9 +9,26 @@ import re
 import sys
 from pathlib import Path
 
+import requests
+
 if len(sys.argv) != 2:
     print(f"Usage: {sys.argv[0]} <file>")
     exit(1)
+
+f = sys.argv[1]
+if Path(f).is_file():
+    calendar = Path(f).read_text()
+elif f.isdigit():
+    s = Path("~/.adventofcode.session").expanduser()
+    if s.is_file():
+        session = s.read_text().strip()
+        calendar = requests.get(
+            f"https://adventofcode.com/{f}",
+            headers={
+                "Cookie": f"session={session}",
+                "user-agent": "Mozilla/5.0",
+            },
+        ).content.decode()
 
 
 def rgb(s: str) -> str:
@@ -38,11 +55,10 @@ def rgb(s: str) -> str:
 
 
 colors = {}
-
 colors[None] = rgb("#606060;")  # "\033[0m"
 
 
-for line in Path(sys.argv[1]).read_text().splitlines():
+for line in calendar.splitlines():
 
     if line.startswith(".calendar .calendar-color-"):
 
