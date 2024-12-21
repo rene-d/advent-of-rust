@@ -66,7 +66,7 @@ impl Puzzle {
             *quadrants.entry(q).or_default() += 1_u32;
         }
 
-        quadrants.values().fold(1, |acc, x| acc * x)
+        quadrants.values().product::<u32>()
     }
 
     /// Solve part two.

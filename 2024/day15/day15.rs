@@ -110,6 +110,8 @@ fn save_warehouse(
     n: u32,
     moves: usize,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    const SCALE: u32 = 11;
+
     // limit the frame count
     if moves > 1000 && n % 20 != 0 {
         return Ok(());
@@ -117,8 +119,6 @@ fn save_warehouse(
     if moves > 100 && n % 5 != 0 {
         return Ok(());
     }
-
-    const SCALE: u32 = 11;
 
     let width = u32::try_from(grid.width())? * SCALE;
     let height = u32::try_from(grid.height())? * SCALE;
