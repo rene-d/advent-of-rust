@@ -1,12 +1,11 @@
 //! [Day 13: Shuttle Search](https://adventofcode.com/2020/day/13)
 
-#[allow(clippy::many_single_char_names)]
 fn egcd(a: i64, b: i64) -> (i64, i64, i64) {
     if a == 0 {
         (b, 0, 1)
     } else {
-        let (g, x, y) = egcd(b % a, a);
-        (g, y - (b / a) * x, x)
+        let (gcd, u, v) = egcd(b % a, a);
+        (gcd, v - (b / a) * u, u)
     }
 }
 
@@ -38,8 +37,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             depart: 0,
             buses: vec![],
         }

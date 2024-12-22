@@ -5,8 +5,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { cups: Vec::new() }
+    const fn new() -> Self {
+        Self { cups: Vec::new() }
     }
 
     /// Get the puzzle input.
