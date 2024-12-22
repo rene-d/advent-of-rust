@@ -113,7 +113,7 @@ impl State {
 
     */
 
-    fn next_state(&self, steps: u32, q: &mut VecDeque<(State, u32)>) {
+    fn next_state(&self, steps: u32, q: &mut VecDeque<(Self, u32)>) {
         let current_floor = &self.floors[self.elevator];
 
         let mut floor_items: Vec<_> = current_floor.generator.union(&current_floor.microchip).collect();
@@ -141,7 +141,7 @@ impl State {
                 }
 
                 //
-                let mut new_state = State {
+                let mut new_state = Self {
                     floors: self.floors.clone(),
                     elevator: next_elevator,
                 };
@@ -247,8 +247,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { floors: vec![] }
+    const fn new() -> Self {
+        Self { floors: vec![] }
     }
 
     /// Get the puzzle input.

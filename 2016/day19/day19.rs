@@ -50,7 +50,7 @@ fn part1_naive(elves: usize) -> usize {
     }
 }
 
-fn part1(elves: usize) -> usize {
+const fn part1(elves: usize) -> usize {
     let mut x = elves;
     let mut p = 1;
     while x > 1 {
@@ -60,7 +60,7 @@ fn part1(elves: usize) -> usize {
     (elves - p) * 2 + 1
 }
 
-fn part2(elves: usize) -> usize {
+const fn part2(elves: usize) -> usize {
     let mut mst = elves;
     let mut power_of_3 = 1;
     while mst > 2 {

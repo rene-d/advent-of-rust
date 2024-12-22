@@ -32,8 +32,8 @@ fn main() {
     let perm_places = &mut places.iter().collect::<Vec<&String>>();
     let permutator = HeapPermutationIterator::new(perm_places);
 
-    let mut min_distance = std::u32::MAX;
-    let mut max_distance = std::u32::MIN;
+    let mut min_distance = u32::MAX;
+    let mut max_distance = u32::MIN;
 
     for permutated in permutator {
         let mut distance = 0;

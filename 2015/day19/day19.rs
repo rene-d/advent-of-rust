@@ -8,8 +8,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             replacements: vec![],
             medicine_molecule: String::new(),
         }
@@ -23,7 +23,7 @@ impl Puzzle {
             if let Some((a, b)) = line.split_once(" => ") {
                 self.replacements.push((a.to_string(), b.to_owned()));
             } else if !line.is_empty() {
-                self.medicine_molecule = line.to_owned();
+                line.clone_into(&mut self.medicine_molecule);
             }
         }
     }

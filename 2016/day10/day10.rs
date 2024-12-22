@@ -28,10 +28,10 @@ enum BotOutput {
 
 impl BotOutput {
     /// `new` creates a new `BotOutput` from string and id
-    fn new(dest: &str, id: u32) -> BotOutput {
+    fn new(dest: &str, id: u32) -> Self {
         match dest {
-            "bot" => BotOutput::Bot(id),
-            "output" => BotOutput::Bin(id),
+            "bot" => Self::Bot(id),
+            "output" => Self::Bin(id),
             _ => panic!("invalid destination"),
         }
     }

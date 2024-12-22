@@ -31,28 +31,28 @@ impl Operation {
         let pos = |ch: &char| password.iter().position(|c| c == ch).unwrap();
 
         match self {
-            &Operation::SwapPosition(a, b) => {
+            &Self::SwapPosition(a, b) => {
                 password.swap(a, b);
             }
-            Operation::SwapLetter(a, b) => {
+            Self::SwapLetter(a, b) => {
                 let a = pos(a);
                 let b = pos(b);
                 password.swap(a, b);
             }
-            &Operation::ReversePositions(a, b) => {
+            &Self::ReversePositions(a, b) => {
                 for i in 0..=((b - a) / 2) {
                     password.swap(a + i, b - i);
                 }
             }
-            &Operation::RotateLeft(p) => {
+            &Self::RotateLeft(p) => {
                 password.rotate_left(p);
             }
 
-            &Operation::RotateRight(p) => {
+            &Self::RotateRight(p) => {
                 password.rotate_right(p);
             }
 
-            &Operation::MovePosition(a, b) => {
+            &Self::MovePosition(a, b) => {
                 let c = password[a];
                 if a < b {
                     for i in a..b {
@@ -65,7 +65,7 @@ impl Operation {
                 }
                 password[b] = c;
             }
-            Operation::RotateBased(a) => {
+            Self::RotateBased(a) => {
                 let a = pos(a);
                 password.rotate_right(a);
                 password.rotate_right(1);
@@ -78,13 +78,13 @@ impl Operation {
 
     fn reverse(&self, password: &mut [char]) {
         match self {
-            Operation::SwapPosition(_, _) | Operation::SwapLetter(_, _) | Operation::ReversePositions(_, _) => {
+            Self::SwapPosition(_, _) | Self::SwapLetter(_, _) | Self::ReversePositions(_, _) => {
                 self.perform(password);
             }
-            Operation::RotateLeft(p) => Operation::RotateRight(*p).perform(password),
-            Operation::RotateRight(p) => Operation::RotateLeft(*p).perform(password),
-            Operation::MovePosition(a, b) => Operation::MovePosition(*b, *a).perform(password),
-            Operation::RotateBased(_a) => {
+            Self::RotateLeft(p) => Self::RotateRight(*p).perform(password),
+            Self::RotateRight(p) => Self::RotateLeft(*p).perform(password),
+            Self::MovePosition(a, b) => Self::MovePosition(*b, *a).perform(password),
+            Self::RotateBased(_a) => {
                 // dummy reverse
                 let n = password.len();
                 for i in 0..n {
@@ -106,8 +106,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { ops: vec![] }
+    const fn new() -> Self {
+        Self { ops: vec![] }
     }
 
     /// Get the puzzle input.

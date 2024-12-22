@@ -8,7 +8,7 @@ fn calc(names: &HashSet<String>, happiness: &HashMap<(String, String), i32>) -> 
     let perm_names = &mut names.iter().collect::<Vec<&String>>();
     let permutator = HeapPermutationIterator::new(perm_names);
 
-    let mut happiness_max = std::i32::MIN;
+    let mut happiness_max = i32::MIN;
 
     for permutated in permutator {
         let mut happiness_sum = 0;

@@ -7,8 +7,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { house_present: 0 }
+    const fn new() -> Self {
+        Self { house_present: 0 }
     }
 
     fn configure(&mut self, filename: &str) {

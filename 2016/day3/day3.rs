@@ -1,6 +1,6 @@
 //! [Day 3: Squares With Three Sides](https://adventofcode.com/2016/day/3)
 
-use scan_fmt::scan_fmt;
+use itertools::Itertools;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
@@ -11,34 +11,38 @@ fn main() {
     println!("{}", part2(&data));
 }
 
+fn parse(line: &str) -> (i32, i32, i32) {
+    let (x, y, z) = line
+        .split_ascii_whitespace()
+        .map_while(|i| i.parse::<i32>().ok())
+        .collect_tuple()
+        .unwrap();
+    (x, y, z)
+}
+
 /// ``part`` counts the triangles in the input with the three sides on the same line.
 fn part1(data: &str) -> u32 {
-    let mut triangles = 0;
-
-    for line in data.split('\n') {
-        if let Ok((x, y, z)) = scan_fmt!(line, "{} {} {}", i32, i32, i32) {
-            triangles += is_triangle(x, y, z);
-        }
-    }
-
-    triangles
+    data.lines()
+        .map(|line| {
+            let (x, y, z) = parse(line);
+            is_triangle(x, y, z)
+        })
+        .sum()
 }
 
 /// ``part2`` counts the triangles in the input with the three sides on three successive lines, one triangle per column.
 fn part2(data: &str) -> u32 {
     let mut triangles = 0;
-    let lines = data.split('\n').collect::<Vec<_>>();
+    let lines = data.lines().collect::<Vec<_>>();
 
-    for i in (0..lines.len()).step_by(3) {
-        if let Ok((x1, y1, z1)) = scan_fmt!(lines[i], "{} {} {}", i32, i32, i32) {
-            if let Ok((x2, y2, z2)) = scan_fmt!(lines[i + 1], "{} {} {}", i32, i32, i32) {
-                if let Ok((x3, y3, z3)) = scan_fmt!(lines[i + 2], "{} {} {}", i32, i32, i32) {
-                    triangles += is_triangle(x1, x2, x3);
-                    triangles += is_triangle(y1, y2, y3);
-                    triangles += is_triangle(z1, z2, z3);
-                }
-            }
-        }
+    for line in lines.chunks(3) {
+        let (x1, y1, z1) = parse(line[0]);
+        let (x2, y2, z2) = parse(line[1]);
+        let (x3, y3, z3) = parse(line[2]);
+
+        triangles += is_triangle(x1, x2, x3);
+        triangles += is_triangle(y1, y2, y3);
+        triangles += is_triangle(z1, z2, z3);
     }
 
     triangles
