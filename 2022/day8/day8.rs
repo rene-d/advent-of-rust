@@ -9,7 +9,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self {
             nx: 0,
             ny: 0,

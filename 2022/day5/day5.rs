@@ -21,8 +21,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             stacks: vec![String::new(); 9],
             moves: Vec::new(),
         }
@@ -36,7 +36,7 @@ impl Puzzle {
 
         let mut state = State::Stacks;
 
-        for line in data.split('\n').collect::<Vec<_>>() {
+        for line in data.split('\n') {
             if line.is_empty() {
                 state = State::Moves;
             } else if state == State::Stacks {
@@ -71,7 +71,7 @@ impl Puzzle {
             }
         }
 
-        Puzzle::top(&stacks)
+        Self::top(&stacks)
     }
 
     /// solves part2
@@ -85,7 +85,7 @@ impl Puzzle {
             }
         }
 
-        Puzzle::top(&stacks)
+        Self::top(&stacks)
     }
 
     /// returns the top of the stacks

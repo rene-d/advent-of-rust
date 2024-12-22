@@ -17,7 +17,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self {
             grid: vec![],
             start: (0, 0),

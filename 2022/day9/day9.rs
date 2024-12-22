@@ -7,14 +7,14 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self { moves: vec![] }
     }
 
     /// Loads data from input (one line)
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
-        for line in data.split('\n').collect::<Vec<_>>() {
+        for line in data.split('\n') {
             if !line.is_empty() {
                 let mut split = line.split(' ');
                 let direction = split.next().unwrap().chars().next().unwrap();
@@ -34,7 +34,7 @@ impl Puzzle {
             let direction = m.0;
             let n = m.1;
             for _ in 0..n {
-                Puzzle::move_segment(direction, &mut head, &mut tail);
+                Self::move_segment(direction, &mut head, &mut tail);
 
                 tails.insert(tail);
             }
@@ -62,7 +62,7 @@ impl Puzzle {
             let direction = m.0;
             let n = m.1;
             for _ in 0..n {
-                Puzzle::move_rope(direction, &mut rope);
+                Self::move_rope(direction, &mut rope);
                 tails.insert(rope.last().copied().unwrap());
             }
         }
@@ -75,7 +75,7 @@ impl Puzzle {
             let mut head = rope[k];
             let mut tail = rope[k + 1];
 
-            Puzzle::move_segment(if k == 0 { direction } else { ' ' }, &mut head, &mut tail);
+            Self::move_segment(if k == 0 { direction } else { ' ' }, &mut head, &mut tail);
 
             rope[k] = head;
             rope[k + 1] = tail;

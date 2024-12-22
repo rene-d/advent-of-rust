@@ -140,13 +140,13 @@ fn test01() {
 
 impl Affine {
     fn from(n: i64) -> Self {
-        Affine {
+        Self {
             a: Rational64::from_integer(0),
             b: Rational64::from_integer(n),
         }
     }
     fn from_x() -> Self {
-        Affine {
+        Self {
             a: Rational64::from_integer(1),
             b: Rational64::from_integer(0),
         }
@@ -156,40 +156,40 @@ impl Affine {
     }
 }
 
-impl ops::Add<Affine> for Affine {
-    type Output = Affine;
-    fn add(self, _rhs: Affine) -> Affine {
-        Affine {
-            a: self.a + _rhs.a,
-            b: self.b + _rhs.b,
+impl ops::Add<Self> for Affine {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self {
+        Self {
+            a: self.a + rhs.a,
+            b: self.b + rhs.b,
         }
     }
 }
 
-impl ops::Sub<Affine> for Affine {
-    type Output = Affine;
+impl ops::Sub<Self> for Affine {
+    type Output = Self;
 
-    fn sub(self, _rhs: Affine) -> Affine {
-        Affine {
-            a: self.a - _rhs.a,
-            b: self.b - _rhs.b,
+    fn sub(self, rhs: Self) -> Self {
+        Self {
+            a: self.a - rhs.a,
+            b: self.b - rhs.b,
         }
     }
 }
 
-impl ops::Mul<Affine> for Affine {
-    type Output = Affine;
+impl ops::Mul<Self> for Affine {
+    type Output = Self;
 
-    fn mul(self, _rhs: Affine) -> Affine {
+    fn mul(self, rhs: Self) -> Self {
         if self.a.numer() == &0 {
-            Affine {
-                a: self.b * _rhs.a,
-                b: self.b * _rhs.b,
+            Self {
+                a: self.b * rhs.a,
+                b: self.b * rhs.b,
             }
-        } else if _rhs.a.numer() == &0 {
-            Affine {
-                a: self.a * _rhs.b,
-                b: self.b * _rhs.b,
+        } else if rhs.a.numer() == &0 {
+            Self {
+                a: self.a * rhs.b,
+                b: self.b * rhs.b,
             }
         } else {
             // cannot (ax+b)*(cx+d)
@@ -198,16 +198,16 @@ impl ops::Mul<Affine> for Affine {
     }
 }
 
-impl ops::Div<Affine> for Affine {
-    type Output = Affine;
+impl ops::Div<Self> for Affine {
+    type Output = Self;
 
-    fn div(self, _rhs: Affine) -> Affine {
+    fn div(self, rhs: Self) -> Self {
         // cannot A/(ax+b)
-        assert_eq!(_rhs.a.numer(), &0);
+        assert_eq!(rhs.a.numer(), &0);
 
-        Affine {
-            a: self.a / _rhs.b,
-            b: self.b / _rhs.b,
+        Self {
+            a: self.a / rhs.b,
+            b: self.b / rhs.b,
         }
     }
 }

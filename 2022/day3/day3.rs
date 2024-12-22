@@ -5,8 +5,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             rucksacks: Vec::new(),
         }
     }
@@ -30,7 +30,7 @@ impl Puzzle {
             let (first_compartment, second_compartment) = rucksack.split_at(rucksack.len() / 2);
             for c in first_compartment.chars() {
                 if second_compartment.contains(c) {
-                    result += Puzzle::char_to_priority(c);
+                    result += Self::char_to_priority(c);
                     break;
                 }
             }
@@ -52,7 +52,7 @@ impl Puzzle {
             for c in first.chars() {
                 // Look for the character in the two others
                 if second.contains(c) && third.contains(c) {
-                    result += Puzzle::char_to_priority(c);
+                    result += Self::char_to_priority(c);
                     break;
                 }
             }

@@ -154,8 +154,7 @@ impl Puzzle {
                 }
 
                 let key = (next_x, next_y, next_time);
-                if !seen.contains(&key) {
-                    seen.insert(key);
+                if seen.insert(key) {
                     q.push_back(key);
                 }
             }

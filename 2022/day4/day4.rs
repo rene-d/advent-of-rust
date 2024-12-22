@@ -8,8 +8,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { part1: 0, part2: 0 }
+    const fn new() -> Self {
+        Self { part1: 0, part2: 0 }
     }
 
     fn configure(&mut self, path: &str) {
@@ -20,7 +20,7 @@ impl Puzzle {
         self.part1 = 0;
         self.part2 = 0;
 
-        for line in data.split('\n').collect::<Vec<_>>() {
+        for line in data.split('\n') {
             if let Some(m) = re.captures(line) {
                 let a = m[1].parse::<i32>().unwrap();
                 let b = m[2].parse::<i32>().unwrap();

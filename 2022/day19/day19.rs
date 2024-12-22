@@ -208,7 +208,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self { blueprints: vec![] }
     }
 

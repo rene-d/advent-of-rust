@@ -37,7 +37,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self { sum_of_numbers: 0 }
     }
 

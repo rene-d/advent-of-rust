@@ -77,10 +77,10 @@ impl Puzzle {
             if y + 1 >= self.floor {
                 if part2 {
                     break;
-                } else {
-                    // sand is beyond the lowest rock
-                    return false;
                 }
+
+                // sand is beyond the lowest rock
+                return false;
             }
 
             if self.is_empty(x, y + 1) {
