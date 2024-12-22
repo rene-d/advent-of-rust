@@ -62,8 +62,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             data: String::new(),
             grid: vec![],
         }
@@ -155,7 +155,7 @@ fn main() {
         println!("{}", puzzle.part2());
         let duration: Duration = start.elapsed();
 
-        eprintln!("Time elapsed: {:?}", duration);
+        eprintln!("Time elapsed: {duration:?}");
     } else {
         println!("{}", puzzle.part1());
         println!("{}", puzzle.part2());

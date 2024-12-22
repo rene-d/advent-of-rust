@@ -33,10 +33,10 @@ enum State {
 impl std::ops::Not for State {
     type Output = Self;
 
-    fn not(self) -> State {
+    fn not(self) -> Self {
         match self {
-            State::On => State::Off,
-            State::Off => State::On,
+            Self::On => Self::Off,
+            Self::Off => Self::On,
         }
     }
 }
@@ -63,8 +63,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             modules: HashMap::new(),
         }
     }

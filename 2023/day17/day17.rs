@@ -15,13 +15,13 @@ enum Direction {
 impl Direction {
     /// Move one step in the given direction, if possible.
     fn step(self, x: usize, y: usize, sx: usize, sy: usize) -> Option<(usize, usize)> {
-        if self == Direction::North && y > 0 {
+        if self == Self::North && y > 0 {
             Some((x, y - 1))
-        } else if self == Direction::East && x < sx - 1 {
+        } else if self == Self::East && x < sx - 1 {
             Some((x + 1, y))
-        } else if self == Direction::South && y < sy - 1 {
+        } else if self == Self::South && y < sy - 1 {
             Some((x, y + 1))
-        } else if self == Direction::West && x > 0 {
+        } else if self == Self::West && x > 0 {
             Some((x - 1, y))
         } else {
             None
@@ -29,11 +29,11 @@ impl Direction {
     }
 
     /// Indicate if two directions are opposite.
-    fn is_opposite(self, other: Direction) -> bool {
-        self == Direction::North && other == Direction::South
-            || self == Direction::South && other == Direction::North
-            || self == Direction::East && other == Direction::West
-            || self == Direction::West && other == Direction::East
+    fn is_opposite(self, other: Self) -> bool {
+        self == Self::North && other == Self::South
+            || self == Self::South && other == Self::North
+            || self == Self::East && other == Self::West
+            || self == Self::West && other == Self::East
     }
 }
 
@@ -72,8 +72,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             grid: vec![],
             sx: 0,
             sy: 0,
@@ -188,6 +188,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -213,12 +221,4 @@ mod test {
         puzzle.configure("test2.txt");
         assert_eq!(puzzle.part2(), 71);
     }
-}
-
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

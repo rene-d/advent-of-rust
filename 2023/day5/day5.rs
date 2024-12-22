@@ -28,8 +28,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             seeds: vec![],
             maps: vec![],
         }
@@ -55,9 +55,7 @@ impl Puzzle {
                     .split_ascii_whitespace()
                     .map(|x| x.parse::<u64>().unwrap())
                     .collect();
-                if dsc.len() != 3 {
-                    panic!("bad line {line}");
-                }
+                assert!(dsc.len() == 3, "bad line {line}");
                 let conv = Conv {
                     destination: dsc[0],
                     source: dsc[1],
@@ -124,6 +122,14 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
@@ -142,12 +148,4 @@ mod test {
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part2(), 46);
     }
-}
-
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

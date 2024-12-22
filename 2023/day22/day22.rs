@@ -9,7 +9,7 @@ struct Point {
 }
 
 impl Point {
-    fn new(c: &[i32]) -> Self {
+    const fn new(c: &[i32]) -> Self {
         Self {
             x: c[0],
             y: c[1],
@@ -45,8 +45,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             bricks: vec![],
             supports: HashMap::new(),
             supported_by: HashMap::new(),
@@ -111,7 +111,7 @@ impl Puzzle {
     fn part1(&self) -> usize {
         (0..self.bricks.len())
             .filter(|j| {
-                self.supports[&j]
+                self.supports[j]
                     .iter()
                     .all(|i| self.supported_by[i].len() >= 2)
             })

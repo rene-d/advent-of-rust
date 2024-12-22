@@ -18,16 +18,16 @@ enum Comparison {
 impl Comparison {
     fn from(s: &str) -> Self {
         match s {
-            ">" => Comparison::Greater,
-            "<" => Comparison::Lesser,
+            ">" => Self::Greater,
+            "<" => Self::Lesser,
             _ => panic!(),
         }
     }
 
     fn opposite(&self) -> Self {
         match &self {
-            Comparison::Lesser => Comparison::GreaterOrEqual,
-            Comparison::Greater => Comparison::LesserOrEqual,
+            Self::Lesser => Self::GreaterOrEqual,
+            Self::Greater => Self::LesserOrEqual,
             _ => panic!("unused"),
         }
     }
@@ -44,7 +44,7 @@ impl Rule {
         let re: Regex = Regex::new(r"^([xmas])([<>])(\d+):(\w+)$").unwrap();
 
         match s {
-            s if s.chars().all(char::is_alphabetic) => Rule::Link(s.to_string()),
+            s if s.chars().all(char::is_alphabetic) => Self::Link(s.to_string()),
 
             _ => {
                 if let Some(caps) = re.captures(s) {
@@ -53,7 +53,7 @@ impl Rule {
                     let value: u64 = caps.get(3).unwrap().as_str().parse().unwrap();
                     let next = caps.get(4).unwrap().as_str().to_owned();
 
-                    Rule::Condition((variable, op, value, next))
+                    Self::Condition((variable, op, value, next))
                 } else {
                     panic!();
                 }
@@ -77,8 +77,8 @@ fn new_range(op: &Comparison, n: u64, mut lo: u64, mut hi: u64) -> (u64, u64) {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             workflows: HashMap::new(),
             parts: vec![],
         }
