@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 42](https://img.shields.io/badge/Stars-42⭐-blue)
-![Rust: 22](https://img.shields.io/badge/Rust-22-cyan?logo=Rust)
+![Stars: 44](https://img.shields.io/badge/Stars-44⭐-blue)
+![Rust: 23](https://img.shields.io/badge/Rust-23-cyan?logo=Rust)
 ![Python: 8](https://img.shields.io/badge/Python-8-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 42⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 44⭐
 
 Puzzle                                                                 | Stars | Languages
 ---------------------------------------------------------------------- | ----- | -----------
@@ -30,3 +30,4 @@ Puzzle                                                                 | Stars |
 [Day 19: Linen Layout](https://adventofcode.com/2024/day/19)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day19/day19.rs)
 [Day 20: Race Condition](https://adventofcode.com/2024/day/20)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day20/day20.rs)
 [Day 21: Keypad Conundrum](https://adventofcode.com/2024/day/21)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day21/day21.rs)
+[Day 22: Monkey Market](https://adventofcode.com/2024/day/22)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day22/day22.rs)
