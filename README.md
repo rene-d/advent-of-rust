@@ -1,7 +1,7 @@
 # [Advent of Code](https://adventofcode.com) in Rust 🦀
 
 ![Stars: 494](https://img.shields.io/badge/Stars-494⭐-blue)
-![Rust: 198](https://img.shields.io/badge/Rust-198-cyan?logo=Rust)
+![Rust: 199](https://img.shields.io/badge/Rust-199-cyan?logo=Rust)
 ![Python: 121](https://img.shields.io/badge/Python-121-cyan?logo=Python)
 
 Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) and other languages.
@@ -48,7 +48,7 @@ Calendar | Solutions | Stars | Rust | Python | 🎄
 [Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](2018/README.md) |  50⭐ |  25 |   4 |   1
 [Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) |  50⭐ |  15 |  17 |    
 [Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](2016/README.md) |  50⭐ |  25 |   0 |    
-[Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/README.md) |  50⭐ |  24 |   5 |    
+[Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/README.md) |  50⭐ |  25 |   5 |    
 
 ## Bonus 🎄
 
