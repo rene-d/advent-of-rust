@@ -4,7 +4,7 @@
 
 import os
 import subprocess
-import typing as t
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -173,13 +173,39 @@ def aoc_clippy(ctx: click.Context):
     if cwd == ctx.obj.aoc_root:
         for year in sorted(cwd.glob("*")):
             if year.name.isdigit() and int(year.name) >= 2015:
-                print(f"Year {year.name}")
+                print("--------------------------------")
+                print(f"| Year {year.name}")
+                print("--------------------------------")
+                sys.stdout.flush()
                 ctx.obj.pass_thru("lint_rust.sh", [], cwd=year)
     else:
 
         if not (cwd / "Cargo.toml").is_file():
             raise click.ClickException("need a Cargo.toml file")
         ctx.obj.pass_thru("lint_rust.sh", [])
+
+
+@aoc.command(name="test")
+@click.pass_context
+def aoc_test(ctx: click.Context):
+    """
+    Run cargo test.
+    """
+    cwd = Path(os.getcwd())
+
+    if cwd == ctx.obj.aoc_root:
+        for year in sorted(cwd.glob("*")):
+            if year.name.isdigit() and int(year.name) >= 2015:
+                print("--------------------------------")
+                print(f"| Year {year.name}")
+                print("--------------------------------")
+                sys.stdout.flush()
+                subprocess.call(["cargo", "test"], cwd=year)
+    else:
+
+        if not (cwd / "Cargo.toml").is_file():
+            raise click.ClickException("need a Cargo.toml file")
+        subprocess.call(["cargo", "test"])
 
 
 @aoc.command(name="answers", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
