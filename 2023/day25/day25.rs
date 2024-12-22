@@ -41,7 +41,7 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&mut self) -> usize {
+    fn part1(&self) -> usize {
         let min_cut = stoer_wagner_min_cut(&self.graph, |_| Ok::<u32, ()>(1));
 
         let (_, edges) = min_cut.unwrap().unwrap();

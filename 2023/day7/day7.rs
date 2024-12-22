@@ -13,8 +13,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { camels: vec![] }
+    const fn new() -> Self {
+        Self { camels: vec![] }
     }
 
     /// Get the puzzle input.
@@ -88,8 +88,7 @@ impl Puzzle {
     fn part1(&self) -> usize {
         let mut camels = self.camels.clone();
 
-        camels
-            .sort_by_key(|camel| Self::rank(&camel.hand) * 0x10_0000 + Puzzle::weight(&camel.hand));
+        camels.sort_by_key(|camel| Self::rank(&camel.hand) * 0x10_0000 + Self::weight(&camel.hand));
 
         camels.iter().enumerate().map(|x| (x.0 + 1) * x.1.bid).sum()
     }
@@ -99,11 +98,19 @@ impl Puzzle {
         let mut camels = self.camels.clone();
 
         camels.sort_by_key(|camel| {
-            Self::optimal_rank(&camel.hand) * 0x10_0000 + Puzzle::weight_no_jack(&camel.hand)
+            Self::optimal_rank(&camel.hand) * 0x10_0000 + Self::weight_no_jack(&camel.hand)
         });
 
         camels.iter().enumerate().map(|x| (x.0 + 1) * x.1.bid).sum()
     }
+}
+
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
 }
 
 /// Test from puzzle input
@@ -124,12 +131,4 @@ mod test {
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part2(), 5905);
     }
-}
-
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

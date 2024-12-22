@@ -51,7 +51,7 @@ impl Puzzle {
 
                 let mut n = 0;
                 while let Some(d) = self.g(x, y).to_digit(10) {
-                    n = n * 10 + (d as u64);
+                    n = n * 10 + u64::from(d);
 
                     for (ix, iy) in [
                         (-1, -1),
@@ -67,10 +67,8 @@ impl Puzzle {
                         if c != '.' && !c.is_ascii_digit() {
                             symbol = true;
                             if c == '*' {
-                                if gear != [0, 0] && gear != [x + ix, y + iy] {
-                                    // assert we have only one gear near a part number
-                                    panic!();
-                                }
+                                // assert we have only one gear near a part number
+                                assert!(!(gear != [0, 0] && gear != [x + ix, y + iy]),);
                                 gear = [x + ix, y + iy];
                             }
                         }
@@ -93,7 +91,7 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> u64 {
+    const fn part1(&self) -> u64 {
         self.sum_parts
     }
 

@@ -21,8 +21,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { hailstones: vec![] }
+    const fn new() -> Self {
+        Self { hailstones: vec![] }
     }
 
     /// Get the puzzle input.
@@ -100,7 +100,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> i64 {
-        use z3::ast::*;
+        use z3::ast::{Ast, Int, Real};
 
         let cfg = z3::Config::new();
         let ctx = z3::Context::new(&cfg);

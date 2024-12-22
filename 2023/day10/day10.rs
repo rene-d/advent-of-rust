@@ -17,8 +17,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             _grid: vec![],
             sx: 0,
             sy: 0,
@@ -113,7 +113,7 @@ impl Puzzle {
             .map(|&(x, y)| Coord { x, y })
             .collect::<LineString<i32>>();
 
-        let polygon = Polygon::new(line_string.clone(), vec![]);
+        let polygon = Polygon::new(line_string, vec![]);
 
         let mut n = 0;
         for (x, y) in iproduct!(0..self.sx, 0..self.sy) {
@@ -125,6 +125,14 @@ impl Puzzle {
 
         n
     }
+}
+
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(args.path.as_str());
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
 }
 
 /// Test from puzzle input
@@ -171,12 +179,4 @@ mod test {
         puzzle.configure("test6.txt");
         assert_eq!(puzzle.part2(), 10);
     }
-}
-
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

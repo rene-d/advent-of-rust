@@ -12,8 +12,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             // rocks: HashSet::new(),
             garden: vec![],
             n: 0, // the map has to be a square n x n
