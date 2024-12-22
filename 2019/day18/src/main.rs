@@ -12,8 +12,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { maze: grid![] }
+    fn new() -> Self {
+        Self { maze: grid![] }
     }
 
     /// Get the puzzle input.

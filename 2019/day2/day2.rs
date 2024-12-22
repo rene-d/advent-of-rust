@@ -8,8 +8,8 @@ const ADD: u32 = 1;
 const MUL: u32 = 2;
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             program: Vec::new(),
         }
     }
@@ -33,7 +33,7 @@ impl Puzzle {
     fn dump(&self) -> String {
         self.program
             .iter()
-            .map(|x| x.to_string())
+            .map(std::string::ToString::to_string)
             .collect::<Vec<String>>()
             .join(",")
     }

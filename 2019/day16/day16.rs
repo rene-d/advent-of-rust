@@ -8,7 +8,7 @@ fn parse_data(data: &str) -> Vec<u8> {
         .filter_map(|x| {
             let digit = (x as u32).wrapping_sub('0' as u32);
             if digit < 10 {
-                Some(digit as u8)
+                u8::try_from(digit).ok()
             } else {
                 None
             }
@@ -25,9 +25,9 @@ fn fft(signal: &mut [u8]) {
     for n in 0..signal.len() {
         let mut s = 0;
         for i in 0..signal.len() {
-            s += pattern[(1 + i) / (1 + n) % 4] * phase[i] as i32;
+            s += pattern[(1 + i) / (1 + n) % 4] * i32::from(phase[i]);
         }
-        signal[n] = (s.abs() % 10) as u8;
+        signal[n] = u8::try_from(s.abs() % 10).unwrap();
     }
 }
 
@@ -37,7 +37,7 @@ fn part1(data: &[u8]) -> u32 {
     for _ in 0..100 {
         fft(&mut p);
     }
-    p[0..8].iter().fold(0, |acc, d| acc * 10 + (*d as u32))
+    p[0..8].iter().fold(0, |acc, d| acc * 10 + u32::from(*d))
 }
 
 /// Solve part two: find the eight-digit message embedded in the final output list.
@@ -60,10 +60,10 @@ fn part2(data: &[u8]) -> u32 {
             t[i] = s;
         }
 
-        p = t.to_owned();
+        p.clone_from(&t);
     }
 
-    p[0..8].iter().fold(0, |acc, d| acc * 10 + (*d as u32))
+    p[0..8].iter().fold(0, |acc, d| acc * 10 + u32::from(*d))
 }
 
 fn main() {

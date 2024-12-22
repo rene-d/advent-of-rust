@@ -1,9 +1,9 @@
 //! [Day 22: Slam Shuffle](https://adventofcode.com/2019/day/22)
 
-#![allow(clippy::unreadable_literal)]
+// #![allow(clippy::unreadable_literal)]
 
 // Calculates (n^x) % p
-fn modular_exponent(mut n: i128, mut x: i128, p: i128) -> i128 {
+const fn modular_exponent(mut n: i128, mut x: i128, p: i128) -> i128 {
     let mut ans = 1;
     if x <= 0 {
         return 1;
@@ -59,14 +59,14 @@ struct Congruence {
 impl Congruence {
     fn compose(&self, lhs: &Self) -> Self {
         assert_eq!(self.m, lhs.m);
-        Congruence {
+        Self {
             a: (self.a * lhs.a) % self.m,
             c: (self.c * lhs.a + lhs.c) % self.m,
             m: self.m,
         }
     }
 
-    fn value(&self, index: i128) -> i128 {
+    const fn value(&self, index: i128) -> i128 {
         (self.a * index + self.c) % self.m
     }
 
@@ -129,8 +129,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { shuffles: vec![] }
+    const fn new() -> Self {
+        Self { shuffles: vec![] }
     }
 
     /// Get the puzzle input.
@@ -196,12 +196,12 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> i128 {
-        let m = 119315717514047;
+        let m = 119_315_717_514_047;
         self.shuffles
             .iter()
             .fold(Congruence { a: 1, c: 0, m }, |acc, t| acc.compose(&t.op(m)))
             .inv()
-            .pow(101741582076661)
+            .pow(101_741_582_076_661)
             .value(2020)
     }
 }

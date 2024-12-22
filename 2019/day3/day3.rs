@@ -44,7 +44,7 @@ fn steps(instrs: &[Instr], target: (i32, i32)) -> u32 {
     0
 }
 
-fn manhattan(p: (i32, i32)) -> i32 {
+const fn manhattan(p: (i32, i32)) -> i32 {
     p.0.abs() + p.1.abs()
 }
 
@@ -53,8 +53,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { paths: Vec::new() }
+    const fn new() -> Self {
+        Self { paths: Vec::new() }
     }
 
     /// Get the puzzle input.

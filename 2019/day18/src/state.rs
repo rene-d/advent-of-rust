@@ -20,7 +20,7 @@ impl State {
     /// # Panics
     /// may be...
     #[must_use]
-    pub fn next(&self, paths: &HashMap<u8, Vec<Path>>) -> Vec<(State, usize)> {
+    pub fn next(&self, paths: &HashMap<u8, Vec<Path>>) -> Vec<(Self, usize)> {
         // impl Iterator<Item = Self> {
 
         let mut result = vec![];
