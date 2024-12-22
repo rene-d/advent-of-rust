@@ -4,7 +4,7 @@ use regex::Regex;
 use std::collections::HashSet;
 
 /// Computes the [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) between two points
-fn manhattan(ax: i64, ay: i64, bx: i64, by: i64) -> i64 {
+const fn manhattan(ax: i64, ay: i64, bx: i64, by: i64) -> i64 {
     (ax - bx).abs() + (ay - by).abs()
 }
 

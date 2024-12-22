@@ -10,20 +10,20 @@ enum Operation {
 impl Operation {
     fn new(s: &str) -> Self {
         if s == "old * old" {
-            return Operation::Square;
+            return Self::Square;
         } else if let Some(m) = s.strip_prefix("old + ") {
-            return Operation::Addition(m.parse().unwrap());
+            return Self::Addition(m.parse().unwrap());
         } else if let Some(m) = s.strip_prefix("old * ") {
-            return Operation::Product(m.parse().unwrap());
+            return Self::Product(m.parse().unwrap());
         }
         panic!("bad operation {s}")
     }
 
     fn calc(&self, arg: u64) -> u64 {
         match self {
-            Operation::Square => arg * arg,
-            Operation::Addition(n) => arg + n,
-            Operation::Product(n) => arg * n,
+            Self::Square => arg * arg,
+            Self::Addition(n) => arg + n,
+            Self::Product(n) => arg * n,
         }
     }
 }
@@ -43,7 +43,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self { monkeys: vec![] }
     }
 

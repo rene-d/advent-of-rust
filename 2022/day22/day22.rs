@@ -13,7 +13,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self {
             grid: vec![],
             path: vec![],
@@ -250,7 +250,7 @@ impl Puzzle {
         self.grid[y].chars().nth(x).unwrap() == ' '
     }
 
-    fn walk(&self, advance: fn(&Puzzle, &mut usize, &mut usize, &mut u8)) -> usize {
+    fn walk(&self, advance: fn(&Self, &mut usize, &mut usize, &mut u8)) -> usize {
         let mut x = self.start(0);
         let mut y = 0;
         let mut d = 0;
@@ -270,7 +270,7 @@ impl Puzzle {
 
     // Solves part one
     fn part1(&self) -> usize {
-        self.walk(Puzzle::step)
+        self.walk(Self::step)
     }
 
     // Solve part two
@@ -279,7 +279,7 @@ impl Puzzle {
         assert_eq!(self.grid[0].len() / 3, 50);
         assert_eq!(self.grid.len() / 4, 50);
 
-        self.walk(Puzzle::step_cube)
+        self.walk(Self::step_cube)
     }
 }
 

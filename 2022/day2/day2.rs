@@ -15,8 +15,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { guide: Vec::new() }
+    const fn new() -> Self {
+        Self { guide: Vec::new() }
     }
 
     fn configure(&mut self, path: &str) {

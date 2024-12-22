@@ -29,7 +29,7 @@ impl Puzzle {
         )
         .unwrap();
 
-        for line in data.split('\n').collect::<Vec<_>>() {
+        for line in data.split('\n') {
             if let Some(m) = re.captures(line) {
                 let valve = self.valve_id_new(&m[1]);
 
@@ -57,7 +57,7 @@ impl Puzzle {
         }
     }
 
-    fn distance(&self, a: u8, b: u8) -> u32 {
+    const fn distance(&self, a: u8, b: u8) -> u32 {
         self.distances[a as usize][b as usize]
     }
 

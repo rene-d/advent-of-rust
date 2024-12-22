@@ -71,7 +71,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self { packets: vec![] }
     }
 
@@ -118,6 +118,15 @@ impl Puzzle {
     }
 }
 
+/// main function
+fn main() {
+    let args = aoc::parse_args();
+    let mut puzzle = Puzzle::new();
+    puzzle.configure(&args.path);
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -129,13 +138,4 @@ mod test {
         assert_eq!(puzzle.part1(), 13);
         assert_eq!(puzzle.part2(), 140);
     }
-}
-
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
 }

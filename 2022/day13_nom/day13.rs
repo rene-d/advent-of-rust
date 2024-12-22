@@ -30,10 +30,10 @@ impl Packet {
 
     fn cmp(&self, other: &Self) -> Ordering {
         match (self, other) {
-            (Packet::Integer(a), Packet::Integer(b)) => a.cmp(b),
-            (Packet::Integer(_), Packet::Array(_)) => Packet::Array(vec![self.clone()]).cmp(other),
-            (Packet::Array(_), Packet::Integer(_)) => self.cmp(&Packet::Array(vec![other.clone()])),
-            (Packet::Array(a), Packet::Array(b)) => {
+            (Self::Integer(a), Self::Integer(b)) => a.cmp(b),
+            (Self::Integer(_), Self::Array(_)) => Self::Array(vec![self.clone()]).cmp(other),
+            (Self::Array(_), Self::Integer(_)) => self.cmp(&Self::Array(vec![other.clone()])),
+            (Self::Array(a), Self::Array(b)) => {
                 let mut iter_a = a.iter();
                 let mut iter_b = b.iter();
                 loop {
@@ -58,7 +58,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self { packets: vec![] }
     }
 
