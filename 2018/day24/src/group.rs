@@ -122,7 +122,7 @@ impl Group {
         self.weaknesses.contains(attack)
     }
 
-    pub fn attack_damage(&self, other: &Group) -> u32 {
+    pub fn attack_damage(&self, other: &Self) -> u32 {
         if other.is_immune(&self.damage_type) {
             return 0;
         }
@@ -141,7 +141,7 @@ impl Group {
         self.num_units.set(old.saturating_sub(units_lost));
     }
 
-    pub fn select_target(&self, others: &[&Group]) -> Option<usize> {
+    pub fn select_target(&self, others: &[&Self]) -> Option<usize> {
         // filter with
         //  - alive units
         //  - can deal damage
@@ -200,7 +200,7 @@ pub struct Fight<'a> {
     pub opponent: &'a Group,
 }
 
-impl<'a> Fight<'a> {
+impl Fight<'_> {
     pub fn fight(&self) {
         if self.attacker.is_alive() {
             let damage = self.attacker.attack_damage(self.opponent);
@@ -209,13 +209,13 @@ impl<'a> Fight<'a> {
     }
 }
 
-impl<'a> PartialOrd for Fight<'a> {
+impl PartialOrd for Fight<'_> {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<'a> Ord for Fight<'a> {
+impl Ord for Fight<'_> {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.attacker
             .initiative
@@ -224,13 +224,13 @@ impl<'a> Ord for Fight<'a> {
     }
 }
 
-impl<'a> PartialEq for Fight<'a> {
+impl PartialEq for Fight<'_> {
     fn eq(&self, other: &Self) -> bool {
         self.attacker.initiative.eq(&other.attacker.initiative)
     }
 }
 
-impl<'a> Eq for Fight<'a> {}
+impl Eq for Fight<'_> {}
 
 #[cfg(test)]
 mod test {

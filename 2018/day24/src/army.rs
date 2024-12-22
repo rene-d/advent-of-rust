@@ -11,7 +11,7 @@ pub struct Army {
 
 impl Army {
     #[must_use]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             name: String::new(),
             groups: vec![],
@@ -29,7 +29,7 @@ impl std::str::FromStr for Army {
     type Err = Box<dyn std::error::Error>;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut a = Army::new();
+        let mut a = Self::new();
         let mut id = 0;
 
         for line in s.lines() {
@@ -65,7 +65,7 @@ impl Army {
     }
 
     #[must_use]
-    pub fn select_fights<'a>(&'a self, other: &'a Army) -> Vec<Fight<'a>> {
+    pub fn select_fights<'a>(&'a self, other: &'a Self) -> Vec<Fight<'a>> {
         let mut fights: Vec<Fight<'a>> = vec![];
 
         let mut attackers = self.alive_groups();

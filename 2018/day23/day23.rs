@@ -25,7 +25,7 @@ impl Nanobot {
         }
     }
 
-    fn dist(&self, other: &Self) -> u64 {
+    const fn dist(&self, other: &Self) -> u64 {
         self.x.abs_diff(other.x) + self.y.abs_diff(other.y) + self.z.abs_diff(other.z)
     }
 }
@@ -35,8 +35,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { nanobots: vec![] }
+    const fn new() -> Self {
+        Self { nanobots: vec![] }
     }
 
     /// Get the puzzle input.
@@ -62,7 +62,7 @@ impl Puzzle {
         let cfg = z3::Config::new();
         let ctx = z3::Context::new(&cfg);
 
-        let o = z3::Optimize::new(&ctx);
+        let ooo = z3::Optimize::new(&ctx);
 
         let x = Int::new_const(&ctx, "x");
         let y = Int::new_const(&ctx, "y");
@@ -102,13 +102,13 @@ impl Puzzle {
             );
         }
 
-        o.maximize(&count);
+        ooo.maximize(&count);
 
-        o.minimize(&dist(0, 0, 0));
+        ooo.minimize(&dist(0, 0, 0));
 
-        match o.check(&[]) {
+        match ooo.check(&[]) {
             z3::SatResult::Sat => {
-                if let Some(model) = o.get_model() {
+                if let Some(model) = ooo.get_model() {
                     let xx = model.eval(&x, true).unwrap();
                     let yy = model.eval(&y, true).unwrap();
                     let zz = model.eval(&z, true).unwrap();

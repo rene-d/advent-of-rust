@@ -100,9 +100,7 @@ fn next_pos(
         if target_adj.contains(&(x, y)) {
             min_path = min_path.min(steps);
             pos.push(e);
-        } else if !visited.contains(&(x, y)) {
-            visited.insert((x, y));
-
+        } else if visited.insert((x, y)) {
             q.extend(
                 adjacent(x, y)
                     .iter()
@@ -138,8 +136,8 @@ fn has_elves_and_goblins(units: &[Unit]) -> bool {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             wall: HashSet::new(),
             units: vec![],
         }

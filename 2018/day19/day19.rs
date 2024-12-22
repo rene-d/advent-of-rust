@@ -55,8 +55,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             ip_reg: 0,
             program: vec![],
         }
