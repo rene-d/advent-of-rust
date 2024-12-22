@@ -5,8 +5,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { step: 0 }
+    const fn new() -> Self {
+        Self { step: 0 }
     }
 
     /// Get the puzzle input.

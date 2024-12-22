@@ -3,7 +3,7 @@
 use aoc::grid::Grid;
 use aoc::knot;
 
-fn count_ones(value: u8) -> u32 {
+const fn count_ones(value: u8) -> u32 {
     let mut count = 0;
     let mut value = value;
 
@@ -20,8 +20,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { key: String::new() }
+    const fn new() -> Self {
+        Self { key: String::new() }
     }
 
     /// Get the puzzle input.

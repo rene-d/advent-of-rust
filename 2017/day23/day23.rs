@@ -66,8 +66,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { program: vec![] }
+    const fn new() -> Self {
+        Self { program: vec![] }
     }
 
     /// Get the puzzle input.
