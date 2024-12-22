@@ -18,8 +18,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             racetrack: Grid::new(1, 1),
             start: Coord::new(0, 0),
             end: Coord::new(0, 0),

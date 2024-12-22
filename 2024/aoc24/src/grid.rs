@@ -33,12 +33,12 @@ impl Grid {
     }
 
     #[must_use]
-    pub fn width(&self) -> i32 {
+    pub const fn width(&self) -> i32 {
         self.size.x
     }
 
     #[must_use]
-    pub fn height(&self) -> i32 {
+    pub const fn height(&self) -> i32 {
         self.size.y
     }
 

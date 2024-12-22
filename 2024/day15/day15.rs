@@ -187,8 +187,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             data: String::new(),
             moves: vec![],
             anim: 0,
@@ -212,7 +212,7 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&mut self) -> i32 {
+    fn part1(&self) -> i32 {
         let (mut grid, mut robot) = init_first_warehouse(&self.data);
         let mut n = 1;
 

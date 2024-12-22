@@ -14,7 +14,7 @@ struct Cost1 {
 }
 
 impl Cost1 {
-    fn new(cost: u32, pos: Coord, dir: Coord) -> Self {
+    const fn new(cost: u32, pos: Coord, dir: Coord) -> Self {
         Self { cost, pos, dir }
     }
 }
@@ -47,7 +47,7 @@ struct Cost2 {
 }
 
 impl Cost2 {
-    fn new(cost: u32, pos: Coord, dir: Coord, path: Vec<Coord>) -> Self {
+    const fn new(cost: u32, pos: Coord, dir: Coord, path: Vec<Coord>) -> Self {
         Self {
             cost,
             pos,
@@ -85,8 +85,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             start: ZERO,
             end: ZERO,
             maze: HashSet::new(),

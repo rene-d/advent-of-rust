@@ -17,8 +17,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             robots: Vec::new(),
             width: 101,
             height: 103,

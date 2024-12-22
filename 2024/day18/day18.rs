@@ -13,8 +13,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             byte_positions: Vec::new(),
             mem_size: 71,
             num_corruptions: 1024,

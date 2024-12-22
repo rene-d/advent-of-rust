@@ -13,8 +13,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             antennas: HashMap::new(),
             width: 0..=0,
             height: 0..=0,

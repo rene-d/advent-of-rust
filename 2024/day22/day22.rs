@@ -2,11 +2,10 @@
 
 use std::collections::{HashMap, HashSet};
 
-fn next_secret(secret: i64) -> i64 {
-    let secret = (secret ^ (secret * 64)) % 16777216;
-    let secret = (secret ^ (secret / 32)) % 16777216;
-    let secret = (secret ^ (secret * 2048)) % 16777216;
-    secret
+const fn next_secret(secret: i64) -> i64 {
+    let secret = (secret ^ (secret * 64)) % 16_777_216;
+    let secret = (secret ^ (secret / 32)) % 16_777_216;
+    (secret ^ (secret * 2048)) % 16_777_216
 }
 
 struct Puzzle {
@@ -14,8 +13,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             initial_secrets: Vec::new(),
         }
     }
@@ -54,8 +53,7 @@ impl Puzzle {
             for p in prices.windows(5) {
                 let sequence = [p[1] - p[0], p[2] - p[1], p[3] - p[2], p[4] - p[3]];
 
-                if !seen.contains(&sequence) {
-                    seen.insert(sequence);
+                if seen.insert(sequence) {
                     *bananas.entry(sequence).or_default() += p[4];
                 }
             }
