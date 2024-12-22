@@ -17,8 +17,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             registers: HashMap::new(),
             last_max: 0,
             value_max: 0,
@@ -81,12 +81,12 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> i32 {
+    const fn part1(&self) -> i32 {
         self.last_max
     }
 
     /// Solve part two.
-    fn part2(&self) -> i32 {
+    const fn part2(&self) -> i32 {
         self.value_max
     }
 }

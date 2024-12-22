@@ -7,8 +7,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             data: String::new(),
         }
     }
@@ -17,7 +17,7 @@ impl Puzzle {
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
 
-        self.data = data.trim().to_owned();
+        data.trim().clone_into(&mut self.data);
     }
 
     /// Solve part one.

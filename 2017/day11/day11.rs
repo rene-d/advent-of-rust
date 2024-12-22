@@ -10,8 +10,8 @@ const STEP_X: i32 = 1;
 const STEP_Y: i32 = 1;
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             data: String::new(),
             part1: 0,
             part2: 0,
@@ -26,7 +26,7 @@ impl Puzzle {
     }
 
     /// Determine the fewest number of steps to return to (0,0).
-    fn steps(x: i32, y: i32) -> u32 {
+    const fn steps(x: i32, y: i32) -> u32 {
         let mut x = x.abs();
         let mut y = y.abs();
         let mut steps = 0;
