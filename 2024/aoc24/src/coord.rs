@@ -9,28 +9,28 @@ pub struct Coord {
 }
 
 impl Coord {
-    pub const LEFT: Coord = Coord { x: -1, y: 0 };
-    pub const RIGHT: Coord = Coord { x: 1, y: 0 };
-    pub const UP: Coord = Coord { x: 0, y: -1 };
-    pub const DOWN: Coord = Coord { x: 0, y: 1 };
+    pub const LEFT: Self = Self { x: -1, y: 0 };
+    pub const RIGHT: Self = Self { x: 1, y: 0 };
+    pub const UP: Self = Self { x: 0, y: -1 };
+    pub const DOWN: Self = Self { x: 0, y: 1 };
 }
 
 impl Coord {
     #[must_use]
-    pub fn new(x: i32, y: i32) -> Self {
+    pub const fn new(x: i32, y: i32) -> Self {
         Self { x, y }
     }
 
     #[must_use]
-    pub fn manhattan_distance(&self, rhs: &Coord) -> i32 {
+    pub const fn manhattan_distance(&self, rhs: &Self) -> i32 {
         (self.x - rhs.x).abs() + (self.y - rhs.y).abs()
     }
 }
 
 impl Add for Coord {
-    type Output = Coord;
-    fn add(self, rhs: Coord) -> Coord {
-        Coord {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self {
+        Self {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
         }
@@ -45,9 +45,9 @@ impl AddAssign for Coord {
 }
 
 impl Sub for Coord {
-    type Output = Coord;
-    fn sub(self, rhs: Coord) -> Coord {
-        Coord {
+    type Output = Self;
+    fn sub(self, rhs: Self) -> Self {
+        Self {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
         }
@@ -62,10 +62,10 @@ impl SubAssign for Coord {
 }
 
 impl Mul<i32> for Coord {
-    type Output = Coord;
+    type Output = Self;
 
-    fn mul(self, rhs: i32) -> Coord {
-        Coord {
+    fn mul(self, rhs: i32) -> Self {
+        Self {
             x: self.x * rhs,
             y: self.y * rhs,
         }

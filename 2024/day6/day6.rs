@@ -9,8 +9,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             grid: grid![],
             start: (0, 0),
         }

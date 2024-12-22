@@ -225,8 +225,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             codes: Vec::new(),
             solver: Solver::new(),
         }
