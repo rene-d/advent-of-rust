@@ -2,13 +2,13 @@
 
 use std::collections::{HashSet, VecDeque};
 
-fn is_wall(x: u32, y: u32, designer_number: u32) -> bool {
+const fn is_wall(x: u32, y: u32, designer_number: u32) -> bool {
     let v = x * x + 3 * x + 2 * x * y + y + y * y + designer_number;
     let v = count_ones(v);
     v & 1 == 1
 }
 
-fn count_ones(value: u32) -> u32 {
+const fn count_ones(value: u32) -> u32 {
     let mut count = 0;
     let mut value = value;
 
@@ -30,16 +30,16 @@ enum Direction {
 
 impl Direction {
     fn iter(x: u32, y: u32) -> impl Iterator<Item = (u32, u32)> {
-        [Direction::North, Direction::East, Direction::South, Direction::West]
+        [Self::North, Self::East, Self::South, Self::West]
             .iter()
             .filter_map(move |d| {
-                if d == &Direction::North && y > 0 {
+                if d == &Self::North && y > 0 {
                     Some((x, y - 1))
-                } else if d == &Direction::South {
+                } else if d == &Self::South {
                     Some((x, y + 1))
-                } else if d == &Direction::East {
+                } else if d == &Self::East {
                     Some((x + 1, y))
-                } else if d == &Direction::West && x > 0 {
+                } else if d == &Self::West && x > 0 {
                     Some((x - 1, y))
                 } else {
                     None
@@ -80,8 +80,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             designer_number: 10, // the puzzle example
         }
     }

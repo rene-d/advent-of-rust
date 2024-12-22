@@ -16,20 +16,20 @@ fn solve(start_sequence: &str, turns: u32) {
 
         let mut count = 0;
         let mut previous = '\0';
-        for current in look {
-            if previous != '\0' && previous != current {
+        for current in &look {
+            if previous != '\0' && previous != *current {
                 say.extend(count.to_string().chars());
                 say.push(previous);
                 count = 0;
             }
             count += 1;
-            previous = current;
+            previous = *current;
         }
 
         say.extend(count.to_string().chars());
         say.push(previous);
 
-        look = say.clone();
+        look.clone_from(&say);
     }
     println!("{}", look.len());
 }

@@ -1,6 +1,4 @@
-/*!
-
-*/
+//! Assembunny Virtual Machine
 
 use std::convert::TryFrom;
 
@@ -41,12 +39,13 @@ enum RegOrValue {
 }
 
 impl RegOrValue {
-    fn from_str(s: &str) -> RegOrValue {
-        if let Ok(value) = s.parse::<i32>() {
-            RegOrValue::Value(value)
-        } else {
-            RegOrValue::Register(to_reg(s))
-        }
+    fn from_str(s: &str) -> Self {
+        // if let Ok(value) = s.parse::<i32>() {
+        //     Self::Value(value)
+        // } else {
+        //     Self::Register(to_reg(s))
+        // }
+        s.parse::<i32>().map_or_else(|_| Self::Register(to_reg(s)), Self::Value)
     }
 }
 
@@ -56,8 +55,8 @@ impl std::fmt::Display for RegOrValue {
             f,
             "{}",
             match self {
-                RegOrValue::Register(reg) => format!("{}", reg_name(*reg)),
-                RegOrValue::Value(value) => format!("{value}"),
+                Self::Register(reg) => format!("{}", reg_name(*reg)),
+                Self::Value(value) => format!("{value}"),
             }
         )
     }
@@ -81,13 +80,13 @@ impl std::fmt::Display for Instruction {
             f,
             "{}",
             match &self {
-                Instruction::Cpy(a, b) => format!("cpy {a} {b}"),
-                Instruction::Inc(reg) => format!("inc {}", reg_name(*reg)),
-                Instruction::Dec(reg) => format!("dec {}", reg_name(*reg)),
-                Instruction::Jnz(a, b) => format!("jnz {a} {b}"),
-                Instruction::Out(a) => format!("out {a}"),
-                Instruction::Tgl(reg) => format!("tgl {}", reg_name(*reg)),
-                Instruction::Nop => "nop".to_string(),
+                Self::Cpy(a, b) => format!("cpy {a} {b}"),
+                Self::Inc(reg) => format!("inc {}", reg_name(*reg)),
+                Self::Dec(reg) => format!("dec {}", reg_name(*reg)),
+                Self::Jnz(a, b) => format!("jnz {a} {b}"),
+                Self::Out(a) => format!("out {a}"),
+                Self::Tgl(reg) => format!("tgl {}", reg_name(*reg)),
+                Self::Nop => "nop".to_string(),
             }
         )
     }
@@ -108,8 +107,8 @@ pub struct BunnyVM {
 impl BunnyVM {
     /// `new` initializes a new program
     #[must_use]
-    pub fn new(program: &str) -> BunnyVM {
-        let mut p = BunnyVM {
+    pub fn new(program: &str) -> Self {
+        let mut p = Self {
             instructions: Vec::new(),
             toggled: Vec::new(),
             registers: [0; 4],
@@ -240,7 +239,7 @@ impl BunnyVM {
                         RegOrValue::Register(reg) => self.registers[*reg],
                         RegOrValue::Value(value) => *value,
                     };
-                    self.ip = BunnyVM::new_ip(self.ip, offset);
+                    self.ip = Self::new_ip(self.ip, offset);
                     return !self.is_terminated();
                 }
             }
@@ -252,7 +251,7 @@ impl BunnyVM {
                 self.output = Some(*value);
             }
             Instruction::Tgl(reg) => {
-                let ip = BunnyVM::new_ip(self.ip, self.registers[*reg]);
+                let ip = Self::new_ip(self.ip, self.registers[*reg]);
 
                 if ip < self.instructions.len() {
                     std::mem::swap(&mut self.instructions[ip], &mut self.toggled[ip]);

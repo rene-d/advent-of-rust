@@ -10,8 +10,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { grid: grid![] }
+    fn new() -> Self {
+        Self { grid: grid![] }
     }
 
     /// Get the puzzle input.

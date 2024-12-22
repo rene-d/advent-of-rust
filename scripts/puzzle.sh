@@ -154,24 +154,26 @@ create_rust()
     cat <<EOF >day$day.rs
 //! $title
 
-// use std::collections::{HashMap,HashSet};
-
 struct Puzzle {
-    data: String,
+    // data: String,
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
-            data: String::new(),
+    fn new() -> Self {
+        Self {
+            // data: String::new(),
         }
     }
 
     /// Get the puzzle input.
     fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
+        let data =
+            std::fs::read_to_string(path).unwrap_or_else(|_| {
+                eprintln!("cannot read input file {path}");
+                std::process::exit(1);
+            });
 
-        self.data = data;
+        // self.data = data;
     }
 
     /// Solve part one.
@@ -199,14 +201,14 @@ mod test {
     use super::*;
 
     #[test]
-    fn test01() {
+    fn test_part1() {
         let mut puzzle = Puzzle::new();
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part1(), 0);
     }
 
     #[test]
-    fn test02() {
+    fn test_part2() {
         let mut puzzle = Puzzle::new();
         puzzle.configure("test.txt");
         assert_eq!(puzzle.part2(), 0);

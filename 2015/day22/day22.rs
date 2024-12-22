@@ -31,7 +31,7 @@ struct State {
 }
 
 impl State {
-    fn new(boss_dmg: i32, boss_hp: i32, hp: i32, mana: i32) -> Self {
+    const fn new(boss_dmg: i32, boss_hp: i32, hp: i32, mana: i32) -> Self {
         Self {
             boss_dmg,
             boss_hp,
@@ -149,8 +149,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             boss_hp: 0,
             boss_dmg: 0,
         }

@@ -31,7 +31,7 @@ impl TripletHash {
     /// Find the next index that produces a hash that contains a triplet
     /// and search for eventual quintuplets. As quintuplets are also triplets,
     /// we cannot miss them.
-    fn next(index: usize, salt: &str, key_stretching: usize) -> TripletHash {
+    fn next(index: usize, salt: &str, key_stretching: usize) -> Self {
         let mut index = index;
 
         loop {
@@ -87,7 +87,7 @@ impl TripletHash {
                 }
             }
 
-            return TripletHash {
+            return Self {
                 index,
                 triplet,
                 quintuplet,
