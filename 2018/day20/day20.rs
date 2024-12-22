@@ -10,8 +10,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             edges: HashMap::new(),
             max_steps: 0,
             thousand_doors: 0,
@@ -80,8 +80,7 @@ impl Puzzle {
                     let nx = x + dx;
                     let ny = y + dy;
 
-                    if !seen.contains(&(nx, ny)) {
-                        seen.insert((nx, ny));
+                    if seen.insert((nx, ny)) {
                         q.push_back((steps + 1, nx, ny));
                     }
                 }
@@ -90,12 +89,12 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> u32 {
+    const fn part1(&self) -> u32 {
         self.max_steps
     }
 
     /// Solve part two.
-    fn part2(&self) -> u32 {
+    const fn part2(&self) -> u32 {
         self.thousand_doors
     }
 }

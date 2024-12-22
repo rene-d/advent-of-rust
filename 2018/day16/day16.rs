@@ -40,8 +40,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             result1: 0,
             result2: 0,
         }
@@ -142,12 +142,12 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> u32 {
+    const fn part1(&self) -> u32 {
         self.result1
     }
 
     /// Solve part two.
-    fn part2(&self) -> u32 {
+    const fn part2(&self) -> u32 {
         self.result2
     }
 }

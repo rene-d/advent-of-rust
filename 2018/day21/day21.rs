@@ -29,22 +29,22 @@ impl std::str::FromStr for OpCodes {
     type Err = Box<Error>;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let opcode = match s {
-            "addr" => OpCodes::Addr,
-            "addi" => OpCodes::Addi,
-            "mulr" => OpCodes::Mulr,
-            "muli" => OpCodes::Muli,
-            "banr" => OpCodes::Banr,
-            "bani" => OpCodes::Bani,
-            "borr" => OpCodes::Borr,
-            "bori" => OpCodes::Bori,
-            "setr" => OpCodes::Setr,
-            "seti" => OpCodes::Seti,
-            "gtir" => OpCodes::Gtir,
-            "gtri" => OpCodes::Gtri,
-            "gtrr" => OpCodes::Gtrr,
-            "eqir" => OpCodes::Eqir,
-            "eqri" => OpCodes::Eqri,
-            "eqrr" => OpCodes::Eqrr,
+            "addr" => Self::Addr,
+            "addi" => Self::Addi,
+            "mulr" => Self::Mulr,
+            "muli" => Self::Muli,
+            "banr" => Self::Banr,
+            "bani" => Self::Bani,
+            "borr" => Self::Borr,
+            "bori" => Self::Bori,
+            "setr" => Self::Setr,
+            "seti" => Self::Seti,
+            "gtir" => Self::Gtir,
+            "gtri" => Self::Gtri,
+            "gtrr" => Self::Gtrr,
+            "eqir" => Self::Eqir,
+            "eqri" => Self::Eqri,
+            "eqrr" => Self::Eqrr,
             _ => panic!("unknown opcode {s}"),
         };
 
@@ -55,22 +55,22 @@ impl std::str::FromStr for OpCodes {
 impl OpCodes {
     fn emulate(&self, a: u64, b: u64, c: u64, regs: &mut [u64]) {
         regs[c as usize] = match &self {
-            OpCodes::Addr => regs[a as usize] + regs[b as usize],
-            OpCodes::Addi => regs[a as usize] + b,
-            OpCodes::Mulr => regs[a as usize] * regs[b as usize],
-            OpCodes::Muli => regs[a as usize] * b,
-            OpCodes::Banr => regs[a as usize] & regs[b as usize],
-            OpCodes::Bani => regs[a as usize] & b,
-            OpCodes::Borr => regs[a as usize] | regs[b as usize],
-            OpCodes::Bori => regs[a as usize] | b,
-            OpCodes::Setr => regs[a as usize],
-            OpCodes::Seti => a,
-            OpCodes::Gtir => u64::from(a > regs[b as usize]),
-            OpCodes::Gtri => u64::from(regs[a as usize] > b),
-            OpCodes::Gtrr => u64::from(regs[a as usize] > regs[b as usize]),
-            OpCodes::Eqir => u64::from(a == regs[b as usize]),
-            OpCodes::Eqri => u64::from(regs[a as usize] == b),
-            OpCodes::Eqrr => u64::from(regs[a as usize] == regs[b as usize]),
+            Self::Addr => regs[a as usize] + regs[b as usize],
+            Self::Addi => regs[a as usize] + b,
+            Self::Mulr => regs[a as usize] * regs[b as usize],
+            Self::Muli => regs[a as usize] * b,
+            Self::Banr => regs[a as usize] & regs[b as usize],
+            Self::Bani => regs[a as usize] & b,
+            Self::Borr => regs[a as usize] | regs[b as usize],
+            Self::Bori => regs[a as usize] | b,
+            Self::Setr => regs[a as usize],
+            Self::Seti => a,
+            Self::Gtir => u64::from(a > regs[b as usize]),
+            Self::Gtri => u64::from(regs[a as usize] > b),
+            Self::Gtrr => u64::from(regs[a as usize] > regs[b as usize]),
+            Self::Eqir => u64::from(a == regs[b as usize]),
+            Self::Eqri => u64::from(regs[a as usize] == b),
+            Self::Eqrr => u64::from(regs[a as usize] == regs[b as usize]),
         };
     }
 }
@@ -98,7 +98,7 @@ impl std::str::FromStr for Instr {
         let b = s[2].parse().unwrap();
         let c = s[3].parse().unwrap();
 
-        Ok(Instr { opcode, a, b, c })
+        Ok(Self { opcode, a, b, c })
     }
 }
 
@@ -116,8 +116,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             ip_reg: 0,
             program: vec![],
         }

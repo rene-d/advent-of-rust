@@ -48,7 +48,7 @@ fn appear(recipes: &str) -> usize {
 
     let score: Vec<u8> = recipes
         .chars()
-        .map(|c| c.to_digit(10).unwrap() as u8)
+        .map(|c| u8::try_from(c.to_digit(10).unwrap()).unwrap())
         .collect();
 
     let score = score.as_slice();
@@ -85,8 +85,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    const fn new() -> Self {
+        Self {
             recipes: String::new(),
         }
     }
@@ -95,7 +95,7 @@ impl Puzzle {
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
 
-        self.recipes = data.trim().to_owned();
+        data.trim().clone_into(&mut self.recipes);
     }
 
     /// Solve part one.

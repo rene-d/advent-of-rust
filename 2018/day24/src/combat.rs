@@ -16,7 +16,7 @@ impl Default for Combat {
 
 impl Combat {
     #[must_use]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             army1: Army::new(),
             army2: Army::new(),
@@ -24,7 +24,7 @@ impl Combat {
     }
 
     #[must_use]
-    pub fn with_armies(army1: Army, army2: Army) -> Self {
+    pub const fn with_armies(army1: Army, army2: Army) -> Self {
         Self { army1, army2 }
     }
 

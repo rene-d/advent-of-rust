@@ -7,8 +7,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { points: vec![] }
+    const fn new() -> Self {
+        Self { points: vec![] }
     }
 
     /// Get the puzzle input.

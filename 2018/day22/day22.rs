@@ -35,8 +35,8 @@ impl Ord for Node {
 impl Node {
     /// Construct the initial node.
     /// Start at position (0,0) with a torch
-    fn init(target: (u32, u32)) -> Self {
-        Node {
+    const fn init(target: (u32, u32)) -> Self {
+        Self {
             x: 0,
             y: 0,
             item: TORCH,
@@ -46,7 +46,7 @@ impl Node {
     }
 
     /// Switch item, with a cost of 7 seconds.
-    fn switch_item(&self, target: (u32, u32), region: u32) -> Self {
+    const fn switch_item(&self, target: (u32, u32), region: u32) -> Self {
         let new_item = match (region, self.item) {
             (ROCKY, TORCH) | (WET, NEITHER) => CLIMBING_GEAR,
             (WET, CLIMBING_GEAR) | (NARROW, TORCH) => NEITHER,
@@ -67,7 +67,7 @@ impl Node {
 
     /// Move to a position with a cost of 1 second.
     /// No verification that the movement is legal or not
-    fn move_to(&self, target: (u32, u32), x: u32, y: u32) -> Self {
+    const fn move_to(&self, target: (u32, u32), x: u32, y: u32) -> Self {
         Self {
             x,
             y,
@@ -79,7 +79,7 @@ impl Node {
 }
 
 /// Compute Manhattan distance to target.
-fn manhattan(x: u32, y: u32, target: (u32, u32)) -> u32 {
+const fn manhattan(x: u32, y: u32, target: (u32, u32)) -> u32 {
     x.abs_diff(target.0) + y.abs_diff(target.1)
 }
 
@@ -91,8 +91,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             depth: 0,
             target: (0, 0),
             lru: HashMap::new(),

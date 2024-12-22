@@ -21,17 +21,17 @@ struct Point {
 }
 
 impl Point {
-    fn go(&self, dir: &Dir) -> Self {
+    const fn go(&self, dir: &Dir) -> Self {
         match dir {
-            Dir::Right => Point {
+            Dir::Right => Self {
                 x: self.x + 1,
                 y: self.y,
             },
-            Dir::Left => Point {
+            Dir::Left => Self {
                 x: self.x - 1,
                 y: self.y,
             },
-            Dir::Down => Point {
+            Dir::Down => Self {
                 x: self.x,
                 y: self.y + 1,
             },
@@ -66,8 +66,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             grid: HashMap::new(),
             ymin: 0,
             ymax: 0,
@@ -108,15 +108,15 @@ impl Puzzle {
 
         for y in 0..=self.ymax {
             for x in xmin..=xmax {
-                let c = match self.grid.get(&Point { x, y }) {
-                    Some(t) => match *t {
-                        CLAY => "\x1b[38;5;166m#\x1b[0m",
-                        SETTLE => "?",
-                        FLOW => "\x1b[94m|\x1b[0m",
-                        _ => "\x1b[96m~\x1b[0m",
-                    },
-                    _ => "\x1b[38;5;231m.\x1b[0m",
-                };
+                let c =
+                    self.grid
+                        .get(&Point { x, y })
+                        .map_or("\x1b[38;5;231m.\x1b[0m", |t| match *t {
+                            CLAY => "\x1b[38;5;166m#\x1b[0m",
+                            SETTLE => "?",
+                            FLOW => "\x1b[94m|\x1b[0m",
+                            _ => "\x1b[96m~\x1b[0m",
+                        });
                 print!("{c}");
             }
             println!();

@@ -8,8 +8,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             sleeping: HashMap::new(),
         }
     }

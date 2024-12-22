@@ -28,8 +28,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { polymer: vec![] }
+    const fn new() -> Self {
+        Self { polymer: vec![] }
     }
 
     /// Get the puzzle input.

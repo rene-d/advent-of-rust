@@ -8,8 +8,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             state: String::new(),
             rules: HashSet::new(),
         }
@@ -23,14 +23,14 @@ impl Puzzle {
             if let Some(state) = line.strip_prefix("initial state: ") {
                 self.state = state.to_string();
             } else if let Some(from) = line.strip_suffix(" => #") {
-                self.rules.insert(Vec::from_iter(from.chars()));
+                self.rules.insert(from.chars().collect::<Vec<_>>());
             }
         }
     }
 
     /// Solve part one.
     fn part1(&self) -> i32 {
-        let mut state = Vec::from_iter(self.state.chars());
+        let mut state = self.state.chars().collect::<Vec<_>>();
 
         let mut pots = 0;
 
@@ -76,7 +76,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> i64 {
-        let mut state = Vec::from_iter(self.state.chars());
+        let mut state = self.state.chars().collect::<Vec<_>>();
 
         let mut score = 0;
         let mut pots = 0;

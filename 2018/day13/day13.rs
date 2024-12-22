@@ -32,8 +32,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             verbose: false,
             grid: Grid::new(),
             carts: vec![],
