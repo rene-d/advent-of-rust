@@ -57,7 +57,8 @@ for year in range(2015, 2025):
         v = list(inputs.values())
         values.append((len(v), sum(v)))
 
-        min_inputs = min(min_inputs, len(v))
+        if len(v) != 0:
+            min_inputs = min(min_inputs, len(v))
         max_inputs = max(max_inputs, len(v))
         nb_inputs = max(nb_inputs, sum(v))
 
