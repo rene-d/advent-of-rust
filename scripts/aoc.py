@@ -116,13 +116,17 @@ def aoc_install(ctx: click.Context):
 
 
 @aoc.command(name="private-leaderboard")
+@click.option("-y", "--year", type=int, help="Year")
 @click.argument("id", type=int)
 @click.pass_context
-def aoc_private_leaderboard(ctx: click.Context, id: int):
+def aoc_private_leaderboard(ctx: click.Context, year: int, id: int):
     """
     Show the state of a private leaderboard.
     """
-    subprocess.run(["aoc-cli", "private-leaderboard", str(id)])
+    cmd = ["aoc-cli", "private-leaderboard", str(id)]
+    if year:
+        cmd.extend(["--year", str(year)])
+    subprocess.run(cmd)
 
 
 @aoc.command(name="calendar", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
