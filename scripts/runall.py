@@ -648,6 +648,8 @@ def main():
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("--no-build", action="store_true", help="do not build")
 
+    parser.add_argument("-C", "--comparison", action="store_true", help="Show languages commparison")
+
     parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
 
     args = parser.parse_args()
@@ -851,34 +853,37 @@ def main():
             )
 
             # compute languages comparison
-            lines = []
-            puzzles = set(map(itemgetter(0, 1), stats_elapsed.keys()))
-            for lang1, lang2 in itertools.combinations(languages, 2):
-                n, t1, t2 = 0, 0, 0
-                for y, d in puzzles:
-                    t = dict((lang, t) for (yy, dd, lang), (t, _) in stats_elapsed.items() if (yy, dd) == (y, d))
-                    if lang1 in t and lang2 in t:
-                        n += 1
-                        t1 += t[lang1]
-                        t2 += t[lang2]
-                if n > 0:
-                    if t2 < t1:
-                        t1, t2 = t2, t1
-                        lang1, lang2 = lang2, lang1
-                    faster = t2 / t1
-                    lines.append(
-                        (
-                            t1 / n,
-                            t2 / n,
-                            f"{YELLOW}{lang1:<7}{RESET}"
-                            f" vs. {YELLOW}{lang2:<7}{RESET}:"
-                            f" {GREEN}{t1/n:7.3f}s{RESET} vs. {GREEN}{t2/n:7.3f}s{RESET}"
-                            f" (x {faster:4.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ''}",
+            if args.comparison:
+                lines = []
+                puzzles = set(map(itemgetter(0, 1), stats_elapsed.keys()))
+                for lang1, lang2 in itertools.combinations(languages, 2):
+                    n, t1, t2 = 0, 0, 0
+                    for y, d in puzzles:
+                        t = dict((lang, t) for (yy, dd, lang), (t, _) in stats_elapsed.items() if (yy, dd) == (y, d))
+                        if lang1 in t and lang2 in t:
+                            n += 1
+                            t1 += t[lang1]
+                            t2 += t[lang2]
+                    if n > 0:
+                        if t2 < t1:
+                            t1, t2 = t2, t1
+                            lang1, lang2 = lang2, lang1
+                        faster = t2 / t1
+                        lines.append(
+                            (
+                                t1 / n,
+                                t2 / n,
+                                f"{YELLOW}{lang1:<7}{RESET}"
+                                f" vs. {YELLOW}{lang2:<7}{RESET}:"
+                                f" {GREEN}{t1/n:7.3f}s{RESET} vs. {GREEN}{t2/n:7.3f}s{RESET}"
+                                f" (x {faster:4.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ''}",
+                            )
                         )
-                    )
-            print()
-            print("LANGUAGES COMPARISON:")
-            print("\n".join(map(itemgetter(2), sorted(lines))))
+                print()
+                print("LANGUAGES COMPARISON:")
+                print("\n".join(map(itemgetter(2), sorted(lines))))
+            else:
+                print("Use option -C/--comparison to display timings comparison.")
 
         if problems:
             print()
