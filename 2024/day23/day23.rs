@@ -6,7 +6,7 @@ use std::collections::{HashMap, HashSet};
 // Bron-Kerbosch recursive algorithm to find cliques
 fn bron_kerbosch(
     graph: &UnGraph<(), ()>,
-    r: &mut HashSet<NodeIndex>,
+    r: &HashSet<NodeIndex>,
     p: &mut HashSet<NodeIndex>,
     x: &mut HashSet<NodeIndex>,
     cliques: &mut Vec<Vec<NodeIndex>>,
@@ -25,7 +25,7 @@ fn bron_kerbosch(
         let mut p_new: HashSet<NodeIndex> = p.intersection(&neighbors).copied().collect();
         let mut x_new: HashSet<NodeIndex> = x.intersection(&neighbors).copied().collect();
 
-        bron_kerbosch(graph, &mut r_new, &mut p_new, &mut x_new, cliques);
+        bron_kerbosch(graph, &r_new, &mut p_new, &mut x_new, cliques);
 
         p.remove(&v);
         x.insert(v);
@@ -37,7 +37,7 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self {
             connections: Vec::new(),
         }
@@ -95,18 +95,6 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> String {
-        // type G = Graph<(), (), Undirected>;
-
-        // let mut graph = G::new_undirected();
-        // let mut nodes = HashMap::new();
-
-        // for (n1, n2) in &self.connections {
-        //     let i1 = *nodes.entry(n1).or_insert_with(|| graph.add_node(()));
-        //     let i2 = *nodes.entry(n2).or_insert_with(|| graph.add_node(()));
-
-        //     graph.add_edge(i1, i2, ());
-        // }
-
         let mut graph = UnGraph::<(), ()>::new_undirected();
 
         let mut nodes = HashMap::new();
@@ -128,11 +116,11 @@ impl Puzzle {
 
         // find the largest clique
         let mut cliques = Vec::new();
-        let mut r = HashSet::new();
+        let r = HashSet::new();
         let mut p: HashSet<NodeIndex> = graph.node_indices().collect();
         let mut x = HashSet::new();
 
-        bron_kerbosch(&graph, &mut r, &mut p, &mut x, &mut cliques);
+        bron_kerbosch(&graph, &r, &mut p, &mut x, &mut cliques);
 
         let largest_clique = cliques.into_iter().max_by_key(std::vec::Vec::len);
 
@@ -143,7 +131,7 @@ impl Puzzle {
                 .collect::<Vec<_>>();
             clique_names.sort_unstable();
 
-            return clique_names.join(",").to_string();
+            return clique_names.join(",");
         }
 
         String::new()
