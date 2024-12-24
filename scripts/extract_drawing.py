@@ -22,17 +22,27 @@ elif f.isdigit():
     s = Path("~/.adventofcode.session").expanduser()
     if s.is_file():
         session = s.read_text().strip()
-        calendar = requests.get(
+        content = requests.get(
             f"https://adventofcode.com/{f}",
             headers={
                 "Cookie": f"session={session}",
                 "user-agent": "Mozilla/5.0",
             },
-        ).content.decode()
+        ).content
+
+        Path(f"{f}.html").write_bytes(content)
+
+        calendar = content.decode()
 
 
 def rgb(s: str) -> str:
-    rgb = re.search(r"#([\da-f]+);", s).group(1)
+    if "color:" not in s:
+        return ""
+    try:
+        rgb = re.search(r"#([\da-f]+);", s).group(1)
+    except:
+        print("color problem:", s)
+        exit(2)
     if len(rgb) == 3:
         if rgb == "ccc":
             rgb = "cccccc"
@@ -82,7 +92,7 @@ for line in calendar.splitlines():
     b = line.find('<span class="calendar-day">')
     line = line[a:b]
 
-    line = re.sub(r'<span class="(.+?)">', lambda x: colors[x.group(1)], line)
+    line = re.sub(r'<span class="(.+?)">', lambda x: colors.get(x.group(1), ""), line)
 
     # line = re.sub(r"(<span.+?>)(.+?)(</span>)", lambda m: f"{rgb(m[1])}{m[2]}\033[0m", line)
     line = re.sub(r"(<span.+?>)(.+?)(</span>)", lambda m: "", line)
