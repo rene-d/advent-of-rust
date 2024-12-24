@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
-![Stars: 46](https://img.shields.io/badge/Stars-46⭐-blue)
-![Rust: 24](https://img.shields.io/badge/Rust-24-cyan?logo=Rust)
+![Stars: 48](https://img.shields.io/badge/Stars-48⭐-blue)
+![Rust: 25](https://img.shields.io/badge/Rust-25-cyan?logo=Rust)
 ![Python: 9](https://img.shields.io/badge/Python-9-cyan?logo=Python)
 
-## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 46⭐
+## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](../2024/)) : 48⭐
 
 Puzzle                                                                 | Stars | Languages
 ---------------------------------------------------------------------- | ----- | -----------
@@ -32,3 +32,4 @@ Puzzle                                                                 | Stars |
 [Day 21: Keypad Conundrum](https://adventofcode.com/2024/day/21)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day21/day21.rs)
 [Day 22: Monkey Market](https://adventofcode.com/2024/day/22)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day22/day22.rs)
 [Day 23: LAN Party](https://adventofcode.com/2024/day/23)              | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day23/day23.rs) [![Python](../scripts/assets/python.png)](../2024/day23/day23.py)
+[Day 24: Crossed Wires](https://adventofcode.com/2024/day/24)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2024/day24/day24.rs)
