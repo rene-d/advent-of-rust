@@ -9,7 +9,7 @@ pedantic()
 
     if [[ -f $manifest ]] ; then
 
-        if ! cargo clippy --manifest-path $manifest -- -F clippy::pedantic -F clippy::all -F clippy::nursery 2>&1 | grep -qE '^error:|^warning:' ; then
+        if ! cargo clippy --manifest-path $manifest --  -D clippy::all -F clippy::pedantic -F clippy::nursery 2>&1 | grep -qE '^error:|^warning:' ; then
             echo -e "Day $day is \033[1;35mEPIC PEDANTIC AND NURSERY\033[0m. Amen 🙏"
 
         elif ! cargo clippy --manifest-path $manifest -- -F clippy::pedantic 2>&1 | grep -qE '^error:|^warning:' ; then
