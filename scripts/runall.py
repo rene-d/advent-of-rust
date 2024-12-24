@@ -308,7 +308,7 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
         if filter_user == "me":
             if not user.isdigit():
                 continue
-        elif filter_user and user != filter_user and user != f"tmp-{filter_user}":
+        elif filter_user and user != filter_user and user[: 4 + len(filter_user)] != f"tmp-{filter_user}":
             continue
 
         year = int(input.parent.name)
