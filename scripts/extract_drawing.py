@@ -77,15 +77,13 @@ for line in calendar.splitlines():
         code = rgb(line[2])
 
         colors[color] = code
-        continue
 
-    if line.startswith('<pre class="calendar">'):
-        a = line.index(">") + 1
-        line = line[a:]
-        print(line)
-        continue
+
+calendar = re.search(r'<pre class="calendar.*?">(.+?)</pre>', calendar, re.DOTALL).group(1)
+for line in calendar.splitlines():
 
     if "calendar-verycomplete" not in line:
+        print(line)
         continue
 
     a = line.index(">") + 1
