@@ -148,7 +148,7 @@ def aoc_download(ctx: click.Context):
 
 
 @aoc.command(name="puzzle")
-@click.argument("day", type=int)
+@click.argument("day", type=int, default=0)
 @click.pass_context
 def aoc_puzzle(ctx: click.Context, day: int):
     """
@@ -251,6 +251,44 @@ def aoc_scores(ctx: click.Context, year, id: int):
     if year:
         args.extend(["--year", str(year)])
     ctx.obj.pass_thru("score.py", args)
+
+
+@aoc.command(name="quality")
+@click.pass_context
+def aoc_quality(ctx: click.Context):
+    """
+    Quality.
+    """
+
+    try:
+
+        print("cargo fmt")
+        subprocess.check_output(["cargo", "fmt"])
+
+        print("cargo clippy")
+        subprocess.check_output(
+            ["cargo", "clippy", "-q", "--", "-Dclippy::all", "-Fclippy::pedantic", "-Fclippy::nursery"]
+        )
+
+        print("cargo build")
+        subprocess.check_output(["cargo", "build", "--release", "--quiet"])
+
+        print("cargo test")
+        subprocess.check_output(["cargo", "test", "--quiet"])
+
+        # print("answers")
+        # output = subprocess.check_output([ctx.obj.scripts_dir / "answers.py"])
+        # for line in output.decode().splitlines():
+        #     if " ok " not in line and " unknown " not in line: print(line)
+
+        print("run all")
+        output = subprocess.check_output([ctx.obj.scripts_dir / "runall.py", "-l", "rust"])
+        for line in output.decode().splitlines():
+            if " ok " not in line and " unknown " not in line:
+                print(line)
+
+    except subprocess.CalledProcessError:
+        pass
 
 
 if __name__ == "__main__":
