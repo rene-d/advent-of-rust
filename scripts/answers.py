@@ -61,7 +61,7 @@ class AocSession:
         self.user_dir = self.data_dir / self.user_id
         self.user_dir.mkdir(parents=True, exist_ok=True)
 
-        self.prefix = f"\033[1;36m[{name:<15} {self.user_id:<6}]\033[0m "
+        self.prefix = f"\033[1;36m[{name:<16} {self.user_id:<6}]\033[0m "
 
     def get_cookie_sessions():
         """Return the list of cookie sessions from `session` file."""
