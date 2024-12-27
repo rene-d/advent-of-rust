@@ -1,7 +1,7 @@
 # [Advent of Code](https://adventofcode.com) in Rust 🦀
 
 ![Stars: 500](https://img.shields.io/badge/Stars-500⭐-blue)
-![Rust: 209](https://img.shields.io/badge/Rust-209-cyan?logo=Rust)
+![Rust: 215](https://img.shields.io/badge/Rust-215-cyan?logo=Rust)
 ![Python: 123](https://img.shields.io/badge/Python-123-cyan?logo=Python)
 
 Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) and other languages.
@@ -46,7 +46,7 @@ Calendar | Solutions | Stars | Rust | Python | 🎄
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](2023/README.md) |  50⭐ |  25 |  11 |   1
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) |  50⭐ |  24 |  18 |    
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) |  50⭐ |  24 |  12 |    
-[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/README.md) |  50⭐ |  13 |  23 |    
+[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/README.md) |  50⭐ |  19 |  23 |    
 [Advent of Code 2019](https://adventofcode.com/2019) | [Solutions](2019/README.md) |  50⭐ |   8 |  23 |   2
 [Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](2018/README.md) |  50⭐ |  25 |   4 |   1
 [Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) |  50⭐ |  15 |  17 |    
