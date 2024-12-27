@@ -76,24 +76,27 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> String {
-        let mut memory: Grid<u8> = Grid::<u8>::with_size(self.mem_size, self.mem_size);
+        let mut a = 0;
+        let mut b = self.byte_positions.len() - 1;
 
-        let start = (0, 0);
-        let end = (self.mem_size - 1, self.mem_size - 1);
+        while a + 1 < b {
+            let mut memory: Grid<u8> = Grid::<u8>::with_size(self.mem_size, self.mem_size);
 
-        for &pos in &self.byte_positions {
-            memory[pos] = CORRUPTED;
+            let m = (a + b) / 2;
 
-            if memory[start] == CORRUPTED
-                || memory[end] == CORRUPTED
-                || self.find_path(&memory) == 0
-            {
-                let (x, y) = pos;
-                return format!("{x},{y}");
+            // corrupt the first m bytes
+            for &pos in self.byte_positions.iter().take(m) {
+                memory[pos] = CORRUPTED;
+            }
+
+            if self.find_path(&memory) == 0 {
+                b = m;
+            } else {
+                a = m;
             }
         }
 
-        String::new()
+        format!("{},{}", self.byte_positions[a].0, self.byte_positions[a].1)
     }
 }
 
