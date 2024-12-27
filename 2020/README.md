@@ -2,7 +2,7 @@
 
 ![AoC2020](https://img.shields.io/badge/Advent_of_Code-2020-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 13](https://img.shields.io/badge/Rust-13-cyan?logo=Rust)
+![Rust: 19](https://img.shields.io/badge/Rust-19-cyan?logo=Rust)
 ![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
 ## 2020 ([Calendar](https://adventofcode.com/2020)) ([Solutions](../2020/)) : 50⭐
@@ -19,13 +19,13 @@ Puzzle                                                                  | Stars 
 [Day 8: Handheld Halting](https://adventofcode.com/2020/day/8)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day8/day8.rs) [![Python](../scripts/assets/python.png)](../2020/day8/day8.py)
 [Day 9: Encoding Error](https://adventofcode.com/2020/day/9)            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day9/day9.rs) [![Python](../scripts/assets/python.png)](../2020/day9/day9.py)
 [Day 10: Adapter Array](https://adventofcode.com/2020/day/10)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day10/day10.rs) [![Python](../scripts/assets/python.png)](../2020/day10/day10.py)
-[Day 11: Seating System](https://adventofcode.com/2020/day/11)          | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day11/day11.py)
-[Day 12: Rain Risk](https://adventofcode.com/2020/day/12)               | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day12/day12.py)
+[Day 11: Seating System](https://adventofcode.com/2020/day/11)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day11/day11.rs) [![Python](../scripts/assets/python.png)](../2020/day11/day11.py)
+[Day 12: Rain Risk](https://adventofcode.com/2020/day/12)               | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day12/day12.rs) [![Python](../scripts/assets/python.png)](../2020/day12/day12.py)
 [Day 13: Shuttle Search](https://adventofcode.com/2020/day/13)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day13/day13.rs) [![Python](../scripts/assets/python.png)](../2020/day13/day13.py)
-[Day 14: Docking Data](https://adventofcode.com/2020/day/14)            | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day14/day14.py)
-[Day 15: Rambunctious Recitation](https://adventofcode.com/2020/day/15) | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day15/day15.py)
-[Day 16: Ticket Translation](https://adventofcode.com/2020/day/16)      | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day16/day16.py)
-[Day 17: Conway Cubes](https://adventofcode.com/2020/day/17)            | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day17/day17.py)
+[Day 14: Docking Data](https://adventofcode.com/2020/day/14)            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day14/day14.rs) [![Python](../scripts/assets/python.png)](../2020/day14/day14.py)
+[Day 15: Rambunctious Recitation](https://adventofcode.com/2020/day/15) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day15/day15.rs) [![Python](../scripts/assets/python.png)](../2020/day15/day15.py)
+[Day 16: Ticket Translation](https://adventofcode.com/2020/day/16)      | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day16/day16.rs) [![Python](../scripts/assets/python.png)](../2020/day16/day16.py)
+[Day 17: Conway Cubes](https://adventofcode.com/2020/day/17)            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day17/day17.rs) [![Python](../scripts/assets/python.png)](../2020/day17/day17.py)
 [Day 18: Operation Order](https://adventofcode.com/2020/day/18)         | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day18/day18.py)
 [Day 19: Monster Messages](https://adventofcode.com/2020/day/19)        | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day19/day19.rs)
 [Day 20: Jurassic Jigsaw](https://adventofcode.com/2020/day/20)         | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day20/day20.py)
