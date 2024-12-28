@@ -2,7 +2,7 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::convert::TryFrom;
+use std::{collections::HashMap, convert::TryFrom};
 
 lazy_static! {
     /// Regex that matches a line of input
@@ -24,6 +24,7 @@ fn part1(data: &str) -> u32 {
 
     for line in data.lines() {
         let (name, checksum, sector_id) = extract(line);
+
         if is_real_room(&name, &checksum) {
             sum += sector_id;
         }
@@ -76,50 +77,20 @@ fn extract(line: &str) -> (String, String, u32) {
 
 /// ``is_real_room`` checks if the room is real by comparing the checksum.
 fn is_real_room(name: &str, checksum: &str) -> bool {
-    let mut counts = [0; 26];
+    let mut freqs = HashMap::<char, i32>::new();
 
-    // compute the counts of each letter
     for c in name.chars() {
         if c.is_ascii_lowercase() {
-            counts[(c as u8 - b'a') as usize] += 1;
+            *freqs.entry(c).or_default() += 1;
         }
     }
 
-    let max = counts.iter().max().unwrap();
-    let mut current_max = *max; // first max count to look for
-    let mut current_pos = 0;
+    let mut freqs = freqs.iter().map(|(c, n)| (-n, c)).collect::<Vec<_>>();
+    freqs.sort_unstable();
 
-    for _ in 0..5 {
-        let mut next_max = 0;
-        let mut max_found = false;
+    let check = freqs.iter().take(5).map(|(_, &c)| c).collect::<String>();
 
-        for (c, count) in counts.iter().enumerate() {
-            if *count == current_max {
-                let c_u8 = u8::try_from(c).unwrap();
-                let letter = (b'a' + c_u8) as char;
-                if checksum.chars().nth(current_pos).unwrap() == letter {
-                    current_pos += 1;
-                    if current_pos == 5 {
-                        // we have checked all checksum letters
-                        return true;
-                    }
-                    max_found = true;
-                }
-            } else if *count < current_max && *count > next_max {
-                // the next max count is highest value below the current one
-                next_max = *count;
-            }
-        }
-
-        if !max_found {
-            // the checksum does not have the letter for the current max count
-            break;
-        }
-
-        current_max = next_max;
-    }
-
-    false
+    return check == checksum;
 }
 
 #[cfg(test)]
