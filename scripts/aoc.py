@@ -80,6 +80,8 @@ class AocProject:
         {
             "r": "run",
             "p": "private-leaderboard",
+            "i": "inputs",
+            "in": "inputs",
         }
     ),
 )
@@ -243,9 +245,9 @@ def aoc_inputs(ctx: click.Context):
 @click.option("-y", "--year", type=int, help="Year")
 @click.argument("id", type=int)
 @click.pass_context
-def aoc_scores(ctx: click.Context, year, id: int):
+def aoc_scores(ctx: click.Context, year: int, id: int):
     """
-    Show a private leaderboard.
+    Show details of a private leaderboard.
     """
     args = [str(id)]
     if year:
@@ -257,11 +259,10 @@ def aoc_scores(ctx: click.Context, year, id: int):
 @click.pass_context
 def aoc_quality(ctx: click.Context):
     """
-    Quality.
+    Run lints, tests, solutions for Rust solution.
     """
 
     try:
-
         print("cargo fmt")
         subprocess.check_output(["cargo", "fmt"])
 
@@ -289,6 +290,15 @@ def aoc_quality(ctx: click.Context):
 
     except subprocess.CalledProcessError:
         pass
+
+
+@aoc.command(name="timings", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
+@click.pass_context
+def aoc_timings(ctx: click.Context):
+    """
+    Show or browse timings.
+    """
+    ctx.obj.pass_thru("timings.py", ctx.args)
 
 
 if __name__ == "__main__":
