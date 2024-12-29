@@ -5,9 +5,8 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-md5 = "0.7"
-num-traits = "0.2"
-indicatif = "0.17"
+md5 = "*"
+indicatif = "*"
 
 [[bin]]
 name = "day5"
