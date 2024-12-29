@@ -252,8 +252,10 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str]):
         if not filter_lang or "rust" in filter_lang:
             m = Path(str(year)) / "Cargo.toml"
             if m.is_file():
+                env_copy = os.environ.copy()
+                # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
                 print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
-                subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"])
+                subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy)
 
         for day in range(1, 26):
             if not filter_lang or "c" in filter_lang:
@@ -633,6 +635,7 @@ def main():
 
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
     parser.add_argument("--cache", type=Path, help="cache database")
+    parser.add_argument("--working-dir", type=Path, help=argparse.SUPPRESS)
 
     parser.add_argument("--venv", type=Path, help="create and install virtual environment")
     parser.add_argument("--reqs", action="store_true", help="install requirements into virtual environments")
@@ -676,6 +679,10 @@ def main():
     if cols.isdigit():
         global TERMINAL_COLS
         TERMINAL_COLS = int(cols)
+
+    if args.working_dir and args.working_dir.is_dir():
+        logging.debug(f"set working directory to: {args.working_dir}")
+        os.chdir(args.working_dir)
 
     try:
         problems = []
@@ -882,7 +889,8 @@ def main():
                 print()
                 print("LANGUAGES COMPARISON:")
                 print("\n".join(map(itemgetter(2), sorted(lines))))
-            else:
+
+            elif len(languages) > 1:
                 print("Use option -C/--comparison to display timings comparison.")
 
         if problems:
