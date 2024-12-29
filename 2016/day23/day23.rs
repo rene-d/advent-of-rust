@@ -1,7 +1,6 @@
 //! [Day 23: Safe Cracking](https://adventofcode.com/2016/day/23)
 
 use assembunny::{BunnyVM, REG_A};
-// use std::time::Instant;
 
 fn compute_until_safe(a: i32, program: &str) -> i32 {
     let mut program = BunnyVM::new(program);
@@ -15,17 +14,23 @@ fn compute_until_safe(a: i32, program: &str) -> i32 {
     }
 }
 
+fn factorial(n: i32) -> i32 {
+    (1..=n).product()
+}
+
 fn main() {
     let data = aoc::load_input_data(23);
 
-    // let now = Instant::now();
+    let part1 = compute_until_safe(7, &data);
 
-    println!("{}", compute_until_safe(7, &data));
+    println!("{}", part1);
 
-    println!("{}", compute_until_safe(12, &data));
-
-    // let micros = f64::from_u128(now.elapsed().as_micros()).unwrap();
-    // println!("elapsed: {} s", micros / 1_000_000.);
+    // as the program calculates n! + constant,
+    // we advantageously can reuse the answer from part 1
+    // nota: constant=n1*n2 where n1,n2 are immediate in the program:
+    //  19:     cpy n1 c
+    //  20:     jnz n2 d
+    println!("{}", part1 + factorial(12) - factorial(7));
 }
 
 #[test]
