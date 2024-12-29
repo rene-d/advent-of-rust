@@ -1,7 +1,6 @@
 //! [Day 5: If You Give A Seed A Fertilizer](https://adventofcode.com/2023/day/5)
 
-use rayon::prelude::*;
-use std::time::{Duration, Instant};
+use std::mem::swap;
 
 fn conv_step(name: &str) -> usize {
     match name {
@@ -17,9 +16,9 @@ fn conv_step(name: &str) -> usize {
 }
 
 struct Conv {
-    destination: u64,
-    source: u64,
-    end: u64, // actually source+count
+    destination: u64, // destination range start
+    start: u64,       // source range start
+    end: u64,         // start + range length
 }
 
 struct Puzzle {
@@ -30,15 +29,15 @@ struct Puzzle {
 impl Puzzle {
     const fn new() -> Self {
         Self {
-            seeds: vec![],
-            maps: vec![],
+            seeds: Vec::new(),
+            maps: Vec::new(),
         }
     }
 
     /// Get the puzzle input.
     fn configure(&mut self, path: &str) {
         let data = std::fs::read_to_string(path).unwrap();
-        let mut current_map = 0;
+        let mut current_map_idx = 0;
 
         self.maps.resize_with(7, Vec::new);
 
@@ -49,7 +48,7 @@ impl Puzzle {
                     .map(|x| x.parse::<u64>().unwrap())
                     .collect();
             } else if let Some(map) = line.strip_suffix(" map:") {
-                current_map = conv_step(map);
+                current_map_idx = conv_step(map);
             } else if !line.is_empty() {
                 let dsc: Vec<u64> = line
                     .split_ascii_whitespace()
@@ -58,33 +57,41 @@ impl Puzzle {
                 assert!(dsc.len() == 3, "bad line {line}");
                 let conv = Conv {
                     destination: dsc[0],
-                    source: dsc[1],
+                    start: dsc[1],
                     end: dsc[1] + dsc[2],
                 };
-                self.maps[current_map].push(conv);
+                self.maps[current_map_idx].push(conv);
             }
         }
     }
 
     fn convert(&self, map: usize, seed: u64) -> u64 {
-        let map = self.maps.get(map).unwrap();
+        // functional approach:
+        self.maps[map]
+            .iter()
+            .find(|conv| conv.start <= seed && seed < conv.end)
+            .map_or(seed, |conv| seed + conv.destination - conv.start)
 
-        for conv in map {
-            if conv.source <= seed && seed < conv.end {
-                return seed + conv.destination - conv.source;
-            }
-        }
-
-        seed
+        // imperative equivalent:
+        // let map = self.maps.get(map).unwrap();
+        // for conv in map {
+        //     if conv.start <= seed && seed < conv.end {
+        //         return seed + conv.destination - conv.start;
+        //     }
+        // }
+        // seed
     }
 
     fn grow(&self, seed: u64) -> u64 {
-        let mut seed = seed;
+        // functional approach:
+        (0..7).fold(seed, |seed, step| self.convert(step, seed))
 
-        for step in 0..7 {
-            seed = self.convert(step, seed);
-        }
-        seed
+        // imperative equivalent:
+        // let mut seed = seed;
+        // for step in 0..7 {
+        //     seed = self.convert(step, seed);
+        // }
+        // seed
     }
 
     /// Solve part one.
@@ -97,28 +104,66 @@ impl Puzzle {
     }
 
     /// Solve part two.
-    fn part2(&self) -> u64 {
-        let start: Instant = Instant::now();
+    pub fn part2(&self) -> u64 {
+        let current = &mut Vec::new();
+        let next = &mut Vec::new();
+        let mut next_map = Vec::new();
 
-        let result = self
-            .seeds
-            .chunks(2)
-            .par_bridge() // <-- just added that! 😎
-            .filter_map(|chunk| {
-                let start = chunk[0];
-                let end = chunk[0] + chunk[1];
-                (start..end).map(|seed| self.grow(seed)).min()
-            })
-            .min()
-            .unwrap_or(0);
+        // convert pairs to ranges of seeds
+        for pair in self.seeds.chunks(2) {
+            current.push((pair[0], pair[0] + pair[1]));
+        }
 
-        let iterations: u64 = self.seeds.iter().skip(1).step_by(2).sum();
+        for map in &self.maps {
+            for conv in map {
+                while let Some((start, end)) = current.pop() {
+                    // find intersection of both segments [start; end] and [conv.start; conv.end]
+                    let a = start.max(conv.start);
+                    let b = end.min(conv.end);
 
-        let duration: Duration = start.elapsed();
+                    if a < b {
+                        // overlap (4 arrangements)
 
-        eprintln!("Time elapsed (part2): {duration:?} for {iterations} iterations");
+                        // -------[start conv end[---------
+                        // ------------[start current end[-----
+                        //             ^         ^       ^
+                        //             a         b       |
+                        //                       [remnant[
 
-        result
+                        // convert the seed range and send it to the next map
+                        next_map.push((
+                            a + conv.destination - conv.start,
+                            b + conv.destination - conv.start,
+                        ));
+
+                        // the left remnant of the intersection, if any
+                        if start < a {
+                            next.push((start, a));
+                        }
+
+                        // the right remnant of the intersection, if any
+                        if b < end {
+                            next.push((b, end));
+                        }
+                    } else {
+                        // no overlap (2 arrangements)
+
+                        // ---[start conv end[---------------------------
+                        // -----------------------[start current end[----
+                        //                   ^    ^
+                        //                   b    a
+
+                        next.push((start, end));
+                    }
+                }
+
+                swap(current, next);
+            }
+
+            current.append(&mut next_map);
+        }
+
+        current.iter().map(|r| r.0).min().unwrap()
     }
 }
 
