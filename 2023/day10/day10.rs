@@ -9,7 +9,7 @@ use std::collections::{HashSet, VecDeque};
 use itertools::iproduct;
 
 struct Puzzle {
-    _grid: Vec<Vec<char>>,
+    grid_data: Vec<Vec<char>>,
     sx: i32,
     sy: i32,
     start_position: (i32, i32),
@@ -19,7 +19,7 @@ struct Puzzle {
 impl Puzzle {
     const fn new() -> Self {
         Self {
-            _grid: vec![],
+            grid_data: vec![],
             sx: 0,
             sy: 0,
             start_position: (0, 0),
@@ -32,18 +32,18 @@ impl Puzzle {
         let data = std::fs::read_to_string(path).unwrap();
 
         self.points.clear();
-        self._grid.clear();
+        self.grid_data.clear();
         self.sx = 0;
         for line in data.lines() {
             if self.sx == 0 {
-                self.sx = line.len() as i32;
+                self.sx = i32::try_from(line.len()).unwrap();
             } else {
-                assert_eq!(self.sx, line.len() as i32);
+                assert_eq!(self.sx, i32::try_from(line.len()).unwrap());
             }
 
-            self._grid.push(line.chars().collect());
+            self.grid_data.push(line.chars().collect());
         }
-        self.sy = self._grid.len() as i32;
+        self.sy = i32::try_from(self.grid_data.len()).unwrap();
 
         for (x, y) in iproduct!(0..self.sx, 0..self.sy) {
             if self.grid(x, y) == 'S' {
@@ -57,7 +57,9 @@ impl Puzzle {
 
     fn grid(&self, x: i32, y: i32) -> char {
         if 0 <= x && x < self.sx && 0 <= y && y < self.sy {
-            self._grid[y as usize][x as usize]
+            let x = usize::try_from(x).unwrap();
+            let y = usize::try_from(y).unwrap();
+            self.grid_data[y][x]
         } else {
             '.'
         }
@@ -65,12 +67,12 @@ impl Puzzle {
 
     fn maze(&mut self) {
         let mut visited = HashSet::new();
-        let mut q = VecDeque::new();
+        let mut queue = VecDeque::new();
 
-        q.push_back(self.start_position);
+        queue.push_back(self.start_position);
 
-        while !q.is_empty() {
-            let p = q.pop_back().unwrap();
+        while !queue.is_empty() {
+            let p = queue.pop_back().unwrap();
 
             if visited.contains(&p) {
                 continue;
@@ -83,19 +85,19 @@ impl Puzzle {
             let c = self.grid(x, y);
 
             if "|LJ".contains(self.grid(x, y + 1)) && "|7FS".contains(c) {
-                q.push_back((x, y + 1));
+                queue.push_back((x, y + 1));
             }
 
             if "|7F".contains(self.grid(x, y - 1)) && "|LJS".contains(c) {
-                q.push_back((x, y - 1));
+                queue.push_back((x, y - 1));
             }
 
             if "-FL".contains(self.grid(x - 1, y)) && "-J7S".contains(c) {
-                q.push_back((x - 1, y));
+                queue.push_back((x - 1, y));
             }
 
             if "-7J".contains(self.grid(x + 1, y)) && "-FLS".contains(c) {
-                q.push_back((x + 1, y));
+                queue.push_back((x + 1, y));
             }
         }
     }
