@@ -20,7 +20,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            racetrack: Grid::new(1, 1),
+            racetrack: Grid::new(),
             start: Coord::new(0, 0),
             end: Coord::new(0, 0),
             from_start: HashMap::new(),
