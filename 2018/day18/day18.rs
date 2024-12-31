@@ -2,18 +2,14 @@
 
 use std::collections::HashMap;
 
-// use std::collections::{HashMap,HashSet};
-use aoc::grid;
-use aoc::grid::Grid;
-
 const OPEN_ACRE: u8 = 0;
 const TREE: u8 = 1;
 const LUMBERYARD: u8 = 2;
 
-type Area = Grid<u8>;
+type Area = aoc::GridU<u8>;
 
 fn collect(area: &Area) -> Area {
-    let mut new_area = Grid::<u8>::with_size(area.size().0, area.size().1);
+    let mut new_area = Area::with_size(area.size().0, area.size().1);
 
     for (xy, acre) in area.iter() {
         let (trees, lumberyards) = {
@@ -90,15 +86,13 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            area: grid![],
+            area: Area::default(),
             n: 0,
         }
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         self.n = 0;
         for (y, line) in data.lines().enumerate() {
             if self.n == 0 {
@@ -157,7 +151,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -170,7 +164,7 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 1147);
     }
 }

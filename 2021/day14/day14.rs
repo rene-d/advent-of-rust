@@ -2,7 +2,6 @@
 
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::fs;
 
 #[derive(Debug)]
 struct Rule {
@@ -36,13 +35,8 @@ impl Puzzle {
         }
     }
 
-    fn configure(&mut self, filename: &str) {
-        let mut data: Vec<String> = fs::read_to_string(filename)
-            .expect("Failed to read input file")
-            .lines()
-            .rev()
-            .map(ToString::to_string)
-            .collect();
+    fn configure(&mut self, data: &str) {
+        let mut data: Vec<String> = data.lines().rev().map(ToString::to_string).collect();
 
         self.template = data.pop().unwrap();
         data.pop();
@@ -163,11 +157,27 @@ impl Puzzle {
     }
 }
 
+fn main() {
+    let args = aoc::parse_args();
+
+    let mut puzzle = Puzzle::new();
+
+    puzzle.configure(&args.input);
+
+    puzzle.steps = 10;
+    let result = puzzle.part1();
+    println!("{result}");
+
+    puzzle.steps = 40;
+    let result = puzzle.part2();
+    println!("{result}");
+}
+
 /// Test from puzzle input
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test01.txt");
+    puzzle.configure(&aoc::load_input_data("test01.txt"));
 
     puzzle.steps = 10;
     assert_eq!(puzzle.part1(), 1588);
@@ -181,7 +191,7 @@ fn test01() {
 #[test]
 fn test02() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test02.txt");
+    puzzle.configure(&aoc::load_input_data("test02.txt"));
 
     puzzle.steps = 10;
     assert_eq!(puzzle.part1(), 3058);
@@ -189,20 +199,4 @@ fn test02() {
 
     puzzle.steps = 40;
     assert_eq!(puzzle.part2(), 3_447_389_044_530);
-}
-
-fn main() {
-    let args = aoc::parse_args();
-
-    let mut puzzle = Puzzle::new();
-
-    puzzle.configure(&args.path);
-
-    puzzle.steps = 10;
-    let result = puzzle.part1();
-    println!("{result}");
-
-    puzzle.steps = 40;
-    let result = puzzle.part2();
-    println!("{result}");
 }

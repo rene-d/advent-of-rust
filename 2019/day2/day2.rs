@@ -15,13 +15,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        self.load(&data);
-    }
-
-    fn load(&mut self, data: &str) {
+    fn configure(&mut self, data: &str) {
         self.program = data
             .trim_ascii()
             .split(',')
@@ -91,7 +85,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -105,18 +99,18 @@ mod test {
     fn test01() {
         let mut puzzle = Puzzle::new();
 
-        puzzle.load("1,0,0,0,99");
+        puzzle.configure("1,0,0,0,99");
         Puzzle::run(&mut puzzle.program);
         assert_eq!(puzzle.dump(), "2,0,0,0,99");
 
-        puzzle.load("2,3,0,3,99");
+        puzzle.configure("2,3,0,3,99");
         Puzzle::run(&mut puzzle.program);
         assert_eq!(puzzle.dump(), "2,3,0,6,99");
-        puzzle.load("2,4,4,5,99,0");
+        puzzle.configure("2,4,4,5,99,0");
         Puzzle::run(&mut puzzle.program);
         assert_eq!(puzzle.dump(), "2,4,4,5,99,9801");
 
-        puzzle.load("1,1,1,4,99,5,6,0,99");
+        puzzle.configure("1,1,1,4,99,5,6,0,99");
         Puzzle::run(&mut puzzle.program);
         assert_eq!(puzzle.dump(), "30,1,1,4,2,5,6,0,99");
     }

@@ -15,11 +15,8 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        self.data = std::fs::read_to_string(path).unwrap();
-        if let Some(stripped) = self.data.strip_suffix('\n') {
-            self.data = stripped.to_string();
-        }
+    fn configure(&mut self, data: &str) {
+        self.data = data.trim_ascii().to_string();
     }
 
     // Solves part one
@@ -53,7 +50,7 @@ fn find_marker(data: &str, length: usize) -> usize {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -61,7 +58,7 @@ fn main() {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
+    puzzle.configure(&aoc::load_input_data("test.txt"));
     assert_eq!(puzzle.part1(), 7);
     assert_eq!(puzzle.part2(), 19);
 }

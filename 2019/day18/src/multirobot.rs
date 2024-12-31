@@ -1,12 +1,10 @@
-use aoc::grid::Grid;
-
 use crate::mazecell::MazeCell; // needed for trait
 
 pub trait Multirobot {
     fn update(&mut self);
 }
 
-impl Multirobot for Grid<u8> {
+impl Multirobot for aoc::GridU<u8> {
     /// Update the maze for part 2: the main entrance becomes four robots
     fn update(&mut self) {
         let (x, y) = self
@@ -34,7 +32,7 @@ mod test {
 
     #[test]
     fn update() {
-        let mut maze = Grid::<u8>::parse(
+        let mut maze = aoc::GridU::<u8>::parse(
             "\
 #######
 #a.#Cd#

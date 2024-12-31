@@ -14,9 +14,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) -> Result<bool, Box<dyn std::error::Error>> {
-        let data = std::fs::read_to_string(path)?;
-
+    fn configure(&mut self, data: &str) -> Result<bool, Box<dyn std::error::Error>> {
         let (army1, army2) = data.split_once("\n\n").unwrap();
 
         self.combat = Combat::with_armies(army1.parse()?, army2.parse()?);
@@ -60,7 +58,7 @@ impl Puzzle {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str())?;
+    puzzle.configure(&args.input)?;
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
     Ok(())
@@ -74,14 +72,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt").unwrap();
+        puzzle.configure(&aoc::load_input_data("test.txt")).unwrap();
         assert_eq!(puzzle.part1(), 5216);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt").unwrap();
+        puzzle.configure(&aoc::load_input_data("test.txt")).unwrap();
 
         puzzle.combat.set_army1_boost(1570);
 

@@ -2,7 +2,8 @@
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data(1);
+    let args = aoc::parse_args();
+    let data = &args.input;
 
     for line in data.lines() {
         let mut floor = 0;

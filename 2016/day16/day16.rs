@@ -1,10 +1,11 @@
 //! [Day 16: Dragon Checksum](https://adventofcode.com/2016/day/16)
 
 fn main() {
-    let data = aoc::load_input_data(16).trim().to_owned();
+    let args = aoc::parse_args();
+    let data = args.input.trim_ascii();
 
-    println!("{}", checksum(&fill(&data, 272)));
-    println!("{}", checksum(&fill(&data, 35_651_584)));
+    println!("{}", checksum(&fill(data, 272)));
+    println!("{}", checksum(&fill(data, 35_651_584)));
 }
 
 /// compute the checksum recursively

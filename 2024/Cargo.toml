@@ -1,6 +1,6 @@
 # https://adventofcode.com/2024
 
 [workspace]
-members = [ "aoc24","day*"]
-
+members = ["day*"]
+exclude = ["day13_z3"]
 resolver = "2"

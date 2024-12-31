@@ -7,8 +7,7 @@ use std::collections::HashMap;
 fn main() {
     let args = aoc::parse_args();
 
-    let data = std::fs::read_to_string(args.path).unwrap();
-    let data = data.trim();
+    let data = args.input.trim_ascii();
 
     // let now = Instant::now();
 

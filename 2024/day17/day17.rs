@@ -18,9 +18,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if let Some(v) = line.strip_prefix("Register A: ") {
                 self.reg_a = v.parse().unwrap();
@@ -197,7 +195,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
 
     if args.verbose {
         puzzle.dump();
@@ -215,14 +213,16 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        let data = aoc::load_input_data("sample_1.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part1(), "4,6,3,5,6,3,5,2,1,0");
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_2.txt");
+        let data = aoc::load_input_data("sample_2.txt");
+        puzzle.configure(&data);
         puzzle.reg_a = 117440;
         assert_eq!(puzzle.part1(), "0,3,5,4,3,0");
     }

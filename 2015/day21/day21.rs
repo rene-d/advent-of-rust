@@ -167,12 +167,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn solve(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap_or_else(|_| {
-            eprintln!("cannot read input file {path}");
-            std::process::exit(1);
-        });
-
+    fn solve(&mut self, data: &str) {
         let mut boss = Character::new("boss", 0, 0, 0);
 
         for line in data.lines() {
@@ -192,7 +187,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.solve(args.path.as_str());
+    puzzle.solve(&args.input);
     println!("{}", puzzle.min_win_cost);
     println!("{}", puzzle.max_loose_cost);
 }

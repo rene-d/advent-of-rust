@@ -8,3 +8,4 @@ aoc = { path = "../../aoc" }
 
 [[bin]]
 name = "day23"
+path = "day23.rs"

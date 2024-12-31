@@ -1,4 +1,4 @@
-set shell := ["bash", "-c"]
+set shell := ["bash", "-uc"]
 
 alias r := run
 
@@ -12,27 +12,40 @@ clean:
 
 make-debug:
     cargo build --manifest-path aoc/Cargo.toml --quiet
-    cargo build --manifest-path 2015/Cargo.toml --quiet
-    cargo build --manifest-path 2016/Cargo.toml --quiet
-    cargo build --manifest-path 2017/Cargo.toml --quiet
-    cargo build --manifest-path 2018/Cargo.toml --quiet
-    cargo build --manifest-path 2019/Cargo.toml --quiet
-    cargo build --manifest-path 2020/Cargo.toml --quiet
-    cargo build --manifest-path 2021/Cargo.toml --quiet
-    cargo build --manifest-path 2022/Cargo.toml --quiet
-    cargo build --manifest-path 2023/Cargo.toml --quiet
-    cargo build --manifest-path 2024/Cargo.toml --quiet
-
+    @for year in 20* ; do echo "cargo build $year" ; cargo build --manifest-path $year/Cargo.toml --quiet ; done
 
 make:
     cargo build --manifest-path aoc/Cargo.toml --release --quiet
-    cargo build --manifest-path 2015/Cargo.toml --release --quiet
-    cargo build --manifest-path 2016/Cargo.toml --release --quiet
-    cargo build --manifest-path 2017/Cargo.toml --release --quiet
-    cargo build --manifest-path 2018/Cargo.toml --release --quiet
-    cargo build --manifest-path 2019/Cargo.toml --release --quiet
-    cargo build --manifest-path 2020/Cargo.toml --release --quiet
-    cargo build --manifest-path 2021/Cargo.toml --release --quiet
-    cargo build --manifest-path 2022/Cargo.toml --release --quiet
-    cargo build --manifest-path 2023/Cargo.toml --release --quiet
-    cargo build --manifest-path 2024/Cargo.toml --release --quiet
+    @for year in 20* ; do echo "cargo build $year" ; cargo build --manifest-path $year/Cargo.toml --release --quiet ; done
+
+run-all:
+    tmux new-session -d -s aoc
+    for year in 20* ; do tmux new-window -t aoc:$year "aoc run $year" ; done
+    tmux kill-window -t aoc:0
+    tmux list-windows -t aoc
+
+gh-fmt:
+    #!/usr/bin/env bash
+    for manifest in `find . -maxdepth 3 ! -path '*/day*' -name Cargo.toml`
+    do
+        echo check fmt for $manifest
+        cargo fmt --all --manifest-path $manifest -- --check
+    done
+
+gh-clippy:
+    #!/usr/bin/env bash
+    for manifest in `find . -maxdepth 3 ! -path '*/day*' -name Cargo.toml`
+    do
+        echo check clippy for $manifest
+        cargo clippy --manifest-path $manifest -- --no-deps -D clippy::all -A clippy::pedantic  -A clippy::nursery
+    done
+
+gh-test:
+    #!/usr/bin/env bash
+    for manifest in `find . -maxdepth 3 ! -path '*/day*' -name Cargo.toml`
+    do
+        echo test for $manifest
+        cargo test --manifest-path $manifest -- --test-threads 4
+    done
+
+gh: gh-fmt gh-clippy gh-test

@@ -1,5 +1,7 @@
 //! [Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)
 
+#![allow(clippy::too_many_lines)]
+
 use regex::Regex;
 use std::collections::HashSet;
 
@@ -213,9 +215,7 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         self.blueprints.extend(
             data.split('\n')
                 .filter(|x| !x.is_empty())
@@ -244,7 +244,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -256,7 +256,7 @@ mod tests {
     #[test]
     fn test_part1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 33);
     }
 
@@ -265,7 +265,7 @@ mod tests {
     #[test]
     fn test_part2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
 
         // assert_eq!(puzzle.blueprints[0].solve(32), 56);
         assert_eq!(puzzle.blueprints[1].solve(32), 62);

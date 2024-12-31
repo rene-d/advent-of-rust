@@ -1,5 +1,9 @@
 //! [Day 10: Cathode-Ray Tube](https://adventofcode.com/2022/day/10)
 
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_sign_loss)]
+
 use aoc::ocr::scan_5x6;
 
 struct Puzzle {
@@ -13,8 +17,7 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
+    fn configure(&mut self, data: &str) {
         let lines = data.split('\n').collect::<Vec<_>>();
 
         #[allow(non_snake_case)]
@@ -68,7 +71,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     // println!("{}", puzzle.part2());
     println!("{}", scan_5x6(&puzzle.part2()));
@@ -80,14 +83,14 @@ mod test {
     #[test]
     fn test_part1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 13140);
     }
 
     #[test]
     fn test_part2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(
             puzzle.part2(),
             "\

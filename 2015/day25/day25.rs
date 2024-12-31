@@ -20,7 +20,8 @@ fn main() {
 }
 
 fn read_data() -> (i32, i32) {
-    let mut data = aoc::load_input_data(25);
+    let args = aoc::parse_args();
+    let mut data = args.input.clone();
 
     data.retain(|c| c.is_ascii_digit() || c.is_whitespace());
 

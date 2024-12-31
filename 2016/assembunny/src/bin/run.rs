@@ -3,9 +3,9 @@
 use assembunny::BunnyVM;
 
 fn main() {
-    let data = aoc::load_input_data(0);
+    let args = aoc::parse_args();
 
-    let mut vm = BunnyVM::new(&data);
+    let mut vm = BunnyVM::new(&args.input);
     let output = vm.run_output(usize::MAX);
 
     println!("{:?}", vm.registers);

@@ -21,7 +21,12 @@ fn sum(v: &serde_json::Value) -> i32 {
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data_vec(12);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     // part 1
     let re = Regex::new(r"(\-?\d+)").unwrap();

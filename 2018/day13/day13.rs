@@ -1,6 +1,9 @@
 //! [Day 13: Mine Cart Madness](https://adventofcode.com/2018/day/13)
 
-use aoc::grid::{Direction, Grid};
+#![allow(clippy::too_many_lines)]
+
+use aoc::Direction;
+use aoc::GridU;
 use std::collections::HashMap;
 use std::collections::VecDeque;
 
@@ -27,24 +30,22 @@ impl Ord for Cart {
 
 struct Puzzle {
     verbose: bool,
-    grid: Grid<char>,
+    grid: GridU<char>,
     carts: Vec<Cart>,
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    const fn new() -> Self {
         Self {
             verbose: false,
-            grid: Grid::new(),
+            grid: GridU::<char>::new(),
             carts: vec![],
         }
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        self.grid = Grid::<char>::parse(&data);
+    fn configure(&mut self, data: &str) {
+        self.grid = GridU::<char>::parse(data);
 
         for ((x, y), c) in self.grid.iter_mut() {
             match c {
@@ -275,7 +276,7 @@ fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
     puzzle.verbose = args.verbose;
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -288,14 +289,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_4.txt");
+        puzzle.configure(&aoc::load_input_data("sample_4.txt"));
         assert_eq!(puzzle.part1(), "7,3");
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_6.txt");
+        puzzle.configure(&aoc::load_input_data("sample_6.txt"));
         assert_eq!(puzzle.part2(), "6,4");
     }
 }

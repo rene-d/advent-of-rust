@@ -3,12 +3,12 @@
 use regex::Regex;
 
 fn main() {
-    let data = aoc::load_input_data(15);
+    let args = aoc::parse_args();
 
     let mut discs = Vec::new();
     let mut positions = Vec::new();
 
-    for line in data.lines() {
+    for line in args.input.lines() {
         let re = Regex::new(r"Disc #\d+ has (\d+) positions; at time=0, it is at position (\d+).").unwrap();
 
         let caps = re.captures(line).unwrap();

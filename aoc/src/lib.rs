@@ -1,52 +1,35 @@
-//! Utility functions
+use args::Args;
 
-use clap::Parser;
+mod args;
+mod coord;
+mod direction;
+mod grid;
+mod gridu;
+pub mod hexslice;
+pub mod knot;
+pub mod ocr;
 
-#[derive(Parser)]
-pub struct Args {
-    /// Puzzle input
-    #[arg(default_value = "input.txt")]
-    pub path: String,
+pub type Coord = coord::Coord;
+pub type Direction = direction::Direction;
+pub type Grid<T> = grid::Grid<T>;
+pub type GridU<T> = gridu::GridU<T>;
 
-    /// Verbose output
-    #[arg(short, long)]
-    pub verbose: bool,
-}
-
-/// Parse the command line arguments for puzzle.
 #[must_use]
-pub fn parse_args() -> Args {
-    Args::parse()
+pub fn parse_args() -> args::Args {
+    Args::parse_args()
 }
 
 /// Read the puzzle input
 /// # Panics
 /// If the file cannot be found or read
 #[must_use]
-pub fn load_input_data(day: u8) -> String {
-    let args = parse_args();
-
-    let mut filename = if args.path == "-" {
-        "/dev/stdin".to_string()
+pub fn load_input_data(filename: &str) -> String {
+    if filename == "-" {
+        std::fs::read_to_string("/dev/stdin").unwrap()
+    } else if std::path::Path::new(filename).is_file() {
+        std::fs::read_to_string(filename).unwrap()
     } else {
-        args.path
-    };
-
-    if filename == "input.txt" && !std::path::Path::new(&filename).is_file() {
-        let txt = format!("day{day}/input.txt");
-        if std::path::Path::new(&txt).is_file() {
-            filename = txt;
-        }
+        eprintln!("error: cannot read file {filename}");
+        std::process::exit(1);
     }
-
-    std::fs::read_to_string(filename).unwrap()
 }
-
-pub fn load_input_data_vec(day: u8) -> Vec<String> {
-    load_input_data(day).lines().map(String::from).collect()
-}
-
-pub mod grid;
-pub mod hex;
-pub mod knot;
-pub mod ocr;

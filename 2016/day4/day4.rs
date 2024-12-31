@@ -12,10 +12,9 @@ lazy_static! {
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
     let args = aoc::parse_args();
-    let data = std::fs::read_to_string(args.path).unwrap();
 
-    println!("{}", part1(&data));
-    println!("{}", part2(&data));
+    println!("{}", part1(&args.input));
+    println!("{}", part2(&args.input));
 }
 
 /// ``part1`` returns the sum of sector id of valid rooms.
@@ -90,7 +89,7 @@ fn is_real_room(name: &str, checksum: &str) -> bool {
 
     let check = freqs.iter().take(5).map(|(_, &c)| c).collect::<String>();
 
-    return check == checksum;
+    check == checksum
 }
 
 #[cfg(test)]

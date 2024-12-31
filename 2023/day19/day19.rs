@@ -1,5 +1,8 @@
 //! [Day 19: Aplenty](https://adventofcode.com/2023/day/19)
 
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::option_if_let_else)]
+
 use core::panic;
 use regex::Regex;
 use std::{
@@ -85,9 +88,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         let re = Regex::new(r"^\{x=(\d+),m=(\d+),a=(\d+),s=(\d+)\}$").unwrap();
 
         let re2 = Regex::new(r"(\w+)\{(.+)\}$").unwrap();
@@ -300,7 +301,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -313,14 +314,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 19114);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part2(), 167_409_079_868_000);
     }
 }

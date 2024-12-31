@@ -3,7 +3,7 @@
 use std::collections::{HashMap, HashSet};
 use std::{cmp::Ordering, collections::VecDeque};
 
-type Grid = aoc::grid::Grid<char>;
+type Grid = aoc::GridU<char>;
 
 const ELF: char = 'E';
 const GOBLIN: char = 'G';
@@ -144,10 +144,8 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        let grid = Grid::parse(&data);
+    fn configure(&mut self, data: &str) {
+        let grid = Grid::parse(data);
 
         for (xy, u) in grid.iter() {
             match u {
@@ -257,7 +255,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -270,84 +268,84 @@ mod test {
     #[test]
     fn test_6_1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_6.txt");
+        puzzle.configure(&aoc::load_input_data("sample_6.txt"));
         assert_eq!(puzzle.part1(), 27730);
     }
 
     #[test]
     fn test_6_2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_6.txt");
+        puzzle.configure(&aoc::load_input_data("sample_6.txt"));
         assert_eq!(puzzle.part2(), 4988);
     }
 
     #[test]
     fn test_7_1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_7.txt");
+        puzzle.configure(&aoc::load_input_data("sample_7.txt"));
         assert_eq!(puzzle.part1(), 36334);
     }
 
     // #[test]
     // fn test_7_2() {
     //     let mut puzzle = Puzzle::new();
-    //     puzzle.configure("sample_7.txt");
+    //     puzzle.configure(&aoc::load_input_data("sample_7.txt");
     //     assert_eq!(puzzle.part2(), 0);
     // }
 
     #[test]
     fn test_8_1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_8.txt");
+        puzzle.configure(&aoc::load_input_data("sample_8.txt"));
         assert_eq!(puzzle.part1(), 39514);
     }
 
     #[test]
     fn test_8_2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_8.txt");
+        puzzle.configure(&aoc::load_input_data("sample_8.txt"));
         assert_eq!(puzzle.part2(), 31284);
     }
 
     #[test]
     fn test_9_1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_9.txt");
+        puzzle.configure(&aoc::load_input_data("sample_9.txt"));
         assert_eq!(puzzle.part1(), 27755);
     }
 
     #[test]
     fn test_9_2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_9.txt");
+        puzzle.configure(&aoc::load_input_data("sample_9.txt"));
         assert_eq!(puzzle.part2(), 3478);
     }
 
     #[test]
     fn test_10_1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_10.txt");
+        puzzle.configure(&aoc::load_input_data("sample_10.txt"));
         assert_eq!(puzzle.part1(), 28944);
     }
 
     #[test]
     fn test_10_2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_10.txt");
+        puzzle.configure(&aoc::load_input_data("sample_10.txt"));
         assert_eq!(puzzle.part2(), 6474);
     }
 
     #[test]
     fn test_11_1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_11.txt");
+        puzzle.configure(&aoc::load_input_data("sample_11.txt"));
         assert_eq!(puzzle.part1(), 18740);
     }
 
     #[test]
     fn test_11_2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_11.txt");
+        puzzle.configure(&aoc::load_input_data("sample_11.txt"));
         assert_eq!(puzzle.part2(), 1140);
     }
 }

@@ -91,13 +91,9 @@ impl fmt::Display for Password {
 /// main function
 fn main() {
     let args = aoc::parse_args();
+    let data = args.input.trim_ascii();
 
-    let data = std::fs::read_to_string(args.path)
-        .unwrap()
-        .trim()
-        .to_string();
-
-    let mut pwd: Password = Password::new(&data);
+    let mut pwd: Password = Password::new(data);
 
     // println!("init:  {}", pwd);
 

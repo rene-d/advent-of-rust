@@ -1,5 +1,9 @@
 //! [Day 3: Gear Ratios](https://adventofcode.com/2023/day/3)
 
+#![allow(clippy::cast_sign_loss)]
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_possible_truncation)]
+
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 
@@ -23,8 +27,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
+    fn configure(&mut self, data: &str) {
         self.grid = data.lines().map(String::from).collect::<Vec<_>>();
 
         self.sx = self.grid[0].len() as i32;
@@ -115,7 +118,7 @@ fn main() {
 
     let start = Instant::now();
 
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     puzzle.parse();
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
@@ -132,7 +135,7 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         puzzle.parse();
         assert_eq!(puzzle.part1(), 4361);
     }
@@ -140,7 +143,7 @@ mod test {
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         puzzle.parse();
         assert_eq!(puzzle.part2(), 467835);
     }

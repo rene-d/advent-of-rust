@@ -1,6 +1,6 @@
 //! [Day 10: Hoof It](https://adventofcode.com/2024/day/10)
 
-use aoc::{grid, grid::Grid};
+use aoc::{Coord, Grid};
 use std::collections::{HashSet, VecDeque};
 
 const BOTTOM: u8 = b'0';
@@ -12,17 +12,15 @@ struct Puzzle {
 
 impl Puzzle {
     fn new() -> Self {
-        Self { grid: grid![] }
+        Self { grid: Grid::new() }
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        self.grid = aoc::grid::Grid::<u8>::parse(&data);
+    fn configure(&mut self, data: &str) {
+        self.grid = Grid::<u8>::parse(data);
     }
 
-    fn bfs(&self, start: (usize, usize)) -> usize {
+    fn bfs(&self, start: Coord) -> usize {
         let mut visited = HashSet::new();
         let mut height_9 = HashSet::new();
         let mut queue = VecDeque::new();
@@ -36,7 +34,7 @@ impl Puzzle {
                 height_9.insert(xy);
             }
 
-            for neigh in self.grid.iter_directions(xy) {
+            for (_, neigh) in self.grid.iter_directions(xy) {
                 if self.grid[neigh] == height + 1 && !visited.contains(&neigh) {
                     queue.push_back((neigh, height + 1));
                 }
@@ -46,14 +44,14 @@ impl Puzzle {
         height_9.len()
     }
 
-    fn dfs(&self, xy: (usize, usize), height: u8) -> usize {
+    fn dfs(&self, xy: Coord, height: u8) -> usize {
         if self.grid[xy] == TOP {
             1
         } else {
             self.grid
                 .iter_directions(xy)
-                .filter(|neigh| self.grid[*neigh] == height + 1)
-                .map(|neigh| self.dfs(neigh, height + 1))
+                .filter(|(_, neigh)| self.grid[*neigh] == height + 1)
+                .map(|(_, neigh)| self.dfs(neigh, height + 1))
                 .sum()
         }
     }
@@ -80,7 +78,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -93,63 +91,63 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
         assert_eq!(puzzle.part1(), 1);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_2.txt");
+        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
         assert_eq!(puzzle.part1(), 2);
     }
 
     #[test]
     fn test03() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_3.txt");
+        puzzle.configure(&aoc::load_input_data("sample_3.txt"));
         assert_eq!(puzzle.part1(), 4);
     }
 
     #[test]
     fn test04() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_4.txt");
+        puzzle.configure(&aoc::load_input_data("sample_4.txt"));
         assert_eq!(puzzle.part1(), 1 + 2);
     }
 
     #[test]
     fn test05() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_5.txt");
+        puzzle.configure(&aoc::load_input_data("sample_5.txt"));
         assert_eq!(puzzle.part1(), 36);
     }
 
     #[test]
     fn test06() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_6.txt");
+        puzzle.configure(&aoc::load_input_data("sample_6.txt"));
         assert_eq!(puzzle.part2(), 3);
     }
 
     #[test]
     fn test08() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_8.txt");
+        puzzle.configure(&aoc::load_input_data("sample_8.txt"));
         assert_eq!(puzzle.part2(), 13);
     }
 
     #[test]
     fn test09() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_9.txt");
+        puzzle.configure(&aoc::load_input_data("sample_9.txt"));
         assert_eq!(puzzle.part2(), 227);
     }
 
     #[test]
     fn test10() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_10.txt");
+        puzzle.configure(&aoc::load_input_data("sample_10.txt"));
         assert_eq!(puzzle.part2(), 81);
     }
 }

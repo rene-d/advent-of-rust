@@ -1,7 +1,5 @@
 //! [Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)
 
-use std::fs;
-
 struct Puzzle {
     house_present: usize,
 }
@@ -11,14 +9,8 @@ impl Puzzle {
         Self { house_present: 0 }
     }
 
-    fn configure(&mut self, filename: &str) {
-        let mut data: Vec<String> = fs::read_to_string(filename)
-            .expect("Failed to read input file {filename}")
-            .lines()
-            .map(ToString::to_string)
-            .collect();
-
-        self.house_present = data.pop().unwrap().parse::<usize>().unwrap();
+    fn configure(&mut self, data: &str) {
+        self.house_present = data.trim_ascii().parse::<usize>().unwrap();
     }
 
     fn part1(&self) -> usize {
@@ -75,6 +67,20 @@ impl Puzzle {
 
         house_number
     }
+}
+
+fn main() {
+    let args = aoc::parse_args();
+
+    let mut puzzle = Puzzle::new();
+
+    puzzle.configure(&args.input);
+
+    let result = puzzle.part1();
+    println!("{result}");
+
+    let result = puzzle.part2();
+    println!("{result}");
 }
 
 /// Test from puzzle input
@@ -156,18 +162,4 @@ fn test09() {
     puzzle.house_present = 150;
     assert_eq!(puzzle.part1(), 8);
     assert_eq!(puzzle.part2(), 8);
-}
-
-fn main() {
-    let args = aoc::parse_args();
-
-    let mut puzzle = Puzzle::new();
-
-    puzzle.configure(&args.path);
-
-    let result = puzzle.part1();
-    println!("{result}");
-
-    let result = puzzle.part2();
-    println!("{result}");
 }

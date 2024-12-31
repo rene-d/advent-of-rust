@@ -2,9 +2,8 @@
 
 fn main() {
     let args = aoc::parse_args();
-    let data = std::fs::read_to_string(args.path).unwrap();
 
-    let (part1, part2) = solve(&data);
+    let (part1, part2) = solve(&args.input);
     println!("{part1}");
     println!("{part2}");
 }

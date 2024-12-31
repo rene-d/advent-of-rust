@@ -1,7 +1,7 @@
 //! Implements the 'knot hash' as described in [2017 day 10](https://adventofcode.com/2017/day/10)
 //! Also used in [2017 day 14](https://adventofcode.com/2017/day/14)
 
-use crate::hex::HexDisplayExt;
+use crate::hexslice::HexDisplayExt;
 
 pub fn tie(values: &[usize], sparse: &mut [u8], skip: &mut usize, pos: &mut usize) {
     let n = sparse.len();

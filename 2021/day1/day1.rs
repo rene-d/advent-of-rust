@@ -1,7 +1,7 @@
 //! [Day 1: Sonar Sweep](https://adventofcode.com/2021/day/1)
 
 fn main() {
-    let input = aoc::load_input_data(1);
+    let args = aoc::parse_args();
 
     let mut prev_num = 999_999_999_u32;
     let mut result = 0;
@@ -9,7 +9,7 @@ fn main() {
     let mut data = vec![];
 
     // step 1
-    for line in input.lines() {
+    for line in args.input.lines() {
         // convertit string -> u32
         let num: u32 = line.parse().unwrap();
 

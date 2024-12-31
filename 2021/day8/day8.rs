@@ -5,7 +5,12 @@ use std::collections::HashSet;
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data_vec(8);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     part1(&data);
     part2(&data);

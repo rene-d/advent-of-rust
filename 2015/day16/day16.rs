@@ -5,7 +5,8 @@ use std::collections::HashMap;
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data(16);
+    let args = aoc::parse_args();
+    let data = &args.input;
 
     let re = Regex::new(r"Sue (\d+): (\w+): (\d+), (\w+): (\d+), (\w+): (\d+)").unwrap();
 

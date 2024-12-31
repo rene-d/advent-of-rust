@@ -14,7 +14,12 @@ struct Reinder {
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data_vec(14);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     let mut reinders = Vec::new();
 

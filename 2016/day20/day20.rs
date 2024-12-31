@@ -1,11 +1,11 @@
 //! [Day 20: Firewall Rules](https://adventofcode.com/2016/day/20)
 
 fn main() {
-    let data = aoc::load_input_data(20);
+    let args = aoc::parse_args();
 
     // load the blacklist and sort it ascending
     let mut blacklist = Vec::new();
-    for line in data.lines() {
+    for line in args.input.lines() {
         if line.is_empty() {
             continue;
         }

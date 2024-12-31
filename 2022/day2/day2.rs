@@ -19,8 +19,7 @@ impl Puzzle {
         Self { guide: Vec::new() }
     }
 
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
+    fn configure(&mut self, data: &str) {
         let lines = data.trim().lines().collect::<Vec<_>>();
 
         for strategy in lines {
@@ -91,7 +90,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -100,7 +99,7 @@ fn main() {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
+    puzzle.configure(&aoc::load_input_data("test.txt"));
     assert_eq!(puzzle.part1(), 15);
     assert_eq!(puzzle.part2(), 12);
 }

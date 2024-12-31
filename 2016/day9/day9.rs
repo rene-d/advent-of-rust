@@ -2,10 +2,10 @@
 
 /// Solve the puzzle with the given input.
 fn main() {
-    let data = aoc::load_input_data(9);
+    let args = aoc::parse_args();
 
-    println!("{}", part1(&data));
-    println!("{}", part2(&data));
+    println!("{}", part1(&args.input));
+    println!("{}", part2(&args.input));
 }
 
 /// Do part 1 of the puzzle

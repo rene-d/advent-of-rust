@@ -2,15 +2,20 @@
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data_vec(7);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     let positions = data[0]
         .split(',')
         .map(|s| s.parse::<i32>().unwrap())
         .collect::<Vec<i32>>();
 
-    let mut min_sum1 = std::i32::MAX;
-    let mut min_sum2 = std::i32::MAX;
+    let mut min_sum1 = i32::MAX;
+    let mut min_sum2 = i32::MAX;
 
     let mm = positions.iter().max().unwrap();
     for pos in 0..*mm {

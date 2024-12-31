@@ -4,8 +4,7 @@ use std::collections::HashMap;
 
 fn main() {
     let args = aoc::parse_args();
-    let data = std::fs::read_to_string(args.path).unwrap();
-    let mut data = data.lines();
+    let mut data = args.input.lines();
 
     let player = data
         .next()

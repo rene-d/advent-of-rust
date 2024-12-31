@@ -2,25 +2,23 @@
 
 use std::collections::{HashSet, VecDeque};
 
-use aoc::{grid, grid::Grid};
-
 use day18::mazette::Dijkstra;
 use day18::multirobot::Multirobot;
 
 struct Puzzle {
-    maze: Grid<u8>,
+    maze: aoc::GridU<u8>,
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self { maze: grid![] }
+    const fn new() -> Self {
+        Self {
+            maze: aoc::GridU::<u8>::new(),
+        }
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        self.maze = aoc::grid::Grid::<u8>::parse(&data);
+    fn configure(&mut self, data: &str) {
+        self.maze = aoc::GridU::<u8>::parse(data);
     }
 
     /// Solve part one.
@@ -98,7 +96,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -111,35 +109,35 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
         assert_eq!(puzzle.part1(), 8);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_4.txt");
+        puzzle.configure(&aoc::load_input_data("sample_4.txt"));
         assert_eq!(puzzle.part1(), 86);
     }
 
     #[test]
     fn test03() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_9.txt");
+        puzzle.configure(&aoc::load_input_data("sample_9.txt"));
         assert_eq!(puzzle.part1(), 132);
     }
 
     #[test]
     fn test04() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_10.txt");
+        puzzle.configure(&aoc::load_input_data("sample_10.txt"));
         assert_eq!(puzzle.part1(), 136);
     }
 
     #[test]
     fn test05() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_11.txt");
+        puzzle.configure(&aoc::load_input_data("sample_11.txt"));
         assert_eq!(puzzle.part1(), 81);
     }
 }

@@ -1,7 +1,6 @@
 //! [Day 14: Disk Defragmentation](https://adventofcode.com/2017/day/14)
 
-use aoc::grid::Grid;
-use aoc::knot;
+use aoc::{knot, Coord, Grid};
 
 const fn count_ones(value: u8) -> u32 {
     let mut count = 0;
@@ -25,9 +24,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         self.key = data.trim().to_string();
     }
 
@@ -46,41 +43,43 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> u32 {
-        let mut g: Grid<u8> = Grid::with_size(128, 128);
+        let mut grid: Grid<u8> = Grid::<u8>::with_size(128, 128, 0, 0);
 
         for y in 0..128 {
             let row = knot::hash_raw(format!("{}-{y}", self.key).as_str());
 
-            for (i, octet) in row.iter().enumerate() {
+            for (i, octet) in (0..).zip(row.iter()) {
                 //
                 for b in 0..8 {
                     let x = (i * 8) + b;
                     let o = (octet >> (7 - b)) & 1;
-                    g[(x, y)] = o;
+                    grid[Coord::new(x, y)] = o;
                 }
             }
         }
 
-        let mut q = vec![];
+        let mut queue = Vec::new();
 
         let mut result = 0;
 
         for y in 0..128 {
             for x in 0..128 {
-                if g[(x, y)] == 0 {
+                let xy = Coord::new(x, y);
+
+                if grid[xy] == 0 {
                     continue;
                 }
 
                 result += 1;
 
                 // bfs to find all adjacent used squares
-                q.push((x, y));
-                while let Some((x, y)) = q.pop() {
-                    g[(x, y)] = 0; // cancel the square so we don't need to maintain a 'visited' set
+                queue.push(xy);
+                while let Some(xy) = queue.pop() {
+                    grid[xy] = 0; // cancel the square so we don't need to maintain a 'visited' set
 
-                    for (nx, ny) in g.iter_directions((x, y)) {
-                        if g[(nx, ny)] == 1 {
-                            q.push((nx, ny));
+                    for (_, nxy) in grid.iter_directions(xy) {
+                        if grid[nxy] == 1 {
+                            queue.push(nxy);
                         }
                     }
                 }
@@ -96,7 +95,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -109,14 +108,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 8108);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part2(), 1242);
     }
 }

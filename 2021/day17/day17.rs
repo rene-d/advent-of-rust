@@ -10,7 +10,9 @@ fn main() {
     let ord_min: i32;
     let ord_max: i32;
 
-    let data = aoc::load_input_data(17);
+    let args = aoc::parse_args();
+    let data = &args.input;
+
     scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
     abs_min, abs_max, ord_min, ord_max);
 

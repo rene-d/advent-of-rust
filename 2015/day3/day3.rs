@@ -2,7 +2,12 @@
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data_vec(3);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     println!("{}", part1(&data[0]));
     println!("{}", part2(&data[0]));

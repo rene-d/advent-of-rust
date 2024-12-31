@@ -29,7 +29,12 @@ fn calc(names: &HashSet<String>, happiness: &HashMap<(String, String), i32>) -> 
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data_vec(13);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     let mut names: HashSet<String> = HashSet::new();
     let mut happiness: HashMap<(String, String), i32> = HashMap::new();

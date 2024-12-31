@@ -12,9 +12,7 @@ impl Puzzle {
         Self { part1: 0, part2: 0 }
     }
 
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         let re = Regex::new(r"^(\d+)-(\d+),(\d+)-(\d+)").unwrap();
 
         self.part1 = 0;
@@ -42,7 +40,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1);
     println!("{}", puzzle.part2);
 }
@@ -50,7 +48,7 @@ fn main() {
 #[test]
 fn test_puzzle() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
+    puzzle.configure(&aoc::load_input_data("test.txt"));
     assert_eq!(puzzle.part1, 2);
     assert_eq!(puzzle.part2, 4);
 }

@@ -34,12 +34,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap_or_else(|_| {
-            eprintln!("cannot read input file {path}");
-            std::process::exit(1);
-        });
-
+    fn configure(&mut self, data: &str) {
         self.seats.extend(data.lines().map(parse_seat));
 
         self.seats.sort_unstable();
@@ -64,7 +59,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }

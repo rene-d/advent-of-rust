@@ -2,7 +2,8 @@
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data(6);
+    let args = aoc::parse_args();
+    let data = &args.input;
 
     let mut timers = [0u64; 9];
     for timer in data.trim().split(',').map(|s| s.parse::<usize>().unwrap()) {

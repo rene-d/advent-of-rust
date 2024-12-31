@@ -14,7 +14,8 @@ struct Ingredient {
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data(15);
+    let args = aoc::parse_args();
+    let data = &args.input;
 
     // load data
     let mut ingredients = Vec::new();
