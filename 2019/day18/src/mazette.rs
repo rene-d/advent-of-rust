@@ -5,14 +5,12 @@ use crate::mazecell::MazeCell;
 use crate::path::Path;
 use crate::state::State;
 
-use aoc::grid::Grid;
-
 pub trait Dijkstra {
     fn search(&self) -> usize;
 }
 
 /// Calculate distances to keys and seen keys and doors from the given cell of the maze.
-fn get_paths_from(maze: &Grid<u8>, start: (usize, usize)) -> Vec<Path> {
+fn get_paths_from(maze: &aoc::GridU<u8>, start: (usize, usize)) -> Vec<Path> {
     let mut paths = vec![];
 
     let mut seen = HashSet::new();
@@ -51,7 +49,7 @@ fn get_paths_from(maze: &Grid<u8>, start: (usize, usize)) -> Vec<Path> {
     paths
 }
 
-fn get_all_paths(maze: &Grid<u8>) -> (u8, HashMap<u8, Vec<Path>>) {
+fn get_all_paths(maze: &aoc::GridU<u8>) -> (u8, HashMap<u8, Vec<Path>>) {
     let mut all_paths = HashMap::new();
 
     let mut num_robots = 0;
@@ -72,7 +70,7 @@ fn get_all_paths(maze: &Grid<u8>) -> (u8, HashMap<u8, Vec<Path>>) {
     (num_robots, all_paths)
 }
 
-impl Dijkstra for Grid<u8> {
+impl Dijkstra for aoc::GridU<u8> {
     fn search(&self) -> usize {
         let all_keys = self
             .iter()
@@ -139,7 +137,7 @@ mod test {
 ###############
 ";
 
-        let maze = Grid::<u8>::parse(maze);
+        let maze = aoc::GridU::<u8>::parse(maze);
 
         assert_eq!(maze.search(), 24);
     }

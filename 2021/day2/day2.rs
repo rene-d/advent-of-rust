@@ -1,13 +1,12 @@
 //! [Day 2: Dive!](https://adventofcode.com/2021/day/2)
 
 fn main() {
-    part1();
-    part2();
+    let args = aoc::parse_args();
+    part1(&args.input);
+    part2(&args.input);
 }
 
-fn part1() {
-    let data = aoc::load_input_data(2);
-
+fn part1(data: &str) {
     let mut pos_h = 0;
     let mut pos_v = 0;
 
@@ -28,9 +27,7 @@ fn part1() {
     println!("{}", pos_h * pos_v);
 }
 
-fn part2() {
-    let data = aoc::load_input_data(2);
-
+fn part2(data: &str) {
     let mut pos_h = 0;
     let mut pos_v = 0;
     let mut aim = 0;

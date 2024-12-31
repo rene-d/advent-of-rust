@@ -2,7 +2,12 @@
 
 /// main function
 fn main() {
-    let data: Vec<_> = aoc::load_input_data_vec(9);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     // parse the data
     let sy = data.len();
@@ -49,7 +54,7 @@ fn main() {
     }
 }
 
-fn basin(grid: &mut Vec<Vec<i32>>, y: usize, x: usize) -> i32 {
+fn basin(grid: &mut [Vec<i32>], y: usize, x: usize) -> i32 {
     let mut stack = vec![(1, y, x)];
     let mut n = 0;
     while let Some((size, y, x)) = stack.pop() {

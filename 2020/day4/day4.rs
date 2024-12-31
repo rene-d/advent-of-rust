@@ -53,13 +53,8 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap_or_else(|_| {
-            eprintln!("cannot read input file {path}");
-            std::process::exit(1);
-        });
-
-        self.data = data;
+    fn configure(&mut self, data: &str) {
+        self.data = data.to_string();
     }
 
     /// Solve part one.
@@ -109,7 +104,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -122,21 +117,21 @@ mod test {
     #[test]
     fn test_part1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
         assert_eq!(puzzle.part1(), 2);
     }
 
     #[test]
     fn test_part2_invalid() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_3.txt");
+        puzzle.configure(&aoc::load_input_data("sample_3.txt"));
         assert_eq!(puzzle.part2(), 0);
     }
 
     #[test]
     fn test_part2_valid() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_4.txt");
+        puzzle.configure(&aoc::load_input_data("sample_4.txt"));
         assert_eq!(puzzle.part2(), 4);
     }
 }

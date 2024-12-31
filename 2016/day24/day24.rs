@@ -1,37 +1,38 @@
 //! [Day 24: Air Duct Spelunking](https://adventofcode.com/2016/day/24)
 
-use aoc::{grid, grid::Grid};
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_possible_wrap)]
 
 use itertools::Itertools;
 use std::collections::{HashSet, VecDeque};
 
 struct Puzzle {
-    grid: Grid<char>,
+    grid: aoc::Grid<char>,
 }
 
 impl Puzzle {
     fn new() -> Self {
-        Self { grid: grid![] }
+        Self {
+            grid: aoc::Grid::<char>::new(),
+        }
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        self.grid = aoc::grid::Grid::<char>::parse(&data);
+    fn configure(&mut self, data: &str) {
+        self.grid = data.into();
     }
 
     fn solve(&self) -> (u32, u32) {
         let mut points = vec![];
 
-        for (xy, c) in self.grid.iter() {
+        for (xy, c) in &self.grid {
             if c.is_ascii_digit() {
                 points.push(xy);
             }
         }
 
         let n = points.len();
-        let mut distances = Grid::<u32>::with_size(n, n);
+        let mut distances = aoc::Grid::<u32>::with_size(n as i32, n as i32, 0, 0);
 
         for &start in &points {
             let from = self.grid[start].to_digit(10).unwrap();
@@ -43,11 +44,11 @@ impl Puzzle {
             while let Some((point, steps)) = q.pop_front() {
                 // distance from 'start' to current point
                 if let Some(to) = self.grid[point].to_digit(10) {
-                    distances[(from as usize, to as usize)] = steps;
+                    distances[(from as i32, to as i32)] = steps;
                 }
 
                 // walk if possible north, east, south and west
-                self.grid.iter_directions(point).for_each(|p| {
+                self.grid.iter_directions(point).for_each(|(_, p)| {
                     if self.grid[p] != '#' && !seen.contains(&p) {
                         seen.insert(p);
                         q.push_back((p, steps + 1));
@@ -60,9 +61,9 @@ impl Puzzle {
         let mut part2 = u32::MAX;
 
         (1..n).permutations(n - 1).for_each(|path| {
-            let first = distances[(0, path[0])];
-            let middle: u32 = path.windows(2).map(|x| distances[(x[0], x[1])]).sum();
-            let last = distances[(path[n - 2], 0)];
+            let first = distances[(0, path[0] as i32)];
+            let middle: u32 = path.windows(2).map(|x| distances[(x[0] as i32, x[1] as i32)]).sum();
+            let last = distances[(path[n - 2] as i32, 0)];
 
             part1 = part1.min(first + middle);
             part2 = part2.min(first + middle + last);
@@ -85,7 +86,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -98,14 +99,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
         assert_eq!(puzzle.part1(), 14);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
         assert_eq!(puzzle.part2(), 20);
     }
 }

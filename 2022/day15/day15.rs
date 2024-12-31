@@ -26,8 +26,7 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str, is_test: bool) {
-        let data = std::fs::read_to_string(path).unwrap();
+    fn configure(&mut self, data: &str, is_test: bool) {
         let lines = data.split('\n').collect::<Vec<_>>();
 
         self.field_size = if is_test { 20 } else { 4_000_000 };
@@ -152,7 +151,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path, args.path == "test.txt");
+    puzzle.configure(&args.input, false);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -160,7 +159,7 @@ fn main() {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt", true);
+    puzzle.configure(&aoc::load_input_data("test.txt"), true);
     assert_eq!(puzzle.part1(), 26);
     assert_eq!(puzzle.part2(), 56_000_011);
 }

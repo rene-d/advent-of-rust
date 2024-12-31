@@ -13,8 +13,7 @@ const TICK_CHARS: &str = "\u{280b}\u{2819}\u{2839}\u{2838}\u{283c}\u{2834}\u{282
 fn main() {
     let args = aoc::parse_args();
 
-    let door_id = std::fs::read_to_string(args.path).unwrap();
-    let door_id = door_id.trim();
+    let door_id = args.input.trim();
 
     let mut password_part1 = ['_'; 8];
     let mut password_part2 = ['_'; 8];

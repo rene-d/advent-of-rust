@@ -81,16 +81,6 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    /// Get the puzzle input.
-    fn solve_from_file(path: &str) -> Self {
-        let data = std::fs::read_to_string(path).unwrap_or_else(|_| {
-            eprintln!("cannot read input file {path}");
-            std::process::exit(1);
-        });
-
-        Self::solve(&data)
-    }
-
     fn solve(data: &str) -> Self {
         let bin_data = data
             .chars()
@@ -126,7 +116,7 @@ impl Puzzle {
 
 fn main() {
     let args = aoc::parse_args();
-    let puzzle = Puzzle::solve_from_file(args.path.as_str());
+    let puzzle = Puzzle::solve(&args.input);
     println!("{}", puzzle.part1);
     println!("{}", puzzle.part2);
 }

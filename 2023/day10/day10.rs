@@ -28,9 +28,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         self.points.clear();
         self.grid_data.clear();
         self.sx = 0;
@@ -132,7 +130,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -145,40 +143,40 @@ mod test {
     #[test]
     fn test01_1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test1.txt");
+        puzzle.configure(&aoc::load_input_data("test1.txt"));
         assert_eq!(puzzle.part1(), 4);
     }
     #[test]
     fn test01_2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test2.txt");
+        puzzle.configure(&aoc::load_input_data("test2.txt"));
         assert_eq!(puzzle.part1(), 8);
     }
 
     #[test]
     fn test02_3() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test3.txt");
+        puzzle.configure(&aoc::load_input_data("test3.txt"));
         assert_eq!(puzzle.part2(), 4);
     }
 
     #[test]
     fn test02_4() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test4.txt");
+        puzzle.configure(&aoc::load_input_data("test4.txt"));
         assert_eq!(puzzle.part2(), 4);
     }
     #[test]
     fn test02_5() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test5.txt");
+        puzzle.configure(&aoc::load_input_data("test5.txt"));
         assert_eq!(puzzle.part2(), 8);
     }
 
     #[test]
     fn test02_6() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test6.txt");
+        puzzle.configure(&aoc::load_input_data("test6.txt"));
         assert_eq!(puzzle.part2(), 10);
     }
 }

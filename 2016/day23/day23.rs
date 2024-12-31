@@ -19,11 +19,11 @@ fn factorial(n: i32) -> i32 {
 }
 
 fn main() {
-    let data = aoc::load_input_data(23);
+    let args = aoc::parse_args();
 
-    let part1 = compute_until_safe(7, &data);
+    let part1 = compute_until_safe(7, &args.input);
 
-    println!("{}", part1);
+    println!("{part1}");
 
     // as the program calculates n! + constant,
     // we advantageously can reuse the answer from part 1

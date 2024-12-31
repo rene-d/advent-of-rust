@@ -160,34 +160,25 @@ impl std::fmt::Display for Dish {
     }
 }
 
-struct Puzzle {
-    data: String,
+struct Puzzle<'a> {
+    data: &'a str,
 }
 
-impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            data: String::new(),
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        self.data = data;
+impl<'a> Puzzle<'a> {
+    const fn new(data: &'a str) -> Self {
+        Self { data }
     }
 
     /// Solve part one.
     fn part1(&self) -> usize {
-        let mut dish = Dish::new(&self.data);
+        let mut dish = Dish::new(self.data);
         dish.north();
         dish.load()
     }
 
     /// Solve part two.
     fn part2(&self) -> usize {
-        let mut dish = Dish::new(&self.data);
+        let mut dish = Dish::new(self.data);
 
         let cycles = 1_000_000_000;
         let mut seen = HashMap::new();
@@ -216,7 +207,7 @@ impl Puzzle {
                     dish.east();
                 }
 
-                eprintln!("{dish}");
+                // eprintln!("{dish}");
 
                 // we've done
                 return dish.load();
@@ -231,7 +222,7 @@ impl Puzzle {
     /// Displays an ASCII animation of the platform's tilt.
     /// Rather useless.
     fn anim(&self) {
-        let mut dish = Dish::new(&self.data);
+        let mut dish = Dish::new(self.data);
         let mut seen = HashSet::new();
 
         let tempo = std::time::Duration::from_millis(100);
@@ -267,8 +258,7 @@ impl Puzzle {
 
 fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    let puzzle = Puzzle::new(&args.input);
 
     if args.verbose {
         puzzle.anim();
@@ -285,15 +275,15 @@ mod test {
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        let data = aoc::load_input_data("test.txt");
+        let puzzle = Puzzle::new(&data);
         assert_eq!(puzzle.part1(), 136);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        let data = aoc::load_input_data("test.txt");
+        let puzzle = Puzzle::new(&data);
         assert_eq!(puzzle.part2(), 64);
     }
 }

@@ -2,7 +2,7 @@
 
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
-use aoc24::coord::Coord;
+use aoc::Coord;
 
 const ZERO: Coord = Coord { x: 0, y: 0 };
 const EAST: Coord = Coord { x: 1, y: 0 }; // starting direction
@@ -95,9 +95,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         for (y, line) in data.lines().enumerate() {
             let y = i32::try_from(y).unwrap();
 
@@ -276,7 +274,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -289,28 +287,32 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        let data = aoc::load_input_data("sample_1.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part1(), 7036);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_3.txt");
+        let data = aoc::load_input_data("sample_3.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part1(), 11048);
     }
 
     #[test]
     fn test03() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        let data = aoc::load_input_data("sample_1.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part2(), 45);
     }
 
     #[test]
     fn test04() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_3.txt");
+        let data = aoc::load_input_data("sample_3.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part2(), 64);
     }
 }

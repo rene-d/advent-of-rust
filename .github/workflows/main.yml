@@ -16,10 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          for manifest in `find . ! -path '*/day*' -name Cargo.toml`
+          for manifest in `find . -maxdepth 3 ! -path '*/day*' -name Cargo.toml`
           do
-            echo check fmt for $manifest
-            cargo fmt --all --manifest-path $manifest -- --check
+              echo check fmt for $manifest
+              cargo fmt --all --manifest-path $manifest -- --check
           done
 
   # Check static analysis defaults
@@ -28,10 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          for manifest in `find . ! -path '*/day*' -name Cargo.toml`
+          for manifest in `find . -maxdepth 3 ! -path '*/day*' -name Cargo.toml`
           do
-            echo check clippy for $manifest
-            cargo clippy --manifest-path $manifest -- --no-deps -A clippy::all
+              echo check clippy for $manifest
+              cargo clippy --manifest-path $manifest -- --no-deps -D clippy::all -A clippy::pedantic -A clippy::nursery
           done
 
   # Check non-regression tests
@@ -40,8 +40,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          for manifest in `find . ! -path '*/day*' -name Cargo.toml`
+          for manifest in `find . -maxdepth 3 ! -path '*/day*' -name Cargo.toml`
           do
-            echo test for $manifest
-            cargo test --manifest-path $manifest --
+              echo test for $manifest
+              cargo test --manifest-path $manifest -- --test-threads 4
           done

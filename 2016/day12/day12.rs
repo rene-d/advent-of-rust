@@ -14,9 +14,7 @@ fn solve(bunny_vm: &mut BunnyVM, c: i32) -> i32 {
 fn main() {
     let args = aoc::parse_args();
 
-    let data = std::fs::read_to_string(args.path).unwrap();
-
-    let mut bunny_vm = BunnyVM::new(&data);
+    let mut bunny_vm = BunnyVM::new(&args.input);
 
     println!("{}", solve(&mut bunny_vm, 0));
     println!("{}", solve(&mut bunny_vm, 1));

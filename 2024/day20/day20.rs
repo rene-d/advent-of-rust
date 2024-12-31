@@ -2,8 +2,9 @@
 
 use std::collections::{BinaryHeap, HashMap};
 
-use aoc24::coord::Coord;
-use aoc24::grid::Grid;
+use aoc::Coord;
+
+type Grid = aoc::Grid<char>;
 
 struct Puzzle {
     // input
@@ -21,8 +22,8 @@ impl Puzzle {
     fn new() -> Self {
         Self {
             racetrack: Grid::new(),
-            start: Coord::new(0, 0),
-            end: Coord::new(0, 0),
+            start: Coord::default(),
+            end: Coord::default(),
             from_start: HashMap::new(),
             to_end: HashMap::new(),
             boring: 0,
@@ -31,12 +32,10 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
+    fn configure(&mut self, data: &str) {
+        self.racetrack = Grid::parse(data);
 
-        self.racetrack = Grid::parse(&data);
-
-        for (pos, &c) in self.racetrack.iter() {
+        for (pos, &c) in &self.racetrack {
             if c == 'S' {
                 self.start = pos;
             } else if c == 'E' {
@@ -65,7 +64,7 @@ impl Puzzle {
         heap.push((0, start));
 
         while let Some((cost, p)) = heap.pop() {
-            for np in self.racetrack.iter_directions(p) {
+            for (_, np) in self.racetrack.iter_directions(p) {
                 if self.racetrack[np] != '#' {
                     let new_cost = cost + 1;
 
@@ -87,7 +86,7 @@ impl Puzzle {
         // at a Manhattan distance less than the asked one (2 or 20 depending on the part)
 
         for cheat_start in &self.track {
-            for cheat_end in &self.track {
+            for &cheat_end in &self.track {
                 let cheat_dist = cheat_start.manhattan_distance(cheat_end);
 
                 if cheat_dist <= max_cheats {
@@ -95,7 +94,7 @@ impl Puzzle {
                     // from the start to the cheat start, the cheat length and the distance from
                     // the cheat end to the end of the track
 
-                    let time = self.from_start[cheat_start] + cheat_dist + self.to_end[cheat_end];
+                    let time = self.from_start[cheat_start] + cheat_dist + self.to_end[&cheat_end];
 
                     // if the gain is sufficient, we count it
                     if time + min_gain <= self.boring {
@@ -121,7 +120,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -134,7 +133,8 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        let data = aoc::load_input_data("test.txt");
+        puzzle.configure(&data);
         assert_eq!(
             puzzle.solve(2, 2),
             14 + 14 + 2 + 4 + 2 + 3 + 1 + 1 + 1 + 1 + 1
@@ -144,7 +144,8 @@ mod test {
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        let data = aoc::load_input_data("test.txt");
+        puzzle.configure(&data);
         assert_eq!(
             puzzle.solve(20, 50),
             32 + 31 + 29 + 39 + 25 + 23 + 20 + 19 + 12 + 14 + 12 + 22 + 4 + 3

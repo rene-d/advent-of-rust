@@ -54,9 +54,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
-        let data = std::fs::read_to_string(path)?;
-
+    fn configure(&mut self, data: &str) {
         // load the bricks of sand
         for line in data.lines() {
             let coords: Vec<_> = line
@@ -103,8 +101,6 @@ impl Puzzle {
                 }
             }
         }
-
-        Ok(())
     }
 
     /// Solve part one.
@@ -154,10 +150,9 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    if puzzle.configure(args.path.as_str()).is_ok() {
-        println!("{}", puzzle.part1());
-        println!("{}", puzzle.part2());
-    }
+    puzzle.configure(&args.input);
+    println!("{}", puzzle.part1());
+    println!("{}", puzzle.part2());
 }
 
 /// Test from puzzle input
@@ -168,14 +163,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        assert!(puzzle.configure("test.txt").is_ok());
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 5);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        assert!(puzzle.configure("test.txt").is_ok());
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part2(), 7);
     }
 }

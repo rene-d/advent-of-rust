@@ -2,7 +2,9 @@
 
 use std::collections::{HashSet, VecDeque};
 
-use aoc24::grid::{Coord, Grid};
+use aoc::Coord;
+
+type Grid = aoc::Grid<char>;
 
 fn score(grid: &Grid) -> i32 {
     grid.iter_cells()
@@ -28,7 +30,7 @@ fn init_first_warehouse(input: &str) -> (Grid, Coord) {
 
 fn init_second_warehouse(input: &str) -> (Grid, Coord) {
     let simple = Grid::parse(input);
-    let mut grid = Grid::with_size(simple.width() * 2, simple.height());
+    let mut grid = Grid::with_size(simple.width() * 2, simple.height(), ' ', '#');
     let mut start = Coord::new(0, 0);
 
     for (Coord { x, y }, &c) in simple.iter_cells() {
@@ -196,9 +198,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         let (a, b) = data.split_once("\n\n").unwrap();
 
         self.data = a.to_string();
@@ -300,7 +300,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -313,21 +313,24 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        let data = aoc::load_input_data("sample_1.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part1(), 10092);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_2.txt");
+        let data = aoc::load_input_data("sample_2.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part1(), 2028);
     }
 
     #[test]
     fn test03() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        let data = aoc::load_input_data("sample_1.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part2(), 9021);
     }
 }

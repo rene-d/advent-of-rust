@@ -1,5 +1,8 @@
 //! [Day 10: The Stars Align](https://adventofcode.com/2018/day/10)
 
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_sign_loss)]
+
 use aoc::ocr::scan_6x10;
 
 struct Puzzle {
@@ -21,9 +24,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             let row: Vec<_> = line.split(['<', '>', ',']).collect();
 
@@ -121,7 +122,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     puzzle.solve(args.verbose);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());

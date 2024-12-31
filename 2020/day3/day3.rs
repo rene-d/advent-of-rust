@@ -1,23 +1,19 @@
 //! [Day 3: Toboggan Trajectory](https://adventofcode.com/2020/day/3)
 
-use aoc::grid;
-
-type Grid = aoc::grid::Grid<u8>;
+type Grid = aoc::GridU<u8>;
 
 struct Puzzle {
     grid: Grid,
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self { grid: grid!() }
+    const fn new() -> Self {
+        Self { grid: Grid::new() }
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        self.grid = Grid::parse(&data);
+    fn configure(&mut self, data: &str) {
+        self.grid = Grid::parse(data);
     }
 
     fn trees(&self, slope_x: usize, slope_y: usize) -> u64 {
@@ -51,7 +47,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -64,14 +60,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 7);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part2(), 336);
     }
 }

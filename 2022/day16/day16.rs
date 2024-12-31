@@ -1,5 +1,7 @@
 //! [Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)
 
+#![allow(clippy::cast_possible_truncation)]
+
 use regex::Regex;
 use std::collections::HashMap;
 
@@ -21,9 +23,7 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         let re = Regex::new(
             r"Valve (\w\w) has flow rate=(\d+); tunnels? leads? to valves? ((?:\w\w)(?:, \w\w)*)$",
         )
@@ -243,7 +243,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    puzzle.configure(&args.input);
 
     if args.verbose {
         puzzle.show();
@@ -260,14 +260,14 @@ mod tests {
     #[test]
     fn test_part1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 1651);
     }
 
     #[test]
     fn test_part2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part2(), 1707);
     }
 }

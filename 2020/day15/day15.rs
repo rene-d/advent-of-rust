@@ -12,16 +12,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap_or_else(|_| {
-            eprintln!("cannot read input file {path}");
-            std::process::exit(1);
-        });
-
-        self.configure_str(&data);
-    }
-
-    fn configure_str(&mut self, data: &str) {
+    fn configure(&mut self, data: &str) {
         self.nums = data
             .trim()
             .split(',')
@@ -76,7 +67,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -89,7 +80,7 @@ mod test {
     #[test]
     fn test_part1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure_str("0,3,6");
+        puzzle.configure("0,3,6");
         assert_eq!(puzzle.part1(), 436);
     }
 }

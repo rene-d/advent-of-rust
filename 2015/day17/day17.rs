@@ -5,7 +5,8 @@ use std::collections::HashMap;
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data(17);
+    let args = aoc::parse_args();
+    let data = &args.input;
 
     // read data into an array
     let values = data

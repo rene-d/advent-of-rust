@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 aoc = { path = "../../aoc" }
 regex = "1"
-lazy_static = "1.4"
+lazy_static = "1"
 
 [[bin]]
 name = "day4"

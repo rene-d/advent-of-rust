@@ -2,7 +2,8 @@
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data(10);
+    let args = aoc::parse_args();
+    let data = &args.input;
 
     let mut part1 = 0;
     let mut part2 = vec![];

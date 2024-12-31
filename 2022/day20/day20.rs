@@ -15,9 +15,7 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         self.numbers = data
             .split('\n')
             .filter(|x| !x.is_empty())
@@ -79,7 +77,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -87,7 +85,7 @@ fn main() {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
+    puzzle.configure(&aoc::load_input_data("test.txt"));
     assert_eq!(puzzle.part1(), 3);
     assert_eq!(puzzle.part2(), 1_623_178_306);
 }

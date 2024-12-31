@@ -19,9 +19,17 @@ fn from_snafu(s: &str) -> i64 {
 }
 
 fn to_snafu(mut n: i64) -> String {
-    let mut digits = vec![];
+    let mut digits = Vec::new();
     loop {
-        let ch = ['=', '-', '0', '1', '2'][(n + 2).rem_euclid(5) as usize];
+        //  let ch = ['=', '-', '0', '1', '2'][(n + 2).rem_euclid(5) as usize];
+        let ch = match (n + 2).rem_euclid(5) {
+            0 => '=',
+            1 => '-',
+            2 => '0',
+            3 => '1',
+            4 => '2',
+            _ => unreachable!(),
+        };
         digits.push(ch);
         n = (n + 2).div_euclid(5);
         if n == 0 {
@@ -37,15 +45,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { sum_of_numbers: 0 }
-    }
-
-    /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        self.sum_of_numbers = data.lines().map(from_snafu).sum();
+    fn new(data: &str) -> Self {
+        Self {
+            sum_of_numbers: data.lines().map(from_snafu).sum(),
+        }
     }
 
     // Solves part one
@@ -57,25 +60,29 @@ impl Puzzle {
 /// main function
 fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    let puzzle = Puzzle::new(&args.input);
     println!("{}", puzzle.part1());
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
-    assert_eq!(puzzle.sum_of_numbers, 4890);
-    assert_eq!(puzzle.part1(), "2=-1=0");
-}
+/// Test from puzzle input
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test_from_snafu() {
-    assert_eq!(from_snafu("2=-01"), 976);
-}
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(&aoc::load_input_data("test.txt"));
+        assert_eq!(puzzle.sum_of_numbers, 4890);
+        assert_eq!(puzzle.part1(), "2=-1=0");
+    }
 
-#[test]
-fn test_to_snafu() {
-    assert_eq!(to_snafu(976), "2=-01");
+    #[test]
+    fn test_from_snafu() {
+        assert_eq!(from_snafu("2=-01"), 976);
+    }
+
+    #[test]
+    fn test_to_snafu() {
+        assert_eq!(to_snafu(976), "2=-01");
+    }
 }

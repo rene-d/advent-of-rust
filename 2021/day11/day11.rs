@@ -2,7 +2,12 @@
 
 /// main function
 fn main() {
-    let data: Vec<_> = aoc::load_input_data_vec(11);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     // read the grid
     let n = data.len();

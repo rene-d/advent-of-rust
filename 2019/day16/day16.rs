@@ -67,9 +67,9 @@ fn part2(data: &[u8]) -> u32 {
 }
 
 fn main() {
-    let puzzle_input = aoc::load_input_data(16);
+    let args = aoc::parse_args();
 
-    let data = parse_data(&puzzle_input);
+    let data = parse_data(&args.input);
 
     println!("{}", part1(&data));
     println!("{}", part2(&data));

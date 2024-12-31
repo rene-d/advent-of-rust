@@ -63,9 +63,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if let Some(value) = line.strip_prefix("#ip ") {
                 self.ip_reg = value.parse::<usize>().unwrap();
@@ -141,7 +139,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     if args.verbose {
         println!("{}", puzzle.run(0));
     } else {
@@ -158,7 +156,7 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
         assert_eq!(puzzle.run(0), 7);
     }
 }

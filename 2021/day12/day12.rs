@@ -68,8 +68,7 @@ fn compute_paths(data: &[&str], small_twice: bool) -> u32 {
 /// main function
 fn main() {
     let args = aoc::parse_args();
-    let data = std::fs::read_to_string(args.path).unwrap();
-    let data = data.lines().collect::<Vec<_>>();
+    let data = args.input.lines().collect::<Vec<_>>();
 
     let small_once = compute_paths(&data, false);
     let small_twice = compute_paths(&data, true);

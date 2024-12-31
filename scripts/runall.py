@@ -299,7 +299,11 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
     inputs = defaultdict(dict)
     answers = defaultdict(dict)
 
-    for input in sorted(Path("data").rglob("*.in")):
+    all_inputs = list(sorted(Path("data").rglob("*.in")))
+
+    me_user = all_inputs[0].parent.parent.name
+
+    for input in all_inputs:
         if input.name.startswith("._"):
             continue
 
@@ -308,6 +312,9 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
         user = input.parent.parent.name
 
         if filter_user == "me":
+            if user != me_user:
+                continue
+        elif filter_user == "mine":
             if not user.isdigit():
                 continue
         elif filter_user and user != filter_user and user[: 4 + len(filter_user)] != f"tmp-{filter_user}":
@@ -568,7 +575,7 @@ def consistency(filter_year, filter_day):
 
     db = get_cache()["db"]  # sqlite3.connect("data/cache.db")
 
-    timings = defaultdict(list)
+    elapsed_times = defaultdict(list)
     cursor = db.execute("select key,elapsed from solutions where status!='error'")
     for key, elapsed in cursor:
         year, day, hash, prog, lang = key.split(":")
@@ -577,7 +584,7 @@ def consistency(filter_year, filter_day):
                 continue
             if filter_day and int(day) not in filter_day:
                 continue
-        timings[int(year), int(day), lang].append((round(elapsed / 1e9, 3), hash))
+        elapsed_times[int(year), int(day), lang].append((round(elapsed / 1e9, 3), hash))
     cursor.close()
 
     inputs = dict()
@@ -589,7 +596,7 @@ def consistency(filter_year, filter_day):
     rows = list()
     cmds = list()
 
-    for k, v in sorted(timings.items()):
+    for k, v in sorted(elapsed_times.items()):
         a = np.array(list(map(itemgetter(0), v)))
 
         # coefficient of variation
@@ -639,9 +646,10 @@ def main():
 
     parser.add_argument("--venv", type=Path, help="create and install virtual environment")
     parser.add_argument("--reqs", action="store_true", help="install requirements into virtual environments")
-    parser.add_argument("-c", "--consistency", action="store_true", help="verify timings consistency")
+    parser.add_argument("-c", "--consistency", action="store_true", help="verify duration consistency")
 
     parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
+    parser.add_argument("--me", action="store_true", help="only first user id")
     parser.add_argument("-l", "--language", type=str, action="append", metavar="LANG", help="filter by language")
     parser.add_argument("-x", "--exclude", type=str, action="append", metavar="Y:D", help="exclude day")
     parser.add_argument("--verified", action="store_true", help="only inputs with solution")
@@ -665,7 +673,7 @@ def main():
     if args.cache:
         get_cache(args.cache.resolve())
 
-    if not sys.stdout.isatty():
+    if not sys.stdout.isatty() and os.environ.get("CLICOLOR_FORCE") != "1":
         global RED, GREEN, BLUE, DARK_GREEN, GRAY, MAGENTA, CYAN, WHITE, YELLOW
         RED = GREEN = BLUE = DARK_GREEN = GRAY = MAGENTA = CYAN = WHITE = YELLOW = ""
 
@@ -685,6 +693,9 @@ def main():
         os.chdir(args.working_dir)
 
     try:
+        if args.me:
+            args.filter_user = "me"
+
         problems = []
         stats_elapsed = dict()
 
@@ -738,12 +749,15 @@ def main():
         args.exclude = args.exclude or []
         if args.no_slow:
             args.exclude.extend(
-                " -x 2016:5 -x 2016:11 -x 2016:14 -x 2016:23"
+                # " -x 2016:5"
+                " -x 2016:11 -x 2016:14"
+                # " -x 2016:23"
                 " -x 2018:21 -x 2018:23"
-                " -x 2020:15"
+                # " -x 2020:15"
                 " -x 2021:18"
                 " -x 2022:15"
-                " -x 2023:5 -x 2023:10 -x 2023:23".split()
+                # " -x 2023:5 -x 2023:10 -x 2023:23"
+                .split()
             )
 
         # build the solutions if needed
@@ -891,7 +905,7 @@ def main():
                 print("\n".join(map(itemgetter(2), sorted(lines))))
 
             elif len(languages) > 1:
-                print("Use option -C/--comparison to display timings comparison.")
+                print("Use option -C/--comparison to display duration comparison.")
 
         if problems:
             print()

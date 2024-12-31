@@ -1,6 +1,6 @@
 //! [Day 22: Mode Maze](https://adventofcode.com/2018/day/22)
 
-use aoc::grid::Direction;
+use aoc::Direction;
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
 const ROCKY: u32 = 0;
@@ -83,6 +83,35 @@ const fn manhattan(x: u32, y: u32, target: (u32, u32)) -> u32 {
     x.abs_diff(target.0) + y.abs_diff(target.1)
 }
 
+/// Returns an iterator over the all four directions, within the limits of the grid.
+fn iter_directions(
+    x: u32,
+    y: u32,
+    width: u32,
+    height: u32,
+) -> impl Iterator<Item = (u32, u32, Direction)> {
+    [
+        Direction::North,
+        Direction::East,
+        Direction::South,
+        Direction::West,
+    ]
+    .iter()
+    .filter_map(move |&d| {
+        if d == Direction::North && y > 0 {
+            Some((x, y - 1, d))
+        } else if d == Direction::South && y < height - 1 {
+            Some((x, y + 1, d))
+        } else if d == Direction::East && x < width - 1 {
+            Some((x + 1, y, d))
+        } else if d == Direction::West && x > 0 {
+            Some((x - 1, y, d))
+        } else {
+            None
+        }
+    })
+}
+
 struct Puzzle {
     depth: u32,
     target: (u32, u32),
@@ -152,9 +181,7 @@ impl Puzzle {
 
 impl Puzzle {
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if let Some(target) = line.strip_prefix("target: ") {
                 let (x, y) = target.split_once(',').unwrap();
@@ -197,7 +224,7 @@ impl Puzzle {
             open_set.push(n);
 
             // move
-            for (nx, ny, _) in Direction::iter(e.x, e.y, u32::MAX, u32::MAX) {
+            for (nx, ny, _) in iter_directions(e.x, e.y, u32::MAX, u32::MAX) {
                 let can_move = match self.region(nx, ny) {
                     ROCKY => e.item != NEITHER,
                     WET => e.item != TORCH,
@@ -217,7 +244,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
 
     if args.verbose {
         puzzle.show();
@@ -235,14 +262,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 114);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part2(), 45);
     }
 }

@@ -206,12 +206,12 @@ def aoc_test(ctx: click.Context):
                 print(f"| Year {year.name}")
                 print("--------------------------------")
                 sys.stdout.flush()
-                subprocess.call(["cargo", "test"], cwd=year)
+                subprocess.call(["cargo", "test", "--", "--test-threads", "4"], cwd=year)
     else:
 
         if not (cwd / "Cargo.toml").is_file():
             raise click.ClickException("need a Cargo.toml file")
-        subprocess.call(["cargo", "test"])
+        subprocess.call(["cargo", "test", "--", "--test-threads", "4"])
 
 
 @aoc.command(name="answers", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
@@ -262,43 +262,79 @@ def aoc_quality(ctx: click.Context):
     Run lints, tests, solutions for Rust solution.
     """
 
-    try:
-        print("cargo fmt")
-        subprocess.check_output(["cargo", "fmt"])
+    cwd = Path(os.getcwd())
 
-        print("cargo clippy")
-        subprocess.check_output(
-            ["cargo", "clippy", "-q", "--", "-Dclippy::all", "-Fclippy::pedantic", "-Fclippy::nursery"]
-        )
+    dirs = []
 
-        print("cargo build")
-        subprocess.check_output(["cargo", "build", "--release", "--quiet"])
+    if cwd == ctx.obj.aoc_root:
+        for year in sorted(cwd.glob("*")):
+            if year.name.isdigit() and int(year.name) >= 2015:
+                dirs.append(year)
+    elif Path("Cargo.toml").is_file():
+        dirs.append(".")
+    else:
+        raise click.ClickException("need a Cargo.toml file or root directory")
 
-        print("cargo test")
-        subprocess.check_output(["cargo", "test", "--quiet"])
+    for d in dirs:
 
-        # print("answers")
-        # output = subprocess.check_output([ctx.obj.scripts_dir / "answers.py"])
-        # for line in output.decode().splitlines():
-        #     if " ok " not in line and " unknown " not in line: print(line)
+        if d != ".":
+            sys.stdout.write("\033[1;31m")
+            print("--------------------------------")
+            print(f"| Year {d.name}")
+            print("--------------------------------")
+            sys.stdout.write("\033[0m")
+            sys.stdout.flush()
 
-        print("run all")
-        output = subprocess.check_output([ctx.obj.scripts_dir / "runall.py", "-l", "rust"])
-        for line in output.decode().splitlines():
-            if " ok " not in line and " unknown " not in line:
-                print(line)
+        os.chdir(d)
 
-    except subprocess.CalledProcessError:
-        pass
+        try:
+            print("cargo fmt")
+            subprocess.check_output(["cargo", "fmt"])
+
+            print("cargo clippy")
+            subprocess.check_output(
+                ["cargo", "clippy", "-q", "--", "-Dclippy::all", "-Fclippy::pedantic", "-Fclippy::nursery"]
+            )
+
+            print("cargo build")
+            subprocess.check_output(["cargo", "build", "--release", "--quiet"])
+
+        except subprocess.CalledProcessError:
+            pass
+
+        try:
+            print("cargo test")
+            subprocess.check_output(["cargo", "test", "--quiet", "--", "--test-threads", "4"])
+
+        except subprocess.CalledProcessError:
+            pass
+
+            # print("answers")
+            # output = subprocess.check_output([ctx.obj.scripts_dir / "answers.py"])
+            # for line in output.decode().splitlines():
+            #     if " ok " not in line and " unknown " not in line: print(line)
+
+        try:
+            print("run all")
+            env = os.environ.copy()
+            env["CLICOLOR_FORCE"] = "1"
+            output = subprocess.check_output([ctx.obj.scripts_dir / "runall.py", "--me", "-l", "rust"], env=env)
+            print(output.decode())
+            # for line in output.decode().splitlines():
+            #     if " ok " not in line and " unknown " not in line:
+            #         print(line)
+
+        except subprocess.CalledProcessError:
+            pass
 
 
-@aoc.command(name="timings", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
+@aoc.command(name="time", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 @click.pass_context
-def aoc_timings(ctx: click.Context):
+def aoc_time(ctx: click.Context):
     """
-    Show or browse timings.
+    Show or browse elapsed time for each puzzle.
     """
-    ctx.obj.pass_thru("timings.py", ctx.args)
+    ctx.obj.pass_thru("elapsed.py", ctx.args)
 
 
 if __name__ == "__main__":

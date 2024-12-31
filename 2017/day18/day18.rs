@@ -1,5 +1,9 @@
 //! [Day 18: Duet](https://adventofcode.com/2017/day/18)
 
+#![allow(clippy::cast_sign_loss)]
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_possible_truncation)]
+
 use std::collections::{HashMap, VecDeque};
 
 struct Program {
@@ -110,9 +114,7 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         self.program = data
             .lines()
             .filter_map(|s| s.split_once(' '))
@@ -170,7 +172,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -183,14 +185,14 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
         assert_eq!(puzzle.part1(), 4);
     }
 
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_2.txt");
+        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
         assert_eq!(puzzle.part2(), 3);
     }
 }

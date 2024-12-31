@@ -7,9 +7,7 @@ use std::collections::{HashMap, HashSet};
 fn main() {
     let args = aoc::parse_args();
 
-    let data = std::fs::read_to_string(args.path).unwrap();
-
-    let data = data.lines().collect::<Vec<&str>>();
+    let data = args.input.lines().collect::<Vec<&str>>();
 
     let (part1, part2) = solve(data);
 

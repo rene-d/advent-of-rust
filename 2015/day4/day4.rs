@@ -2,7 +2,8 @@
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data(4).trim().to_string();
+    let args = aoc::parse_args();
+    let data = args.input.trim_ascii().to_string();
 
     let mut key = 0;
 

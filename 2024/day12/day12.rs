@@ -1,7 +1,9 @@
 //! [Day 12: Garden Groups](https://adventofcode.com/2024/day/12)
 
-use aoc::{grid, grid::Grid};
+use aoc::{Coord, Direction};
 use std::collections::{HashMap, HashSet, VecDeque};
+
+type Grid = aoc::Grid<char>;
 
 struct Puzzle {
     standard_price: u32,
@@ -17,26 +19,24 @@ impl Puzzle {
     }
 
     /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
-        let grid = aoc::grid::Grid::<char>::parse(&data);
+    fn configure(&mut self, data: &str) {
+        let grid = Grid::parse(data);
 
         self.solve(&grid);
     }
 
-    fn solve(&mut self, grid: &Grid<char>) {
+    fn solve(&mut self, grid: &Grid) {
         self.standard_price = 0;
         self.discount_price = 0;
 
         let mut seen = HashSet::new();
 
-        for (xy, &plant) in grid.iter() {
+        for (xy, &plant) in grid {
             let mut area: u32 = 0;
             let mut perimeter: u32 = 0;
             let mut sides = 0;
             let mut queue = VecDeque::new();
-            let mut side_fences: HashMap<grid::Direction, HashSet<(usize, usize)>> = HashMap::new();
+            let mut side_fences: HashMap<Direction, HashSet<Coord>> = HashMap::new();
 
             queue.push_back(xy);
 
@@ -48,7 +48,7 @@ impl Puzzle {
 
                 area += 1;
 
-                for (d, neigh) in grid.iter_directions_full(c) {
+                for (d, neigh) in grid.iter_directions_all(c) {
                     if let Some(neigh) = neigh {
                         if grid[neigh] == plant {
                             // bfs to compute area of current plant
@@ -56,6 +56,7 @@ impl Puzzle {
                             continue;
                         }
                     }
+
                     // fence: increase perimter
                     perimeter += 1;
 
@@ -86,8 +87,8 @@ impl Puzzle {
                         seen_sides.insert(c);
 
                         grid.iter_directions(c)
-                            .filter(|a| vs.contains(a))
-                            .for_each(|a| queue_sides.push_back(a));
+                            .filter(|(_, a)| vs.contains(a))
+                            .for_each(|(_, a)| queue_sides.push_back(a));
                     }
                 }
             }
@@ -111,7 +112,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -124,7 +125,8 @@ mod test {
     #[test]
     fn test01() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_1.txt");
+        let data = aoc::load_input_data("sample_1.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part1(), 140);
         assert_eq!(puzzle.part2(), 80);
     }
@@ -132,7 +134,8 @@ mod test {
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_3.txt");
+        let data = aoc::load_input_data("sample_3.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part1(), 772);
         assert_eq!(puzzle.part2(), 436);
     }
@@ -140,7 +143,8 @@ mod test {
     #[test]
     fn test03() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_4.txt");
+        let data = aoc::load_input_data("sample_4.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part1(), 1930);
         assert_eq!(puzzle.part2(), 1206);
     }
@@ -148,14 +152,16 @@ mod test {
     #[test]
     fn test04() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_6.txt");
+        let data = aoc::load_input_data("sample_6.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part2(), 236);
     }
 
     #[test]
     fn test05() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("sample_7.txt");
+        let data = aoc::load_input_data("sample_7.txt");
+        puzzle.configure(&data);
         assert_eq!(puzzle.part2(), 368);
     }
 }

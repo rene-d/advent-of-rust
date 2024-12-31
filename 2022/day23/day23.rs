@@ -1,5 +1,9 @@
 //! [Day 23: Unstable Diffusion](https://adventofcode.com/2022/day/23)
 
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_sign_loss)]
+
 use std::collections::{HashMap, HashSet};
 
 struct Puzzle {
@@ -16,9 +20,7 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         for (y, line) in data.lines().enumerate() {
             for (x, c) in line.chars().enumerate() {
                 let x = x as i32;
@@ -144,7 +146,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -152,7 +154,7 @@ fn main() {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
+    puzzle.configure(&aoc::load_input_data("test.txt"));
     assert_eq!(puzzle.part1(), 110);
     assert_eq!(puzzle.part2(), 20);
 }

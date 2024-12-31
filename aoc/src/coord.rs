@@ -1,4 +1,4 @@
-//! Coord class represents a point, a vector or a direction in 2D.
+//! `Coord` class represents a point, a vector or a direction in 2D.
 //!
 //! Advent-of-Rust 2024
 
@@ -17,6 +17,11 @@ impl Coord {
     pub const RIGHT: Self = Self { x: 1, y: 0 };
     pub const UP: Self = Self { x: 0, y: -1 };
     pub const DOWN: Self = Self { x: 0, y: 1 };
+
+    pub const WEST: Self = Self { x: -1, y: 0 };
+    pub const EAST: Self = Self { x: 1, y: 0 };
+    pub const NORTH: Self = Self { x: 0, y: -1 };
+    pub const SOUTH: Self = Self { x: 0, y: 1 };
 }
 
 impl Coord {
@@ -28,13 +33,13 @@ impl Coord {
 
     #[inline]
     #[must_use]
-    pub const fn manhattan_distance(&self, rhs: &Self) -> i32 {
+    pub const fn manhattan_distance(self, rhs: Self) -> i32 {
         (self.x - rhs.x).abs() + (self.y - rhs.y).abs()
     }
 
     #[inline]
     #[must_use]
-    pub const fn clockwise(&self) -> Self {
+    pub const fn clockwise(self) -> Self {
         Self {
             x: -self.y,
             y: self.x,
@@ -43,7 +48,7 @@ impl Coord {
 
     #[inline]
     #[must_use]
-    pub const fn counter_clockwise(&self) -> Self {
+    pub const fn counter_clockwise(self) -> Self {
         Self {
             x: self.y,
             y: -self.x,
@@ -52,11 +57,17 @@ impl Coord {
 
     #[inline]
     #[must_use]
-    pub fn max(&self, rhs: &Self) -> Self {
+    pub fn max(self, rhs: Self) -> Self {
         Self {
             x: self.x.max(rhs.x),
             y: self.y.max(rhs.y),
         }
+    }
+}
+
+impl Default for Coord {
+    fn default() -> Self {
+        Self::ZERO
     }
 }
 

@@ -27,9 +27,8 @@ fn run_clock_signal(bunny_vm: &mut BunnyVM, a: i32) -> bool {
 
 fn main() {
     let args = aoc::parse_args();
-    let data = std::fs::read_to_string(args.path).unwrap();
 
-    let mut bunny_vm = BunnyVM::new(&data);
+    let mut bunny_vm = BunnyVM::new(&args.input);
 
     for a in 0..10000 {
         if run_clock_signal(&mut bunny_vm, a) {

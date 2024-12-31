@@ -1,5 +1,9 @@
 //! [Day 24: Blizzard Basin](https://adventofcode.com/2022/day/24)
 
+#![allow(clippy::cast_sign_loss)]
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_possible_truncation)]
+
 use std::collections::{HashSet, VecDeque};
 
 const RIGHT: usize = 0;
@@ -32,9 +36,7 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-
+    fn configure(&mut self, data: &str) {
         for (y, row) in data.lines().enumerate() {
             let y = y as i32;
 
@@ -245,7 +247,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -257,21 +259,21 @@ mod tests {
     #[test]
     fn test_part1() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part1(), 18);
     }
 
     #[test]
     fn test_part2() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.part2(), 54);
     }
 
     #[test]
     fn test_part2_details() {
         let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
         assert_eq!(puzzle.solve(1, 0, 6, 5, 0), 18); // this is part 1 actually
         assert_eq!(puzzle.solve(6, 5, 1, 0, 18), 18 + 23);
         assert_eq!(puzzle.solve(1, 0, 6, 5, 18 + 23), 54);
@@ -281,7 +283,7 @@ mod tests {
     fn test_show_demo() {
         let mut puzzle = Puzzle::new();
 
-        puzzle.configure("demo.txt");
+        puzzle.configure(&aoc::load_input_data("demo.txt"));
 
         assert_eq!(
             puzzle.grid_str(-1, -1, 0),
@@ -366,7 +368,7 @@ mod tests {
     fn test_show_test() {
         let mut puzzle = Puzzle::new();
 
-        puzzle.configure("test.txt");
+        puzzle.configure(&aoc::load_input_data("test.txt"));
 
         assert_eq!(
             puzzle.grid_str(3, 1, 10),

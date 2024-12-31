@@ -4,7 +4,12 @@ const STEPS: usize = 100;
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data_vec(18);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     // grid initialization
     let mut grid = [[0_u8; 100]; 100];

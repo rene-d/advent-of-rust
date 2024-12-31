@@ -7,8 +7,8 @@ fn main() {
                 return n;
             }
         }
-        let data = aoc::load_input_data(19);
-        data.trim().parse::<usize>().unwrap()
+        let args = aoc::parse_args();
+        args.input.trim().parse::<usize>().unwrap()
     };
     let elves = elves();
 

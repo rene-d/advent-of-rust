@@ -25,7 +25,12 @@ impl fmt::Debug for Point {
 
 /// main function
 fn main() {
-    let data = aoc::load_input_data_vec(19);
+    let args = aoc::parse_args();
+    let data = args
+        .input
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
 
     // load puzzle data
     let scanners = load_scanners(data);

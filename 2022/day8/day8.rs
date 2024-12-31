@@ -1,5 +1,8 @@
 //! [Day 8: Treetop Tree House](https://adventofcode.com/2022/day/8)
 
+#![allow(clippy::cast_possible_wrap)]
+#![allow(clippy::cast_possible_truncation)]
+
 struct Puzzle {
     nx: usize,
     /// number of columns
@@ -18,9 +21,8 @@ impl Puzzle {
     }
 
     /// Loads data from input (one line)
-    fn configure(&mut self, path: &str) {
-        let data = std::fs::read_to_string(path).unwrap();
-        let lines = data.split('\n').collect::<Vec<_>>();
+    fn configure(&mut self, data: &str) {
+        let lines = data.lines().collect::<Vec<_>>();
 
         self.nx = lines.first().unwrap().len();
         for line in lines {
@@ -125,7 +127,7 @@ impl Puzzle {
 fn main() {
     let args = aoc::parse_args();
     let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.path);
+    puzzle.configure(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -133,7 +135,7 @@ fn main() {
 #[test]
 fn test01() {
     let mut puzzle = Puzzle::new();
-    puzzle.configure("test.txt");
+    puzzle.configure(&aoc::load_input_data("test.txt"));
     assert_eq!(puzzle.part1(), 21);
     assert_eq!(puzzle.part2(), 8);
 }

@@ -154,43 +154,30 @@ create_rust()
     cat <<EOF >day$day.rs
 //! $title
 
-struct Puzzle {
-    // data: String,
+struct Puzzle<'a> {
+    data: &'a str,
 }
 
-impl Puzzle {
-    fn new() -> Self {
-        Self {
-            // data: String::new(),
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, path: &str) {
-        let data =
-            std::fs::read_to_string(path).unwrap_or_else(|_| {
-                eprintln!("cannot read input file {path}");
-                std::process::exit(1);
-            });
-
-        // self.data = data;
+impl<'a> Puzzle<'a> {
+    /// Initialize from the puzzle input.
+    const fn new(data: &'a str) -> Self {
+        Self { data }
     }
 
     /// Solve part one.
-    fn part1(&self) -> u32 {
+    fn part1(&self) -> u64 {
         0
     }
 
     /// Solve part two.
-    fn part2(&self) -> u32 {
+    fn part2(&self) -> u64 {
         0
     }
 }
 
 fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(args.path.as_str());
+    let puzzle = Puzzle::new(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -201,16 +188,16 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+    fn part1() {
+        let data = aoc::load_input_data("test.txt");
+        let puzzle = Puzzle::new(&data);
         assert_eq!(puzzle.part1(), 0);
     }
 
     #[test]
-    fn test_part2() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure("test.txt");
+    fn part2() {
+        let data = aoc::load_input_data("test.txt");
+        let puzzle = Puzzle::new(&data);
         assert_eq!(puzzle.part2(), 0);
     }
 }

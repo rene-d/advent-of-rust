@@ -4,7 +4,7 @@ use std::collections::HashSet;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let data = aoc::load_input_data(1);
+    let args = aoc::parse_args();
 
     let mut x = 0_i32;
     let mut y = 0_i32;
@@ -14,7 +14,7 @@ fn main() {
     let mut twice = false;
     let mut part2 = 0;
 
-    for op2 in data.split(',') {
+    for op2 in args.input.split(',') {
         let op = op2.trim();
 
         let direction = op.chars().next().unwrap();
