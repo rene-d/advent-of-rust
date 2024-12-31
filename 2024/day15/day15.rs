@@ -5,7 +5,7 @@ use std::collections::{HashSet, VecDeque};
 use aoc24::grid::{Coord, Grid};
 
 fn score(grid: &Grid) -> i32 {
-    grid.iter()
+    grid.iter_cells()
         .filter(|(_, &c)| c == 'O' || c == '[')
         .map(|(xy, _)| 100 * xy.y + xy.x)
         .sum()
@@ -15,7 +15,7 @@ fn init_first_warehouse(input: &str) -> (Grid, Coord) {
     let mut grid = Grid::parse(input);
     let mut start = Coord { x: 0, y: 0 };
 
-    for (pos, &c) in grid.iter() {
+    for (pos, &c) in &grid {
         if c == '@' {
             start = pos;
             break;
@@ -28,10 +28,10 @@ fn init_first_warehouse(input: &str) -> (Grid, Coord) {
 
 fn init_second_warehouse(input: &str) -> (Grid, Coord) {
     let simple = Grid::parse(input);
-    let mut grid = Grid::new(simple.width() * 2, simple.height());
+    let mut grid = Grid::with_size(simple.width() * 2, simple.height());
     let mut start = Coord::new(0, 0);
 
-    for (Coord { x, y }, &c) in simple.iter() {
+    for (Coord { x, y }, &c) in simple.iter_cells() {
         let pos1 = Coord { x: x * 2, y };
         let pos2 = Coord { x: x * 2 + 1, y };
         match c {
@@ -142,7 +142,7 @@ fn save_warehouse(
         }
     }
 
-    for (pos, &c) in grid.iter() {
+    for (pos, &c) in grid.iter_cells() {
         let x = u32::try_from(pos.x)? * SCALE;
         let y = u32::try_from(pos.y)? * SCALE;
 
