@@ -37,7 +37,7 @@ infections1 = 0
 for _ in range(10000):
     if (x, y) in infected:
         d = (d + 1) % 4  # turn right
-        infected.discard((x, y))  # infect the node
+        infected.discard((x, y))  # clean the node
     else:
         d = (d + 3) % 4  # turn left
         infected.add((x, y))  # infect the node
@@ -98,6 +98,6 @@ print(infections2)
 
 
 # test
-if filename == "test":
+if filename == "test.txt":
     assert infections1 == 5587
     assert infections2 == 2511944

@@ -64,6 +64,12 @@ impl<T: Clone + Default> Grid<T> {
         }
     }
 
+    /// Set value returned by Index if pos is outside the grid limits
+    #[inline]
+    pub fn set_exterior(&mut self, exterior: T) {
+        self.exterior = exterior;
+    }
+
     /// Return the width of the grid;
     #[inline]
     #[must_use]

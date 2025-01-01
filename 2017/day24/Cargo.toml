@@ -1,0 +1,11 @@
+[package]
+name = "day24"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aoc = { path = "../../aoc" }
+
+[[bin]]
+name = "day24"
+path = "day24.rs"
