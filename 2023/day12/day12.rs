@@ -1,6 +1,6 @@
 //! [Day 12: Hot Springs](https://adventofcode.com/2023/day/12)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Clone)]
 struct Row {
@@ -10,12 +10,12 @@ struct Row {
 
 impl Row {
     fn calc(&self) -> u64 {
-        self.calc_rec(&mut HashMap::new(), 0, 0, 0)
+        self.calc_rec(&mut FxHashMap::default(), 0, 0, 0)
     }
 
     fn calc_rec(
         &self,
-        seen: &mut HashMap<(u64, usize, usize), u64>,
+        seen: &mut FxHashMap<(u64, usize, usize), u64>,
         damaged: u64, // current number of damaged springs
         si: usize,    // index in spring array
         di: usize,    // index in damages array

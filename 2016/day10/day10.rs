@@ -1,7 +1,7 @@
 //! [Day 10: Balance Bots](https://adventofcode.com/2016/day/10)
 
 use regex::Regex;
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 /// `main` reads the puzzle input then solves part 1 and part 2
 fn main() {
@@ -52,7 +52,7 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
     let re_init = Regex::new(r"value ([\d]+) goes to bot (\d+)").unwrap();
     let re_move = Regex::new(r"bot (\d+) gives low to (bot|output) (\d+) and high to (bot|output) (\d+)").unwrap();
 
-    let mut bots: HashMap<u32, HashSet<u32>> = HashMap::new();
+    let mut bots: FxHashMap<u32, FxHashSet<u32>> = FxHashMap::default();
     let mut moves: Vec<BotInstruction> = Vec::new();
 
     for line in data {

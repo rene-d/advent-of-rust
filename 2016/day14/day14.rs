@@ -1,6 +1,6 @@
 //! [Day 14: One-Time Pad](https://adventofcode.com/2016/day/14)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 // use std::time::Instant;
 
 /// Solve the day 14 puzzle.
@@ -97,7 +97,7 @@ impl TripletHash {
 
 /// Find the 64th key with the given salt and key stretching.
 fn solve(salt: &str, key_stretching: usize) -> usize {
-    let mut memoize = HashMap::new();
+    let mut memoize = FxHashMap::default();
 
     let mut hasher = |index| {
         *memoize

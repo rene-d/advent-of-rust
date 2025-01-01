@@ -1,7 +1,8 @@
 //! [Day 10: Hoof It](https://adventofcode.com/2024/day/10)
 
 use aoc::{Coord, Grid};
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 const BOTTOM: u8 = b'0';
 const TOP: u8 = b'9';
@@ -21,8 +22,8 @@ impl Puzzle {
     }
 
     fn bfs(&self, start: Coord) -> usize {
-        let mut visited = HashSet::new();
-        let mut height_9 = HashSet::new();
+        let mut visited = FxHashSet::default();
+        let mut height_9 = FxHashSet::default();
         let mut queue = VecDeque::new();
 
         queue.push_back((start, BOTTOM));

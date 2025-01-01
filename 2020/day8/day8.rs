@@ -1,11 +1,11 @@
 //! [Day 8: Handheld Halting](https://adventofcode.com/2020/day/8)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 fn run(boot_code: &[String]) -> (i32, bool) {
     let mut acc = 0;
     let mut ip = 0;
-    let mut seen = HashSet::new();
+    let mut seen = FxHashSet::default();
 
     while ip < boot_code.len() && seen.insert(ip) {
         let instr = &boot_code[ip];

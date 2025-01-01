@@ -1,9 +1,9 @@
 //! [Day 25: Snowverload](https://adventofcode.com/2023/day/25)
 
+use rustc_hash::FxHashMap;
 use rustworkx_core::connectivity::stoer_wagner_min_cut;
 use rustworkx_core::petgraph::graph::Graph;
 use rustworkx_core::petgraph::Undirected;
-use std::collections::HashMap;
 
 type G = Graph<(), (), Undirected>;
 
@@ -20,7 +20,7 @@ impl Puzzle {
 
     /// Get the puzzle input.
     fn configure(&mut self, data: &str) {
-        let mut nodes = HashMap::new();
+        let mut nodes = FxHashMap::default();
 
         for line in data.lines() {
             let (node, cnx) = line.split_once(": ").unwrap();

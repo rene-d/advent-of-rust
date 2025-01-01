@@ -1,5 +1,5 @@
 use crate::{mazecell::MazeCell, path::Path};
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Hash, Eq, PartialEq, Ord, PartialOrd, Clone)]
 pub struct State {
@@ -20,7 +20,7 @@ impl State {
     /// # Panics
     /// may be...
     #[must_use]
-    pub fn next(&self, paths: &HashMap<u8, Vec<Path>>) -> Vec<(Self, usize)> {
+    pub fn next(&self, paths: &FxHashMap<u8, Vec<Path>>) -> Vec<(Self, usize)> {
         // impl Iterator<Item = Self> {
 
         let mut result = vec![];

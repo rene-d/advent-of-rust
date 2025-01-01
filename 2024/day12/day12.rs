@@ -1,7 +1,8 @@
 //! [Day 12: Garden Groups](https://adventofcode.com/2024/day/12)
 
 use aoc::{Coord, Direction};
-use std::collections::{HashMap, HashSet, VecDeque};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::collections::VecDeque;
 
 type Grid = aoc::Grid<char>;
 
@@ -29,14 +30,14 @@ impl Puzzle {
         self.standard_price = 0;
         self.discount_price = 0;
 
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
 
         for (xy, &plant) in grid {
             let mut area: u32 = 0;
             let mut perimeter: u32 = 0;
             let mut sides = 0;
             let mut queue = VecDeque::new();
-            let mut side_fences: HashMap<Direction, HashSet<Coord>> = HashMap::new();
+            let mut side_fences: FxHashMap<Direction, FxHashSet<Coord>> = FxHashMap::default();
 
             queue.push_back(xy);
 
@@ -68,7 +69,7 @@ impl Puzzle {
             // println!("{xy:?} {plant} {side_fences:?}");
 
             for vs in side_fences.values() {
-                let mut seen_sides = HashSet::new();
+                let mut seen_sides = FxHashSet::default();
 
                 for &p in vs {
                     if seen_sides.contains(&p) {

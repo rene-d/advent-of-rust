@@ -2,19 +2,19 @@
 
 #![allow(clippy::if_same_then_else)]
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use std::path::PathBuf;
 
 struct Puzzle {
     // Puzzle input
-    total_dir_size: HashMap<String, usize>,
+    total_dir_size: FxHashMap<String, usize>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
             // data: String::new(),
-            total_dir_size: HashMap::new(),
+            total_dir_size: FxHashMap::default(),
         }
     }
 
@@ -22,7 +22,7 @@ impl Puzzle {
     fn configure(&mut self, data: &str) {
         let lines = data.lines().collect::<Vec<_>>();
 
-        let mut dir_size = HashMap::new();
+        let mut dir_size = FxHashMap::default();
         let mut current_path = PathBuf::from("/");
 
         dir_size.entry("/".to_string()).or_insert(0);

@@ -3,21 +3,21 @@
 #![allow(clippy::cast_possible_truncation)]
 
 use regex::Regex;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
-    valves: HashMap<String, u8>,
-    flow_rates: HashMap<u8, u32>,
-    tunnels: HashMap<u8, Vec<u8>>,
+    valves: FxHashMap<String, u8>,
+    flow_rates: FxHashMap<u8, u32>,
+    tunnels: FxHashMap<u8, Vec<u8>>,
     distances: [[u32; 128]; 128],
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            valves: HashMap::new(),
-            flow_rates: HashMap::new(),
-            tunnels: HashMap::new(),
+            valves: FxHashMap::default(),
+            flow_rates: FxHashMap::default(),
+            tunnels: FxHashMap::default(),
             distances: [[0u32; 128]; 128],
         }
     }
@@ -131,7 +131,7 @@ impl Puzzle {
         valve: u8,
         opened: u128,
         time_left: u32,
-        seen: &mut HashMap<(u8, u128, u32), u32>,
+        seen: &mut FxHashMap<(u8, u128, u32), u32>,
     ) -> u32 {
         if let Some(e) = seen.get(&(valve, opened, time_left)) {
             return *e;
@@ -165,7 +165,7 @@ impl Puzzle {
 
     // Solves part one
     fn part1(&self) -> u32 {
-        let mut seen = HashMap::new();
+        let mut seen = FxHashMap::default();
         self.max_flow(self.valve_id("AA"), 0, 30, &mut seen)
     }
 

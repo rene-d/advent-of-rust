@@ -1,5 +1,7 @@
 //! [Day 3: Perfectly Spherical Houses in a Vacuum](https://adventofcode.com/2015/day/3)
 
+use rustc_hash::FxHashSet;
+
 /// main function
 fn main() {
     let args = aoc::parse_args();
@@ -14,7 +16,7 @@ fn main() {
 }
 
 fn part2(line: &str) -> usize {
-    let mut visited = std::collections::HashSet::new();
+    let mut visited = FxHashSet::default();
 
     let mut position_santa = (0, 0);
     let mut position_robot = (0, 0);
@@ -49,7 +51,7 @@ fn part2(line: &str) -> usize {
 }
 
 fn part1(line: &str) -> usize {
-    let mut visited = std::collections::HashSet::new();
+    let mut visited = FxHashSet::default();
 
     let mut position = (0, 0);
 

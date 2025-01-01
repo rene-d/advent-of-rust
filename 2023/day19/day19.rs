@@ -5,10 +5,8 @@
 
 use core::panic;
 use regex::Regex;
-use std::{
-    char,
-    collections::{HashMap, VecDeque},
-};
+use rustc_hash::FxHashMap;
+use std::collections::VecDeque;
 
 #[derive(Debug)]
 enum Comparison {
@@ -65,7 +63,7 @@ impl Rule {
     }
 }
 struct Puzzle {
-    workflows: HashMap<String, Vec<Rule>>,
+    workflows: FxHashMap<String, Vec<Rule>>,
     parts: Vec<[u64; 4]>,
 }
 
@@ -82,7 +80,7 @@ fn new_range(op: &Comparison, n: u64, mut lo: u64, mut hi: u64) -> (u64, u64) {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            workflows: HashMap::new(),
+            workflows: FxHashMap::default(),
             parts: vec![],
         }
     }

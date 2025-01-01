@@ -1,6 +1,6 @@
 //! [Day 19: Monster Messages](https://adventofcode.com/2020/day/19)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 enum Rule {
     Ch(char),
@@ -8,12 +8,14 @@ enum Rule {
 }
 
 struct Rules {
-    r: HashMap<u32, Rule>,
+    r: FxHashMap<u32, Rule>,
 }
 
 impl Rules {
     fn new() -> Self {
-        Self { r: HashMap::new() }
+        Self {
+            r: FxHashMap::default(),
+        }
     }
 
     fn parse(&mut self, data: &str) {
@@ -47,7 +49,7 @@ impl Rules {
     }
 
     fn matches(&self, rule_id: u32, message: &str) -> bool {
-        let mut seen: HashMap<(usize, usize, u32), bool> = HashMap::new();
+        let mut seen: FxHashMap<(usize, usize, u32), bool> = FxHashMap::default();
 
         self.match_rule(rule_id, message, 0, message.len(), &mut seen)
     }
@@ -58,7 +60,7 @@ impl Rules {
         message: &str,
         start: usize,
         end: usize,
-        seen: &mut HashMap<(usize, usize, u32), bool>,
+        seen: &mut FxHashMap<(usize, usize, u32), bool>,
     ) -> bool {
         let key = (start, end, rule_id);
         if seen.contains_key(&key) {
@@ -85,7 +87,7 @@ impl Rules {
         message: &str,
         start: usize,
         end: usize,
-        seen: &mut HashMap<(usize, usize, u32), bool>,
+        seen: &mut FxHashMap<(usize, usize, u32), bool>,
     ) -> bool {
         if start == end && rule_set.is_empty() {
             return true;

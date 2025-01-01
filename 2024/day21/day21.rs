@@ -1,12 +1,13 @@
 //! [Day 21: Keypad Conundrum](https://adventofcode.com/2024/day/21)
 
 use itertools::Itertools;
-use std::collections::{HashMap, VecDeque};
+use rustc_hash::FxHashMap;
+use std::collections::VecDeque;
 
-type ButtonSequences = HashMap<(char, char), Vec<String>>;
+type ButtonSequences = FxHashMap<(char, char), Vec<String>>;
 
 fn compute_sequences(keypad: &[&str]) -> ButtonSequences {
-    let mut positions = HashMap::new();
+    let mut positions = FxHashMap::default();
 
     // size of the keypad
     let size_x = i32::try_from(keypad[0].len()).unwrap();
@@ -24,7 +25,7 @@ fn compute_sequences(keypad: &[&str]) -> ButtonSequences {
     }
 
     // find all paths between each pair of buttons
-    let mut sequences: ButtonSequences = HashMap::new();
+    let mut sequences: ButtonSequences = FxHashMap::default();
 
     for &from_button in positions.keys() {
         for &to_button in positions.keys() {
@@ -37,7 +38,7 @@ fn compute_sequences(keypad: &[&str]) -> ButtonSequences {
             let mut possibilities = Vec::new();
             let mut queue = VecDeque::new();
             let mut shortest = usize::MAX;
-            let mut visited = HashMap::new();
+            let mut visited = FxHashMap::default();
 
             queue.push_front((positions[&from_button], String::new()));
             visited.insert(positions[&from_button], 0);
@@ -154,7 +155,7 @@ impl Solver {
         &self,
         targetted_seq: &str,
         robots: u32,
-        cache: &mut HashMap<(String, u32), u64>,
+        cache: &mut FxHashMap<(String, u32), u64>,
     ) -> u64 {
         if let Some(found) = cache.get(&(targetted_seq.to_string(), robots)) {
             return *found;
@@ -202,7 +203,7 @@ impl Solver {
     fn complexity(&self, code: &str, robots: u32) -> u64 {
         let seqs = self.find_code_seqs(code);
 
-        let mut cache = HashMap::new();
+        let mut cache = FxHashMap::default();
 
         let min_length = seqs
             .iter()

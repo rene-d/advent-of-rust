@@ -1,6 +1,6 @@
 //! [Day 8: I Heard You Like Registers](https://adventofcode.com/2017/day/8)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 use pest::Parser;
 use pest_derive::Parser as PestParser;
@@ -10,7 +10,7 @@ use pest_derive::Parser as PestParser;
 struct MyParser;
 
 struct Puzzle {
-    registers: HashMap<String, i32>,
+    registers: FxHashMap<String, i32>,
 
     last_max: i32,  // i.e. part 1
     value_max: i32, // i.e. part 2
@@ -19,7 +19,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            registers: HashMap::new(),
+            registers: FxHashMap::default(),
             last_max: 0,
             value_max: 0,
         }

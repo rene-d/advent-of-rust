@@ -1,7 +1,7 @@
 //! [Day 14: Extended Polymerization](https://adventofcode.com/2021/day/14)
 
-use std::collections::HashMap;
-use std::collections::HashSet;
+use rustc_hash::FxHashMap;
+use rustc_hash::FxHashSet;
 
 #[derive(Debug)]
 struct Rule {
@@ -20,8 +20,8 @@ impl Rule {
 
 struct Puzzle {
     template: String,
-    generator: HashMap<String, Rule>,
-    elements: HashSet<char>,
+    generator: FxHashMap<String, Rule>,
+    elements: FxHashSet<char>,
     steps: u64,
 }
 
@@ -29,8 +29,8 @@ impl Puzzle {
     fn new() -> Puzzle {
         Puzzle {
             template: String::new(),
-            generator: HashMap::new(),
-            elements: HashSet::new(),
+            generator: FxHashMap::default(),
+            elements: FxHashSet::default(),
             steps: 0,
         }
     }
@@ -95,8 +95,8 @@ impl Puzzle {
     }
 
     fn part2(&self) -> u64 {
-        let mut elements_count = HashMap::new();
-        let mut generators_count = HashMap::new();
+        let mut elements_count = FxHashMap::default();
+        let mut generators_count = FxHashMap::default();
 
         for c in &self.elements {
             elements_count.insert(*c, 0_u64);
@@ -119,7 +119,7 @@ impl Puzzle {
         }
 
         for _ in 0..self.steps {
-            let mut generators_new = HashMap::new();
+            let mut generators_new = FxHashMap::default();
             for rule in &self.generator {
                 generators_new.insert(rule.0.clone(), 0_u64);
             }

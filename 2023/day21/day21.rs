@@ -1,11 +1,11 @@
 //! [Day 21: Step Counter](https://adventofcode.com/2023/day/21)
 
 use num::Integer;
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
-    garden: Vec<bool>, // twice as fast as the HashSet
-    // rocks: HashSet<(i32, i32)>,
+    garden: Vec<bool>, // twice as fast as the FxHashSet
+    // rocks: FxHashSet<(i32, i32)>,
     n: i32,
     start_x: i32,
     start_y: i32,
@@ -14,7 +14,7 @@ struct Puzzle {
 impl Puzzle {
     const fn new() -> Self {
         Self {
-            // rocks: HashSet::new(),
+            // rocks: FxHashSet::default(),
             garden: vec![],
             n: 0, // the map has to be a square n x n
             start_x: 0,
@@ -63,11 +63,11 @@ impl Puzzle {
 
     fn count(&self, n: i32) -> u64 {
         // nota: still not really optimized, could probably memoize something
-        let mut p = HashSet::new();
+        let mut p = FxHashSet::default();
         p.insert((self.start_x, self.start_y));
 
         for _ in 0..n {
-            let mut np = HashSet::new();
+            let mut np = FxHashSet::default();
 
             for (x, y) in p {
                 /*

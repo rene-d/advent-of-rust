@@ -1,7 +1,7 @@
 //! [Day 6: Guard Gallivant](https://adventofcode.com/2024/day/6)
 
 use aoc::Coord;
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 type Grid = aoc::Grid<u8>;
 
@@ -86,7 +86,7 @@ impl Puzzle {
         let mut direction = Coord::NORTH;
         let mut leave = false;
 
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
 
         let obstruction = (i32::MAX, i32::MAX);
 
@@ -107,7 +107,7 @@ impl Puzzle {
         let mut leave = false;
         let obstruction = (i32::MAX, i32::MAX);
 
-        let mut normal_walk = HashSet::new();
+        let mut normal_walk = FxHashSet::default();
 
         while !leave {
             normal_walk.insert(xy);
@@ -131,7 +131,7 @@ impl Puzzle {
                 let mut xy = self.start;
                 let mut direction = Coord::NORTH;
                 let mut leave = false;
-                let mut seen: HashSet<(Coord, Coord)> = HashSet::new();
+                let mut seen: FxHashSet<(Coord, Coord)> = FxHashSet::default();
 
                 while !leave {
                     if seen.contains(&(xy, direction)) {

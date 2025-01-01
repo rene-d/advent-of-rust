@@ -1,6 +1,6 @@
 //! [Day 4: Scratchcards](https://adventofcode.com/2023/day/4)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
     matching_cards: Vec<usize>,
@@ -23,12 +23,12 @@ impl Puzzle {
             let winning = line[0]
                 .split_whitespace()
                 .map(|x| x.parse::<u32>().unwrap())
-                .collect::<HashSet<_>>();
+                .collect::<FxHashSet<_>>();
 
             let nums = line[1]
                 .split_whitespace()
                 .map(|x| x.parse::<u32>().unwrap())
-                .collect::<HashSet<_>>();
+                .collect::<FxHashSet<_>>();
 
             let result = winning.intersection(&nums).count();
 

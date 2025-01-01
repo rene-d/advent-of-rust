@@ -2,7 +2,7 @@
 
 ![AoC2017](https://img.shields.io/badge/Advent_of_Code-2017-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 21](https://img.shields.io/badge/Rust-21-cyan?logo=Rust)
+![Rust: 22](https://img.shields.io/badge/Rust-22-cyan?logo=Rust)
 ![Python: 17](https://img.shields.io/badge/Python-17-cyan?logo=Python)
 
 ## 2017 ([Calendar](https://adventofcode.com/2017)) ([Solutions](../2017/)) : 50⭐
@@ -20,7 +20,7 @@ Puzzle                                                                          
 [Day 9: Stream Processing](https://adventofcode.com/2017/day/9)                       | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2017/day9/day9.py)
 [Day 10: Knot Hash](https://adventofcode.com/2017/day/10)                             | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2017/day10/day10.rs)
 [Day 11: Hex Ed](https://adventofcode.com/2017/day/11)                                | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2017/day11/day11.rs) [![Python](../scripts/assets/python.png)](../2017/day11/day11.py)
-[Day 12: Digital Plumber](https://adventofcode.com/2017/day/12)                       | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2017/day12/day12.py)
+[Day 12: Digital Plumber](https://adventofcode.com/2017/day/12)                       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2017/day12/day12.rs) [![Python](../scripts/assets/python.png)](../2017/day12/day12.py)
 [Day 13: Packet Scanners](https://adventofcode.com/2017/day/13)                       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2017/day13/day13.rs)
 [Day 14: Disk Defragmentation](https://adventofcode.com/2017/day/14)                  | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2017/day14/day14.rs)
 [Day 15: Dueling Generators](https://adventofcode.com/2017/day/15)                    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2017/day15/day15.rs)

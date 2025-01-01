@@ -8,6 +8,7 @@ aoc = { path = "../../aoc" }
 geo = "0.29"
 geo-types = "0.7"
 itertools = "0.13"
+rustc-hash = "2.1.0"
 
 [[bin]]
 name = "day10"

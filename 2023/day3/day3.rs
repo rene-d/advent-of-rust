@@ -4,7 +4,7 @@
 #![allow(clippy::cast_possible_wrap)]
 #![allow(clippy::cast_possible_truncation)]
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use std::time::{Duration, Instant};
 
 struct Puzzle {
@@ -12,7 +12,7 @@ struct Puzzle {
     sy: i32,
     grid: Vec<String>,
     sum_parts: u64,
-    gears: HashMap<[i32; 2], Vec<u64>>,
+    gears: FxHashMap<[i32; 2], Vec<u64>>,
 }
 
 impl Puzzle {
@@ -22,7 +22,7 @@ impl Puzzle {
             sy: 0,
             grid: vec![],
             sum_parts: 0,
-            gears: HashMap::new(),
+            gears: FxHashMap::default(),
         }
     }
 

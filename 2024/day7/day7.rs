@@ -1,6 +1,6 @@
 //! [Day 7: Bridge Repair](https://adventofcode.com/2024/day/7)
 
-// use std::collections::{HashMap,HashSet};
+// use std::collections::{FxHashMap,FxHashSet};
 
 struct Equation {
     test_value: u64,

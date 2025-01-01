@@ -1,6 +1,7 @@
 //! [Day 22: Sand Slabs](https://adventofcode.com/2023/day/22)
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::collections::VecDeque;
 
 struct Point {
     x: i32,
@@ -40,16 +41,16 @@ impl Brick {
 
 struct Puzzle {
     bricks: Vec<Brick>,                           // list of bricks sorted lowest first
-    supports: HashMap<usize, HashSet<usize>>,     // set of bricks supported by another brick
-    supported_by: HashMap<usize, HashSet<usize>>, // set of bricks that support another brick
+    supports: FxHashMap<usize, FxHashSet<usize>>, // set of bricks supported by another brick
+    supported_by: FxHashMap<usize, FxHashSet<usize>>, // set of bricks that support another brick
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
             bricks: vec![],
-            supports: HashMap::new(),
-            supported_by: HashMap::new(),
+            supports: FxHashMap::default(),
+            supported_by: FxHashMap::default(),
         }
     }
 
@@ -89,8 +90,8 @@ impl Puzzle {
 
         // who supports whom ?
         for i in 0..n {
-            self.supports.insert(i, HashSet::new());
-            self.supported_by.insert(i, HashSet::new());
+            self.supports.insert(i, FxHashSet::default());
+            self.supported_by.insert(i, FxHashSet::default());
         }
 
         for (i, upper) in self.bricks.iter().enumerate() {
@@ -119,7 +120,7 @@ impl Puzzle {
         (0..self.bricks.len())
             .map(|j| {
                 let mut q = VecDeque::new();
-                let mut fall = HashSet::new();
+                let mut fall = FxHashSet::default();
 
                 for &i in &self.supports[&j] {
                     if self.supported_by[&i].len() == 1 {

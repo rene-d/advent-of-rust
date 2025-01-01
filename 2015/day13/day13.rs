@@ -2,9 +2,9 @@
 
 use permutator::HeapPermutationIterator;
 use regex::Regex;
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
-fn calc(names: &HashSet<String>, happiness: &HashMap<(String, String), i32>) -> i32 {
+fn calc(names: &FxHashSet<String>, happiness: &FxHashMap<(String, String), i32>) -> i32 {
     let perm_names = &mut names.iter().collect::<Vec<&String>>();
     let permutator = HeapPermutationIterator::new(perm_names);
 
@@ -36,8 +36,8 @@ fn main() {
         .map(std::string::ToString::to_string)
         .collect::<Vec<String>>();
 
-    let mut names: HashSet<String> = HashSet::new();
-    let mut happiness: HashMap<(String, String), i32> = HashMap::new();
+    let mut names: FxHashSet<String> = FxHashSet::default();
+    let mut happiness: FxHashMap<(String, String), i32> = FxHashMap::default();
 
     let re =
         Regex::new(r"^(.+) would (gain|lose) (\d+) happiness units by sitting next to (.+)\.$")

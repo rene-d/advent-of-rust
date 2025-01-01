@@ -2,7 +2,7 @@
 
 use permutator::HeapPermutationIterator;
 use regex::Regex;
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 /// main function
 fn main() {
@@ -13,8 +13,8 @@ fn main() {
         .map(std::string::ToString::to_string)
         .collect::<Vec<String>>();
 
-    let mut places: HashSet<String> = HashSet::new();
-    let mut distances: HashMap<(String, String), u32> = HashMap::new();
+    let mut places: FxHashSet<String> = FxHashSet::default();
+    let mut distances: FxHashMap<(String, String), u32> = FxHashMap::default();
 
     let re = Regex::new(r"^(.+) to (.+) = (\d+)$").unwrap();
 

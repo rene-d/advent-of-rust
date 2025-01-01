@@ -1,6 +1,6 @@
 //! [Day 7: Internet Protocol Version 7](https://adventofcode.com/2016/day/7)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
@@ -54,8 +54,8 @@ fn support_tls(address: &str) -> bool {
 fn support_ssl(address: &str) -> bool {
     let mut hypernet = false;
 
-    let mut supernet_aba = HashSet::new();
-    let mut hypernet_bab = HashSet::new();
+    let mut supernet_aba = FxHashSet::default();
+    let mut hypernet_bab = FxHashSet::default();
 
     for i in 0..=address.len() - 3 {
         let a = address.chars().nth(i).unwrap();

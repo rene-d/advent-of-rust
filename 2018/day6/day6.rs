@@ -28,7 +28,7 @@ impl Puzzle {
     }
 
     // fn show(&self) {
-    //     let mut pts: HashSet<(usize, usize)> = HashSet::new();
+    //     let mut pts: FxHashSet<(usize, usize)> = FxHashSet::default();
     //     pts.extend(self.points.iter());
     //     for y in 0..N {
     //         for x in 0..N {

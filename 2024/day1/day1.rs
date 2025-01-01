@@ -1,6 +1,6 @@
 //! [Day 1: Historian Hysteria](https://adventofcode.com/2024/day/1)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
     left: Vec<i32>,
@@ -45,7 +45,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> i32 {
-        let mut right_count = HashMap::new();
+        let mut right_count = FxHashMap::default();
         for &num in &self.right {
             *right_count.entry(num).or_insert(0) += 1;
         }

@@ -1,6 +1,6 @@
 //! [Day 22: Grid Computing](https://adventofcode.com/2016/day/22)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Clone)]
 struct Node {
@@ -51,7 +51,7 @@ impl Puzzle {
 
     fn print(&self) {
         let big = if self.nodes.len() > 10 { 400 } else { 20 };
-        let mut g = HashMap::new();
+        let mut g = FxHashMap::default();
 
         for &Node { x, y, used, .. } in &self.nodes {
             let c = if (x, y) == (0, 0) {

@@ -4,12 +4,13 @@
 #![allow(clippy::cast_possible_wrap)]
 #![allow(clippy::cast_possible_truncation)]
 
-use std::collections::{HashMap, VecDeque};
+use rustc_hash::FxHashMap;
+use std::collections::VecDeque;
 
 struct Program {
     id: i64,
     opcodes: Vec<(String, Vec<String>)>,
-    regs: HashMap<String, i64>,
+    regs: FxHashMap<String, i64>,
     ip: i64,
     terminated: bool,
     messages: VecDeque<i64>,
@@ -22,7 +23,7 @@ impl Program {
         let mut o = Self {
             id,
             opcodes: opcodes.to_vec(),
-            regs: HashMap::new(),
+            regs: FxHashMap::default(),
             ip: 0,
             terminated: false,
             messages: VecDeque::new(),

@@ -1,7 +1,8 @@
 //! [Day 20: Pulse Propagation](https://adventofcode.com/2023/day/20)
 
 use num::Integer;
-use std::collections::{HashMap, VecDeque};
+use rustc_hash::FxHashMap;
+use std::collections::VecDeque;
 
 fn lcm(values: &[u64]) -> u64 {
     let mut m = 1;
@@ -46,8 +47,8 @@ struct Module {
     id: u32,
     kind: ModuleType,
     outputs: Vec<u32>,
-    state: State,                // only for Flip-flop module
-    memory: HashMap<u32, Pulse>, // only for Conjunction module
+    state: State,                  // only for Flip-flop module
+    memory: FxHashMap<u32, Pulse>, // only for Conjunction module
 }
 
 fn get_id(name: &str) -> u32 {
@@ -59,13 +60,13 @@ fn get_id(name: &str) -> u32 {
 }
 
 struct Puzzle {
-    modules: HashMap<u32, Module>,
+    modules: FxHashMap<u32, Module>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            modules: HashMap::new(),
+            modules: FxHashMap::default(),
         }
     }
 
@@ -90,7 +91,7 @@ impl Puzzle {
                     kind: mtype,
                     outputs,
                     state: State::Off,
-                    memory: HashMap::new(),
+                    memory: FxHashMap::default(),
                 },
             );
         }
@@ -225,7 +226,7 @@ impl Puzzle {
             .count();
 
         // the count of presses to have a High pulse on each inputs of the rx_feed module
-        let mut rx_feed_input_presses = HashMap::new();
+        let mut rx_feed_input_presses = FxHashMap::default();
 
         for presses in 1.. {
             let stopped = !self.press(&mut |source, target, pulse| {

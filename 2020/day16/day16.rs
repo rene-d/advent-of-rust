@@ -1,6 +1,6 @@
 //! [Day 16: Ticket Translation](https://adventofcode.com/2020/day/16)
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 use regex::Regex;
 
@@ -95,7 +95,7 @@ impl Puzzle {
 
     /// Generic solver for part two and tests.
     fn solve_part2(&self, field_name: &str) -> u64 {
-        let mut incompatible = HashMap::<usize, HashSet<usize>>::new();
+        let mut incompatible = FxHashMap::<usize, FxHashSet<usize>>::default();
 
         for ticket in &self.tickets {
             if ticket.iter().all(|value| {
@@ -130,7 +130,7 @@ impl Puzzle {
         //   3. who cares, really ? 😂
 
         // build the equivalence map between fields array and values array
-        let mut equivalent = HashMap::new();
+        let mut equivalent = FxHashMap::default();
         while !incompatible.is_empty() {
             let &i = incompatible
                 .iter()

@@ -3,7 +3,8 @@
 // Nota: very slow implementation
 
 use itertools::Itertools;
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 const RTG: u8 = 1;
 const CHIP: u8 = 2;
@@ -13,8 +14,8 @@ type Element = (u32, u8);
 
 #[derive(Default, Debug, Clone)]
 struct Floor {
-    generator: HashSet<Element>,
-    microchip: HashSet<Element>,
+    generator: FxHashSet<Element>,
+    microchip: FxHashSet<Element>,
 }
 
 impl Floor {
@@ -74,10 +75,10 @@ impl State {
     /*
 
     fn show(&self) {
-        let mut all = HashSet::new();
+        let mut all = FxHashSet::default();
         for i in &self.floors {
-            let a: HashSet<_> = i.generator.iter().map(|e| e.0).collect();
-            let b: HashSet<_> = i.microchip.iter().map(|e| e.0).collect();
+            let a: FxHashSet<_> = i.generator.iter().map(|e| e.0).collect();
+            let b: FxHashSet<_> = i.microchip.iter().map(|e| e.0).collect();
 
             all.extend(a);
             all.extend(b);
@@ -214,7 +215,7 @@ fn solve(floors: &[Floor]) -> u32 {
         .map(|floor| floor.generator.len() + floor.microchip.len())
         .sum();
 
-    let mut seen = HashSet::new();
+    let mut seen = FxHashSet::default();
 
     let mut q: VecDeque<(State, u32)> = VecDeque::new();
 

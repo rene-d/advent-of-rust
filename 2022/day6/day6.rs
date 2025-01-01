@@ -1,6 +1,6 @@
 //! [Day 6: Tuning Trouble](https://adventofcode.com/2022/day/6)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
     /// Puzzle input
@@ -34,7 +34,7 @@ impl Puzzle {
 fn find_marker(data: &str, length: usize) -> usize {
     if data.len() >= length {
         for i in 0..=(data.len() - length) {
-            let mut marker = HashSet::new();
+            let mut marker = FxHashSet::default();
             for k in 0..length {
                 marker.insert(data.chars().nth(i + k));
             }

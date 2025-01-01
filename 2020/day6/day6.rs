@@ -1,6 +1,6 @@
 //! [Day 6: Custom Customs](https://adventofcode.com/2020/day/6)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
     data: String,
@@ -24,7 +24,7 @@ impl Puzzle {
             .split("\n\n")
             .map(|group| {
                 // keeping only letters allows to ignore '\n'
-                let group: HashSet<_> = group.chars().filter(char::is_ascii_alphabetic).collect();
+                let group: FxHashSet<_> = group.chars().filter(char::is_ascii_alphabetic).collect();
                 group.len()
             })
             .sum()
@@ -40,7 +40,7 @@ impl Puzzle {
                     // split lines
                     .lines()
                     // set of unique letters
-                    .map(|person| person.chars().collect::<HashSet<_>>())
+                    .map(|person| person.chars().collect::<FxHashSet<_>>())
                     // intersection of all of them
                     .reduce(|a, b| a.intersection(&b).copied().collect())
                     .unwrap()

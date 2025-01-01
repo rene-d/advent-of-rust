@@ -4,7 +4,8 @@
 #![allow(clippy::cast_possible_wrap)]
 #![allow(clippy::cast_possible_truncation)]
 
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 const RIGHT: usize = 0;
 const DOWN: usize = 1;
@@ -16,17 +17,17 @@ struct Puzzle {
     y_max: i32,   // y=0 or y_max: top/bottom wall
     x_entry: i32, // position of entry (y=0)
     x_exit: i32,  // position of exit (y=y_max)
-    blizzards: [HashSet<(i32, i32)>; 4],
+    blizzards: [FxHashSet<(i32, i32)>; 4],
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
             blizzards: [
-                HashSet::new(), // rightward blizzard
-                HashSet::new(), // downward blizzard
-                HashSet::new(), // leftward blizzard
-                HashSet::new(), // upward blizzard
+                FxHashSet::default(), // rightward blizzard
+                FxHashSet::default(), // downward blizzard
+                FxHashSet::default(), // leftward blizzard
+                FxHashSet::default(), // upward blizzard
             ],
             x_entry: 0,
             x_exit: 0,
@@ -94,7 +95,7 @@ impl Puzzle {
 
     fn solve(&self, start_x: i32, start_y: i32, end_x: i32, end_y: i32, start_time: i32) -> i32 {
         let mut q = VecDeque::new();
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
 
         #[cfg(debug_assertions)]
         println!("\ntime: {start_time} - entry: {start_x},{start_y} - exit: {end_x},{end_y}");

@@ -1,5 +1,6 @@
+use rustc_hash::{FxHashMap, FxHashSet};
 use std::cmp::Reverse;
-use std::collections::{BinaryHeap, HashMap, HashSet, VecDeque};
+use std::collections::{BinaryHeap, VecDeque};
 
 use crate::mazecell::MazeCell;
 use crate::path::Path;
@@ -13,7 +14,7 @@ pub trait Dijkstra {
 fn get_paths_from(maze: &aoc::GridU<u8>, start: (usize, usize)) -> Vec<Path> {
     let mut paths = vec![];
 
-    let mut seen = HashSet::new();
+    let mut seen = FxHashSet::default();
     let mut q = VecDeque::new();
 
     q.push_back((start, 0, 0, 0));
@@ -49,8 +50,8 @@ fn get_paths_from(maze: &aoc::GridU<u8>, start: (usize, usize)) -> Vec<Path> {
     paths
 }
 
-fn get_all_paths(maze: &aoc::GridU<u8>) -> (u8, HashMap<u8, Vec<Path>>) {
-    let mut all_paths = HashMap::new();
+fn get_all_paths(maze: &aoc::GridU<u8>) -> (u8, FxHashMap<u8, Vec<Path>>) {
+    let mut all_paths = FxHashMap::default();
 
     let mut num_robots = 0;
 
@@ -81,12 +82,12 @@ impl Dijkstra for aoc::GridU<u8> {
 
         let state = State::new(num_robots);
 
-        let mut scores = HashMap::new();
+        let mut scores = FxHashMap::default();
         scores.insert(state.clone(), 0usize);
 
-        let mut closed = HashSet::new();
+        let mut closed = FxHashSet::default();
 
-        let mut open = HashSet::new();
+        let mut open = FxHashSet::default();
         open.insert(state.clone());
 
         let mut q = BinaryHeap::new();

@@ -1,7 +1,7 @@
 //! [Day 3: No Matter How You Slice It](https://adventofcode.com/2018/day/3)
 
 use regex::Regex;
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 struct Puzzle<'a> {
     data: &'a str,
@@ -16,7 +16,7 @@ impl<'a> Puzzle<'a> {
     fn part1(&self) -> usize {
         let re = Regex::new(r"^#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)$").unwrap();
 
-        let mut squares = HashMap::new();
+        let mut squares = FxHashMap::default();
 
         for line in self.data.lines() {
             if let Some(caps) = re.captures(line) {
@@ -47,8 +47,8 @@ impl<'a> Puzzle<'a> {
     fn part2(&self) -> u32 {
         let re = Regex::new(r"^#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)$").unwrap();
 
-        let mut squares_id: HashMap<(u32, u32), u32> = HashMap::new();
-        let mut intact = HashSet::new();
+        let mut squares_id: FxHashMap<(u32, u32), u32> = FxHashMap::default();
+        let mut intact = FxHashSet::default();
 
         for line in self.data.lines() {
             if let Some(caps) = re.captures(line) {

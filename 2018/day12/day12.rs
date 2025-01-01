@@ -1,17 +1,17 @@
 //! [Day 12: Subterranean Sustainability](https://adventofcode.com/2018/day/12)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
     state: String,
-    rules: HashSet<Vec<char>>,
+    rules: FxHashSet<Vec<char>>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
             state: String::new(),
-            rules: HashSet::new(),
+            rules: FxHashSet::default(),
         }
     }
 

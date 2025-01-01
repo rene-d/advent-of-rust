@@ -1,15 +1,15 @@
 //! [Day 13: Packet Scanners](https://adventofcode.com/2017/day/13)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
-    heights: HashMap<u32, u32>,
+    heights: FxHashMap<u32, u32>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            heights: HashMap::new(),
+            heights: FxHashMap::default(),
         }
     }
 

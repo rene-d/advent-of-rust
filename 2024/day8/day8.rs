@@ -1,13 +1,11 @@
 //! [Day 8: Resonant Collinearity](https://adventofcode.com/2024/day/8)
 
 use itertools::Itertools;
-use std::{
-    collections::{HashMap, HashSet},
-    ops::RangeInclusive,
-};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::ops::RangeInclusive;
 
 struct Puzzle {
-    antennas: HashMap<char, Vec<(i32, i32)>>,
+    antennas: FxHashMap<char, Vec<(i32, i32)>>,
     width: RangeInclusive<i32>,
     height: RangeInclusive<i32>,
 }
@@ -15,7 +13,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            antennas: HashMap::new(),
+            antennas: FxHashMap::default(),
             width: 0..=0,
             height: 0..=0,
         }
@@ -44,7 +42,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> usize {
-        let mut uniq = HashSet::new();
+        let mut uniq = FxHashSet::default();
 
         for positions in self.antennas.values() {
             for it in positions.iter().combinations(2) {
@@ -70,7 +68,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> usize {
-        let mut uniq = HashSet::new();
+        let mut uniq = FxHashSet::default();
 
         for positions in self.antennas.values() {
             for it in positions.iter().combinations(2) {

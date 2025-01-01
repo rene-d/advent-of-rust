@@ -1,6 +1,6 @@
 //! [Day 11: Plutonian Pebbles](https://adventofcode.com/2024/day/11)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
     stones: Vec<u64>,
@@ -23,8 +23,8 @@ impl Puzzle {
     /// - stone 0 becomes stone 1
     /// - stone with a even length number splits into two
     /// - otherwise stone number is multiplied by 2024
-    fn blink(stone_counts: &HashMap<u64, u64>) -> HashMap<u64, u64> {
-        let mut new_counts = HashMap::new();
+    fn blink(stone_counts: &FxHashMap<u64, u64>) -> FxHashMap<u64, u64> {
+        let mut new_counts = FxHashMap::default();
 
         for (&stone, &count) in stone_counts {
             let new_stones = {
@@ -58,7 +58,7 @@ impl Puzzle {
 
     /// Blink `blinks` times and returns the total number of stones.
     fn solve(&self, blinks: usize) -> u64 {
-        let mut stone_counts = HashMap::new();
+        let mut stone_counts = FxHashMap::default();
 
         for &stone in &self.stones {
             *stone_counts.entry(stone).or_insert(0) += 1;

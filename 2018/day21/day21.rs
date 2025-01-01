@@ -2,7 +2,7 @@
 
 #![allow(clippy::cast_possible_truncation)]
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 use std::fmt::Error;
 
 #[derive(Debug)]
@@ -182,7 +182,7 @@ impl Puzzle {
     /// Solve part two.
     fn part2(&self) -> u64 {
         let mut regs = [0, 0, 0, 0, 0, 0];
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
         let mut last = 0;
 
         loop {

@@ -1,6 +1,6 @@
 //! [Day 4: Passport Processing](https://adventofcode.com/2020/day/4)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 fn validate_field(field: &str, value: &str) -> bool {
     match (field, value.len()) {
@@ -59,7 +59,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        let mandatory_fields: HashSet<_> = ["eyr", "iyr", "byr", "ecl", "pid", "hcl", "hgt"]
+        let mandatory_fields: FxHashSet<_> = ["eyr", "iyr", "byr", "ecl", "pid", "hcl", "hgt"]
             .iter()
             .copied()
             .collect();
@@ -67,7 +67,7 @@ impl Puzzle {
         self.data
             .split("\n\n")
             .map(|record| {
-                let mut fields = HashSet::new();
+                let mut fields = FxHashSet::default();
                 for item in record.split_ascii_whitespace() {
                     let (field, _) = item.split_once(':').unwrap();
                     fields.insert(field);
@@ -79,7 +79,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> u32 {
-        let mandatory_fields: HashSet<_> = ["eyr", "iyr", "byr", "ecl", "pid", "hcl", "hgt"]
+        let mandatory_fields: FxHashSet<_> = ["eyr", "iyr", "byr", "ecl", "pid", "hcl", "hgt"]
             .iter()
             .copied()
             .collect();
@@ -87,7 +87,7 @@ impl Puzzle {
         self.data
             .split("\n\n")
             .map(|record| {
-                let mut fields = HashSet::new();
+                let mut fields = FxHashSet::default();
                 for item in record.split_ascii_whitespace() {
                     let (field, value) = item.split_once(':').unwrap();
 

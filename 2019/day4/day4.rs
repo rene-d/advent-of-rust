@@ -1,6 +1,6 @@
 //! [Day 4: Secure Container](https://adventofcode.com/2019/day/4)
 
-// use std::collections::{HashMap,HashSet};
+// use std::collections::{FxHashMap,FxHashSet};
 
 struct Puzzle {
     a: u32,

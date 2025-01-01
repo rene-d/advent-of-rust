@@ -1,6 +1,6 @@
 //! [Day 4: High-Entropy Passphrases](https://adventofcode.com/2017/day/4)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
     lines: Vec<String>,
@@ -24,7 +24,7 @@ impl Puzzle {
                 let a = line.split_ascii_whitespace();
                 let n = line.split_ascii_whitespace().count();
 
-                a.collect::<HashSet<_>>().len() == n
+                a.collect::<FxHashSet<_>>().len() == n
             })
             .count()
     }
@@ -43,7 +43,7 @@ impl Puzzle {
                     })
                     .collect();
 
-                a.iter().collect::<HashSet<_>>().len() == a.len()
+                a.iter().collect::<FxHashSet<_>>().len() == a.len()
             })
             .count()
     }

@@ -1,7 +1,8 @@
 //! [Day 22: Mode Maze](https://adventofcode.com/2018/day/22)
 
 use aoc::Direction;
-use std::collections::{BinaryHeap, HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::collections::BinaryHeap;
 
 const ROCKY: u32 = 0;
 const WET: u32 = 1;
@@ -116,7 +117,7 @@ struct Puzzle {
     depth: u32,
     target: (u32, u32),
 
-    lru: HashMap<(u32, u32), u32>,
+    lru: FxHashMap<(u32, u32), u32>,
 }
 
 impl Puzzle {
@@ -124,7 +125,7 @@ impl Puzzle {
         Self {
             depth: 0,
             target: (0, 0),
-            lru: HashMap::new(),
+            lru: FxHashMap::default(),
         }
     }
 
@@ -203,7 +204,7 @@ impl Puzzle {
     fn part2(&mut self) -> u32 {
         // A star algorithm
         let mut open_set = BinaryHeap::new();
-        let mut closed_list = HashSet::new();
+        let mut closed_list = FxHashSet::default();
 
         open_set.push(Node::init(self.target));
 
