@@ -1,6 +1,6 @@
 //! [Day 15: Beverage Bandits](https://adventofcode.com/2018/day/15)
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 use std::{cmp::Ordering, collections::VecDeque};
 
 type Grid = aoc::GridU<char>;
@@ -30,7 +30,7 @@ impl Unit {
     }
 }
 struct Puzzle {
-    wall: HashSet<(usize, usize)>,
+    wall: FxHashSet<(usize, usize)>,
     units: Vec<Unit>,
 }
 
@@ -38,8 +38,8 @@ fn adjacent(x: usize, y: usize) -> Vec<(usize, usize)> {
     vec![(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)]
 }
 
-fn get_opponents(targets: &[Unit], race: char) -> HashMap<(usize, usize), Vec<usize>> {
-    let mut target_mapping: HashMap<(usize, usize), Vec<usize>> = HashMap::new();
+fn get_opponents(targets: &[Unit], race: char) -> FxHashMap<(usize, usize), Vec<usize>> {
+    let mut target_mapping: FxHashMap<(usize, usize), Vec<usize>> = FxHashMap::default();
 
     for (i, t) in targets.iter().enumerate() {
         if t.race != race && t.hit_points != 0 {
@@ -55,10 +55,10 @@ fn get_opponents(targets: &[Unit], race: char) -> HashMap<(usize, usize), Vec<us
 fn next_pos(
     u: usize,
     units: &[Unit],
-    target_adj: &HashSet<(usize, usize)>,
-    wall: &HashSet<(usize, usize)>,
+    target_adj: &FxHashSet<(usize, usize)>,
+    wall: &FxHashSet<(usize, usize)>,
 ) -> Option<(usize, usize)> {
-    let others: HashSet<(usize, usize)> = units
+    let others: FxHashSet<(usize, usize)> = units
         .iter()
         .enumerate()
         .filter_map(|(i, unit)| {
@@ -73,7 +73,7 @@ fn next_pos(
     let mut pos = vec![];
 
     let mut q = VecDeque::new();
-    let mut visited = HashSet::new();
+    let mut visited = FxHashSet::default();
 
     q.extend(
         adjacent(units[u].x, units[u].y)
@@ -138,7 +138,7 @@ fn has_elves_and_goblins(units: &[Unit]) -> bool {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            wall: HashSet::new(),
+            wall: FxHashSet::default(),
             units: vec![],
         }
     }
@@ -193,7 +193,7 @@ impl Puzzle {
                 if !opponents.contains_key(&(units[u].x, units[u].y)) {
                     // not in range
 
-                    let target_adj: HashSet<(usize, usize)> = opponents.keys().copied().collect();
+                    let target_adj: FxHashSet<(usize, usize)> = opponents.keys().copied().collect();
 
                     if let Some(xy) = next_pos(u, &units, &target_adj, wall) {
                         units[u].x = xy.0;

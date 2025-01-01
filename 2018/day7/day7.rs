@@ -1,15 +1,15 @@
 //! [Day 7: The Sum of Its Parts](https://adventofcode.com/2018/day/7)
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 struct Puzzle {
-    deps: HashMap<char, HashSet<char>>,
+    deps: FxHashMap<char, FxHashSet<char>>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            deps: HashMap::new(),
+            deps: FxHashMap::default(),
         }
     }
 

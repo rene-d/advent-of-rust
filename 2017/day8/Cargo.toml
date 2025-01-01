@@ -7,6 +7,7 @@ edition = "2021"
 aoc = { path = "../../aoc" }
 pest = "2"
 pest_derive = "2"
+rustc-hash = "2.1.0"
 
 [[bin]]
 name = "day8"

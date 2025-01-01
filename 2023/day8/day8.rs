@@ -1,7 +1,7 @@
 //! [Day 8: Haunted Wasteland](https://adventofcode.com/2023/day/8)
 
 use num::Integer;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 fn lcm(values: &Vec<u64>) -> u64 {
     let mut m = 1;
@@ -13,14 +13,14 @@ fn lcm(values: &Vec<u64>) -> u64 {
 
 struct Puzzle {
     navigation: String,
-    network: HashMap<u32, (u32, u32)>,
+    network: FxHashMap<u32, (u32, u32)>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
             navigation: String::new(),
-            network: HashMap::new(),
+            network: FxHashMap::default(),
         }
     }
 
@@ -56,7 +56,7 @@ impl Puzzle {
 
         let size = q.len();
 
-        let mut z = HashMap::new();
+        let mut z = FxHashMap::default();
 
         let mut n = 0;
         loop {

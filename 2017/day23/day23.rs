@@ -5,11 +5,11 @@
 #![allow(clippy::cast_possible_wrap)]
 #![allow(clippy::cast_sign_loss)]
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Program {
     opcodes: Vec<(String, Vec<String>)>,
-    regs: HashMap<String, i64>,
+    regs: FxHashMap<String, i64>,
     ip: i64,
     mul_called: u32,
 }
@@ -18,7 +18,7 @@ impl Program {
     fn new(opcodes: &[(String, Vec<String>)]) -> Self {
         Self {
             opcodes: opcodes.to_vec(),
-            regs: HashMap::new(),
+            regs: FxHashMap::default(),
             ip: 0,
             mul_called: 0,
         }

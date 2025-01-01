@@ -1,7 +1,7 @@
 //! [Day 16: Aunt Sue](https://adventofcode.com/2015/day/16)
 
 use regex::Regex;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 /// main function
 fn main() {
@@ -10,7 +10,7 @@ fn main() {
 
     let re = Regex::new(r"Sue (\d+): (\w+): (\d+), (\w+): (\d+), (\w+): (\d+)").unwrap();
 
-    let mut aunts: HashMap<u32, HashMap<String, u32>> = HashMap::new();
+    let mut aunts: FxHashMap<u32, FxHashMap<String, u32>> = FxHashMap::default();
 
     for line in data.lines() {
         let m = re.captures(line).unwrap();

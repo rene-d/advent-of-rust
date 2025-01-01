@@ -1,16 +1,16 @@
 //! [Day 4: Repose Record](https://adventofcode.com/2018/day/4)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
     /// Number of minutes asleep for each minute from 00:00 to 00:59 by guard ID
-    sleeping: HashMap<u32, [u32; 60]>,
+    sleeping: FxHashMap<u32, [u32; 60]>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            sleeping: HashMap::new(),
+            sleeping: FxHashMap::default(),
         }
     }
 

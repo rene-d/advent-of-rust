@@ -1,7 +1,7 @@
 //! [Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)
 
 use regex::Regex;
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 /// Computes the [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) between two points
 const fn manhattan(ax: i64, ay: i64, bx: i64, by: i64) -> i64 {
@@ -10,7 +10,7 @@ const fn manhattan(ax: i64, ay: i64, bx: i64, by: i64) -> i64 {
 
 struct Puzzle {
     sensors: Vec<(i64, i64, i64)>, // list of (x,y,distance from nearest beacon)
-    beacons: HashSet<(i64, i64)>,  // set of beacons
+    beacons: FxHashSet<(i64, i64)>, // set of beacons
     max_d: i64,                    // max distance sensor-beacon
     field_size: i64,               // 20 or 4000000 depends on test or puzzle
 }
@@ -19,7 +19,7 @@ impl Puzzle {
     fn new() -> Self {
         Self {
             sensors: vec![],
-            beacons: HashSet::new(),
+            beacons: FxHashSet::default(),
             max_d: 0,
             field_size: 0,
         }

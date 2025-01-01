@@ -1,6 +1,6 @@
 //! [Day 25: The Halting Problem](https://adventofcode.com/2017/day/25)
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 #[derive(Default)]
 struct Blueprint<'a> {
@@ -21,7 +21,7 @@ impl<'a> Puzzle<'a> {
 
     /// Solve part one.
     fn part1(&self) -> usize {
-        let mut blueprints: HashMap<&str, Blueprint> = HashMap::new();
+        let mut blueprints: FxHashMap<&str, Blueprint> = FxHashMap::default();
         let mut state: &str = "";
         let mut steps: u32 = 0;
 
@@ -57,7 +57,7 @@ impl<'a> Puzzle<'a> {
             }
         }
 
-        let mut tape = HashSet::new();
+        let mut tape = FxHashSet::default();
         let mut cursor = 0;
 
         for _ in 0..steps {

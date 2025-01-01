@@ -4,7 +4,8 @@ use geo::Contains;
 use geo::Polygon;
 use geo_types::{Coord, LineString};
 
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 use itertools::iproduct;
 
@@ -64,7 +65,7 @@ impl Puzzle {
     }
 
     fn maze(&mut self) {
-        let mut visited = HashSet::new();
+        let mut visited = FxHashSet::default();
         let mut queue = VecDeque::new();
 
         queue.push_back(self.start_position);

@@ -1,6 +1,7 @@
 //! [Day 23: A Long Walk](https://adventofcode.com/2023/day/23)
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::collections::VecDeque;
 
 use aoc::{Coord, Grid};
 
@@ -34,7 +35,7 @@ impl Puzzle {
         let mut m = 0;
 
         let mut q = VecDeque::new();
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
 
         q.push_back((0, sx, sy, 0, 0));
         while let Some((c, x, y, px, py)) = q.pop_front() {
@@ -75,11 +76,11 @@ impl Puzzle {
     fn part2(&self) -> i32 {
         // cf. https://stackoverflow.com/questions/16946888/is-it-possible-to-make-a-recursive-closure-in-rust
         struct Dfs<'s> {
-            f: &'s dyn Fn(&Dfs, Coord, &mut HashSet<Coord>) -> i32,
+            f: &'s dyn Fn(&Dfs, Coord, &mut FxHashSet<Coord>) -> i32,
         }
 
         let grid = &self.grid;
-        let mut adj: HashMap<Coord, HashMap<Coord, i32>> = HashMap::new();
+        let mut adj: FxHashMap<Coord, FxHashMap<Coord, i32>> = FxHashMap::default();
 
         for (pos, &c) in grid.iter_cells() {
             if c != FOREST {
@@ -130,7 +131,7 @@ impl Puzzle {
             },
         };
 
-        (dfs.f)(&dfs, start_pos, &mut HashSet::new())
+        (dfs.f)(&dfs, start_pos, &mut FxHashSet::default())
     }
 }
 

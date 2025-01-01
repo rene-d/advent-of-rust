@@ -1,6 +1,6 @@
 //! [Day 3: Crossed Wires](https://adventofcode.com/2019/day/3)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 #[derive(Debug)]
 struct Instr {
@@ -8,8 +8,8 @@ struct Instr {
     distance: u32,
 }
 
-fn draw(instrs: &[Instr]) -> HashSet<(i32, i32)> {
-    let mut line = HashSet::new();
+fn draw(instrs: &[Instr]) -> FxHashSet<(i32, i32)> {
+    let mut line = FxHashSet::default();
 
     let (mut x, mut y) = (0, 0);
 

@@ -1,7 +1,7 @@
 # [Advent of Code](https://adventofcode.com) in Rust 🦀
 
 ![Stars: 500](https://img.shields.io/badge/Stars-500⭐-blue)
-![Rust: 221](https://img.shields.io/badge/Rust-221-cyan?logo=Rust)
+![Rust: 222](https://img.shields.io/badge/Rust-222-cyan?logo=Rust)
 ![Python: 123](https://img.shields.io/badge/Python-123-cyan?logo=Python)
 
 <img src="./scripts/assets/christmas_ferris_2015_2024.png" alt="Christmas Ferris" width="164" />
@@ -51,7 +51,7 @@ Calendar | Solutions | Stars | Rust | Python | 🎄
 [Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/README.md) |  50⭐ |  19 |  23 |    
 [Advent of Code 2019](https://adventofcode.com/2019) | [Solutions](2019/README.md) |  50⭐ |   8 |  23 |   2
 [Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](2018/README.md) |  50⭐ |  25 |   4 |   1
-[Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) |  50⭐ |  21 |  17 |    
+[Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) |  50⭐ |  22 |  17 |    
 [Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](2016/README.md) |  50⭐ |  25 |   0 |    
 [Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/README.md) |  50⭐ |  25 |   5 |    
 

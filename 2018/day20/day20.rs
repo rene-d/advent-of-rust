@@ -1,9 +1,10 @@
 //! [Day 20: A Regular Map](https://adventofcode.com/2018/day/20)
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::collections::VecDeque;
 
 struct Puzzle {
-    edges: HashMap<(i32, i32), HashSet<(i32, i32)>>,
+    edges: FxHashMap<(i32, i32), FxHashSet<(i32, i32)>>,
 
     max_steps: u32,
     thousand_doors: u32,
@@ -12,7 +13,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            edges: HashMap::new(),
+            edges: FxHashMap::default(),
             max_steps: 0,
             thousand_doors: 0,
         }
@@ -58,7 +59,7 @@ impl Puzzle {
 
     fn solve(&mut self) {
         let mut q = VecDeque::new();
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
 
         self.max_steps = 0;
         self.thousand_doors = 0;

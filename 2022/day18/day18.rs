@@ -4,16 +4,17 @@
 #![allow(clippy::cast_possible_truncation)]
 #![allow(clippy::cast_sign_loss)]
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::collections::VecDeque;
 
 struct Puzzle {
-    cubes: HashSet<(i32, i32, i32)>,
+    cubes: FxHashSet<(i32, i32, i32)>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            cubes: HashSet::new(),
+            cubes: FxHashSet::default(),
         }
     }
 
@@ -39,7 +40,7 @@ impl Puzzle {
 
     // Solves part one
     fn part1(&self) -> usize {
-        let mut faces = HashMap::new();
+        let mut faces = FxHashMap::default();
 
         // each 1x1x1 cube has - obviously - six faces: each face is identified by its center
         // to simplify computation, we use pair coordinates for the cubes and odd for the center of faces
@@ -77,7 +78,7 @@ impl Puzzle {
         let z_min = self.cubes.iter().map(|a| a.2).min().unwrap() - 1;
         let z_max = self.cubes.iter().map(|a| a.2).max().unwrap() + 1;
 
-        let mut air = HashSet::new();
+        let mut air = FxHashSet::default();
         let mut q = VecDeque::new();
 
         // first empty cell (but we could start with any of the surrounding cells)
@@ -121,7 +122,7 @@ impl Puzzle {
         }
 
         // same algo as part1 but applied on empty cells
-        let mut faces = HashMap::new();
+        let mut faces = FxHashMap::default();
 
         for (x, y, z) in &air {
             for (dx, dy, dz) in [

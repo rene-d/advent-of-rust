@@ -1,6 +1,7 @@
 //! [Day 20: Race Condition](https://adventofcode.com/2024/day/20)
 
-use std::collections::{BinaryHeap, HashMap};
+use rustc_hash::FxHashMap;
+use std::collections::BinaryHeap;
 
 use aoc::Coord;
 
@@ -12,10 +13,10 @@ struct Puzzle {
     start: Coord,    // start position
     end: Coord,      // end position
     // precomputed
-    from_start: HashMap<Coord, i32>, // distance from start
-    to_end: HashMap<Coord, i32>,     // distance from end
-    boring: i32,                     // length of the track
-    track: Vec<Coord>,               // coords of the track (e.g. not walls)
+    from_start: FxHashMap<Coord, i32>, // distance from start
+    to_end: FxHashMap<Coord, i32>,     // distance from end
+    boring: i32,                       // length of the track
+    track: Vec<Coord>,                 // coords of the track (e.g. not walls)
 }
 
 impl Puzzle {
@@ -24,8 +25,8 @@ impl Puzzle {
             racetrack: Grid::new(),
             start: Coord::default(),
             end: Coord::default(),
-            from_start: HashMap::new(),
-            to_end: HashMap::new(),
+            from_start: FxHashMap::default(),
+            to_end: FxHashMap::default(),
             boring: 0,
             track: Vec::new(),
         }
@@ -56,8 +57,8 @@ impl Puzzle {
             .collect::<Vec<_>>();
     }
 
-    fn compute_distances(&self, start: Coord) -> HashMap<Coord, i32> {
-        let mut costs = HashMap::new();
+    fn compute_distances(&self, start: Coord) -> FxHashMap<Coord, i32> {
+        let mut costs = FxHashMap::default();
         let mut heap = BinaryHeap::new();
 
         costs.insert(start, 0);

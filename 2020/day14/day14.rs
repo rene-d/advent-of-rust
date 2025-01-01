@@ -1,6 +1,6 @@
 //! [Day 14: Docking Data](https://adventofcode.com/2020/day/14)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
     data: String,
@@ -20,7 +20,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u64 {
-        let mut mem = HashMap::new();
+        let mut mem = FxHashMap::default();
         let mut or_mask = 0;
         let mut and_mask = 0;
 
@@ -42,7 +42,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> u64 {
-        let mut mem = HashMap::new();
+        let mut mem = FxHashMap::default();
         let mut and_mask = 0;
         let mut x_mask: &str = "";
 

@@ -1,6 +1,6 @@
 //! [Day 22: Monkey Market](https://adventofcode.com/2024/day/22)
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 const fn next_secret(secret: i64) -> i64 {
     let secret = (secret ^ (secret * 64)) % 16_777_216;
@@ -35,7 +35,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> i64 {
-        let mut bananas = HashMap::new();
+        let mut bananas = FxHashMap::default();
 
         for &initial_secret in &self.initial_secrets {
             let mut prices = Vec::new();
@@ -47,7 +47,7 @@ impl Puzzle {
                 prices.push(secret % 10);
             }
 
-            let mut seen = HashSet::new();
+            let mut seen = FxHashSet::default();
             for p in prices.windows(5) {
                 let sequence = [p[1] - p[0], p[2] - p[1], p[3] - p[2], p[4] - p[3]];
 

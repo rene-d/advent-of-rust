@@ -1,6 +1,6 @@
 //! [Day 21: Dirac Dice](https://adventofcode.com/2021/day/21)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 fn main() {
     let args = aoc::parse_args();
@@ -28,7 +28,7 @@ fn main() {
 
 fn part2(player: u8, computer: u8) -> u64 {
     fn solve(
-        cache: &mut HashMap<(u8, u8, u64, u64), (u64, u64)>,
+        cache: &mut FxHashMap<(u8, u8, u64, u64), (u64, u64)>,
         position1: u8,
         position2: u8,
         score1: u64,
@@ -69,7 +69,7 @@ fn part2(player: u8, computer: u8) -> u64 {
         total
     }
 
-    let mut cache: HashMap<(u8, u8, u64, u64), (u64, u64)> = HashMap::new();
+    let mut cache: FxHashMap<(u8, u8, u64, u64), (u64, u64)> = FxHashMap::default();
 
     let res = solve(&mut cache, player, computer, 0, 0);
 

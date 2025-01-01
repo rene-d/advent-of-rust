@@ -4,7 +4,7 @@
 
 use aoc::Direction;
 use aoc::GridU;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use std::collections::VecDeque;
 
 #[derive(Clone, Debug, Eq, PartialEq, Copy)]
@@ -99,7 +99,7 @@ impl Puzzle {
             .iter()
             .filter(|cart| !cart.destroyed)
             .map(|cart| ((cart.x, cart.y), cart.d))
-            .collect::<HashMap<_, _>>();
+            .collect::<FxHashMap<_, _>>();
 
         for (xy, c) in self.grid.iter() {
             if let Some(d) = carts.get(&xy) {

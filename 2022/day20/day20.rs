@@ -1,6 +1,9 @@
 //! [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20)
 
-// use regex::Regex;
+#![allow(clippy::cast_sign_loss)]
+#![allow(clippy::cast_possible_truncation)]
+#![allow(clippy::cast_possible_wrap)]
+
 use std::collections::VecDeque;
 
 struct Puzzle {

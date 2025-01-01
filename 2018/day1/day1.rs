@@ -1,6 +1,6 @@
 //! [Day 1: Chronal Calibration](https://adventofcode.com/2018/day/1)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle<'a> {
     data: &'a str,
@@ -18,7 +18,7 @@ impl<'a> Puzzle<'a> {
 
     /// Solve part two.
     fn part2(&self) -> i32 {
-        let mut frequencies = HashSet::new();
+        let mut frequencies = FxHashSet::default();
         let mut sum = 0;
         loop {
             for i in self.data.lines() {

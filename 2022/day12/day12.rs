@@ -4,7 +4,8 @@
 #![allow(clippy::cast_possible_truncation)]
 #![allow(clippy::cast_sign_loss)]
 
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 #[derive(Debug)]
 struct Node {
@@ -69,7 +70,7 @@ impl Puzzle {
     /// Breadth-first search
     fn bfs(&self, part: u8) -> usize {
         let mut q: VecDeque<Node> = VecDeque::new();
-        let mut seen: HashSet<(usize, usize)> = HashSet::new();
+        let mut seen: FxHashSet<(usize, usize)> = FxHashSet::default();
 
         // set up the start positions:
         // 'S' if part 1

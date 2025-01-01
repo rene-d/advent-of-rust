@@ -1,9 +1,9 @@
 //! [Day 18: Many-Worlds Interpretation](https://adventofcode.com/2019/day/18)
 
-use std::collections::{HashSet, VecDeque};
-
 use day18::mazette::Dijkstra;
 use day18::multirobot::Multirobot;
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 struct Puzzle {
     maze: aoc::GridU<u8>,
@@ -37,7 +37,7 @@ impl Puzzle {
         // bfs
 
         let mut q = VecDeque::new();
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
 
         q.push_back((entrance, 0, 0));
         while let Some((pos, mut keys, steps)) = q.pop_front() {

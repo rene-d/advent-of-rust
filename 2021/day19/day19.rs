@@ -1,8 +1,8 @@
 //! [Day 19: Beacon Scanner](https://adventofcode.com/2021/day/19)
 
+use rustc_hash::FxHashMap;
+use rustc_hash::FxHashSet;
 use scan_fmt::scan_fmt;
-use std::collections::HashMap;
-use std::collections::HashSet;
 use std::fmt;
 
 #[derive(Hash, Eq, PartialEq, Clone)]
@@ -42,7 +42,7 @@ fn main() {
 
 fn solve(scanners: &[Vec<Point>]) {
     // the list of different beacons
-    let mut beacons: HashSet<Point> = HashSet::new();
+    let mut beacons: FxHashSet<Point> = FxHashSet::default();
     for p in &scanners[0] {
         // add beacons from scanner 0
         beacons.insert(p.clone());
@@ -52,7 +52,7 @@ fn solve(scanners: &[Vec<Point>]) {
     let mut scanner_coords = vec![Point { x: 0, y: 0, z: 0 }; scanners.len()];
 
     // pending scanner analysis
-    let mut pending: HashSet<usize> = HashSet::new();
+    let mut pending: FxHashSet<usize> = FxHashSet::default();
     for i in 1..scanners.len() {
         // add beacons from all other scanners
         pending.insert(i);
@@ -90,7 +90,7 @@ fn solve(scanners: &[Vec<Point>]) {
             for rotation in 0..24 {
                 let b_scan = scanner_rotated_list[*scanner_id][rotation].clone();
 
-                let mut match_points: HashMap<Point, i32> = HashMap::new();
+                let mut match_points: FxHashMap<Point, i32> = FxHashMap::default();
 
                 for bi in b_scan.iter().take(scanners[*scanner_id].len()) {
                     for gi in &g_scan {

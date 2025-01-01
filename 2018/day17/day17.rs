@@ -1,7 +1,7 @@
 //! [Day 17: Reservoir Research](https://adventofcode.com/2018/day/17)
 
 use nom::{bytes::complete::tag, character::complete::digit1, combinator::map_res, IResult};
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 const CLAY: u8 = 1;
 const SETTLE: u8 = 2;
@@ -60,7 +60,7 @@ fn y_xx(input: &str) -> IResult<&str, (u32, u32, u32)> {
 }
 
 struct Puzzle {
-    grid: HashMap<Point, u8>,
+    grid: FxHashMap<Point, u8>,
     ymin: u32,
     ymax: u32,
 }
@@ -68,7 +68,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            grid: HashMap::new(),
+            grid: FxHashMap::default(),
             ymin: 0,
             ymax: 0,
         }

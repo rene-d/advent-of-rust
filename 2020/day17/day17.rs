@@ -1,6 +1,6 @@
 //! [Day 17: Conway Cubes](https://adventofcode.com/2020/day/17)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 #[derive(Eq, PartialEq, Hash, Clone)]
 struct Cube {
@@ -55,9 +55,9 @@ impl Cube {
         })
     }
 
-    fn cycle(cubes: &HashSet<Self>) -> HashSet<Self> {
-        let mut next_cubes = HashSet::new();
-        let mut tested = HashSet::new();
+    fn cycle(cubes: &FxHashSet<Self>) -> FxHashSet<Self> {
+        let mut next_cubes = FxHashSet::default();
+        let mut tested = FxHashSet::default();
 
         for cube in cubes {
             let mut actives = 0;
@@ -86,13 +86,13 @@ impl Cube {
 }
 
 struct Puzzle {
-    cubes: HashSet<Cube>,
+    cubes: FxHashSet<Cube>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            cubes: HashSet::new(),
+            cubes: FxHashSet::default(),
         }
     }
 

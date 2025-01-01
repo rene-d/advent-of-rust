@@ -2,7 +2,8 @@
 
 #![allow(dead_code)]
 
-use std::{collections::HashMap, ops::Index};
+use rustc_hash::FxHashMap;
+use std::ops::Index;
 
 const HALLS: [usize; 7] = [0, 1, 3, 5, 7, 9, 10];
 const ROOMS: [usize; 4] = [2, 4, 6, 8];
@@ -137,7 +138,7 @@ impl std::fmt::Display for Burrow {
 struct Puzzle {
     rooms: Vec<Vec<u8>>,
     target: Burrow,
-    seen: HashMap<Burrow, usize>,
+    seen: FxHashMap<Burrow, usize>,
 }
 
 fn movements(hi: usize, ri: usize) -> std::ops::Range<usize> {
@@ -152,7 +153,7 @@ impl Puzzle {
         Puzzle {
             rooms: vec![],
             target: Burrow::new(),
-            seen: HashMap::new(),
+            seen: FxHashMap::default(),
         }
     }
 

@@ -1,7 +1,7 @@
 //! [Day 7: Some Assembly Required](https://adventofcode.com/2015/day/7)
 
 use regex::Regex;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 /// main function
 fn main() {
@@ -12,7 +12,7 @@ fn main() {
         .map(std::string::ToString::to_string)
         .collect::<Vec<String>>();
 
-    let mut opcodes: HashMap<String, String> = HashMap::new();
+    let mut opcodes: FxHashMap<String, String> = FxHashMap::default();
     let re_opcode = Regex::new(r"^(.+) \-> (\w+)$").unwrap();
     for line in &data {
         if let Some(op) = re_opcode.captures(line) {
@@ -31,8 +31,8 @@ fn main() {
 }
 
 fn run(
-    opcodes: &HashMap<String, String>,
-    cache: &mut HashMap<String, u16>,
+    opcodes: &FxHashMap<String, String>,
+    cache: &mut FxHashMap<String, u16>,
     reg: &str,
     level: u32,
 ) -> u16 {
@@ -114,8 +114,8 @@ fn run(
     }
 }
 
-fn wires(opcodes: &HashMap<String, String>, wire: &str) -> u16 {
-    let mut values: HashMap<String, u16> = HashMap::new();
+fn wires(opcodes: &FxHashMap<String, String>, wire: &str) -> u16 {
+    let mut values: FxHashMap<String, u16> = FxHashMap::default();
 
     run(opcodes, &mut values, wire, 0)
 }

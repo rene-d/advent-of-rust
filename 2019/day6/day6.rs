@@ -1,17 +1,17 @@
 //! [Day 6: Universal Orbit Map](https://adventofcode.com/2019/day/6)
 
-// use std::collections::{HashMap,HashSet};
+// use std::collections::{FxHashMap,FxHashSet};
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
-    orbits: HashMap<String, String>,
+    orbits: FxHashMap<String, String>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            orbits: HashMap::new(),
+            orbits: FxHashMap::default(),
         }
     }
 

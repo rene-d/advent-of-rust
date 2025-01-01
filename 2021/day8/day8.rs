@@ -1,7 +1,7 @@
 //! [Day 8: Seven Segment Search](https://adventofcode.com/2021/day/8)
 
-use std::collections::HashMap;
-use std::collections::HashSet;
+use rustc_hash::FxHashMap;
+use rustc_hash::FxHashSet;
 
 /// main function
 fn main() {
@@ -34,7 +34,7 @@ fn part2(data: &[String]) {
         let notes = notes1.split_whitespace().collect::<Vec<&str>>();
         let code = code1.split_whitespace().collect::<Vec<&str>>();
 
-        let mut d: HashMap<usize, HashSet<String>> = HashMap::new();
+        let mut d: FxHashMap<usize, FxHashSet<String>> = FxHashMap::default();
 
         for c in notes {
             let mut s: Vec<char> = c.chars().collect();
@@ -43,7 +43,7 @@ fn part2(data: &[String]) {
             d.entry(c.len()).or_default().insert(s_sorted);
         }
 
-        let mut map: HashMap<String, u8> = HashMap::new();
+        let mut map: FxHashMap<String, u8> = FxHashMap::default();
 
         let mut zero: &str = "";
         let one = d.get(&2).unwrap().iter().next().unwrap(); // the only digit with the 2 segments

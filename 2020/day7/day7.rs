@@ -1,17 +1,17 @@
 //! [Day 7: Handy Haversacks](https://adventofcode.com/2020/day/7)
 
 use regex::Regex;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
     // data: String,
-    bags: HashMap<String, HashMap<String, u32>>,
+    bags: FxHashMap<String, FxHashMap<String, u32>>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            bags: HashMap::new(),
+            bags: FxHashMap::default(),
         }
     }
 
@@ -26,7 +26,7 @@ impl Puzzle {
 
             let contain = contain.strip_suffix('.').unwrap();
 
-            let mut contained = HashMap::new();
+            let mut contained = FxHashMap::default();
 
             for s in contain.split(',') {
                 if s == "no other bags" {

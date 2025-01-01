@@ -13,7 +13,7 @@
 // }
 //
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 #[derive(Eq, PartialEq, Hash, Clone, Debug)]
 enum Role {
@@ -58,11 +58,11 @@ struct Gate {
     r: String,     // output wire
 }
 
-fn is_role(set: &HashSet<Role>, f: &Role) -> bool {
+fn is_role(set: &FxHashSet<Role>, f: &Role) -> bool {
     set.len() == 1 && (set.iter().next().unwrap() == f)
 }
 
-fn is_roles(set: &HashSet<Role>, f1: &Role, f2: &Role) -> bool {
+fn is_roles(set: &FxHashSet<Role>, f1: &Role, f2: &Role) -> bool {
     if set.len() != 2 {
         return false;
     }
@@ -73,14 +73,14 @@ fn is_roles(set: &HashSet<Role>, f1: &Role, f2: &Role) -> bool {
 
 struct Puzzle {
     // data: String,
-    wires: HashMap<String, u8>,
+    wires: FxHashMap<String, u8>,
     gates: Vec<Gate>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            wires: HashMap::new(),
+            wires: FxHashMap::default(),
             gates: Vec::new(),
         }
     }
@@ -140,8 +140,8 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> String {
-        let mut input_types: HashMap<&str, HashSet<Role>> = HashMap::new();
-        let mut result_types: HashMap<&str, HashSet<Role>> = HashMap::new();
+        let mut input_types: FxHashMap<&str, FxHashSet<Role>> = FxHashMap::default();
+        let mut result_types: FxHashMap<&str, FxHashSet<Role>> = FxHashMap::default();
 
         // analyse the role of each gate
 

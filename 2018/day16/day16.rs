@@ -1,7 +1,7 @@
 //! [Day 16: Chronal Classification](https://adventofcode.com/2018/day/16)
 
 use itertools::Itertools;
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 const OPCODES: [&str; 16] = [
     "addi", "addr", "bani", "banr", "bori", "borr", "eqir", "eqri", "eqrr", "gtir", "gtri", "gtrr",
@@ -52,7 +52,7 @@ impl Puzzle {
         let (samples, program) = data.split_once("\n\n\n\n").unwrap();
 
         // the mapping between opcode numebrs and labels
-        let mut mapping: HashMap<u32, HashSet<&str>> = HashMap::new();
+        let mut mapping: FxHashMap<u32, FxHashSet<&str>> = FxHashMap::default();
 
         // parse the CPU monitoring
         let parse_line = |line: &str, prefix: &str| -> Vec<u32> {
@@ -98,7 +98,7 @@ impl Puzzle {
         }
 
         // resolve the mapping
-        let mut opcodes = HashMap::new();
+        let mut opcodes = FxHashMap::default();
 
         while !mapping.is_empty() {
             // find the opcode with one label exactly (or panic, but puzzle inputs are built to prevent this)

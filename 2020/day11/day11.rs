@@ -1,6 +1,6 @@
 //! [Day 11: Seating System](https://adventofcode.com/2020/day/11)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 const EMPTY: char = 'L';
 const OCCUPIED: char = '#';
@@ -17,13 +17,13 @@ const NEIGHBORS: &[(i32, i32)] = &[
 ];
 
 struct Puzzle {
-    seats: HashMap<(i32, i32), char>,
+    seats: FxHashMap<(i32, i32), char>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            seats: HashMap::new(),
+            seats: FxHashMap::default(),
         }
     }
 
@@ -43,7 +43,7 @@ impl Puzzle {
 
         loop {
             let mut change = false;
-            let mut new_seats = HashMap::<(i32, i32), char>::new();
+            let mut new_seats = FxHashMap::<(i32, i32), char>::default();
 
             for ((x, y), seat) in &seats {
                 let mut occupied = 0;

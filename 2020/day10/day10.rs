@@ -1,6 +1,6 @@
 //! [Day 10: Adapter Array](https://adventofcode.com/2020/day/10)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
     adapters: Vec<i64>,
@@ -23,7 +23,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        let mut diffs: HashMap<i64, u32> = HashMap::new();
+        let mut diffs: FxHashMap<i64, u32> = FxHashMap::default();
 
         for w in self.adapters.windows(2) {
             let d = w[1] - w[0];

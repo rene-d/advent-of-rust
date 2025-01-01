@@ -1,6 +1,6 @@
 //! [Day 18: Settlers of The North Pole](https://adventofcode.com/2018/day/18)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 const OPEN_ACRE: u8 = 0;
 const TREE: u8 = 1;
@@ -125,7 +125,7 @@ impl Puzzle {
         let mut area = self.area.clone();
 
         let mut values = vec![];
-        let mut seen = HashMap::new();
+        let mut seen = FxHashMap::default();
 
         for i in 0.. {
             values.push(value(&area));

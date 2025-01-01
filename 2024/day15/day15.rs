@@ -1,6 +1,7 @@
 //! [Day 15: Warehouse Woes](https://adventofcode.com/2024/day/15)
 
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 use aoc::Coord;
 
@@ -57,7 +58,7 @@ fn init_second_warehouse(input: &str) -> (Grid, Coord) {
 }
 
 fn move_boxes(grid: &mut Grid, robot: &mut Coord, d: Coord) {
-    let mut seen = HashSet::new();
+    let mut seen = FxHashSet::default();
 
     let mut queue = VecDeque::new();
     queue.push_back(*robot);
@@ -87,7 +88,7 @@ fn move_boxes(grid: &mut Grid, robot: &mut Coord, d: Coord) {
     }
 
     while !seen.is_empty() {
-        let mut seen_new = HashSet::new();
+        let mut seen_new = FxHashSet::default();
 
         for &pos in &seen {
             let new_pos = pos + d;

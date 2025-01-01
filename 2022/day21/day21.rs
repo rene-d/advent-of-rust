@@ -1,7 +1,9 @@
 //! [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)
 
+#![allow(clippy::option_if_let_else)]
+
 use num::Rational64;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 use std::ops;
 
 enum Job {
@@ -17,13 +19,13 @@ struct Affine {
 }
 
 struct Puzzle {
-    monkeys: HashMap<String, Job>,
+    monkeys: FxHashMap<String, Job>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            monkeys: HashMap::new(),
+            monkeys: FxHashMap::default(),
         }
     }
 

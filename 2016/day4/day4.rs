@@ -2,7 +2,8 @@
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::{collections::HashMap, convert::TryFrom};
+use rustc_hash::FxHashMap;
+use std::convert::TryFrom;
 
 lazy_static! {
     /// Regex that matches a line of input
@@ -76,7 +77,7 @@ fn extract(line: &str) -> (String, String, u32) {
 
 /// ``is_real_room`` checks if the room is real by comparing the checksum.
 fn is_real_room(name: &str, checksum: &str) -> bool {
-    let mut freqs = HashMap::<char, i32>::new();
+    let mut freqs = FxHashMap::<char, i32>::default();
 
     for c in name.chars() {
         if c.is_ascii_lowercase() {

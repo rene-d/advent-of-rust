@@ -4,7 +4,8 @@
 #![allow(clippy::cast_possible_wrap)]
 
 use itertools::Itertools;
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 struct Puzzle {
     grid: aoc::Grid<char>,
@@ -37,7 +38,7 @@ impl Puzzle {
         for &start in &points {
             let from = self.grid[start].to_digit(10).unwrap();
 
-            let mut seen = HashSet::new();
+            let mut seen = FxHashSet::default();
             let mut q = VecDeque::new();
             q.push_back((start, 0u32));
 

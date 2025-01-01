@@ -1,6 +1,6 @@
 //! [Day 6: Memory Reallocation](https://adventofcode.com/2017/day/6)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
     part1: u32,
@@ -16,7 +16,7 @@ impl Puzzle {
             .collect();
         let size = u32::try_from(banks.len()).unwrap();
 
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
         let mut iterations = 0;
 
         let mut part1 = 0;

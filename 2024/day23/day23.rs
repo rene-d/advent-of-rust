@@ -1,14 +1,14 @@
 //! [Day 23: LAN Party](https://adventofcode.com/2024/day/23)
 
 use petgraph::graph::{NodeIndex, UnGraph};
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 // Bron-Kerbosch recursive algorithm to find cliques
 fn bron_kerbosch(
     graph: &UnGraph<(), ()>,
-    r: &HashSet<NodeIndex>,
-    p: &mut HashSet<NodeIndex>,
-    x: &mut HashSet<NodeIndex>,
+    r: &FxHashSet<NodeIndex>,
+    p: &mut FxHashSet<NodeIndex>,
+    x: &mut FxHashSet<NodeIndex>,
     cliques: &mut Vec<Vec<NodeIndex>>,
 ) {
     if p.is_empty() && x.is_empty() {
@@ -21,9 +21,9 @@ fn bron_kerbosch(
         let mut r_new = r.clone();
         r_new.insert(v);
 
-        let neighbors: HashSet<_> = graph.neighbors(v).collect();
-        let mut p_new: HashSet<NodeIndex> = p.intersection(&neighbors).copied().collect();
-        let mut x_new: HashSet<NodeIndex> = x.intersection(&neighbors).copied().collect();
+        let neighbors: FxHashSet<_> = graph.neighbors(v).collect();
+        let mut p_new: FxHashSet<NodeIndex> = p.intersection(&neighbors).copied().collect();
+        let mut x_new: FxHashSet<NodeIndex> = x.intersection(&neighbors).copied().collect();
 
         bron_kerbosch(graph, &r_new, &mut p_new, &mut x_new, cliques);
 
@@ -54,8 +54,8 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> usize {
-        let mut graph: HashMap<String, HashSet<String>> = HashMap::new();
-        let mut triangles: HashSet<[&String; 3]> = HashSet::new();
+        let mut graph: FxHashMap<String, FxHashSet<String>> = FxHashMap::default();
+        let mut triangles: FxHashSet<[&String; 3]> = FxHashSet::default();
 
         for (n1, n2) in &self.connections {
             graph
@@ -92,7 +92,7 @@ impl Puzzle {
     fn part2(&self) -> String {
         let mut graph = UnGraph::<(), ()>::new_undirected();
 
-        let mut nodes = HashMap::new();
+        let mut nodes = FxHashMap::default();
 
         for (n1, n2) in &self.connections {
             let i1 = *nodes
@@ -104,16 +104,16 @@ impl Puzzle {
             graph.add_edge(i1, i2, ());
         }
 
-        let mut node_names: HashMap<&NodeIndex, &str> = HashMap::new();
+        let mut node_names: FxHashMap<&NodeIndex, &str> = FxHashMap::default();
         for (k, v) in &nodes {
             node_names.insert(v, k);
         }
 
         // find the largest clique
         let mut cliques = Vec::new();
-        let r = HashSet::new();
-        let mut p: HashSet<NodeIndex> = graph.node_indices().collect();
-        let mut x = HashSet::new();
+        let r = FxHashSet::default();
+        let mut p: FxHashSet<NodeIndex> = graph.node_indices().collect();
+        let mut x = FxHashSet::default();
 
         bron_kerbosch(&graph, &r, &mut p, &mut x, &mut cliques);
 

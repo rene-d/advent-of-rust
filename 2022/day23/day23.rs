@@ -4,17 +4,17 @@
 #![allow(clippy::cast_possible_truncation)]
 #![allow(clippy::cast_sign_loss)]
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 struct Puzzle {
-    elves: HashSet<(i32, i32)>,
+    elves: FxHashSet<(i32, i32)>,
     round: usize,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            elves: HashSet::new(),
+            elves: FxHashSet::default(),
             round: 0,
         }
     }
@@ -90,7 +90,7 @@ impl Puzzle {
     }
 
     fn move_elves(&mut self) -> bool {
-        let mut counter = HashMap::new();
+        let mut counter = FxHashMap::default();
         let mut proposed_moves = Vec::new();
 
         for (x, y) in &self.elves {

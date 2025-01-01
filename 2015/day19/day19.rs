@@ -1,6 +1,6 @@
 //! [Day 19: Medicine for Rudolph](https://adventofcode.com/2015/day/19)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
     replacements: Vec<(String, String)>,
@@ -44,7 +44,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> usize {
-        let mut molecules = HashSet::new();
+        let mut molecules = FxHashSet::default();
 
         for (from, to) in &self.replacements {
             for s in Self::replacements(&self.medicine_molecule, from, to) {

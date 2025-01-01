@@ -1,6 +1,7 @@
 //! [Day 16: Reindeer Maze](https://adventofcode.com/2024/day/16)
 
-use std::collections::{BinaryHeap, HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
+use std::collections::BinaryHeap;
 
 use aoc::Coord;
 
@@ -80,7 +81,7 @@ impl Eq for Cost2 {}
 struct Puzzle {
     start: Coord,
     end: Coord,
-    maze: HashSet<Coord>,
+    maze: FxHashSet<Coord>,
     size: Coord,
 }
 
@@ -89,7 +90,7 @@ impl Puzzle {
         Self {
             start: ZERO,
             end: ZERO,
-            maze: HashSet::new(),
+            maze: FxHashSet::default(),
             size: ZERO,
         }
     }
@@ -188,7 +189,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
         let mut heap = BinaryHeap::new();
 
         heap.push(Cost1::new(0, self.start, EAST));
@@ -219,8 +220,8 @@ impl Puzzle {
     /// Solve part two.
     fn part2(&self) -> usize {
         let mut heap = BinaryHeap::new();
-        let mut costs = HashMap::new();
-        let mut best_path_tiles: HashSet<Coord> = HashSet::new();
+        let mut costs = FxHashMap::default();
+        let mut best_path_tiles: FxHashSet<Coord> = FxHashSet::default();
 
         let mut best_cost = u32::MAX;
 

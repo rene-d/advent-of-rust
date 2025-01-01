@@ -1,6 +1,6 @@
 //! [Day 1: No Time for a Taxicab](https://adventofcode.com/2016/day/1)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
@@ -10,7 +10,7 @@ fn main() {
     let mut y = 0_i32;
     let mut angle = 0;
 
-    let mut visited: HashSet<(i32, i32)> = HashSet::new();
+    let mut visited: FxHashSet<(i32, i32)> = FxHashSet::default();
     let mut twice = false;
     let mut part2 = 0;
 

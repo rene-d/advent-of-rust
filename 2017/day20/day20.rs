@@ -1,6 +1,6 @@
 //! [Day 20: Particle Swarm](https://adventofcode.com/2017/day/20)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 use regex::Regex;
 
@@ -74,7 +74,7 @@ impl Puzzle {
         let mut particles = self.particles.clone();
 
         for t in 0..1000 {
-            let mut collisions: HashMap<(i64, i64, i64), Vec<usize>> = HashMap::new();
+            let mut collisions: FxHashMap<(i64, i64, i64), Vec<usize>> = FxHashMap::default();
 
             for (i, p) in particles.iter().enumerate() {
                 let x = p.px + p.vx * t + p.ax * t * (t + 1) / 2;

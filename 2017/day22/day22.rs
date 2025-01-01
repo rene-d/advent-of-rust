@@ -1,6 +1,6 @@
 //! [Day 22: Sporifica Virus](https://adventofcode.com/2017/day/22)
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 const MOVES: &[(i32, i32)] = &[
     (0, -1), // up
@@ -19,7 +19,7 @@ enum State {
 }
 
 struct Puzzle {
-    infected: HashSet<(i32, i32)>,
+    infected: FxHashSet<(i32, i32)>,
     nx: i32, // size of the map
     ny: i32,
 }
@@ -27,7 +27,7 @@ struct Puzzle {
 impl Puzzle {
     /// Initialize from the puzzle input.
     fn new(data: &str) -> Self {
-        let mut infected = HashSet::new();
+        let mut infected = FxHashSet::default();
         let mut nx = 0;
         let mut ny = 0;
 
@@ -79,7 +79,7 @@ impl Puzzle {
             .iter()
             .copied()
             .map(|(x, y)| ((x, y), State::Infected))
-            .collect::<HashMap<(i32, i32), State>>();
+            .collect::<FxHashMap<(i32, i32), State>>();
 
         let mut x = self.nx / 2; // middle of the map
         let mut y = self.ny / 2;

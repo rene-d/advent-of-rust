@@ -1,7 +1,8 @@
 //! [Day 17: Clumsy Crucible](https://adventofcode.com/2023/day/17)
 
+use rustc_hash::FxHashSet;
 use std::cmp::Ordering;
-use std::collections::{BinaryHeap, HashSet};
+use std::collections::BinaryHeap;
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash)]
 enum Direction {
@@ -92,7 +93,7 @@ impl Puzzle {
 
     fn dijkstra(&self, ultra_crucibles: bool) -> u32 {
         let mut heap = BinaryHeap::new();
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
         let mut min_heat_loss = u32::MAX;
 
         heap.push(State {

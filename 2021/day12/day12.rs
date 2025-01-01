@@ -1,10 +1,10 @@
 //! [Day 12: Passage Pathing](https://adventofcode.com/2021/day/12)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 fn compute_paths(data: &[&str], small_twice: bool) -> u32 {
     // Map containing each cave and its neighbors as a list
-    let mut map: HashMap<String, Vec<String>> = HashMap::new();
+    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
 
     // Fill the map with caves
     for entry in data {

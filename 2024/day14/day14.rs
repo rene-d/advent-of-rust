@@ -1,7 +1,7 @@
 //! [Day 14: Restroom Redoubt](https://adventofcode.com/2024/day/14)
 
 use regex::Regex;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Robot {
     px: i32,
@@ -51,7 +51,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        let mut quadrants = HashMap::new();
+        let mut quadrants = FxHashMap::default();
 
         for robot in &self.robots {
             let px = (robot.px + robot.vx * 100).rem_euclid(self.width);
@@ -74,7 +74,7 @@ impl Puzzle {
         // when no robot is in the same place
 
         'outer: for seconds in 0..100_000 {
-            let mut grid: HashMap<(i32, i32), u32> = HashMap::new();
+            let mut grid: FxHashMap<(i32, i32), u32> = FxHashMap::default();
 
             for robot in &self.robots {
                 let px = (robot.px + robot.vx * seconds).rem_euclid(self.width);

@@ -1,7 +1,7 @@
 //! [Day 17: No Such Thing as Too Much](https://adventofcode.com/2015/day/17)
 
 use permutator::LargeCombinationIterator;
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 /// main function
 fn main() {
@@ -16,7 +16,7 @@ fn main() {
         .collect::<Vec<u32>>();
 
     let mut part1 = 0;
-    let mut part2: HashMap<usize, usize> = HashMap::new();
+    let mut part2: FxHashMap<usize, usize> = FxHashMap::default();
 
     for i in 1..=values.len() {
         // try all the combinations with i containers

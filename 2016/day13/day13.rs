@@ -1,6 +1,7 @@
 //! [Day 13: A Maze of Twisty Little Cubicles](https://adventofcode.com/2016/day/13)
 
-use std::collections::{HashSet, VecDeque};
+use rustc_hash::FxHashSet;
+use std::collections::VecDeque;
 
 const fn is_wall(x: u32, y: u32, designer_number: u32) -> bool {
     let v = x * x + 3 * x + 2 * x * y + y + y * y + designer_number;
@@ -49,7 +50,7 @@ impl Direction {
 }
 
 fn bfs(designer_number: u32, start: (u32, u32), end: (u32, u32), max_moves: usize) -> usize {
-    let mut seen = HashSet::new();
+    let mut seen = FxHashSet::default();
     let mut q = VecDeque::new();
 
     q.push_front((start, 0));

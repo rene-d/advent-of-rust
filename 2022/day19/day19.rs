@@ -3,7 +3,7 @@
 #![allow(clippy::too_many_lines)]
 
 use regex::Regex;
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 #[derive(Hash, PartialEq, Eq, Clone, Copy, Debug)]
 struct State {
@@ -51,7 +51,7 @@ impl Blueprint {
         let mut max_geode = 0;
 
         let mut q = Vec::new();
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
 
         let max_ore = *[
             self.ore_cost_in_ore,

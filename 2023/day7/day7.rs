@@ -1,6 +1,6 @@
 //! [Day 7: Camel Cards](https://adventofcode.com/2023/day/7)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 #[derive(Debug, Clone)]
 struct Camel {
@@ -31,7 +31,7 @@ impl Puzzle {
 
     /// Compute the rank of the hand.
     fn rank(hand: &str) -> usize {
-        let hs = hand.chars().fold(HashMap::new(), |mut acc, c| {
+        let hs = hand.chars().fold(FxHashMap::default(), |mut acc, c| {
             *acc.entry(c).or_insert(0) += 1;
             acc
         });

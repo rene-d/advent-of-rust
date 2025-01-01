@@ -1,9 +1,9 @@
 //! [Day 22: Reactor Reboot](https://adventofcode.com/2021/day/22)
 
 use regex::Regex;
+use rustc_hash::FxHashSet;
 use std::cmp::max;
 use std::cmp::min;
-use std::collections::HashSet;
 
 struct Cube {
     x1: i64,
@@ -106,7 +106,7 @@ fn part1(data: &[String]) -> usize {
         Regex::new(r"^(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)$")
             .unwrap();
 
-    let mut cubes_on: HashSet<(i32, i32, i32)> = HashSet::new();
+    let mut cubes_on: FxHashSet<(i32, i32, i32)> = FxHashSet::default();
 
     for line in data {
         let cube = re.captures(line).unwrap();

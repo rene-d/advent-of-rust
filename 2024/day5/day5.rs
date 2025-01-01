@@ -1,16 +1,16 @@
 //! [Day 5: Print Queue](https://adventofcode.com/2024/day/5)
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 struct Puzzle {
-    ordering_rules: HashMap<i32, HashSet<i32>>,
+    ordering_rules: FxHashMap<i32, FxHashSet<i32>>,
     page_updates: Vec<Vec<i32>>,
 }
 
 impl Puzzle {
     fn new() -> Self {
         Self {
-            ordering_rules: HashMap::new(),
+            ordering_rules: FxHashMap::default(),
             page_updates: Vec::new(),
         }
     }
@@ -45,7 +45,7 @@ impl Puzzle {
 
             for (i, page) in pu.iter().enumerate() {
                 if let Some(or) = self.ordering_rules.get(page) {
-                    let hs: HashSet<i32> = pu.iter().copied().take(i).collect();
+                    let hs: FxHashSet<i32> = pu.iter().copied().take(i).collect();
 
                     if hs.intersection(or).count() != 0 {
                         correctly_ordered = false;
@@ -82,7 +82,7 @@ impl Puzzle {
             let page = pu[i];
 
             if let Some(or) = self.ordering_rules.get(&page) {
-                let hs: HashSet<i32> = pu.iter().copied().take(i).collect();
+                let hs: FxHashSet<i32> = pu.iter().copied().take(i).collect();
 
                 if hs.intersection(or).count() != 0 {
                     pu.swap(i - 1, i);

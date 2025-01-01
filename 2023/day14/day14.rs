@@ -1,6 +1,6 @@
 //! [Day 14: Parabolic Reflector Dish](https://adventofcode.com/2023/day/14)
 
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 /// Parabolic Reflector Dish.
 struct Dish {
@@ -181,7 +181,7 @@ impl<'a> Puzzle<'a> {
         let mut dish = Dish::new(self.data);
 
         let cycles = 1_000_000_000;
-        let mut seen = HashMap::new();
+        let mut seen = FxHashMap::default();
 
         for mut i in 1..=cycles {
             dish.north();
@@ -223,7 +223,7 @@ impl<'a> Puzzle<'a> {
     /// Rather useless.
     fn anim(&self) {
         let mut dish = Dish::new(self.data);
-        let mut seen = HashSet::new();
+        let mut seen = FxHashSet::default();
 
         let tempo = std::time::Duration::from_millis(100);
 

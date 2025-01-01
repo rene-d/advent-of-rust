@@ -1,6 +1,6 @@
 //! [Day 9: Rope Bridge](https://adventofcode.com/2022/day/9)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 struct Puzzle {
     moves: Vec<(char, i32)>,
@@ -25,7 +25,7 @@ impl Puzzle {
 
     // Solves part one
     fn part1(&self) -> usize {
-        let mut tails = HashSet::new();
+        let mut tails = FxHashSet::default();
         let mut head = (0, 0);
         let mut tail = (0, 0);
 
@@ -43,7 +43,7 @@ impl Puzzle {
 
     // Solve part two
     fn part2(&self) -> usize {
-        let mut tails = HashSet::new();
+        let mut tails = FxHashSet::default();
         let mut rope = [
             (0, 0),
             (0, 0),

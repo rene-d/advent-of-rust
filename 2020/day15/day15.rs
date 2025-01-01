@@ -1,6 +1,6 @@
 //! [Day 15: Rambunctious Recitation](https://adventofcode.com/2020/day/15)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 struct Puzzle {
     nums: Vec<usize>,
@@ -21,8 +21,8 @@ impl Puzzle {
     }
 
     fn solve(&self, number_spoken: usize) -> usize {
-        let mut last_spoken = HashMap::new();
-        let mut last_last_spoken = HashMap::new();
+        let mut last_spoken = FxHashMap::default();
+        let mut last_last_spoken = FxHashMap::default();
         let mut first_spoken = false;
         let mut last = 0;
         let mut n = 0;

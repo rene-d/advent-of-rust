@@ -1,6 +1,6 @@
 //! [Day 14: Regolith Reservoir](https://adventofcode.com/2022/day/14)
 
-use std::collections::HashSet;
+use rustc_hash::FxHashSet;
 
 #[derive(Eq, Hash, PartialEq, Debug)]
 struct Coord {
@@ -9,7 +9,7 @@ struct Coord {
 }
 
 struct Puzzle {
-    wall: HashSet<Coord>,
+    wall: FxHashSet<Coord>,
     floor: u32,
     sand: usize,
 }
@@ -17,7 +17,7 @@ struct Puzzle {
 impl Puzzle {
     fn new() -> Self {
         Self {
-            wall: HashSet::new(),
+            wall: FxHashSet::default(),
             floor: 0,
             sand: 0,
         }
