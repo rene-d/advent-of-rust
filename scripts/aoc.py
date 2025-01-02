@@ -328,13 +328,13 @@ def aoc_quality(ctx: click.Context):
             pass
 
 
-@aoc.command(name="time", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
+@aoc.command(name="timings", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 @click.pass_context
-def aoc_time(ctx: click.Context):
+def aoc_timings(ctx: click.Context):
     """
     Show or browse elapsed time for each puzzle.
     """
-    ctx.obj.pass_thru("elapsed.py", ctx.args)
+    ctx.obj.pass_thru("timings.py", ctx.args)
 
 
 if __name__ == "__main__":
