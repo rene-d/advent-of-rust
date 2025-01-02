@@ -110,7 +110,14 @@ void read_data(const char *filename, std::vector<Monkey> &monkeys)
 
     while (true)
     {
-        Monkey monkey{.inspections = 0};
+        Monkey monkey{
+            .items = std::list<uint64_t>(),
+            .operation = Operation{.opcode = 0, .param = 0},
+            .divisible_by = 0,
+            .if_true = 0,
+            .if_false = 0,
+            .inspections = 0,
+        };
 
         if (!std::getline(f, line))
             break;
