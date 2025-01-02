@@ -8,11 +8,13 @@ mod gridu;
 pub mod hexslice;
 pub mod knot;
 pub mod ocr;
+mod square;
 
 pub type Coord = coord::Coord;
 pub type Direction = direction::Direction;
 pub type Grid<T> = grid::Grid<T>;
 pub type GridU<T> = gridu::GridU<T>;
+pub type Square<T> = square::Square<T>;
 
 #[must_use]
 pub fn parse_args() -> args::Args {
