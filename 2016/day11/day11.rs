@@ -1,291 +1,221 @@
 //! [Day 11: Radioisotope Thermoelectric Generators](https://adventofcode.com/2016/day/11)
 
-// Nota: very slow implementation
-
-use itertools::Itertools;
-use rustc_hash::FxHashSet;
+use regex::Regex;
+use rustc_hash::{FxHashMap, FxHashSet};
 use std::collections::VecDeque;
 
-const RTG: u8 = 1;
-const CHIP: u8 = 2;
-
-// u32 is a combination of the first 3 characters of the element
-type Element = (u32, u8);
-
-#[derive(Default, Debug, Clone)]
-struct Floor {
-    generator: FxHashSet<Element>,
-    microchip: FxHashSet<Element>,
+// Nota: the state could by 7*2+2=16 bits wide 2 bits for each generator and microchip and 2 for the elevator
+// I don't know if it'd be really faster.
+#[derive(Clone, PartialEq, Eq)]
+struct State {
+    items: Vec<u8>, // generators then microchips current floor
+    elevator: u8,   // elevator current floor
 }
 
-impl Floor {
+impl State {
+    // Same remark: the hash is actually 66 bits wide (9 bytes).
+    // but it's about the same speed if I use a u128 integer as the hash key
+    fn key(&self) -> [u8; 9] {
+        // the hash algorithm is a critical optimization!
+
+        let mut key = [0u8; 9];
+
+        // count generators by floor
+        for x in self.generators() {
+            key[usize::from(*x)] += 1;
+        }
+
+        // count microchips by floor
+        for x in self.microchips() {
+            key[4 + usize::from(*x)] += 1;
+        }
+
+        key[8] = self.elevator;
+        key
+    }
+}
+
+impl State {
+    fn n(&self) -> usize {
+        self.items.len() / 2
+    }
+
+    fn generators(&self) -> &[u8] {
+        &self.items[..self.n()]
+    }
+
+    fn microchips(&self) -> &[u8] {
+        &self.items[self.n()..]
+    }
+
     fn is_valid(&self) -> bool {
-        // if a chip is ever left in the same area
-        for m in &self.microchip {
-            let m = (m.0, RTG);
-            // as another RTG, and it's not connected to its own RTG,
-            if !self.generator.is_empty() && !self.generator.contains(&m) {
-                // the chip will be fried
+        for (generator, chip) in self.generators().iter().zip(self.microchips().iter()) {
+            if chip != generator && self.generators().iter().any(|gen| gen == chip) {
                 return false;
             }
         }
         true
     }
-}
-#[derive(Default, Debug, Clone)]
-struct State {
-    floors: Vec<Floor>,
-    elevator: usize,
-}
 
-impl State {
-    fn key(&self) -> Vec<u32> {
-        let mut s = vec![];
-
-        s.push(u32::try_from(self.elevator).unwrap());
-
-        for i in &self.floors {
-            s.push(u32::MAX);
-            s.extend(i.generator.iter().map(|(e, _)| e).sorted());
-            s.push(u32::MAX);
-            s.extend(i.microchip.iter().map(|(e, _)| e).sorted());
-        }
-
-        // let mut s = format!("{}", self.elevator);
-        // for i in &self.floors {
-        //     s += "|";
-        //     i.generator
-        //         .iter()
-        //         .map(|(e, _)| e)
-        //         .sorted()
-        //         .copied()
-        //         .for_each(|e| s.push_str(format!("{e}").as_str()));
-        //     s += " ";
-        //     i.microchip
-        //         .iter()
-        //         .map(|(e, _)| e)
-        //         .sorted()
-        //         .copied()
-        //         .for_each(|e| s.push_str(format!("{e}").as_str()));
-        // }
-
-        s
+    fn is_solved(&self) -> bool {
+        self.items.iter().all(|floor| floor == &3)
     }
 
-    /*
-
-    fn show(&self) {
-        let mut all = FxHashSet::default();
-        for i in &self.floors {
-            let a: FxHashSet<_> = i.generator.iter().map(|e| e.0).collect();
-            let b: FxHashSet<_> = i.microchip.iter().map(|e| e.0).collect();
-
-            all.extend(a);
-            all.extend(b);
-        }
-
-        for i in (0..4).rev() {
-            print!("F{} ", i + 1);
-            if i == self.elevator {
-                print!(" E ");
-            } else {
-                print!(" . ");
-            }
-
-            let f = &self.floors[i];
-
-            for e in &all {
-                if f.generator.contains(&(*e, RTG)) {
-                    print!(" {}G ", e.to_uppercase());
-                } else {
-                    print!(" .  ");
-                }
-                if f.microchip.contains(&(*e, CHIP)) {
-                    print!(" {}M ", e.to_uppercase());
-                } else {
-                    print!(" .  ");
-                }
-            }
-
-            println!();
-        }
-        println!();
+    fn up(&self, idx: usize) -> Self {
+        let mut new_state = self.clone();
+        new_state.items[idx] += 1;
+        new_state.elevator += 1;
+        new_state
     }
 
-    */
+    fn down(&self, idx: usize) -> Self {
+        let mut new_state = self.clone();
+        new_state.items[idx] -= 1;
+        new_state.elevator -= 1;
+        new_state
+    }
 
-    fn next_state(&self, steps: u32, q: &mut VecDeque<(Self, u32)>) {
-        let current_floor = &self.floors[self.elevator];
+    fn up_two(&self, idx1: usize, idx2: usize) -> Self {
+        let mut new_state = self.clone();
+        new_state.items[idx1] += 1;
+        new_state.items[idx2] += 1;
+        new_state.elevator += 1;
+        new_state
+    }
 
-        let mut floor_items: Vec<_> = current_floor.generator.union(&current_floor.microchip).collect();
-        floor_items.push(&(0, 0)); // empty placeholder to move just one equipment
-
-        let n = floor_items.len();
-        for indices in (0..n).combinations(2) {
-            let a = floor_items[indices[0]];
-            let b = floor_items[indices[1]];
-
-            let mut new_floor = current_floor.clone();
-            new_floor.generator.retain(|e| e != a && e != b);
-            new_floor.microchip.retain(|e| e != a && e != b);
-
-            if !new_floor.is_valid() {
-                continue;
-            }
-
-            let down = self.elevator.saturating_sub(1);
-            let up = (self.elevator + 1).min(self.floors.len() - 1);
-
-            for next_elevator in down..=up {
-                if next_elevator == self.elevator {
-                    continue;
-                }
-
-                //
-                let mut new_state = Self {
-                    floors: self.floors.clone(),
-                    elevator: next_elevator,
-                };
-
-                new_state.floors[self.elevator].clone_from(&new_floor);
-
-                match a.1 {
-                    RTG => new_state.floors[next_elevator].generator.insert(*a),
-                    CHIP => new_state.floors[next_elevator].microchip.insert(*a),
-                    _ => false,
-                };
-                match b.1 {
-                    RTG => new_state.floors[next_elevator].generator.insert(*b),
-                    CHIP => new_state.floors[next_elevator].microchip.insert(*b),
-                    _ => false,
-                };
-
-                if !new_state.floors[next_elevator].is_valid() {
-                    continue;
-                }
-
-                q.push_back((new_state, steps + 1));
-            }
-        }
+    fn down_two(&self, idx1: usize, idx2: usize) -> Self {
+        let mut new_state = self.clone();
+        new_state.items[idx1] -= 1;
+        new_state.items[idx2] -= 1;
+        new_state.elevator -= 1;
+        new_state
     }
 }
 
-fn parse_floor(line: &str) -> Option<(usize, Floor)> {
-    // The [first|second|...] floor contains
-    let line = line.strip_prefix("The ")?;
-    let (nth, line) = line.split_once(" floor contains ")?;
-    let nth = match nth {
-        "first" => 0,
-        "second" => 1,
-        "third" => 2,
-        "fourth" => 3,
-        _ => return None,
-    };
-
-    let line = line.strip_suffix('.')?;
-
-    if line == "nothing relevant" {
-        return Some((nth, Floor::default()));
-    }
-
-    let line = line.replace(", and ", " and ");
-    let line = line.replace(" and ", ", ");
-
-    let mut floor = Floor::default();
-
-    for e in line.split(", ") {
-        let e = e.strip_prefix("a ")?;
-
-        let (element, eqpt) = e.split_once([' ', '-'])?;
-        let element = element.chars().take(3).fold(0, |acc, c| acc * 256 + c as u32);
-
-        match eqpt {
-            "generator" => floor.generator.insert((element, RTG)),
-            "compatible microchip" => floor.microchip.insert((element, CHIP)),
-            _ => panic!("eqpt={eqpt}"),
-        };
-    }
-
-    Some((nth, floor))
-}
-
-fn solve(floors: &[Floor]) -> u32 {
-    let total = floors
-        .iter()
-        .map(|floor| floor.generator.len() + floor.microchip.len())
-        .sum();
-
+fn solve(initial: &State) -> u32 {
     let mut seen = FxHashSet::default();
+    let mut queue = VecDeque::new();
 
-    let mut q: VecDeque<(State, u32)> = VecDeque::new();
+    queue.push_front((initial.clone(), 0));
 
-    let initial = State {
-        floors: floors.to_vec(),
-        elevator: 0,
-    };
+    let n_items = initial.items.len();
 
-    // bfs
-    q.push_back((initial, 0));
-    while let Some((state, steps)) = q.pop_front() {
-        if seen.contains(&state.key()) {
+    while let Some((state, steps)) = queue.pop_back() {
+        let hash = state.key();
+
+        if seen.contains(&hash) {
             continue;
         }
-        seen.insert(state.key());
 
-        // state.show();
+        // seems to be a little faster to hash/lookup than to check if a chip will be fried
+        if !state.is_valid() {
+            continue;
+        }
 
-        if state.floors[3].generator.len() + state.floors[3].microchip.len() == total {
+        if state.is_solved() {
             return steps;
         }
 
-        state.next_state(steps, &mut q);
+        seen.insert(hash);
+
+        let floor = state.elevator;
+
+        for i in 0..n_items {
+            if state.items[i] == floor {
+                if floor < 3 {
+                    queue.push_front((state.up(i), steps + 1));
+                }
+
+                if floor > 0 {
+                    queue.push_front((state.down(i), steps + 1));
+                }
+
+                for j in (i + 1)..n_items {
+                    if state.items[j] == floor {
+                        if floor < 3 {
+                            queue.push_front((state.up_two(i, j), steps + 1));
+                        }
+                        if floor > 0 {
+                            queue.push_front((state.down_two(i, j), steps + 1));
+                        }
+                    }
+                }
+            }
+        }
     }
     0
 }
 
 struct Puzzle {
-    floors: Vec<Floor>,
+    initial: State,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { floors: vec![] }
-    }
+    /// Initialize from the puzzle input.
+    fn new(data: &str) -> Self {
+        let mut generators = Vec::new();
+        let mut microchips = Vec::new();
+        let mut elements = FxHashMap::default();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        for line in data.lines() {
-            if let Some((n, floor)) = parse_floor(line) {
-                self.floors.push(floor);
+        let re = Regex::new(r"a \b(\w+)( generator|\-compatible microchip)").unwrap();
 
-                assert_eq!(n + 1, self.floors.len());
+        for (floor, line) in (0u8..).zip(data.lines()) {
+            for caps in re.captures_iter(line) {
+                if let Some(element) = caps.get(1) {
+                    let element = element.as_str();
+                    let n = elements.len();
+                    let idx = *elements.entry(element).or_insert(n);
+
+                    if let Some(kind) = caps.get(2) {
+                        generators.resize(elements.len(), 0);
+                        microchips.resize(elements.len(), 0);
+
+                        if kind.as_str() == " generator" {
+                            generators[idx] = floor;
+                        } else {
+                            microchips[idx] = floor;
+                        }
+                    }
+                }
             }
+        }
+
+        generators.extend(&microchips);
+
+        Self {
+            initial: State {
+                items: generators,
+                elevator: 0,
+            },
         }
     }
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        solve(&self.floors)
+        solve(&self.initial)
     }
 
     /// Solve part two.
     fn part2(&self) -> u32 {
-        let mut floors = self.floors.clone();
+        let mut new_items = self.initial.clone();
 
-        floors[0].generator.insert((0xffff_e1e4, RTG)); // elerium
-        floors[0].microchip.insert((0xffff_e1e4, CHIP));
+        let m = new_items.n();
 
-        floors[0].generator.insert((0xffff_d111, RTG)); // dilithium
-        floors[0].microchip.insert((0xffff_d111, CHIP));
+        // insert two new microchips
+        new_items.items.insert(m, 0);
+        new_items.items.insert(m, 0);
 
-        solve(&floors)
+        // then insert the two new generators
+        new_items.items.insert(0, 0);
+        new_items.items.insert(0, 0);
+
+        solve(&new_items)
     }
 }
 
 fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
+    let puzzle = Puzzle::new(&args.input);
     println!("{}", puzzle.part1());
     println!("{}", puzzle.part2());
 }
@@ -296,9 +226,9 @@ mod test {
     use super::*;
 
     #[test]
-    fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+    fn part1() {
+        let data = aoc::load_input_data("test.txt");
+        let puzzle = Puzzle::new(&data);
         assert_eq!(puzzle.part1(), 11);
     }
 }
