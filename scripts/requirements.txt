@@ -5,3 +5,6 @@ shapely
 tabulate
 parse
 z3-solver
+
+click
+requests

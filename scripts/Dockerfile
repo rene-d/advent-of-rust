@@ -1,47 +1,55 @@
-FROM debian:bookworm
+FROM debian:sid
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y vim curl wget sudo sqlite3 && \
-    apt-get install -y build-essential cmake gdb python3-full python3-numpy python3-tabulate && \
-    apt-get install -y clang llvm
-
-# dependency for some puzzles
-RUN apt-get install -y z3
-
-
-# seems to be mandatory/useful to compile Python 3.x
-RUN apt-get install -y libssl-dev liblzma-dev libreadline-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libbz2-dev libffi-dev zlib1g-dev
-
-# required to build shapely and numpy, if needed
-RUN apt-get install -y libgeos-dev gfortran libopenblas-dev liblapack-dev
+    apt-get install -y vim curl wget sudo sqlite3 vim && \
+    apt-get install -y build-essential cmake gdb python3-full python3-numpy python3-tabulate python3-click && \
+    apt-get install -y clang llvm && \
+    # seems to be mandatory/useful to compile Python 3.x
+    apt-get install -y libssl-dev liblzma-dev libreadline-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libbz2-dev libffi-dev zlib1g-dev && \
+    # dependency for some puzzles
+    apt-get install -y z3 && \
+    # required to build shapely and numpy, if needed
+    apt-get install -y libgeos-dev gfortran libopenblas-dev liblapack-dev
 
 # Rust
-ENV CARGO_HOME /usr/local/cargo
-ENV RUSTUP_HOME /usr/local/rustup
-ENV PATH "/usr/local/cargo/bin:$PATH"
+ENV CARGO_HOME=/usr/local/cargo
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV PATH="/usr/local/cargo/bin:$PATH"
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     rustup component add rust-src && \
     chmod -R 777 /usr/local/cargo
 
-# PyPy 3.10
-RUN if [ $(uname -m) = aarch64 ] ; then arch=aarch64 ; else arch=linux64 ; fi && \
-    curl -sL https://downloads.python.org/pypy/pypy3.10-v7.3.15-$arch.tar.bz2 | tar -C /opt -xj && \
-    /opt/pypy3.10-*/bin/pypy3 -mensurepip
-
-
-# Python 3.10 → 3.13
+# Python 3.13
 COPY allpython.sh /
-RUN /allpython.sh
+RUN /allpython.sh 3.13.1
 
-# Virtual Environments
-RUN /opt/python/Python-3.10.*/bin/python3.10 -mvenv /venv/py3.10
-RUN /opt/python/Python-3.11.*/bin/python3.11 -mvenv /venv/py3.11
-RUN /opt/python/Python-3.12.*/bin/python3.12 -mvenv /venv/py3.12
-RUN /opt/python/Python-3.13.*/bin/python3.13 -mvenv /venv/py3.13
-RUN /opt/pypy3.10-*/bin/pypy3.10 -mvenv /venv/pypy3.10
-RUN python3 -mvenv /venv/python
+COPY requirements.txt /
+RUN /opt/python/Python-3.13.1/bin/python3.13 -mvenv /venv/python && \
+    /venv/python/bin/pip install -r /requirements.txt
+
+# Golang
+RUN apt-get install -y -qq golang
+
+# Lua
+RUN apt-get install -y -qq lua5.4
+
+# Ruby
+RUN apt-get install -y -qq ruby
+
+# Java
+RUN apt-get install -y -qq default-jdk
+
+# C#
+RUN apt-get install -y -qq mono-mcs
+
+# Swift
+RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq swiftlang
+
+# JavaScript
+RUN curl -fsSL https://bun.sh/install | bash
+
 
 # User environment
 ARG HOST_U=1027
@@ -52,9 +60,4 @@ RUN echo "$HOST_UN ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN echo 'export SHELL=/bin/bash' >> /etc/bash.bashrc
 RUN echo 'alias ll="ls -l --color"' >> /etc/bash.bashrc
 
-
-# WORKDIR /advent-of-rust
-# RUN curl -sfL https://github.com/rene-d/advent-of-rust/tarball/refs/heads/main | tar -xz --strip-components=1
-# RUN ln -s /venv .venv
-# RUN ln -s /data data
-# VOLUME /data
+RUN echo '[ -f /venv/python/bin/activate ] && source /venv/python/bin/activate' >> /etc/bash.bashrc

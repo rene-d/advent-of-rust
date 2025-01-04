@@ -2,6 +2,14 @@
 
 set -euo pipefail
 
+# Requirements:
+#   macOS
+#
+#   Debian
+#       apt-get install -y libssl-dev liblzma-dev libreadline-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libbz2-dev libffi-dev zlib1g-dev
+#   Fedora
+#       dnf install -y openssl-devel libuuid-devel sqlite-devel ncurses-devel bzip2-devel gdbm-devel libffi-devel readline-devel tk-devel
+
 script_dir=$(realpath $(dirname $0))
 
 mkdir -p /opt/python
@@ -18,7 +26,7 @@ i()
     curl -sL $url | tar -C /tmp -xJ
     cd /tmp/Python-$v
     ./configure --prefix=/opt/python/Python-$v --enable-optimizations
-    cat config.log | grep "^py_cv_module_" | grep -Ev "=(yes|n/a)$" | ! grep -q ^
+    ! cat config.log | grep "^py_cv_module_" | grep -Ev "=(yes|n/a)$" | grep -q ^
     make -j$(nproc --ignore=1)
     make altinstall
     # /opt/python/Python-$v/bin/python$m -mensurepip

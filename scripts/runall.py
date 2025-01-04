@@ -16,8 +16,6 @@ from datetime import datetime
 from operator import itemgetter
 from pathlib import Path
 
-# from zlib import crc32
-
 RED = "\033[91m"
 GREEN = "\033[92m"
 BLUE = "\033[94m"
@@ -44,7 +42,7 @@ LANGUAGES = {
     "C": "{year}/build/day{day}_c",
     "C++": "{year}/build/day{day}_cpp",
     "Lua": "{year}/day{day}/day{day}.lua",
-    "Node": "{year}/day{day}/day{day}.js",
+    "JavaScript": "{year}/day{day}/day{day}.js",
     "Ruby": "{year}/day{day}/day{day}.rb",
     "Perl": "{year}/day{day}/day{day}.pl",
     "Bash": "{year}/day{day}/day{day}.sh",
@@ -56,12 +54,16 @@ LANGUAGES = {
 
 INTERPRETERS = {
     "Python": {
-        "Python": ".venv/python/bin/python3",
+        "Python": (".venv/python/bin/python3", "/venv/python/bin/python3", "~/.venv/bin/python3"),
         "PyPy": ".venv/pypy3.10/bin/python3",
         "Py3.10": ".venv/py3.10/bin/python3",
         "Py3.11": ".venv/py3.11/bin/python3",
         "Py3.12": ".venv/py3.12/bin/python3",
         "Py3.13": ".venv/py3.13/bin/python3",
+    },
+    "JavaScript": {
+        "NodeJS": "node",
+        "BunJS": "bun",
     },
 }
 
@@ -179,23 +181,31 @@ def run(
     cmd.append(file.absolute().as_posix())
 
     start = time.time_ns()
-    out = subprocess.run(cmd, stdout=subprocess.PIPE)
-    elapsed = time.time_ns() - start
+    try:
+        env = os.environ
+        env["NO_COLOR"] = "1"
+        out = subprocess.run(cmd, stdout=subprocess.PIPE, env=env)
+        elapsed = time.time_ns() - start
 
-    if out.returncode != 0:
+        if out.returncode != 0:
+            status = "error"
+            answers = ""
+        else:
+            answers = out.stdout.decode().strip().split("\n")
+            nb_answers = len(answers)
+            answers = " ".join(answers)
+
+            status = "unknown"
+            if expected:
+                expected = " ".join(expected.read_text().strip().split("\n"))
+                status = "ok" if answers == expected else "failed"
+            else:
+                status = "unknown" if nb_answers == nb_expected else "failed"
+
+    except OSError:
         status = "error"
         answers = ""
-    else:
-        answers = out.stdout.decode().strip().split("\n")
-        nb_answers = len(answers)
-        answers = " ".join(answers)
-
-        status = "unknown"
-        if expected:
-            expected = " ".join(expected.read_text().strip().split("\n"))
-            status = "ok" if answers == expected else "failed"
-        else:
-            status = "unknown" if nb_answers == nb_expected else "failed"
+        elapsed = 0
 
     result = {"elapsed": elapsed, "status": status, "answers": answers}
 
@@ -477,96 +487,52 @@ def run_day(
 def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Union[str, None]]]:
     languages = {}
     for lang, v in LANGUAGES.items():
+
         if lang in INTERPRETERS:
+
             for lang2, interpreter in INTERPRETERS[lang].items():
+
                 if filter_lang and lang2.casefold() not in filter_lang:
                     continue
 
-                if "/" not in interpreter and "\\" not in interpreter:
-                    interpreter = shutil.which(interpreter)
-                    if not interpreter:
-                        continue
+                def lookup(interpreter: str) -> str:
+                    """Resolve an interpreter."""
+                    if "/" not in interpreter and "\\" not in interpreter:
+                        interpreter = shutil.which(interpreter)
+                        if not interpreter:
+                            return None
 
-                    if lang == "Python":
-                        hexversion = int(
-                            subprocess.check_output([interpreter, "-c", "import sys;print(sys.hexversion)"]).decode()
-                        )
-                        if hexversion < 0x30A0000:  # 3.10.x
-                            continue
+                        if lang == "Python":
+                            hexversion = int(
+                                subprocess.check_output(
+                                    [interpreter, "-c", "import sys;print(sys.hexversion)"]
+                                ).decode()
+                            )
+                            if hexversion < 0x30A0000:  # 3.10.x
+                                return None
 
-                    languages[lang2] = (v, interpreter)
-                else:
-                    interpreter = Path(interpreter).expanduser().absolute()
-                    if interpreter.is_file() and (interpreter.stat().st_mode & os.X_OK) != 0:
-                        languages[lang2] = (v, interpreter.as_posix())
+                        languages[lang2] = (v, interpreter)
                     else:
-                        # print(f"language {lang2} : interpreter {interpreter} not found")
-                        pass
+                        interpreter = Path(interpreter).expanduser().absolute()
+                        if interpreter.is_file() and (interpreter.stat().st_mode & os.X_OK) != 0:
+                            return interpreter.as_posix()
+                        else:
+                            # print(f"language {lang2} : interpreter {interpreter} not found")
+                            return None
+
+                if isinstance(interpreter, str):
+                    interpreter = lookup(interpreter)
+                elif isinstance(interpreter, (tuple, list)):
+                    interpreter = next(filter(None, map(lookup, interpreter)))
+
+                if interpreter:
+                    languages[lang2] = (v, interpreter)
         else:
             if filter_lang and lang.casefold() not in filter_lang:
                 continue
             languages[lang] = (v, None)
 
     return languages
-
-
-def install_venv(interpreter: Path):
-    try:
-        if interpreter.as_posix() == "python3":
-            slug = "python"
-        else:
-            # determine the Python version
-            slug = 'import sys;print(((hasattr(sys, "subversion") and getattr(sys, "subversion")) or ("Py",))[0] + f"{sys.version_info.major}.{sys.version_info.minor}")'
-            slug = subprocess.check_output([interpreter, "-c", slug]).decode().strip()
-
-        venv = f".venv/{slug.lower()}"
-
-        # subprocess.check_call([interpreter, "-mensurepip"])
-        subprocess.check_output([interpreter, "-mvenv", venv])
-        subprocess.check_call(
-            [
-                f"{venv}/bin/python3",
-                "-mpip",
-                "install",
-                "--no-input",
-                "--quiet",
-                "--upgrade",
-                "pip",
-            ]
-        )
-
-        print(f"Virtual environment for {MAGENTA}{interpreter}{RESET} created into: {GREEN}{venv}{RESET}")
-
-        install_requirements(venv)
-
-    except subprocess.CalledProcessError as e:
-        print(e)
-
-
-def install_requirements(venv: Path = None):
-    if venv is None:
-        for venv in Path(".venv").glob("*"):
-            if venv.is_dir() and (venv / "bin" / "python3").is_file():
-                install_requirements(venv)
-    else:
-        try:
-            subprocess.check_call(
-                [
-                    f"{venv}/bin/python3",
-                    "-mpip",
-                    "install",
-                    "--no-input",
-                    "--quiet",
-                    "--upgrade",
-                    "-r",
-                    "scripts/requirements.txt",
-                ]
-            )
-
-            print(f"Requirements installed into virtual environment: {GREEN}{venv}{RESET}")
-
-        except subprocess.CalledProcessError as e:
-            print(e)
 
 
 def consistency(filter_year, filter_day):
@@ -717,29 +683,25 @@ def main():
         filter_day = set(args.n)
 
         # actions
-        if args.venv:
-            return install_venv(args.venv)
-        if args.reqs:
-            return install_requirements()
         if args.consistency:
             return consistency(filter_year, filter_day)
 
-        # resolve interpreters
-        for lang, variants in INTERPRETERS.items():
-            for variant in list(variants.keys()):
-                interpreters = variants[variant]
-
-                if isinstance(interpreters, tuple) or isinstance(interpreters, list):
-                    for prog in interpreters:
-                        prog = shutil.which(prog)
-                        if prog:
-                            variants[variant] = prog
-                            break
-                    else:
-                        variants.pop(variant)
-                else:
-                    if not shutil.which(interpreters):
-                        variants.pop(variant)
+        # WTF ? why I have kept this ? get_languages() seems to do the job
+        # # resolve interpreters
+        # for lang, variants in INTERPRETERS.items():
+        #     for variant in list(variants.keys()):
+        #         interpreters = variants[variant]
+        #         if isinstance(interpreters, tuple) or isinstance(interpreters, list):
+        #             for prog in interpreters:
+        #                 prog = shutil.which(prog)
+        #                 if prog:
+        #                     variants[variant] = prog
+        #                     break
+        #             else:
+        #                 variants.pop(variant)
+        #         else:
+        #             if not shutil.which(interpreters):
+        #                 variants.pop(variant)
 
         # prepare the language filtering
         filter_lang = set(map(str.casefold, args.language or ()))
