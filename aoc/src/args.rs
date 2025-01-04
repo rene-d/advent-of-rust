@@ -1,5 +1,5 @@
 use colored::Colorize;
-use std::{env::args, time::Instant};
+use std::time::Instant;
 
 use crate::load_input_data;
 
@@ -9,42 +9,39 @@ pub struct Args {
     pub verbose: bool,
     elapsed: bool,
     instant: Instant,
+    pub has_option: fn(&str) -> bool,
 }
 
 impl Args {
     #[must_use]
     pub fn parse_args() -> Self {
-        let help = args().any(|a| a == "--help" || a == "-h");
+        let help = std::env::args().any(|a| a == "--help" || a == "-h");
         if help {
             usage();
         }
 
-        let filename = args()
+        let filename = std::env::args()
             .skip(1)
             .find(|a| !a.starts_with('-'))
             .map_or("input.txt".to_string(), |a| a);
 
-        let verbose = args().any(|a| a == "--verbose" || a == "-v");
-        let elapsed = args().any(|a| a == "--elapsed");
-
+        let verbose = std::env::args().any(|a| a == "--verbose" || a == "-v");
+        let elapsed = std::env::args().any(|a| a == "--elapsed");
         let input = load_input_data(&filename);
+        let has_option = |option: &str| -> bool { std::env::args().any(|a| a == option) };
 
         Self {
             input,
             verbose,
             elapsed,
             instant: Instant::now(),
+            has_option,
         }
     }
 
     fn elapsed(&self) -> String {
         let micros: u128 = self.instant.elapsed().as_micros();
         format!("elapsed: {}.{:03} ms", micros / 1000, micros % 1000)
-    }
-
-    #[must_use]
-    pub fn has_option(option: &str) -> bool {
-        args().any(|a| a == option)
     }
 }
 
@@ -81,10 +78,7 @@ fn usage() {
         "-v".cyan().bold(),
         "--verbose".cyan().bold()
     );
-    println!(
-        "      {}          Show duration",
-        "--duration".cyan().bold()
-    );
+    println!("      {}          Show duration", "--elapsed".cyan().bold());
 
     std::process::exit(0); //std::process::ExitCode::SUCCESS);
 }

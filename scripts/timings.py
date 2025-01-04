@@ -17,6 +17,17 @@ T2 = 2
 T3 = 5
 
 
+def fmt_elapsed(elapsed: float, tablefmt) -> str:
+    if elapsed < T1:
+        return f"\033[32m{elapsed:.3f}\033[0m"
+    elif elapsed < T2:
+        return f"\033[34m{elapsed:.3f}\033[0m"
+    elif elapsed < T3:
+        return f"\033[33m{elapsed:.3f}\033[0m"
+    else:
+        return f"\033[31m{elapsed:.3f}\033[0m"
+
+
 @dataclass
 class Stats:
     headers: list
@@ -35,7 +46,7 @@ class Timings:
             day = int(day)
             self.user_inputs[hash].add(user)
 
-        self.solutions = defaultdict(lambda: defaultdict(list))
+        self.solutions = defaultdict(lambda: defaultdict(dict))
         for key_solution, elapsed, status in db.execute("select key,elapsed,status from solutions"):
             if status == "ok":
                 year, day, hash, binary, language = key_solution.split(":")
@@ -43,9 +54,12 @@ class Timings:
                 day = int(day)
                 elapsed /= 1_000_000_000
 
-                self.solutions[year, day][language].append((hash, elapsed))
+                # manage multiple solutions in different dayXX_xxx directories
+                day_sols = self.solutions[year, day][language]
+                other_elapsed = day_sols.get(hash, float("inf"))
+                day_sols[hash] = min(elapsed, other_elapsed)
 
-    def get_stats(self, user: str, lang: str) -> Stats:
+    def get_stats(self, user: str, lang: str, tablefmt: str) -> Stats:
 
         stats = Stats(
             headers=["day"] + [i for i in range(YEAR_BEGIN, YEAR_END + 1)],
@@ -59,7 +73,7 @@ class Timings:
             min_elapsed = float("inf")
             max_elapsed = 0
             nb_elapsed = 0
-            for hash, elapsed in languages[lang]:
+            for hash, elapsed in languages[lang].items():
                 if min_elapsed > elapsed:
                     min_elapsed = elapsed
                 if max_elapsed < elapsed:
@@ -79,40 +93,30 @@ class Timings:
                 else:
                     stats.solutions[year, day] = elapsed
 
-                def fmt(elapsed: float) -> str:
-                    if elapsed < T1:
-                        return f"\033[32m{elapsed:.3f}\033[0m"
-                    elif elapsed < T2:
-                        return f"\033[34m{elapsed:.3f}\033[0m"
-                    elif elapsed < T3:
-                        return f"\033[33m{elapsed:.3f}\033[0m"
-                    else:
-                        return f"\033[31m{elapsed:.3f}\033[0m"
-
                 if user == "minmax":
-                    s = f"{fmt(min_elapsed)} - {fmt(max_elapsed)}"
+                    s = f"{fmt_elapsed(min_elapsed, tablefmt)} - {fmt_elapsed(max_elapsed, tablefmt)}"
                 elif user == "min":
-                    s = fmt(min_elapsed)
+                    s = fmt_elapsed(min_elapsed, tablefmt)
                 elif user == "max":
-                    s = fmt(max_elapsed)
+                    s = fmt_elapsed(max_elapsed, tablefmt)
                 else:
-                    s = fmt(elapsed)
+                    s = fmt_elapsed(elapsed, tablefmt)
 
                 stats.data[day - 1][year - YEAR_BEGIN + 1] = s
 
         return stats
 
-    def print_stats(self, user: str, lang: str):
+    def print_stats(self, user: str, lang: str, tablefmt: str = "rounded_outline"):
 
-        stats = self.get_stats(user, lang)
+        stats = self.get_stats(user, lang, tablefmt)
 
-        print(tabulate.tabulate(stats.data, stats.headers, tablefmt="rounded_outline", floatfmt=".3f"))
+        print(tabulate.tabulate(stats.data, stats.headers, tablefmt, floatfmt=".3f"))
 
         timing = lambda a, b: sum(1 for _ in filter(lambda x: a <= x < b, stats.solutions.values()))
         ids = lambda a, b: " ".join(f"{y}:{d:<2}" for (y, d), v in sorted(stats.solutions.items()) if a <= v < b)
         inf = float("inf")
         print()
-        print(f"Solutions in {lang.capitalize():<7} : {len(stats.solutions):3}")
+        print(f"Solutions in \033[95m{lang.capitalize():<7}\033[0m : {len(stats.solutions):3}")
         print(f"Number missing       : {25 * (YEAR_END - YEAR_BEGIN + 1) - len(stats.solutions):3}")
         print(f"Fast        (< {T1:3.1g}s) : \033[32m{timing(0, T1):3}\033[0m")
         print(f"Quite fast  (< {T2:3.1g}s) : \033[34m{timing(T1, T2):3}\033[0m")

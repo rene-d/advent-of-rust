@@ -1,30 +1,35 @@
 //! [Day 5: Alchemical Reduction](https://adventofcode.com/2018/day/5)
 
 // Return true if same letter and different cases
-fn react(a: char, b: char) -> bool {
-    a.to_ascii_lowercase() == b.to_ascii_lowercase() && a.is_lowercase() ^ b.is_lowercase()
+const fn react(a: u8, b: u8) -> bool {
+    a ^ b == 32 // <=> a.to_ascii_lowercase() == b.to_ascii_lowercase() && a.is_lowercase() ^ b.is_lowercase()
 }
 
-fn react_polymer(polymer: &[char]) -> usize {
-    let mut polymer = polymer.to_owned();
-    let mut i = 0;
+fn react_polymer(polymer: &[u8]) -> usize {
+    let mut reacted = Vec::with_capacity(polymer.len());
 
-    while i < polymer.len() - 1 {
-        if react(polymer[i], polymer[i + 1]) {
-            polymer.remove(i);
-            polymer.remove(i);
+    let mut last = 0;
 
-            i = i.saturating_sub(1);
+    for &unit in polymer {
+        if react(last, unit) {
+            last = reacted.pop().unwrap_or(0);
         } else {
-            i += 1;
+            if last != 0 {
+                reacted.push(last);
+            }
+            last = unit;
         }
     }
 
-    polymer.len()
+    if last != 0 {
+        reacted.push(last);
+    }
+
+    reacted.len()
 }
 
 struct Puzzle {
-    polymer: Vec<char>,
+    polymer: Vec<u8>,
 }
 
 impl Puzzle {
@@ -34,7 +39,7 @@ impl Puzzle {
 
     /// Get the puzzle input.
     fn configure(&mut self, data: &str) {
-        self.polymer = data.trim().chars().collect();
+        self.polymer = data.trim().bytes().collect();
     }
 
     /// Solve part one.
@@ -44,10 +49,10 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> usize {
-        ('a'..='z')
+        (b'a'..=b'z')
             .map(|unit| {
                 let mut polymer = self.polymer.clone();
-                polymer.retain(|c| c.to_ascii_lowercase() != unit);
+                polymer.retain(|c| (c | 32) != unit); // c|32 <=> c.to_ascii_lowercase()
 
                 react_polymer(&polymer)
             })

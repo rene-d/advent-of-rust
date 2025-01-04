@@ -1,13 +1,11 @@
 [package]
-name = "day23"
+name = "day8"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-regex = "1.10.2"
-
 
 [[bin]]
-name = "day23"
-path = "day23.rs"
+name = "day8"
+path = "day8.rs"
