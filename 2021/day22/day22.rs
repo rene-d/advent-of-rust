@@ -37,7 +37,7 @@ impl Cube {
     fn volume(&self) -> i64 {
         let vol = (self.x2 - self.x1 + 1) * (self.y2 - self.y1 + 1) * (self.z2 - self.z1 + 1);
 
-        vol - self.holes.iter().map(Cube::volume).sum::<i64>()
+        vol - self.holes.iter().map(Self::volume).sum::<i64>()
     }
 
     fn intersect(&self, other: &Self) -> Option<Self> {

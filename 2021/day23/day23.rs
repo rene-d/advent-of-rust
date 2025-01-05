@@ -3,7 +3,7 @@
 #![allow(dead_code)]
 
 use rustc_hash::FxHashMap;
-use std::ops::Index;
+use std::ops::{Index, Range};
 
 const HALLS: [usize; 7] = [0, 1, 3, 5, 7, 9, 10];
 const ROOMS: [usize; 4] = [2, 4, 6, 8];
@@ -40,7 +40,7 @@ impl Burrow {
         new
     }
 
-    fn new() -> Self {
+    const fn new() -> Self {
         Self {
             p: [
                 vec![],
@@ -141,16 +141,17 @@ struct Puzzle {
     seen: FxHashMap<Burrow, usize>,
 }
 
-fn movements(hi: usize, ri: usize) -> std::ops::Range<usize> {
+const fn movements(hi: usize, ri: usize) -> Range<usize> {
+    #[allow(clippy::range_plus_one)]
     if hi <= ri {
-        (hi + 1)..(ri + 1)
+        (hi + 1)..(ri + 1) // clippy is sometimes a pain
     } else {
         ri..hi
     }
 }
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             rooms: vec![],
             target: Burrow::new(),
             seen: FxHashMap::default(),
@@ -208,8 +209,8 @@ impl Puzzle {
         }
 
         // move from room to hall
-        for (i, &ri) in ROOMS.iter().enumerate() {
-            if !burrow[ri].iter().all(|&x| x == (i as u8)) {
+        for (i, &ri) in (0..).zip(ROOMS.iter()) {
+            if !burrow[ri].iter().all(|&x| x == i) {
                 let bug = burrow.bug(ri);
                 let room = &burrow[ri];
 

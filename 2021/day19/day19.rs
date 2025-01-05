@@ -104,10 +104,7 @@ fn solve(scanners: &[Vec<Point>]) {
                             z: dz,
                         };
 
-                        let mut n = 0;
-                        if match_points.contains_key(&p) {
-                            n = match_points[&p];
-                        }
+                        let n = match_points.get(&p).unwrap_or(&0);
                         match_points.insert(p, n + 1);
                     }
                 }
@@ -179,7 +176,7 @@ fn load_scanners(data: Vec<String>) -> Vec<Vec<Point>> {
     scanners
 }
 
-fn rotate(point: &Point, rotation: usize) -> Point {
+const fn rotate(point: &Point, rotation: usize) -> Point {
     let x = point.x;
     let y = point.y;
     let z = point.z;

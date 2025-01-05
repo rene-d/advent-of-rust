@@ -1,13 +1,21 @@
 use crate::integer::{Integer, Signed, Unsigned};
 
 pub trait IntegerMathOps<T: Integer<T>> {
+    /// Greatest common divisor.
     fn gcd(self, b: T) -> T;
+
+    /// Least common multiple.
     fn lcm(self, b: T) -> T;
+
+    /// Calculates `(n^x) % p`.
     fn mod_exp(self, x: T, p: T) -> T;
 }
 
 pub trait SignedMathOps<T: Signed<T>> {
+    /// Extended Euclidean algorithm.
     fn egcd(self, b: T) -> (T, T, T);
+
+    /// Modular multiplicate inverse.
     fn mod_inv(self, m: T) -> Option<T>;
 }
 
@@ -17,7 +25,6 @@ pub trait UnsignedMathOps<T: Unsigned<T>> {
 }
 
 impl<T: Integer<T>> IntegerMathOps<T> for T {
-    /// Greatest common divisor
     #[inline]
     fn gcd(self, mut b: T) -> T {
         let mut a = self;
@@ -28,13 +35,11 @@ impl<T: Integer<T>> IntegerMathOps<T> for T {
         a
     }
 
-    /// Least common multiple
     #[inline]
     fn lcm(self, b: T) -> T {
         self * (b / self.gcd(b))
     }
 
-    // Calculates (n^x) % p
     fn mod_exp(self: T, mut x: T, p: T) -> T {
         let mut n = self;
         let mut ans = T::ONE;
@@ -57,7 +62,6 @@ impl<T: Integer<T>> IntegerMathOps<T> for T {
 }
 
 impl<T: Signed<T>> SignedMathOps<T> for T {
-    /// Extended Euclidean algorithm
     fn egcd(self, b: T) -> (T, T, T) {
         let a = self;
 
@@ -110,7 +114,6 @@ impl<T: Unsigned<T>> UnsignedMathOps<T> for T {
     }
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;

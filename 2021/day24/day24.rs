@@ -35,7 +35,7 @@ struct Instruction {
 /// implement `fmt::Debug` for Point
 impl fmt::Debug for Instruction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let src = if let Register::Immediate = self.src {
+        let src = if matches!(self.src, Register::Immediate) {
             format!("{}", self.immediate)
         } else {
             format!("{:?}", self.src)
@@ -169,7 +169,7 @@ fn run_program(program: &[Instruction], input: &[i64], z: i64, verbose: bool) ->
     registers[Register::Z as usize]
 }
 
-fn run_box(w: i64, z: i64, div: i64, n1: i64, n2: i64) -> i64 {
+const fn run_box(w: i64, z: i64, div: i64, n1: i64, n2: i64) -> i64 {
     if w == z % 26 + n1 {
         z / div
     } else {

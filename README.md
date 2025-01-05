@@ -1,12 +1,12 @@
 # [Advent of Code](https://adventofcode.com) in Rust 🦀
 
 ![Stars: 500](https://img.shields.io/badge/Stars-500⭐-blue)
-![Rust: 228](https://img.shields.io/badge/Rust-228-cyan?logo=Rust)
+![Rust: 229](https://img.shields.io/badge/Rust-229-cyan?logo=Rust)
 ![Python: 123](https://img.shields.io/badge/Python-123-cyan?logo=Python)
 
 <img src="./scripts/assets/christmas_ferris_2015_2024.png" alt="Christmas Ferris" width="164" />
 
-Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) and other languages.
+Solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) and other languages 🎄✨.
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
@@ -27,9 +27,9 @@ Puzzle                                                                 | Stars |
 [Day 11: Plutonian Pebbles](https://adventofcode.com/2024/day/11)      | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day11/day11.rs) [![Go](./scripts/assets/go.png)](./2024/day11/day11.go)
 [Day 12: Garden Groups](https://adventofcode.com/2024/day/12)          | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day12/day12.rs)
 [Day 13: Claw Contraption](https://adventofcode.com/2024/day/13)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day13/day13.rs) [![Rust](./scripts/assets/rust.png)](./2024/day13_z3/day13.rs) [![Python](./scripts/assets/python.png)](./2024/day13_z3/day13.py)
-[Day 14: Restroom Redoubt](https://adventofcode.com/2024/day/14)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day14/day14.rs) [![Python](./scripts/assets/python.png)](./2024/day14/day14.py) [🎄](./2024/day14/README.md)
-[Day 15: Warehouse Woes](https://adventofcode.com/2024/day/15)         | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day15/day15.rs) [🎄](./2024/day15/README.md)
-[Day 16: Reindeer Maze](https://adventofcode.com/2024/day/16)          | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day16/day16.rs) [🎄](./2024/day16/README.md)
+[Day 14: Restroom Redoubt](https://adventofcode.com/2024/day/14)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day14/day14.rs) [![Python](./scripts/assets/python.png)](./2024/day14/day14.py) [🎁](./2024/day14/README.md)
+[Day 15: Warehouse Woes](https://adventofcode.com/2024/day/15)         | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day15/day15.rs) [🎁](./2024/day15/README.md)
+[Day 16: Reindeer Maze](https://adventofcode.com/2024/day/16)          | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day16/day16.rs) [🎁](./2024/day16/README.md)
 [Day 17: Chronospatial Computer](https://adventofcode.com/2024/day/17) | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day17/day17.rs)
 [Day 18: RAM Run](https://adventofcode.com/2024/day/18)                | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day18/day18.rs) [![C++](./scripts/assets/cpp.png)](./2024/day18/day18.cpp) [![Go](./scripts/assets/go.png)](./2024/day18/day18.go)
 [Day 19: Linen Layout](https://adventofcode.com/2024/day/19)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](./2024/day19/day19.rs)
@@ -42,20 +42,20 @@ Puzzle                                                                 | Stars |
 
 ## All years
 
-Calendar | Solutions | Stars | Rust | Python | 🎄
+Calendar | Solutions | Stars | Rust | Python | 🎁
 -------- | --------- | ----- | ---- | ------ | --
 [Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](2024/README.md) |  50⭐ |  25 |  10 |   3
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](2023/README.md) |  50⭐ |  25 |  11 |   1
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) |  50⭐ |  24 |  18 |    
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) |  50⭐ |  24 |  12 |    
-[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/README.md) |  50⭐ |  19 |  23 |    
+[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/README.md) |  50⭐ |  20 |  23 |    
 [Advent of Code 2019](https://adventofcode.com/2019) | [Solutions](2019/README.md) |  50⭐ |  11 |  23 |   2
 [Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](2018/README.md) |  50⭐ |  25 |   4 |   1
 [Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) |  50⭐ |  25 |  17 |    
 [Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](2016/README.md) |  50⭐ |  25 |   0 |    
 [Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/README.md) |  50⭐ |  25 |   5 |    
 
-## Bonus 🎄
+## Bonus 🎁
 
 Year | Count | Days
 ---- | ----- | --------------------

@@ -10,8 +10,8 @@ struct Rule {
 }
 
 impl Rule {
-    fn new() -> Rule {
-        Rule {
+    const fn new() -> Self {
+        Self {
             generated: (String::new(), String::new()),
             output: '\0',
         }
@@ -26,8 +26,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle {
+    fn new() -> Self {
+        Self {
             template: String::new(),
             generator: FxHashMap::default(),
             elements: FxHashSet::default(),

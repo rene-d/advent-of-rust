@@ -3,14 +3,14 @@
 use std::collections::BinaryHeap;
 
 struct Cost {
-    cost: u32,
+    value: u32,
     x: usize,
     y: usize,
 }
 
 impl Ord for Cost {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.cost.cmp(&self.cost)
+        other.value.cmp(&self.value)
     }
 }
 
@@ -22,7 +22,7 @@ impl PartialOrd for Cost {
 
 impl PartialEq for Cost {
     fn eq(&self, other: &Self) -> bool {
-        self.cost == other.cost
+        self.value == other.value
     }
 }
 
@@ -35,7 +35,7 @@ fn min_cost(grid: &[Vec<u32>]) -> u32 {
     let mut heap = BinaryHeap::new();
 
     heap.push(Cost {
-        cost: 0,
+        value: 0,
         x: 0,
         y: 0,
     });
@@ -43,7 +43,7 @@ fn min_cost(grid: &[Vec<u32>]) -> u32 {
     while !heap.is_empty() {
         let cur = heap.pop().unwrap();
 
-        let new_cost = cur.cost + grid[cur.y][cur.x];
+        let new_cost = cur.value + grid[cur.y][cur.x];
 
         if new_cost >= d[cur.y][cur.x] && d[cur.y][cur.x] != 0 {
             continue;
@@ -57,28 +57,28 @@ fn min_cost(grid: &[Vec<u32>]) -> u32 {
 
         if cur.x + 1 < n {
             heap.push(Cost {
-                cost: new_cost,
+                value: new_cost,
                 x: cur.x + 1,
                 y: cur.y,
             });
         }
         if cur.y + 1 < n {
             heap.push(Cost {
-                cost: new_cost,
+                value: new_cost,
                 x: cur.x,
                 y: cur.y + 1,
             });
         }
         if cur.x > 0 {
             heap.push(Cost {
-                cost: new_cost,
+                value: new_cost,
                 x: cur.x - 1,
                 y: cur.y,
             });
         }
         if cur.y > 0 {
             heap.push(Cost {
-                cost: new_cost,
+                value: new_cost,
                 x: cur.x,
                 y: cur.y - 1,
             });
@@ -93,8 +93,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Puzzle {
-        Puzzle { grid: vec![] }
+    const fn new() -> Self {
+        Self { grid: vec![] }
     }
 
     /// Get the puzzle input.

@@ -513,7 +513,7 @@ def get_languages(sols, year, year_dir, path_to_home):
         sol_dir = sol_dir.parent
     f = sol_dir / "README.md"
     if f.is_file():
-        files.append(f"[🎄]({path_to_home}/{year}/{f.relative_to(year_dir)})")
+        files.append(f"[🎁]({path_to_home}/{year}/{f.relative_to(year_dir)})")
 
     return " ".join(files)
 
@@ -657,7 +657,7 @@ def make_readme_main(args):
             else:
                 continue
 
-        if line == "## Bonus 🎄":
+        if line == "## Bonus 🎁":
             skip = True
             md.append(line)
             md.append("")
@@ -677,7 +677,7 @@ def make_readme_main(args):
             skip = True
             md.append(line)
             md.append("")
-            md.append(" | ".join(("Calendar", "Solutions", "Stars", "Rust", "Python", "🎄")))
+            md.append(" | ".join(("Calendar", "Solutions", "Stars", "Rust", "Python", "🎁")))
             md.append(" | ".join(("--------", "---------", "-----", "----", "------", "--")))
             md.extend(rows)
             md.append("")
