@@ -730,6 +730,8 @@ def make_readme_main(args):
         md.append(line)
 
     if args.write:
+        if md[-1] != "":
+            md.append("")
         md = "\n".join(md)
         if not readme.is_file() or md != readme.read_text():
             readme.write_text(md)

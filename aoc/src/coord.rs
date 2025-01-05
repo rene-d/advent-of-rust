@@ -22,6 +22,11 @@ impl Coord {
     pub const EAST: Self = Self { x: 1, y: 0 };
     pub const NORTH: Self = Self { x: 0, y: -1 };
     pub const SOUTH: Self = Self { x: 0, y: 1 };
+
+    pub const NORTH_EAST: Self = Self { x: 1, y: -1 };
+    pub const SOUTH_EAST: Self = Self { x: 1, y: 1 };
+    pub const NORTH_WEST: Self = Self { x: -1, y: -1 };
+    pub const SOUTH_WEST: Self = Self { x: -1, y: 1 };
 }
 
 impl Coord {

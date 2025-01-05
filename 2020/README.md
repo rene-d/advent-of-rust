@@ -2,7 +2,7 @@
 
 ![AoC2020](https://img.shields.io/badge/Advent_of_Code-2020-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 21](https://img.shields.io/badge/Rust-21-cyan?logo=Rust)
+![Rust: 23](https://img.shields.io/badge/Rust-23-cyan?logo=Rust)
 ![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
 ## 2020 ([Calendar](https://adventofcode.com/2020)) ([Solutions](../2020/)) : 50⭐
@@ -30,7 +30,7 @@ Puzzle                                                                  | Stars 
 [Day 19: Monster Messages](https://adventofcode.com/2020/day/19)        | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day19/day19.rs)
 [Day 20: Jurassic Jigsaw](https://adventofcode.com/2020/day/20)         | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day20/day20.py)
 [Day 21: Allergen Assessment](https://adventofcode.com/2020/day/21)     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day21/day21.rs) [![Python](../scripts/assets/python.png)](../2020/day21/day21.py)
-[Day 22: Crab Combat](https://adventofcode.com/2020/day/22)             | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day22/day22.py)
+[Day 22: Crab Combat](https://adventofcode.com/2020/day/22)             | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day22/day22.rs) [![Python](../scripts/assets/python.png)](../2020/day22/day22.py)
 [Day 23: Crab Cups](https://adventofcode.com/2020/day/23)               | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day23/day23.rs)
-[Day 24: Lobby Layout](https://adventofcode.com/2020/day/24)            | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day24/day24.py)
+[Day 24: Lobby Layout](https://adventofcode.com/2020/day/24)            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day24/day24.rs) [![Python](../scripts/assets/python.png)](../2020/day24/day24.py)
 [Day 25: Combo Breaker](https://adventofcode.com/2020/day/25)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day25/day25.rs) [![Python](../scripts/assets/python.png)](../2020/day25/day25.py)

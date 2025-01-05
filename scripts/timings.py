@@ -112,6 +112,7 @@ class Timings:
 
         print(tabulate.tabulate(stats.data, stats.headers, tablefmt, floatfmt=".3f"))
 
+        # Python doesn't like closures. I do.
         timing = lambda a, b: sum(1 for _ in filter(lambda x: a <= x < b, stats.solutions.values()))
         ids = lambda a, b: " ".join(f"{y}:{d:<2}" for (y, d), v in sorted(stats.solutions.items()) if a <= v < b)
         inf = float("inf")
@@ -123,6 +124,20 @@ class Timings:
         print(f"Fast enough (< {T3:3.1g}s) : \033[33m{timing(T2, T3):3}\033[0m   [ {ids(T2, T3)} ]")
         print(f"Slow        (≥ {T3:3.1g}s) : \033[31m{timing(T3, inf):3}\033[0m   [ {ids(T3, inf)} ]")
         print(f"Total                : {sum(stats.solutions.values()):7.3f} s")
+
+        # import numpy as np
+
+        # a = np.array(list(stats.solutions.values()))
+
+        # # coefficient of variation
+        # µ, σ = a.mean(), a.std()
+        # cv = σ / µ
+        # cv = round(cv * 100, 1)
+
+        # # quartile coefficient of dispersion
+        # for i in range(10,101,1):
+        #     q1 = np.percentile(a, i)
+        #     print(f"{i:3}  {q1:7.3f}s")
 
 
 def main():

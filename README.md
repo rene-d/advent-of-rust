@@ -1,7 +1,7 @@
 # [Advent of Code](https://adventofcode.com) in Rust 🦀
 
 ![Stars: 500](https://img.shields.io/badge/Stars-500⭐-blue)
-![Rust: 231](https://img.shields.io/badge/Rust-231-cyan?logo=Rust)
+![Rust: 233](https://img.shields.io/badge/Rust-233-cyan?logo=Rust)
 ![Python: 123](https://img.shields.io/badge/Python-123-cyan?logo=Python)
 
 <img src="./scripts/assets/christmas_ferris_2015_2024.png" alt="Christmas Ferris" width="164" />
@@ -48,7 +48,7 @@ Calendar | Solutions | Stars | Rust | Python | 🎁
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](2023/README.md) |  50⭐ |  25 |  11 |   1
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](2022/README.md) |  50⭐ |  25 |  18 |    
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](2021/README.md) |  50⭐ |  24 |  12 |    
-[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/README.md) |  50⭐ |  21 |  23 |    
+[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](2020/README.md) |  50⭐ |  23 |  23 |    
 [Advent of Code 2019](https://adventofcode.com/2019) | [Solutions](2019/README.md) |  50⭐ |  11 |  23 |   2
 [Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](2018/README.md) |  50⭐ |  25 |   4 |   1
 [Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) |  50⭐ |  25 |  17 |    
@@ -63,3 +63,11 @@ Year | Count | Days
 2023 |     1 | [10](2023/day10/README.md)
 2019 |     2 | [13](2019/day13/README.md) [15](2019/day15/README.md)
 2018 |     1 | [18](2018/day18/README.md)
+
+## Under the hood 🎄
+
+All solutions are *tested* and *verified* with many puzzle inputs (15+: personal, family, friends accounts and those found on GitHub). They are therefore considered to be completely generic.
+
+By choice, I use the most up-to-date versions of the languages, and therefore sometimes new paradigms and features since AoC is an great way to practice, explore, learn (wit fun!).
+
+Rust solutions are mostly fair with `cargo clippy -- -F clippy::all -F clippy::pedantic -F clippy::nursery`. In the older ones, I allow myself to unsafe integer casts or sign conversions. They also include, for the most part, unit tests taken from the puzzle statement examples. On average, with all inputs I have, 80% of them run in less than 100ms on my Apple Silicon M1, and 95% under the half second.
