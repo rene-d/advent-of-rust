@@ -7,6 +7,7 @@ mod grid;
 mod gridu;
 pub mod hexslice;
 pub mod knot;
+pub mod math;
 pub mod ocr;
 mod square;
 

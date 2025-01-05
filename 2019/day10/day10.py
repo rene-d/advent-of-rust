@@ -5,6 +5,7 @@ import sys
 from collections import namedtuple
 from math import atan2, gcd, pi
 from pathlib import Path
+from typing import Tuple
 
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
@@ -16,18 +17,15 @@ Coord = namedtuple("Coord", ("x", "y"))
 # target of the giant rotating laser
 Target = namedtuple("Target", ("angle", "distance", "coord"))
 
-asteroids = set()
+asteroids = list()
 
 for dy, line in enumerate(lines):
     for dx, c in enumerate(line):
         if c != ".":
-            asteroids.add(Coord(dx, dy))
-
-x_max = max(a.x for a in asteroids)
-y_max = max(a.y for a in asteroids)
+            asteroids.append(Coord(dx, dy))
 
 
-def insight_vector(asteroid: Coord, other: Coord) -> int:
+def insight_vector(asteroid: Coord, other: Coord) -> Tuple[int, int]:
     """
     Compute the direction vector between two asteroids.
     Asteroids are considred aligned if their coords are multiple of the same vector.
@@ -52,7 +50,7 @@ def angle(asteroid: Coord, other: Coord) -> float:
 # part 1
 
 detected = []
-for i, asteroid in enumerate(asteroids):
+for asteroid in asteroids:
     in_sight = set()
     for other in asteroids:
         if other != asteroid:
@@ -89,6 +87,6 @@ while len(asteroids) > 1:
         if vaporized == 200:
             t = target.coord
             print(t.x * 100 + t.y)
-            exit()
+            break
         else:
             asteroids.remove(target.coord)

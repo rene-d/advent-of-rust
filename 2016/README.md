@@ -2,7 +2,7 @@
 
 ![AoC2016](https://img.shields.io/badge/Advent_of_Code-2016-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 26](https://img.shields.io/badge/Rust-26-cyan?logo=Rust)
+![Rust: 25](https://img.shields.io/badge/Rust-25-cyan?logo=Rust)
 
 ## 2016 ([Calendar](https://adventofcode.com/2016)) ([Solutions](../2016/)) : 50⭐
 
@@ -18,7 +18,7 @@ Puzzle                                                                          
 [Day 8: Two-Factor Authentication](https://adventofcode.com/2016/day/8)                | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2016/day8/day8.rs)
 [Day 9: Explosives in Cyberspace](https://adventofcode.com/2016/day/9)                 | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2016/day9/day9.rs)
 [Day 10: Balance Bots](https://adventofcode.com/2016/day/10)                           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2016/day10/day10.rs)
-[Day 11: Radioisotope Thermoelectric Generators](https://adventofcode.com/2016/day/11) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2016/day11/day11.rs) [![Rust](../scripts/assets/rust.png)](../2016/day11/day11_old.rs)
+[Day 11: Radioisotope Thermoelectric Generators](https://adventofcode.com/2016/day/11) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2016/day11/day11.rs)
 [Day 12: Leonardo's Monorail](https://adventofcode.com/2016/day/12)                    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2016/day12/day12.rs)
 [Day 13: A Maze of Twisty Little Cubicles](https://adventofcode.com/2016/day/13)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2016/day13/day13.rs)
 [Day 14: One-Time Pad](https://adventofcode.com/2016/day/14)                           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2016/day14/day14.rs)
