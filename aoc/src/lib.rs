@@ -6,6 +6,7 @@ mod direction;
 mod grid;
 mod gridu;
 pub mod hexslice;
+pub mod integer;
 pub mod knot;
 pub mod math;
 pub mod ocr;

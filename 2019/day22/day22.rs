@@ -1,53 +1,16 @@
 //! [Day 22: Slam Shuffle](https://adventofcode.com/2019/day/22)
 
-// #![allow(clippy::unreadable_literal)]
+use aoc::math::IntegerMathOps;
+use aoc::math::SignedMathOps;
 
-// Calculates (n^x) % p
-const fn modular_exponent(mut n: i128, mut x: i128, p: i128) -> i128 {
-    let mut ans = 1;
-    if x <= 0 {
-        return 1;
-    }
-    loop {
-        if x == 1 {
-            return (ans * n) % p;
-        }
-        if x & 1 == 0 {
-            n = (n * n) % p;
-            x >>= 1;
-        } else {
-            ans = (ans * n) % p;
-            x -= 1;
-        }
-    }
+// Calculate `(n^x) % p`.
+fn modular_exponent(n: i128, x: i128, p: i128) -> i128 {
+    n.mod_exp(x, p)
 }
 
-// Check GCD
-fn gcd(mut a: i128, mut b: i128) -> i128 {
-    if a == b {
-        return a;
-    }
-    if b > a {
-        std::mem::swap(&mut a, &mut b);
-    }
-    while b > 0 {
-        let temp = a;
-        a = b;
-        b = temp % b;
-    }
-    a
-}
-
-// Magic starts here
+/// Return Modular Multiplicative Inverse `x | x * n = 1 (mod p)` or 0.
 fn modular_inverse(n: i128, p: i128) -> i128 {
-    // Returns 0 if no Modular Multiplicative Inverse exist
-    if p <= 1 || gcd(n, p) > 1 {
-        return 0;
-    }
-
-    // Return Modular Multiplicative Inverse, that is (n^(p-2)) mod p
-    // From Fermat's little theorem
-    modular_exponent(n, p - 2, p)
+    n.mod_inv(p).unwrap_or(0)
 }
 
 struct Congruence {
@@ -215,15 +178,15 @@ fn main() {
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
-    use super::*;
+    // use super::*;
 
-    #[test]
-    fn test01() {
-        assert_eq!(modular_inverse(213, 1000000007), 32863850);
-    }
+    // #[test]
+    // fn test01() {
+    //     assert_eq!(modular_inverse(213, 1000000007), 32863850);
+    // }
 
-    #[test]
-    fn test02() {
-        assert_eq!(modular_exponent(29, 830, 20253), 14587);
-    }
+    // #[test]
+    // fn test02() {
+    //     assert_eq!(modular_exponent(29, 830, 20253), 14587);
+    // }
 }

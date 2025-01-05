@@ -3,6 +3,7 @@
 use core::f64;
 use std::cmp::Ordering;
 
+use aoc::math::IntegerMathOps;
 use aoc::Coord;
 use rustc_hash::{FxHashMap, FxHashSet};
 
@@ -18,7 +19,7 @@ struct Target {
 /// So, only one asteroid can be detected for this 'irreductible' vector (i.e. with gcd(x,y)=1).
 fn insight_vector(asteroid: Coord, other: Coord) -> Coord {
     let vector = other - asteroid;
-    let d = aoc::math::gcd(vector.x, vector.y).abs();
+    let d = vector.x.gcd(vector.y).abs();
     Coord {
         x: vector.x / d,
         y: vector.y / d,

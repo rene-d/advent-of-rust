@@ -1,22 +1,6 @@
 //! [Day 13: Shuttle Search](https://adventofcode.com/2020/day/13)
 
-fn egcd(a: i64, b: i64) -> (i64, i64, i64) {
-    if a == 0 {
-        (b, 0, 1)
-    } else {
-        let (gcd, u, v) = egcd(b % a, a);
-        (gcd, v - (b / a) * u, u)
-    }
-}
-
-fn mod_inv(x: i64, n: i64) -> Option<i64> {
-    let (g, x, _) = egcd(x, n);
-    if g == 1 {
-        Some((x % n + n) % n)
-    } else {
-        None
-    }
-}
+use aoc::math::SignedMathOps;
 
 fn chinese_remainder(residues: &[i64], modulii: &[i64]) -> Option<i64> {
     let prod = modulii.iter().product::<i64>();
@@ -25,7 +9,7 @@ fn chinese_remainder(residues: &[i64], modulii: &[i64]) -> Option<i64> {
 
     for (&residue, &modulus) in residues.iter().zip(modulii) {
         let p = prod / modulus;
-        sum += residue * mod_inv(p, modulus)? * p;
+        sum += residue * p.mod_inv(modulus)? * p;
     }
 
     Some(sum.rem_euclid(prod))

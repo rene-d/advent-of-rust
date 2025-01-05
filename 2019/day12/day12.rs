@@ -1,5 +1,7 @@
 //! [Day 12: The N-Body Problem](https://adventofcode.com/2019/day/12)
 
+use aoc::math::IntegerMathOps;
+
 type Coord = [i32; 3];
 
 const ZERO: Coord = [0, 0, 0];
@@ -83,12 +85,12 @@ impl Puzzle {
     }
 
     /// Solve part two.
-    fn part2(&self) -> i64 {
+    fn part2(&self) -> u64 {
         let mut moons = self.moons.clone();
         let mut velocities = vec![ZERO; moons.len()];
 
         let mut step = 0;
-        let mut steps = [0, 0, 0];
+        let mut steps = [0; 3];
         let mut remaining = 3;
 
         while remaining != 0 {
@@ -114,19 +116,7 @@ impl Puzzle {
             }
         }
 
-        lcm(steps[0], lcm(steps[1], steps[2]))
-    }
-}
-
-fn lcm(a: i64, b: i64) -> i64 {
-    a * b / gcd(a, b)
-}
-
-fn gcd(a: i64, b: i64) -> i64 {
-    if b == 0 {
-        a
-    } else {
-        gcd(b, a % b)
+        steps[0].lcm(steps[1].lcm(steps[2]))
     }
 }
 
