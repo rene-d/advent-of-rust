@@ -1,4 +1,4 @@
-# http://adventofcode.com/2020
+# https://adventofcode.com/2020
 
 [workspace]
 members = [
@@ -19,6 +19,7 @@ members = [
     "day15",
     "day16",
     "day17",
+    "day18",
     "day19",
     "day21",
     "day22",

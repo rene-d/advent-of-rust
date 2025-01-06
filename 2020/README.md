@@ -2,7 +2,7 @@
 
 ![AoC2020](https://img.shields.io/badge/Advent_of_Code-2020-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 23](https://img.shields.io/badge/Rust-23-cyan?logo=Rust)
+![Rust: 24](https://img.shields.io/badge/Rust-24-cyan?logo=Rust)
 ![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
 ## 2020 ([Calendar](https://adventofcode.com/2020)) ([Solutions](../2020/)) : 50⭐
@@ -26,7 +26,7 @@ Puzzle                                                                  | Stars 
 [Day 15: Rambunctious Recitation](https://adventofcode.com/2020/day/15) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day15/day15.rs) [![Python](../scripts/assets/python.png)](../2020/day15/day15.py)
 [Day 16: Ticket Translation](https://adventofcode.com/2020/day/16)      | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day16/day16.rs) [![Python](../scripts/assets/python.png)](../2020/day16/day16.py)
 [Day 17: Conway Cubes](https://adventofcode.com/2020/day/17)            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day17/day17.rs) [![Python](../scripts/assets/python.png)](../2020/day17/day17.py)
-[Day 18: Operation Order](https://adventofcode.com/2020/day/18)         | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day18/day18.py)
+[Day 18: Operation Order](https://adventofcode.com/2020/day/18)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day18/day18.rs) [![Python](../scripts/assets/python.png)](../2020/day18/day18.py)
 [Day 19: Monster Messages](https://adventofcode.com/2020/day/19)        | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day19/day19.rs)
 [Day 20: Jurassic Jigsaw](https://adventofcode.com/2020/day/20)         | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2020/day20/day20.py)
 [Day 21: Allergen Assessment](https://adventofcode.com/2020/day/21)     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2020/day21/day21.rs) [![Python](../scripts/assets/python.png)](../2020/day21/day21.py)
