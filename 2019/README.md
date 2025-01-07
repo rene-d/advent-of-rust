@@ -2,7 +2,7 @@
 
 ![AoC2019](https://img.shields.io/badge/Advent_of_Code-2019-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 11](https://img.shields.io/badge/Rust-11-cyan?logo=Rust)
+![Rust: 12](https://img.shields.io/badge/Rust-12-cyan?logo=Rust)
 ![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
 ## 2019 ([Calendar](https://adventofcode.com/2019)) ([Solutions](../2019/)) : 50⭐
@@ -32,5 +32,5 @@ Puzzle                                                                          
 [Day 21: Springdroid Adventure](https://adventofcode.com/2019/day/21)            | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2019/day21/day21.py)
 [Day 22: Slam Shuffle](https://adventofcode.com/2019/day/22)                     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day22/day22.rs)
 [Day 23: Category Six](https://adventofcode.com/2019/day/23)                     | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2019/day23/day23.py)
-[Day 24: Planet of Discord](https://adventofcode.com/2019/day/24)                | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2019/day24/day24.py)
+[Day 24: Planet of Discord](https://adventofcode.com/2019/day/24)                | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day24/day24.rs) [![Python](../scripts/assets/python.png)](../2019/day24/day24.py)
 [Day 25: Cryostasis](https://adventofcode.com/2019/day/25)                       | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2019/day25/day25.py)

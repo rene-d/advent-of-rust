@@ -19,7 +19,7 @@ const NEIGHBORS: [Coord; 8] = [
     Coord::new(-1, -1), // NW
 ];
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Grid<T> {
     size: Coord,
     data: Vec<T>,
