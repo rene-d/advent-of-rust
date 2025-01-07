@@ -3,9 +3,9 @@
 use rustc_hash::FxHashMap;
 
 use pest::Parser;
-use pest_derive::Parser as PestParser;
+use pest_derive::Parser;
 
-#[derive(PestParser, Debug)]
+#[derive(Parser)]
 #[grammar = "day8.pest"]
 struct MyParser;
 

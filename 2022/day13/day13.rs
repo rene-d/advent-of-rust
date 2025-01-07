@@ -2,10 +2,10 @@
 
 use pest::iterators::Pair;
 use pest::Parser;
-use pest_derive::Parser as PestParser;
+use pest_derive::Parser;
 use std::cmp::Ordering;
 
-#[derive(PestParser, Debug)]
+#[derive(Parser)]
 #[grammar = "day13.pest"]
 struct PacketParser;
 

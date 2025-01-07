@@ -1,4 +1,4 @@
-# https://adventofcode.com/2018
+# https://adventofcode.com/2019
 
 [workspace]
 members = [
@@ -10,8 +10,10 @@ members = [
     "day8",
     "day10",
     "day12",
+    "day14",
     "day16",
     "day18",
+    "day20",
     "day22",
     "day24",
 ]

@@ -256,8 +256,9 @@ def aoc_scores(ctx: click.Context, year: int, id: int):
 
 
 @aoc.command(name="quality")
+@click.option("-s", "--strict", is_flag=True, help="Forbid clippy rule")
 @click.pass_context
-def aoc_quality(ctx: click.Context):
+def aoc_quality(ctx: click.Context, strict: bool):
     """
     Run lints, tests, solutions for Rust solution.
     """
@@ -292,9 +293,14 @@ def aoc_quality(ctx: click.Context):
             subprocess.check_output(["cargo", "fmt"])
 
             print("cargo clippy")
-            subprocess.check_output(
-                ["cargo", "clippy", "-q", "--", "-Dclippy::all", "-Fclippy::pedantic", "-Fclippy::nursery"]
-            )
+            if strict:
+                subprocess.check_output(
+                    ["cargo", "clippy", "-q", "--", "-Fclippy::all", "-Fclippy::pedantic", "-Fclippy::nursery"]
+                )
+            else:
+                subprocess.check_output(
+                    ["cargo", "clippy", "-q", "--", "-Dclippy::all", "-Dclippy::pedantic", "-Fclippy::nursery"]
+                )
 
             print("cargo build")
             subprocess.check_output(["cargo", "build", "--release", "--quiet"])

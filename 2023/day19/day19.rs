@@ -1,7 +1,7 @@
 //! [Day 19: Aplenty](https://adventofcode.com/2023/day/19)
 
 #![allow(clippy::too_many_lines)]
-#![allow(clippy::option_if_let_else)]
+// #![allow(clippy::option_if_let_else)]
 
 use core::panic;
 use regex::Regex;
@@ -40,28 +40,6 @@ enum Rule {
     Condition((String, Comparison, u64, String)),
 }
 
-impl Rule {
-    fn new(s: &str) -> Self {
-        let re: Regex = Regex::new(r"^([xmas])([<>])(\d+):(\w+)$").unwrap();
-
-        match s {
-            s if s.chars().all(char::is_alphabetic) => Self::Link(s.to_string()),
-
-            _ => {
-                if let Some(caps) = re.captures(s) {
-                    let variable = caps.get(1).unwrap().as_str().to_owned();
-                    let op = Comparison::from(caps.get(2).unwrap().as_str());
-                    let value: u64 = caps.get(3).unwrap().as_str().parse().unwrap();
-                    let next = caps.get(4).unwrap().as_str().to_owned();
-
-                    Self::Condition((variable, op, value, next))
-                } else {
-                    panic!();
-                }
-            }
-        }
-    }
-}
 struct Puzzle {
     workflows: FxHashMap<String, Vec<Rule>>,
     parts: Vec<[u64; 4]>,
@@ -87,9 +65,38 @@ impl Puzzle {
 
     /// Get the puzzle input.
     fn configure(&mut self, data: &str) {
+        //
+        // _   _ _____  _   __   __  _
+        // | | | |  __ \| |  \ \ / / | |
+        // | | | | |  \/| |   \ V /  | |
+        // | | | | | __ | |    \ /   | |
+        // | |_| | |_\ \| |____| |   |_|
+        //  \___/ \____/\_____/\_/   (_)
+        //
+
         let re = Regex::new(r"^\{x=(\d+),m=(\d+),a=(\d+),s=(\d+)\}$").unwrap();
 
         let re2 = Regex::new(r"(\w+)\{(.+)\}$").unwrap();
+
+        let re3: Regex = Regex::new(r"^([xmas])([<>])(\d+):(\w+)$").unwrap();
+
+        let rule_new = |s: &str| match s {
+            s if s.chars().all(char::is_alphabetic) => Rule::Link(s.to_string()),
+
+            _ => re3.captures(s).map_or_else(
+                || {
+                    panic!();
+                },
+                |caps| {
+                    let variable = caps.get(1).unwrap().as_str().to_owned();
+                    let op = Comparison::from(caps.get(2).unwrap().as_str());
+                    let value: u64 = caps.get(3).unwrap().as_str().parse().unwrap();
+                    let next = caps.get(4).unwrap().as_str().to_owned();
+
+                    Rule::Condition((variable, op, value, next))
+                },
+            ),
+        };
 
         for line in data.lines() {
             if let Some(caps) = re.captures(line) {
@@ -110,7 +117,7 @@ impl Puzzle {
                     .unwrap()
                     .as_str()
                     .split(',')
-                    .map(Rule::new)
+                    .map(rule_new)
                     .collect();
 
                 if let Some(Rule::Link(_)) = rules.last() {
