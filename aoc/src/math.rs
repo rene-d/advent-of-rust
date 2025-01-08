@@ -1,6 +1,9 @@
 use crate::integer::{Integer, Signed, Unsigned};
 
-pub trait IntegerMathOps<T: Integer<T>> {
+pub trait IntegerMathOps<T>
+where
+    T: Integer<T>,
+{
     /// Greatest common divisor.
     fn gcd(self, b: T) -> T;
 
@@ -11,7 +14,10 @@ pub trait IntegerMathOps<T: Integer<T>> {
     fn mod_exp(self, x: T, p: T) -> T;
 }
 
-pub trait SignedMathOps<T: Signed<T>> {
+pub trait SignedMathOps<T>
+where
+    T: Signed<T>,
+{
     /// Extended Euclidean algorithm.
     fn egcd(self, b: T) -> (T, T, T);
 
@@ -24,7 +30,10 @@ pub trait UnsignedMathOps<T: Unsigned<T>> {
     fn sqrt(self) -> T;
 }
 
-impl<T: Integer<T>> IntegerMathOps<T> for T {
+impl<T> IntegerMathOps<T> for T
+where
+    T: Integer<T>,
+{
     #[inline]
     fn gcd(self, mut b: T) -> T {
         let mut a = self;
@@ -61,7 +70,10 @@ impl<T: Integer<T>> IntegerMathOps<T> for T {
     }
 }
 
-impl<T: Signed<T>> SignedMathOps<T> for T {
+impl<T> SignedMathOps<T> for T
+where
+    T: Signed<T>,
+{
     fn egcd(self, b: T) -> (T, T, T) {
         let a = self;
 
@@ -94,7 +106,10 @@ impl<T: Signed<T>> SignedMathOps<T> for T {
     }
 }
 
-impl<T: Unsigned<T>> UnsignedMathOps<T> for T {
+impl<T> UnsignedMathOps<T> for T
+where
+    T: Unsigned<T>,
+{
     fn sqrt(self) -> T {
         let mut a = T::ZERO;
         let mut m;

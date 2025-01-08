@@ -14,14 +14,14 @@ impl Puzzle {
     fn new(data: &str) -> Self {
         let mut p = Self {
             rules: FxHashMap::default(),
-            start: Square::parse(".#./..#/###"),
+            start: Square::parse(".#./..#/###", '/'),
         };
 
         for line in data.lines() {
             let (src, dest) = line.split_once(" => ").unwrap();
 
-            let src = Square::parse(src);
-            let dest = Square::parse(dest);
+            let src = Square::parse(src, '/');
+            let dest = Square::parse(dest, '/');
 
             for s in src.iter_pos() {
                 p.rules.insert(s, dest.clone());

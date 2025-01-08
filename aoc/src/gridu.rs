@@ -9,7 +9,7 @@ use std::ops::{Index, IndexMut};
 use crate::Direction;
 
 /// A rectangular grid of elements, used to store various data including mazes.
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct GridU<T> {
     width: usize,
     height: usize,
@@ -33,6 +33,77 @@ impl<T: Clone + Default> GridU<T> {
         self.width = width;
         self.height = height;
         self.g.resize(width * height, T::default());
+    }
+}
+
+impl<T: Copy + Default> GridU<T> {
+    pub fn rotate_clockwise(&self) -> Self {
+        let mut rotated = Self::with_size(self.height, self.width);
+
+        for x in 0..self.width {
+            for y in 0..self.height {
+                rotated[(self.height - y - 1, x)] = self[(x, y)];
+            }
+        }
+        rotated
+    }
+
+    pub fn rotate_counterclockwise(&self) -> Self {
+        let mut rotated = Self::with_size(self.height, self.width);
+
+        for x in 0..self.width {
+            for y in 0..self.height {
+                rotated[(y, self.width - 1 - x)] = self[(x, y)];
+            }
+        }
+        rotated
+    }
+
+    pub fn flip_vertical(&self) -> Self {
+        let mut flipped = Self::with_size(self.width, self.height);
+
+        for y in 0..self.height {
+            for x in 0..self.width {
+                flipped[(x, y)] = self[(self.width - 1 - x, y)];
+            }
+        }
+        flipped
+    }
+
+    pub fn flip_horizontal(&self) -> Self {
+        let mut flipped = Self::with_size(self.width, self.height);
+
+        for y in 0..self.height {
+            for x in 0..self.width {
+                flipped[(x, y)] = self[(x, self.height - 1 - y)];
+            }
+        }
+        flipped
+    }
+
+    /// Iterate over the 8 possible images of the grid:
+    /// 4 rotations of the original grid and 4 rotations of the symmetric grid.
+    /// Return successively:
+    /// - the original grid
+    /// - the grid rotated clockwise
+    /// - the grid rotated clockwise x2
+    /// - the grid rotated clockwise x3
+    /// - the original grid vertically flipped (image in a vertical mirror)
+    /// - the image of the grid rotated clockwise
+    /// - the image of the grid rotated clockwise x2
+    /// - the image of the grid rotated clockwise x3
+    pub fn iter_pos(&self) -> impl Iterator<Item = Self> {
+        let mut square = self.clone();
+        (0..8).map(move |i| {
+            if i >= 1 {
+                square = square.rotate_clockwise();
+            }
+            if i == 4 {
+                square = square.flip_vertical();
+            }
+
+            square.clone()
+        })
     }
 }
 
@@ -236,10 +307,148 @@ impl std::fmt::Display for GridU<u8> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for y in 0..self.height {
             for x in 0..self.width {
-                write!(f, "{}", self.g[self.width * y + x] as char)?;
+                let c = self.g[self.width * y + x];
+                write!(f, "{}", c as char)?;
             }
             writeln!(f)?;
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const R: &str = concat!(
+        "###### \n",
+        "###### \n",
+        "#     #\n",
+        "#     #\n",
+        "#     #\n",
+        "#     #\n",
+        "###### \n",
+        "###### \n",
+        "#   #  \n",
+        "#   #  \n",
+        "#    # \n",
+        "#    # \n",
+        "#     #\n",
+        "#     #\n",
+    );
+
+    const G: &str = concat!(
+        "                       \n",
+        "         GGGGGGGGGGGGG \n",
+        "      GGG::::::::::::G \n",
+        "    GG:::::::::::::::G \n",
+        "   G:::::GGGGGGGG::::G \n",
+        "  G:::::G       GGGGGG \n",
+        " G:::::G               \n",
+        " G:::::G               \n",
+        " G:::::G    GGGGGGGGGG \n",
+        " G:::::G    G::::::::G \n",
+        " G:::::G    GGGGG::::G \n",
+        " G:::::G        G::::G \n",
+        "  G:::::G       G::::G \n",
+        "   G:::::GGGGGGGG::::G \n",
+        "    GG:::::::::::::::G \n",
+        "      GGG::::::GGG:::G \n",
+        "         GGGGGG   GGGG \n",
+        "                       \n",
+    );
+
+    #[test]
+    fn rotation() {
+        let grid = GridU::<u8>::parse(R);
+
+        println!("{grid}");
+
+        println!("clockwise");
+        println!("{}", grid.rotate_clockwise());
+        println!("clockwise x2");
+        println!("{}", grid.rotate_clockwise().rotate_clockwise());
+
+        println!("counterclockwise");
+        println!("{}", grid.rotate_counterclockwise());
+        println!("counterclockwise x2");
+        println!(
+            "{}",
+            grid.rotate_counterclockwise().rotate_counterclockwise()
+        );
+
+        assert_eq!(
+            grid.to_string(),
+            grid.rotate_clockwise()
+                .rotate_clockwise()
+                .rotate_clockwise()
+                .rotate_clockwise()
+                .to_string()
+        );
+
+        assert_eq!(
+            grid.to_string(),
+            grid.rotate_counterclockwise()
+                .rotate_counterclockwise()
+                .rotate_counterclockwise()
+                .rotate_counterclockwise()
+                .to_string()
+        );
+
+        assert_eq!(
+            grid.rotate_counterclockwise()
+                .rotate_counterclockwise()
+                .to_string(),
+            grid.rotate_clockwise().rotate_clockwise().to_string()
+        );
+    }
+
+    #[test]
+    fn inversion() {
+        let grid = GridU::<u8>::parse(R);
+
+        println!("{grid}");
+
+        println!("flip_horizontal");
+        println!("{}", grid.flip_horizontal());
+
+        println!("flip_vertical");
+        println!("{}", grid.flip_vertical());
+
+        println!("flip both");
+        println!("{}", grid.flip_vertical().flip_horizontal());
+
+        assert_eq!(
+            grid.to_string(),
+            grid.flip_vertical().flip_vertical().to_string()
+        );
+
+        assert_eq!(
+            grid.to_string(),
+            grid.flip_horizontal().flip_horizontal().to_string()
+        );
+
+        assert_eq!(
+            grid.flip_horizontal().flip_vertical().to_string(),
+            grid.flip_vertical().flip_horizontal().to_string()
+        );
+
+        assert_eq!(
+            grid.to_string(),
+            grid.flip_horizontal()
+                .flip_vertical()
+                .rotate_clockwise()
+                .rotate_clockwise()
+                .to_string()
+        );
+    }
+
+    #[test]
+    fn dispositions() {
+        let grid = GridU::<u8>::parse(G);
+
+        for r in grid.iter_pos() {
+            println!("{r}");
+        }
     }
 }
