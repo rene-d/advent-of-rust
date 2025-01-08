@@ -5,7 +5,7 @@
 use rustc_hash::FxHashSet;
 use std::fmt::Error;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum OpCodes {
     Addi,
     Addr,
@@ -190,11 +190,10 @@ impl Puzzle {
 
             if ip == 28 {
                 let m = *regs.iter().max().unwrap();
-                if seen.contains(&m) {
+                if !seen.insert(m) {
                     return last;
                 }
                 last = m;
-                seen.insert(last);
             }
 
             assert!(ip < self.program.len());
@@ -202,6 +201,38 @@ impl Puzzle {
             self.program[ip].run(&mut regs);
             regs[self.ip_reg] += 1;
         }
+    }
+
+    fn part2_fast(&self) -> u64 {
+        if self.program[7].opcode != OpCodes::Seti {
+            return self.part2();
+        }
+        let a = self.program[7].a;
+
+        let run = |hash: u64| -> u64 {
+            let mut acc = a;
+            let mut b = hash | 65536;
+
+            for _ in 0..3 {
+                acc += b & 255;
+                acc &= 16_777_215;
+                acc *= 65899;
+                acc &= 16_777_215;
+                b >>= 8;
+            }
+
+            acc
+        };
+
+        let mut seen = FxHashSet::default();
+        let mut last = 0;
+        let mut hash = 0;
+
+        while seen.insert(hash) {
+            last = hash;
+            hash = run(hash);
+        }
+        last
     }
 }
 
@@ -213,6 +244,10 @@ fn main() {
         puzzle.run(1);
     } else {
         println!("{}", puzzle.part1());
-        println!("{}", puzzle.part2());
+        if (args.has_option)("--assembly") {
+            println!("{}", puzzle.part2());
+        } else {
+            println!("{}", puzzle.part2_fast());
+        }
     }
 }
