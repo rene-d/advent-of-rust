@@ -138,11 +138,11 @@ class Assembler:
             assert len(line) == 2
             arg = line[1]
             if arg == "std":
-                for line in STD_MACROS.splitlines():
-                    self._parse_p1(line)
+                for line2 in STD_MACROS.splitlines():
+                    self._parse_p1(line2)
             else:
-                for line in Path(f"{arg}.assembunny").open():
-                    self._parse_p1(line)
+                for line2 in Path(f"{arg}.assembunny").open():
+                    self._parse_p1(line2)
             return
 
         if line[0] == "%macro":
@@ -207,7 +207,7 @@ class Assembler:
 
     def _parse_p2(self, line, suffix="", args=[]):
         ip = len(self.phase3)
-        line = line.copy()
+        line = list(line)
         instr = line[0]
 
         for i in range(1, len(line)):
@@ -226,8 +226,8 @@ class Assembler:
         if instr in self.macros:
             nb_args = self.macros[instr][0]
             assert len(line) == nb_args + 1
-            for line in self.macros[instr][1:]:
-                self._parse_p2(line, suffix=f"@{instr}{ip}", args=line[1:])
+            for line2 in self.macros[instr][1:]:
+                self._parse_p2(line2, suffix=f"@{instr}{ip}", args=line[1:])
             return
 
         if instr[0] == ".":
