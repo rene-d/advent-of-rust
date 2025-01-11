@@ -2,8 +2,8 @@
 
 ![AoC2021](https://img.shields.io/badge/Advent_of_Code-2021-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 24](https://img.shields.io/badge/Rust-24-cyan?logo=Rust)
-![Python: 12](https://img.shields.io/badge/Python-12-cyan?logo=Python)
+![Rust: 25](https://img.shields.io/badge/Rust-25-cyan?logo=Rust)
+![Python: 13](https://img.shields.io/badge/Python-13-cyan?logo=Python)
 
 ## 2021 ([Calendar](https://adventofcode.com/2021)) ([Solutions](../2021/)) : 50⭐
 
@@ -26,7 +26,7 @@ Puzzle                                                                  | Stars 
 [Day 15: Chiton](https://adventofcode.com/2021/day/15)                  | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2021/day15/day15.rs)
 [Day 16: Packet Decoder](https://adventofcode.com/2021/day/16)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2021/day16/day16.rs) [![Python](../scripts/assets/python.png)](../2021/day16/day16.py)
 [Day 17: Trick Shot](https://adventofcode.com/2021/day/17)              | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2021/day17/day17.rs)
-[Day 18: Snailfish](https://adventofcode.com/2021/day/18)               | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2021/day18/day18.py)
+[Day 18: Snailfish](https://adventofcode.com/2021/day/18)               | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2021/day18/day18.rs) [![Python](../scripts/assets/python.png)](../2021/day18/day18_eval.py) [![Python](../scripts/assets/python.png)](../2021/day18/day18.py)
 [Day 19: Beacon Scanner](https://adventofcode.com/2021/day/19)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2021/day19/day19.rs)
 [Day 20: Trench Map](https://adventofcode.com/2021/day/20)              | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2021/day20/day20.rs)
 [Day 21: Dirac Dice](https://adventofcode.com/2021/day/21)              | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2021/day21/day21.rs)

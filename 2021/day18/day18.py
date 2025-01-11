@@ -1,160 +1,277 @@
 #!/usr/bin/env python3
+# [Day 18: Snailfish](https://adventofcode.com/2021/day/18)
 
-# Day 18: Snailfish
-# https://adventofcode.com/2021/day/18
-
-import sys
-
-
-class RegularNumber:
-    """Represent a regular number."""
-
-    def __init__(self, value):
-        self.value = value
-
-    def __eq__(self, other):
-        if not isinstance(other, RegularNumber):
-            return False
-        return self.value == other.value
+import functools
+import itertools
+import typing as t
+from argparse import ArgumentParser
+from pathlib import Path
 
 
-def to_snailfish(number):
-    """
-    Ensure the nested list is a list of RegularNumber elements.
-    """
-    if isinstance(number, int):
-        return RegularNumber(number)
-    if isinstance(number, RegularNumber):
-        return RegularNumber(number.value)
-    return (to_snailfish(number[0]), to_snailfish(number[1]))
+class Snailfish:
+    DEPTH = 5  # to handle addition before reduction
+    MAX_SIZE = 2**DEPTH
+
+    def __init__(self, value: t.Optional[str] = None):
+        self.v = [None] * Snailfish.MAX_SIZE
+
+        if isinstance(value, str):
+            depth = 0
+            i = 0
+            k = 0
+            while k < len(value):
+                c = value[k]
+                k += 1
+                if c == "[":
+                    depth += 1
+                    assert depth <= Snailfish.DEPTH
+                elif c == "]":
+                    depth -= 1
+                elif c.isdigit():
+                    self.v[i] = int(c)
+                    while value[k].isdigit():
+                        self.v[i] = self.v[i] * 10 + int(value[k])
+                        k += 1
+                    i += 2 ** (Snailfish.DEPTH - depth)
+
+            assert depth == 0
+
+    def __str__(self):
+        def fmt(v: t.List[t.Any]):
+            if len(v) == 1 or v[len(v) // 2] is None:
+                return str(v[0])
+            else:
+                left = fmt(v[: len(v) // 2])
+                right = fmt(v[len(v) // 2 :])
+                return f"[{left},{right}]"
+
+        return fmt(self.v)
+
+    def dump(self, idx: int = None):
+        def gen():
+            for k, v in enumerate(self.v):
+                if k == idx:
+                    yield "\033[32m"
+                yield "⋅" if v is None else str(v)
+                if k == idx:
+                    yield "\033[0m"
+
+        print(f"[{' '.join(gen())}]")
+
+    def __add__(self, rhs):
+        r = self.add(rhs)
+        r.reduce()
+        return r
+
+    def __eq__(self, value):
+        return self.v == value.v
+
+    def add(self, rhs):
+        if not isinstance(rhs, Snailfish):
+            rhs = Snailfish(rhs)
+        if all(num is None for num in self.v):
+            return rhs
+        r = Snailfish()
+        r.v = self.v[0::2] + rhs.v[0::2]
+        return r
+
+    def reduce(self):
+        while self.explode() or self.split():
+            pass
+
+    def explode(self):
+        for i in range(0, Snailfish.MAX_SIZE, 2):
+
+            # two consecutive numbers form a pair and this pair is necessarily «nested inside four pairs»
+            if self.v[i] is not None and self.v[i + 1] is not None:
+
+                # «the pair's left value is added to the first regular number to the left of the exploding pair (if any)»
+                k = i
+                while k > 0 and self.v[k - 1] is None:
+                    k -= 1
+                if k > 0:
+                    self.v[k - 1] += self.v[i]
+
+                # «"the pair's right value is added to the first regular number to the right of the exploding pair (if any)»
+                k = i + 1
+                while k < Snailfish.MAX_SIZE - 1 and self.v[k + 1] is None:
+                    k += 1
+                if k < 31:
+                    self.v[k + 1] += self.v[i + 1]
+
+                # «exploding pair is replaced with the regular number 0»
+                self.v[i] = 0
+                self.v[i + 1] = None
+
+                return True
+
+        return False
+
+    def split(self):
+        for i in range(0, Snailfish.MAX_SIZE, 2):
+
+            # «If any regular number is 10 or greater, the leftmost such regular number splits»
+            if self.v[i] is not None and self.v[i] >= 10:
+
+                # «the left element of the pair should be the regular number divided by two and rounded down»
+                num = self.v[i]
+                self.v[i] = num // 2
+
+                # «the right element of the pair should be the regular number divided by two and rounded up»
+                # to "insert" a pair, we have to find an empty slot on the right
+                # the right slots for a pair depend on the left one:
+                #   slot 0:     1 2 4 8 16
+                # i.e.  [a,b]               has slots {0:a,16:b}
+                #       [[a,b],c]           has slots {0:a,8:b,16:c}
+                #       [[[a,b],c],d]       has slots {0:a,4:b,8:c,16:d}
+                #       [[[[a,b],c],d],e]   has slots {0:a,2:b,4:c,4:d,8:d,16:e}
+                #   slot 2:     3
+                # i.e. a number at slot 2 is left side of a pair nested 4 times:
+                # so the only possible slot is 3 (in a 5-depth snailfish number)
+                # etc.
+                k = 1
+                ii = i
+                while ii % 2 == 0 and k < Snailfish.DEPTH:
+                    k *= 2
+                    ii /= 2
+                while k > 0:
+                    j = i + k
+                    if j < Snailfish.MAX_SIZE and self.v[j] is None:
+                        self.v[j] = (num + 1) // 2
+                        return True
+                    k //= 2
+
+                assert False
+        return False
+
+    def magnitude(self):
+        def mag(v):
+            if len(v) == 1 or v[len(v) // 2] is None:
+                return v[0]
+            else:
+                left = mag(v[: len(v) // 2])
+                right = mag(v[len(v) // 2 :])
+                return 3 * left + 2 * right
+
+        return mag(self.v)
 
 
-def explode(number):
-    """If any pair is nested inside four pairs, the leftmost such pair explodes."""
-
-    def _flatten(length):
-        return (length,) if isinstance(length, RegularNumber) else sum(map(_flatten, length), ())
-
-    # flatten the nested list to get right and left numbers of number to explode
-    # /!\ the RegularNumber are the same objects in the flattened and nested lists
-    flat = _flatten(number)
-    i_flat = 0
-    exploded = False
-
-    def _explode(number, depth):
-        nonlocal i_flat, flat, exploded
-
-        if exploded:
-            # no more action to perform
-            return number
-
-        if isinstance(number, RegularNumber):
-            # since we traverse the nested list left to right,
-            # each time we find a regular number
-            # we increment the index of the flat list
-            i_flat += 1
-            return number
-
-        left, right = number
-
-        if isinstance(left, RegularNumber) and isinstance(right, RegularNumber):
-            # If any pair of regular numbers is nested inside four pairs, the leftmost such pair explodes
-            if depth >= 4 and not exploded:
-                # the pair's left value is added to the first regular number to the left of the exploding pair (if any)
-                if i_flat > 0:
-                    flat[i_flat - 1].value += flat[i_flat].value
-
-                # the pair's right value is added to the first regular number to the right of the exploding pair (if any)
-                if i_flat + 1 < len(flat) - 1:
-                    flat[i_flat + 2].value += flat[i_flat + 1].value
-
-                exploded = True  # just one explode operation per turn
-                return RegularNumber(0)
-
-        return (_explode(left, depth + 1), _explode(right, depth + 1))
-
-    return _explode(number, 0)
+def solve(data: str):
+    numbers = list(map(Snailfish, data.splitlines()))
+    sum_part1 = functools.reduce(lambda a, b: a + b, numbers)
+    part1 = sum_part1.magnitude()
+    part2 = max((a + b).magnitude() for a, b in itertools.permutations(numbers, 2))
+    return sum_part1, part1, part2
 
 
-def split(number):
-    """If any regular number is 10 or greater, the leftmost such regular number splits."""
+def test():
+    def assert_eq(a: Snailfish, s: str):
+        assert str(a) == s
+        assert a == Snailfish(s)
 
-    splitted = False
+    ########################################################
 
-    def _split(number):
-        nonlocal splitted
+    def assert_explode(phrase: str):
+        before, after = phrase.split(" becomes ")
+        a = Snailfish(before)
+        assert_eq(a, before)
+        a.explode()
+        assert_eq(a, after)
 
-        if splitted:
-            # one split operation per turn
-            return number
+    assert_explode("[[[[[9,8],1],2],3],4] becomes [[[[0,9],2],3],4]")
+    assert_explode("[7,[6,[5,[4,[3,2]]]]] becomes [7,[6,[5,[7,0]]]]")
+    assert_explode("[[6,[5,[4,[3,2]]]],1] becomes [[6,[5,[7,0]]],3]")
+    assert_explode("[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]] becomes [[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]")
+    assert_explode("[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]] becomes [[3,[2,[8,0]]],[9,[5,[7,0]]]]")
 
-        if isinstance(number, RegularNumber):
-            if number.value >= 10 and not splitted:
-                # split the number and terminate the recursion
-                splitted = True
-                return (RegularNumber(number.value // 2), RegularNumber(number.value - number.value // 2))
-            return number
+    ########################################################
 
-        left, right = number
+    a = Snailfish("[[[[4,3],4],4],[7,[[8,4],9]]]")
+    b = Snailfish("[1,1]")
 
-        return (_split(left), _split(right))
+    c = a.add(b)
+    assert_eq(c, "[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]")
+    c.explode()
+    assert_eq(c, "[[[[0,7],4],[7,[[8,4],9]]],[1,1]]")
+    c.explode()
+    assert_eq(c, "[[[[0,7],4],[15,[0,13]]],[1,1]]")
+    c.split()
+    assert_eq(c, "[[[[0,7],4],[[7,8],[0,13]]],[1,1]]")
+    c.split()
+    assert_eq(c, "[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]")
+    c.explode()
+    assert_eq(c, "[[[[0,7],4],[[7,8],[6,0]]],[8,1]]")
 
-    return _split(number)
+    ########################################################
 
+    a = Snailfish()
+    a += "[1,1]"
+    a += "[2,2]"
+    a += "[3,3]"
+    a += "[4,4]"
+    assert_eq(a, "[[[[1,1],[2,2]],[3,3]],[4,4]]")
 
-def addition(a, b):
-    """Basic addition, not reduced."""
-    return (a, b)
+    a += "[5,5]"
+    assert_eq(a, "[[[[3,0],[5,3]],[4,4]],[5,5]]")
 
+    a += "[6,6]"
+    assert_eq(a, "[[[[5,0],[7,4]],[5,5]],[6,6]]")
 
-def reduced_addition(a, b):
-    """
-    Perform addition, then reduce the snailfish number.
-    To reduce a snailfish number, you must repeatedly explode/reduce until no action applies.
-    """
+    ########################################################
 
-    # create new objects to avoid modifying the original ones
-    new_a = to_snailfish(a)
-    new_b = to_snailfish(b)
+    additions = Path("sample_7.txt").read_text().split("\n\n")
+    for addition in additions:
+        a, b, r = addition.splitlines()
+        a = a.strip()
+        b = b.removeprefix("+").strip()
+        r = r.removeprefix("=").strip()
+        assert_eq(Snailfish(a) + Snailfish(b), r)
 
-    result = addition(new_a, new_b)
+    ########################################################
 
-    while True:
-        new = explode(result)
-        if result != new:
-            result = new
-            continue
-        new = split(result)
-        if result != new:
-            result = new
-            continue
+    def assert_mag(phrase: str):
+        a, value = phrase.split(" becomes ")
+        assert Snailfish(a).magnitude() == int(value)
 
-        return result
+    assert Snailfish("[9,1]").magnitude() == 29
+    assert Snailfish("[[9,1],[1,9]]").magnitude() == 129
+    assert_mag("[[1,2],[[3,4],5]] becomes 143")
+    assert_mag("[[[[0,7],4],[[7,8],[6,0]]],[8,1]] becomes 1384")
+    assert_mag("[[[[1,1],[2,2]],[3,3]],[4,4]] becomes 445")
+    assert_mag("[[[[3,0],[5,3]],[4,4]],[5,5]] becomes 791")
+    assert_mag("[[[[5,0],[7,4]],[5,5]],[6,6]] becomes 1137")
+    assert_mag("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]] becomes 3488")
 
+    ########################################################
 
-def magnitude(number):
-    """The magnitude of a pair is 3 times the magnitude of its left element plus 2 times the magnitude of its right element."""
+    sum, mag, mag_max = solve(Path("sample_8.txt").read_text())
+    assert_eq(sum, "[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]")
+    assert mag == 4140
+    assert mag_max == 3993
 
-    if isinstance(number, RegularNumber):
-        return number.value
-    left, right = number
-    return 3 * magnitude(left) + 2 * magnitude(right)
+    a = Snailfish("[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]")
+    b = Snailfish("[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]")
+    c = a + b
+    assert_eq(c, "[[[[7,8],[6,6]],[[6,0],[7,7]]],[[[7,8],[8,8]],[[7,9],[0,6]]]]")
+    assert c.magnitude() == 3993
+
+    print("ok")
 
 
 def main():
-    """Solve the puzzle."""
+    parser = ArgumentParser()
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-t", "--test", action="store_true")
+    parser.add_argument("filename", nargs="?", type=Path, default="input.txt")
+    args = parser.parse_args()
 
-    data = open("input.txt" if len(sys.argv) == 1 else sys.argv[1]).read().splitlines()
-    numbers = [to_snailfish(eval(line)) for line in data]
+    if args.test:
+        return test()
 
-    # part 1
-    total = numbers[0]
-    for number in numbers[1:]:
-        total = reduced_addition(total, number)
-    print(magnitude(total))
-
-    # part 2
-    print(max(magnitude(reduced_addition(a, b)) for a in numbers for b in numbers if a != b))
+    data = args.filename.read_text().strip()
+    _, part1, part2 = solve(data)
+    print(part1)
+    print(part2)
 
 
 if __name__ == "__main__":

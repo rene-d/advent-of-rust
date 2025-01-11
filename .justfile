@@ -18,9 +18,12 @@ make:
     cargo build --manifest-path aoc/Cargo.toml --release --quiet
     @for year in 20* ; do echo "cargo build $year" ; cargo build --manifest-path $year/Cargo.toml --release --quiet ; done
 
+timings *ARGS:
+    ./scripts/timings.py {{ ARGS }}
+
 run-all *ARGS:
     tmux new-session -d -s aoc
-    for year in 20* ; do tmux new-window -t aoc:$year "aoc run $year {{ ARGS }}" ; done
+    for year in 20* ; do tmux new-window -t aoc:$year "./scripts/runall.py $year {{ ARGS }}" ; done
     tmux kill-window -t aoc:0
     tmux list-windows -t aoc
 

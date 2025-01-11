@@ -1,5 +1,4 @@
 # http://adventofcode.com/2021
 [workspace]
 members = ["day*"]
-exclude = ["day18"]
 resolver = "2"
