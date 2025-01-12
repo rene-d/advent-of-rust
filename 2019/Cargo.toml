@@ -6,7 +6,9 @@ members = [
     "day2",
     "day3",
     "day4",
+    "day5",
     "day6",
+    "day7",
     "day8",
     "day10",
     "day12",
@@ -16,6 +18,7 @@ members = [
     "day20",
     "day22",
     "day24",
+    "intcode-rs",
 ]
 
 resolver = "2"
