@@ -25,7 +25,7 @@ Puzzle                                                                   | Stars
 [Day 14: Regolith Reservoir](https://adventofcode.com/2022/day/14)       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2022/day14/day14.rs) [![Python](../scripts/assets/python.png)](../2022/day14/day14.py)
 [Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2022/day15/day15.rs) [![Python](../scripts/assets/python.png)](../2022/day15/day15.py)
 [Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2022/day16/day16.rs)
-[Day 17: Pyroclastic Flow](https://adventofcode.com/2022/day/17)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2022/day17/day17.rs) [![Python](../scripts/assets/python.png)](../2022/day17/day17.py)
+[Day 17: Pyroclastic Flow](https://adventofcode.com/2022/day/17)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2022/day17/day17.rs) [![Python](../scripts/assets/python.png)](../2022/day17/day17.py) [🎁](../2022/day17/README.md)
 [Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2022/day18/day18.rs)
 [Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)      | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2022/day19/day19.rs)
 [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2022/day20/day20.rs)
