@@ -2,7 +2,7 @@
 
 ![AoC2019](https://img.shields.io/badge/Advent_of_Code-2019-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 16](https://img.shields.io/badge/Rust-16-cyan?logo=Rust)
+![Rust: 19](https://img.shields.io/badge/Rust-19-cyan?logo=Rust)
 ![Python: 23](https://img.shields.io/badge/Python-23-cyan?logo=Python)
 
 ## 2019 ([Calendar](https://adventofcode.com/2019)) ([Solutions](../2019/)) : 50⭐
@@ -17,11 +17,11 @@ Puzzle                                                                          
 [Day 6: Universal Orbit Map](https://adventofcode.com/2019/day/6)                | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day6/day6.rs) [![Python](../scripts/assets/python.png)](../2019/day6/day6.py)
 [Day 7: Amplification Circuit](https://adventofcode.com/2019/day/7)              | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day7/day7.rs) [![Python](../scripts/assets/python.png)](../2019/day7/day7.py)
 [Day 8: Space Image Format](https://adventofcode.com/2019/day/8)                 | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day8/day8.rs) [![Python](../scripts/assets/python.png)](../2019/day8/day8.py)
-[Day 9: Sensor Boost](https://adventofcode.com/2019/day/9)                       | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2019/day9/day9.py)
+[Day 9: Sensor Boost](https://adventofcode.com/2019/day/9)                       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day9/day9.rs) [![Python](../scripts/assets/python.png)](../2019/day9/day9.py)
 [Day 10: Monitoring Station](https://adventofcode.com/2019/day/10)               | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day10/day10.rs) [![Python](../scripts/assets/python.png)](../2019/day10/day10.py)
-[Day 11: Space Police](https://adventofcode.com/2019/day/11)                     | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2019/day11/day11.py)
+[Day 11: Space Police](https://adventofcode.com/2019/day/11)                     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day11/day11.rs) [![Python](../scripts/assets/python.png)](../2019/day11/day11.py)
 [Day 12: The N-Body Problem](https://adventofcode.com/2019/day/12)               | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day12/day12.rs) [![Python](../scripts/assets/python.png)](../2019/day12/day12.py)
-[Day 13: Care Package](https://adventofcode.com/2019/day/13)                     | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2019/day13/day13.py) [🎁](../2019/day13/README.md)
+[Day 13: Care Package](https://adventofcode.com/2019/day/13)                     | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day13/day13.rs) [![Python](../scripts/assets/python.png)](../2019/day13/day13.py) [🎁](../2019/day13/README.md)
 [Day 14: Space Stoichiometry](https://adventofcode.com/2019/day/14)              | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day14/day14.rs) [![Python](../scripts/assets/python.png)](../2019/day14/day14.py)
 [Day 15: Oxygen System](https://adventofcode.com/2019/day/15)                    | ⭐⭐  | [![Python](../scripts/assets/python.png)](../2019/day15/day15.py) [🎁](../2019/day15/README.md)
 [Day 16: Flawed Frequency Transmission](https://adventofcode.com/2019/day/16)    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2019/day16/day16.rs) [![Python](../scripts/assets/python.png)](../2019/day16/day16.py) [![C](../scripts/assets/c.png)](../2019/day16/day16.c)

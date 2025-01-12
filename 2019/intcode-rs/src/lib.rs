@@ -100,7 +100,7 @@ impl Computer {
     /// # Panics
     pub fn run(&mut self) -> State {
         loop {
-            let opcode = self.peek(Address(self.ip));
+            let opcode = self.peek(self.address(IMMEDIATE_MODE, 0));
 
             match opcode % 100 {
                 0 => {
@@ -197,6 +197,12 @@ impl Computer {
                     self.ip += 4;
                 }
 
+                9 => {
+                    let a = self.address((opcode / 100) % 10, 1);
+                    self.relbase += self.peek(a);
+                    self.ip += 2;
+                }
+
                 _ => panic!("opcode {opcode} not implemented"),
             }
         }
@@ -207,12 +213,17 @@ impl Computer {
             |_| {
                 panic!("segmentation fault at {}", address.0);
             },
-            |a| self.mem[a],
+            |a| *self.mem.get(a).unwrap_or(&0),
         )
     }
 
     fn poke(&mut self, address: Address, num: i64) {
         if let Ok(a) = usize::try_from(address.0) {
+            if a >= self.mem.len() {
+                // allocate a new 16-int page
+                self.mem.resize(a + 16, 0);
+            }
+
             self.mem[a] = num;
         } else {
             panic!("segmentation fault at {}", address.0);
@@ -221,12 +232,20 @@ impl Computer {
 
     fn address(&self, mode: i64, offset: i64) -> Address {
         match mode {
-            POSITION_MODE => Address(self.peek(Address(self.ip + offset))),
+            POSITION_MODE => Address(self.peek(self.address(IMMEDIATE_MODE, offset))),
             IMMEDIATE_MODE => Address(self.ip + offset),
             RELATIVE_MODE => Address(self.relbase + self.peek(Address(self.ip + offset))),
             _ => panic!("invalid mode {mode}"),
         }
     }
+
+    pub fn poke_mem(&mut self, address: i64, value: i64) {
+        self.poke(Address(address), value);
+    }
+
+    // pub fn iter_run(&mut self) -> impl Iterator<Item = State> + '_ {
+    //     (0..).map(|_| self.run())
+    // }
 }
 
 /// Test from puzzle input
