@@ -97,10 +97,18 @@ impl Computer {
         self.input.push_back(value);
     }
 
+    pub fn push_byte(&mut self, byte: u8) {
+        self.input.push_back(i64::from(byte));
+    }
+
+    pub fn push_ascii(&mut self, string: &str) {
+        string.bytes().for_each(|b| self.push_byte(b));
+    }
+
     /// # Panics
     pub fn run(&mut self) -> State {
         loop {
-            let opcode = self.peek(self.address(IMMEDIATE_MODE, 0));
+            let opcode = self.addr_peek(Address(self.ip));
 
             match opcode % 100 {
                 0 => {
@@ -111,19 +119,19 @@ impl Computer {
 
                 1 => {
                     // addition
-                    let a = self.address((opcode / 100) % 10, 1);
-                    let b = self.address((opcode / 1000) % 10, 2);
-                    let c = self.address((opcode / 10000) % 10, 3);
-                    self.poke(c, self.peek(a) + self.peek(b));
+                    let a = self.op_address(opcode, 1);
+                    let b = self.op_address(opcode, 2);
+                    let c = self.op_address(opcode, 3);
+                    self.addr_poke(c, self.addr_peek(a) + self.addr_peek(b));
                     self.ip += 4;
                 }
 
                 2 => {
                     // multiplication
-                    let a = self.address((opcode / 100) % 10, 1);
-                    let b = self.address((opcode / 1000) % 10, 2);
-                    let c = self.address((opcode / 10000) % 10, 3);
-                    self.poke(c, self.peek(a) * self.peek(b));
+                    let a = self.op_address(opcode, 1);
+                    let b = self.op_address(opcode, 2);
+                    let c = self.op_address(opcode, 3);
+                    self.addr_poke(c, self.addr_peek(a) * self.addr_peek(b));
                     self.ip += 4;
                 }
 
@@ -132,8 +140,8 @@ impl Computer {
                     if let Some(value) = self.input.pop_front() {
                         // println!("got input {value}");
 
-                        let a = self.address((opcode / 100) % 10, 1);
-                        self.poke(a, value);
+                        let a = self.op_address(opcode, 1);
+                        self.addr_poke(a, value);
                         self.ip += 2;
                     } else {
                         // println!("waiting for input");
@@ -143,8 +151,8 @@ impl Computer {
 
                 4 => {
                     // output
-                    let a = self.address((opcode / 100) % 10, 1);
-                    let value = self.peek(a);
+                    let a = self.op_address(opcode, 1);
+                    let value = self.addr_peek(a);
                     self.ip += 2;
 
                     // println!("output {value}");
@@ -154,52 +162,52 @@ impl Computer {
                 5 => {
                     // jump-if-true
 
-                    let a = self.address((opcode / 100) % 10, 1);
+                    let a = self.op_address(opcode, 1);
 
-                    self.ip = if self.peek(a) == 0 {
+                    self.ip = if self.addr_peek(a) == 0 {
                         self.ip + 3
                     } else {
-                        let b = self.address((opcode / 1000) % 10, 2);
-                        self.peek(b)
+                        let b = self.op_address(opcode, 2);
+                        self.addr_peek(b)
                     }
                 }
 
                 6 => {
                     // jump-if-false
 
-                    let a = self.address((opcode / 100) % 10, 1);
+                    let a = self.op_address(opcode, 1);
 
-                    self.ip = if self.peek(a) != 0 {
+                    self.ip = if self.addr_peek(a) != 0 {
                         self.ip + 3
                     } else {
-                        let b = self.address((opcode / 1000) % 10, 2);
-                        self.peek(b)
+                        let b = self.op_address(opcode, 2);
+                        self.addr_peek(b)
                     }
                 }
 
                 7 => {
-                    let a = self.address((opcode / 100) % 10, 1);
-                    let b = self.address((opcode / 1000) % 10, 2);
-                    let c = self.address((opcode / 10000) % 10, 3);
+                    let a = self.op_address(opcode, 1);
+                    let b = self.op_address(opcode, 2);
+                    let c = self.op_address(opcode, 3);
 
-                    self.poke(c, i64::from(self.peek(a) < self.peek(b)));
+                    self.addr_poke(c, i64::from(self.addr_peek(a) < self.addr_peek(b)));
 
                     self.ip += 4;
                 }
 
                 8 => {
-                    let a = self.address((opcode / 100) % 10, 1);
-                    let b = self.address((opcode / 1000) % 10, 2);
-                    let c = self.address((opcode / 10000) % 10, 3);
+                    let a = self.op_address(opcode, 1);
+                    let b = self.op_address(opcode, 2);
+                    let c = self.op_address(opcode, 3);
 
-                    self.poke(c, i64::from(self.peek(a) == self.peek(b)));
+                    self.addr_poke(c, i64::from(self.addr_peek(a) == self.addr_peek(b)));
 
                     self.ip += 4;
                 }
 
                 9 => {
-                    let a = self.address((opcode / 100) % 10, 1);
-                    self.relbase += self.peek(a);
+                    let a = self.op_address(opcode, 1);
+                    self.relbase += self.addr_peek(a);
                     self.ip += 2;
                 }
 
@@ -208,7 +216,23 @@ impl Computer {
         }
     }
 
-    fn peek(&self, address: Address) -> i64 {
+    /// Calculate the operand address.
+    fn op_address(&self, opcode: i64, offset: i64) -> Address {
+        let mode = match offset {
+            1 => (opcode / 100) % 10,
+            2 => (opcode / 1000) % 10,
+            3 => (opcode / 10000) % 10,
+            _ => panic!(),
+        };
+        match mode {
+            POSITION_MODE => Address(self.addr_peek(Address(self.ip + offset))),
+            IMMEDIATE_MODE => Address(self.ip + offset),
+            RELATIVE_MODE => Address(self.relbase + self.addr_peek(Address(self.ip + offset))),
+            _ => panic!("invalid mode {mode}"),
+        }
+    }
+
+    fn addr_peek(&self, address: Address) -> i64 {
         usize::try_from(address.0).map_or_else(
             |_| {
                 panic!("segmentation fault at {}", address.0);
@@ -217,7 +241,7 @@ impl Computer {
         )
     }
 
-    fn poke(&mut self, address: Address, num: i64) {
+    fn addr_poke(&mut self, address: Address, num: i64) {
         if let Ok(a) = usize::try_from(address.0) {
             if a >= self.mem.len() {
                 // allocate a new 16-int page
@@ -230,22 +254,10 @@ impl Computer {
         }
     }
 
-    fn address(&self, mode: i64, offset: i64) -> Address {
-        match mode {
-            POSITION_MODE => Address(self.peek(self.address(IMMEDIATE_MODE, offset))),
-            IMMEDIATE_MODE => Address(self.ip + offset),
-            RELATIVE_MODE => Address(self.relbase + self.peek(Address(self.ip + offset))),
-            _ => panic!("invalid mode {mode}"),
-        }
+    /// To cheat.
+    pub fn poke(&mut self, address: i64, value: i64) {
+        self.addr_poke(Address(address), value);
     }
-
-    pub fn poke_mem(&mut self, address: i64, value: i64) {
-        self.poke(Address(address), value);
-    }
-
-    // pub fn iter_run(&mut self) -> impl Iterator<Item = State> + '_ {
-    //     (0..).map(|_| self.run())
-    // }
 }
 
 /// Test from puzzle input

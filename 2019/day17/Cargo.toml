@@ -1,0 +1,13 @@
+[package]
+name = "day17"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aoc = { path = "../../aoc" }
+intcode = { path = "../intcode-rs" }
+rustc-hash = "2.1.0"
+
+[[bin]]
+name = "day17"
+path = "day17.rs"

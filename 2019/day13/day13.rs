@@ -50,7 +50,7 @@ impl ArcadeCabinet {
 
     fn part2(&mut self) -> i64 {
         self.computer.reset();
-        self.computer.poke_mem(0, 2); // play for free
+        self.computer.poke(0, 2); // play for free
         self.play();
         self.score
     }

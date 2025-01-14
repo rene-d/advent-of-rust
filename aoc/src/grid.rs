@@ -160,6 +160,60 @@ impl<T: Clone + Default> Default for Grid<T> {
     }
 }
 
+//
+// implement Rotation (should be a trait...)
+//
+
+impl<T: Copy + Default> Grid<T> {
+    pub fn rotate_clockwise(&self) -> Self {
+        let mut rotated = Self::with_size(self.height(), self.width(), self.exterior, self.dummy);
+
+        for x in 0..self.width() {
+            for y in 0..self.height() {
+                rotated[(self.height() - y - 1, x)] = self[(x, y)];
+            }
+        }
+        rotated
+    }
+
+    pub fn rotate_counterclockwise(&self) -> Self {
+        let mut rotated = Self::with_size(self.height(), self.width(), self.exterior, self.dummy);
+
+        for x in 0..self.width() {
+            for y in 0..self.height() {
+                rotated[(y, self.width() - 1 - x)] = self[(x, y)];
+            }
+        }
+        rotated
+    }
+
+    pub fn flip_vertical(&self) -> Self {
+        let mut flipped = Self::with_size(self.width(), self.height(), self.exterior, self.dummy);
+
+        for y in 0..self.height() {
+            for x in 0..self.width() {
+                flipped[(x, y)] = self[(self.width() - 1 - x, y)];
+            }
+        }
+        flipped
+    }
+
+    pub fn flip_horizontal(&self) -> Self {
+        let mut flipped = Self::with_size(self.width(), self.height(), self.exterior, self.dummy);
+
+        for y in 0..self.height() {
+            for x in 0..self.width() {
+                flipped[(x, y)] = self[(x, self.height() - 1 - y)];
+            }
+        }
+        flipped
+    }
+}
+
+//
+// implement []
+//
+
 impl<T> Index<Coord> for Grid<T> {
     type Output = T;
     #[inline]

@@ -12,6 +12,7 @@ pub mod knot;
 pub mod math;
 pub mod ocr;
 mod square;
+pub mod util;
 
 pub type Coord = coord::Coord;
 pub type Direction = direction::Direction;
