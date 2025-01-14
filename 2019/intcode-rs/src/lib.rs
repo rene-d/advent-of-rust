@@ -105,6 +105,15 @@ impl Computer {
         string.bytes().for_each(|b| self.push_byte(b));
     }
 
+    pub fn input_flush(&mut self) {
+        self.input.clear();
+    }
+
+    #[must_use]
+    pub fn input_len(&self) -> usize {
+        self.input.len()
+    }
+
     /// # Panics
     pub fn run(&mut self) -> State {
         loop {
