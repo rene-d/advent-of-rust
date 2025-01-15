@@ -5,6 +5,7 @@ import hashlib
 import itertools
 import logging
 import os
+import re
 import shutil
 import sqlite3
 import subprocess
@@ -107,6 +108,11 @@ def save_cache():
     #     print(f"{FEINT}{ITALIC}cache commited{RESET}")
 
 
+def shorten_key(key: str) -> str:
+    key = re.sub(r":([a-f\d]{9}[a-f\d]+):", lambda m: f":{m[1][:8]}…:", key)
+    return key
+
+
 def check_cache(key, file_timestamp: Path, table: str, columns: t.Iterable[str], no_age_check=False):
     cache = get_cache()
     key = str(key)
@@ -124,10 +130,10 @@ def check_cache(key, file_timestamp: Path, table: str, columns: t.Iterable[str],
             # delta = timedelta(seconds=seconds)
             # print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end=f"{CR}")
 
-            print(f"{FEINT}{ITALIC}entry {key} is out of date{RESET}", end=TRANSIENT)
+            print(f"{FEINT}{ITALIC}entry {shorten_key(key)} is out of date{RESET}", end=TRANSIENT)
 
     else:
-        print(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end=TRANSIENT)
+        print(f"{FEINT}{ITALIC}missing cache for {shorten_key(key)}{RESET}", end=TRANSIENT)
 
 
 def update_cache(key, timestamp: Path, table: str, row: t.Dict[str, t.Union[str, int]]) -> None:
