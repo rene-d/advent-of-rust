@@ -54,8 +54,12 @@ gh-test:
 gh: gh-fmt gh-clippy gh-test
 
 
+debian:
+    docker build -f scripts/Dockerfile -t aoc scripts/
+    docker run --rm -ti -v $PWD:/aoc -w /aoc aoc
+
 sid:
-    docker build -f scripts/Dockerfile -t aoc-sid scripts/
+    docker build -f scripts/Dockerfile-sid -t aoc-sid scripts/
     docker run --rm -ti -v $PWD:/aoc -w /aoc aoc-sid
 
 fedora:

@@ -1,4 +1,4 @@
-FROM debian:sid
+FROM debian
 
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -38,18 +38,17 @@ RUN apt-get install -y -qq lua5.4
 # Ruby
 RUN apt-get install -y -qq ruby
 
-# Java
-RUN apt-get install -y -qq default-jdk
-
 # C#
 RUN apt-get install -y -qq mono-mcs
 
 # Swift
-RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq swiftlang
+# RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq swiftlang
 
 # JavaScript
 RUN curl -fsSL https://bun.sh/install | bash
 
+# Java
+RUN apt-get install -y -qq default-jdk
 
 # User environment
 ARG HOST_U=1027

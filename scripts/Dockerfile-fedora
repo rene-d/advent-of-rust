@@ -6,10 +6,8 @@ RUN dnf upgrade -y && \
     dnf install -y cmake gdb clang llvm z3-devel
 
 # Python
-RUN dnf install -y python3-pip python3-numpy python3-tabulate python3-click python3-devel
-COPY requirements.txt /
-RUN python3 -mvenv /venv/python && \
-    /venv/python/bin/pip install -r /requirements.txt
+RUN dnf install -y python3-pip python3-devel python3-numpy python3-tabulate python3-click python3-curtsies python3-shapely python3-sympy python3-networkx python3-z3
+RUN python3 -mvenv /venv/python --system-site-packages
 
 # Rust
 RUN dnf install -y cargo cargo-fmt cargo-clippy
