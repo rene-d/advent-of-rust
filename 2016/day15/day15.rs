@@ -8,9 +8,9 @@ fn main() {
     let mut discs = Vec::new();
     let mut positions = Vec::new();
 
-    for line in args.input.lines() {
-        let re = Regex::new(r"Disc #\d+ has (\d+) positions; at time=0, it is at position (\d+).").unwrap();
+    let re = Regex::new(r"Disc #\d+ has (\d+) positions; at time=0, it is at position (\d+).").unwrap();
 
+    for line in args.input.lines() {
         let caps = re.captures(line).unwrap();
 
         discs.push(caps[2].parse::<usize>().unwrap());
