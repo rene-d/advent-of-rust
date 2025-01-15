@@ -4,9 +4,9 @@
 import argparse
 import re
 import sys
+import typing as t
 from collections import defaultdict
 from pathlib import Path
-import typing as t
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
 from intcode.Intcode import Computer  # noqa
@@ -155,10 +155,10 @@ def solve(software):
     # find path to the detection room
     path = find_path(map, start_room, "Pressure-Sensitive Floor")
 
-    # the diretion to get to Security Checkpoint from Pressure-Sensitive Floor
+    # the direction to get to Security Checkpoint from Pressure-Sensitive Floor
     checkpoint_dir = [k for k, v in map["Security Checkpoint"].items() if v == "Pressure-Sensitive Floor"][0]
 
-    # go to the pre
+    # go to the Pressure-Sensitive Floor
     for step in path:
         run(computer, step)
 

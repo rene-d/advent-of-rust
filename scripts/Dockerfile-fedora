@@ -23,9 +23,6 @@ RUN dnf install -y lua
 # Ruby
 RUN dnf install -y ruby
 
-# Java
-RUN dnf install -y java-latest-openjdk-devel
-
 # C#
 RUN dnf install -y mono-devel
 
@@ -34,6 +31,9 @@ RUN dnf install -y swift-lang
 
 # JavaScript
 RUN dnf install -y nodejs
+
+# Java
+RUN dnf install -y java-latest-openjdk-devel || true
 
 # User environment
 ENV Z3_SYS_Z3_HEADER=/usr/include/z3/z3.h

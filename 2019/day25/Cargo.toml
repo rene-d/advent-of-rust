@@ -1,0 +1,13 @@
+[package]
+name = "day25"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aoc = { path = "../../aoc" }
+intcode = { path = "../intcode-rs" }
+regex = "1.11.1"
+
+[[bin]]
+name = "day25"
+path = "day25.rs"

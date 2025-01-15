@@ -112,7 +112,15 @@ def aoc_install(ctx: click.Context):
 
     cli = Path("~/.local/bin/aoc").expanduser()
     cli.unlink(True)
+    cli.parent.mkdir(parents=True, exist_ok=True)
     cli.symlink_to(f)
+
+    if os.getuid() == 0:
+        # probably into a container
+        cli = Path("/usr/local/bin/aoc").expanduser()
+        cli.unlink(True)
+        cli.parent.mkdir(parents=True, exist_ok=True)
+        cli.symlink_to(f)
 
     click.echo("Command aoc has been installed in ~/.local/bin .")
 
