@@ -67,7 +67,11 @@ class AocProject:
     def pass_thru(self, tool: str, args: list, cwd=None):
 
         if not Path(os.getcwd()).is_relative_to(self.aoc_root):
-            raise click.ClickException("not in AoC project")
+            if Path(__file__).is_symlink():
+                cwd = Path(__file__).resolve().parent.parent
+
+            else:
+                raise click.ClickException("not in AoC project")
 
         cmd = [self.scripts_dir / tool]
         cmd.extend(args)

@@ -333,7 +333,7 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
         elif filter_user == "mine":
             if not user.isdigit():
                 continue
-        elif filter_user and user != filter_user and user[: 4 + len(filter_user)] != f"tmp-{filter_user}":
+        elif filter_user and user != filter_user and user[-1 - len(filter_user) :] != f"-{filter_user}":
             continue
 
         year = int(input.parent.name)
@@ -390,7 +390,10 @@ def run_day(
     name_max_len = 16 - len(day_suffix)
 
     for crc, file in sorted(day_inputs.items(), key=itemgetter(1)):
-        input_name = file.parent.parent.name.removeprefix("tmp-")[:16]
+        input_name = file.parent.parent.name
+        input_name = input_name.removeprefix("tmp-")[:16]
+        input_name = input_name.removeprefix("ok-")[:17]
+        input_name = input_name.removeprefix("other-")[:14]
         prefix = f"[{year}-{day:02d}{day_suffix}] {input_name[:name_max_len]:<{name_max_len}}"
 
         if day % 2 == 1:
@@ -461,7 +464,8 @@ def run_day(
                 f" {status_color}{e['status']:7}{RESET}"
                 f" {WHITE}{e['elapsed']/1e9:7.3f}s"
                 f" {GRAY}{'☽' if in_cache else ' '}"
-                f" {status_color}{str(answers):<40}{RESET}"
+                f" {status_color}{str(answers):<50}{RESET}"
+                f" {FEINT}{file}{RESET}"
             )
             if TERMINAL_COLS >= 130:
                 print(line, info)
@@ -529,7 +533,10 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
                 if isinstance(interpreter, str):
                     interpreter = lookup(interpreter)
                 elif isinstance(interpreter, (tuple, list)):
-                    interpreter = next(filter(None, map(lookup, interpreter)))
+                    try:
+                        interpreter = next(filter(None, map(lookup, interpreter)))
+                    except StopIteration:
+                        interpreter = None  # none of them available
 
                 if interpreter:
                     languages[lang2] = (v, interpreter)
