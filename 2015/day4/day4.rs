@@ -2,40 +2,54 @@
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args.input.trim_ascii().to_string();
+    let mut args = aoc::parse_args();
 
-    let mut key = 0;
+    args.run(solve);
+}
 
-    loop {
-        let key_str = key.to_string();
-        let mut x = data.clone();
+fn solve(data: &str) -> (u32, u32) {
+    let mut secret = [0u8; 32];
+    let mut base_len = 0;
 
-        x.push_str(&key_str);
-        let digest = md5::compute(x);
-
-        if format!("{digest:x}").starts_with("00000") {
-            // println!("{}\t{:?}", key, digest);
-            println!("{key}");
-            break;
-        }
-
-        key += 1;
+    // fill a byte buffer with the seed
+    for b in data.trim().bytes() {
+        secret[base_len] = b;
+        base_len += 1;
     }
 
-    loop {
-        let key_str = key.to_string();
-        let mut x = data.clone();
+    let mut number = 0u32;
 
-        x.push_str(&key_str);
-        let digest = md5::compute(x);
+    let mut find_key = |mask| {
+        loop {
+            // compute the number of digits of key
+            let mut secret_len = base_len;
+            let mut number_tmp = number;
+            loop {
+                secret_len += 1;
+                number_tmp /= 10;
+                if number_tmp == 0 {
+                    break;
+                }
+            }
 
-        if format!("{digest:x}").starts_with("000000") {
-            // println!("{}\t{:?}", key, digest);
-            println!("{key}");
-            break;
+            // add the digits to the seed
+            let mut number_tmp = number;
+            for i in (base_len..secret_len).rev() {
+                secret[i] = b'0' + (number_tmp % 10) as u8;
+                number_tmp /= 10;
+            }
+
+            let digest = md5::compute(&secret[..secret_len]);
+
+            // test the 5 or 6 first nibbles
+            if digest.0[0] == 0 && digest.0[1] == 0 && (digest.0[2] & mask) == 0 {
+                // println!("{}\t{:?}", key, digest);
+                break number;
+            }
+
+            number += 1;
         }
+    };
 
-        key += 1;
-    }
+    (find_key(0xf0), find_key(0xff))
 }

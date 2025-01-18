@@ -5,12 +5,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { house_present: 0 }
-    }
-
-    fn configure(&mut self, data: &str) {
-        self.house_present = data.trim_ascii().parse::<usize>().unwrap();
+    fn new(data: &str) -> Self {
+        Self {
+            house_present: data.trim_ascii().parse::<usize>().unwrap(),
+        }
     }
 
     fn part1(&self) -> usize {
@@ -70,24 +68,17 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-
-    let mut puzzle = Puzzle::new();
-
-    puzzle.configure(&args.input);
-
-    let result = puzzle.part1();
-    println!("{result}");
-
-    let result = puzzle.part2();
-    println!("{result}");
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
 #[test]
 fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 10;
+    let puzzle = Puzzle::new("10");
     assert_eq!(puzzle.part1(), 1);
     assert_eq!(puzzle.part2(), 1);
 }
@@ -95,8 +86,7 @@ fn test01() {
 /// Test from puzzle input
 #[test]
 fn test02() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 30;
+    let puzzle = Puzzle::new("30");
     assert_eq!(puzzle.part1(), 2);
     assert_eq!(puzzle.part2(), 2);
 }
@@ -104,8 +94,7 @@ fn test02() {
 /// Test from puzzle input
 #[test]
 fn test03() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 40;
+    let puzzle = Puzzle::new("40");
     assert_eq!(puzzle.part1(), 3);
     assert_eq!(puzzle.part2(), 3);
 }
@@ -113,8 +102,7 @@ fn test03() {
 /// Test from puzzle input
 #[test]
 fn test04() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 60;
+    let puzzle = Puzzle::new("60");
     assert_eq!(puzzle.part1(), 4);
     assert_eq!(puzzle.part2(), 4);
 }
@@ -122,8 +110,7 @@ fn test04() {
 /// Test from puzzle input
 #[test]
 fn test05() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 70;
+    let puzzle = Puzzle::new("70");
     assert_eq!(puzzle.part1(), 4);
     assert_eq!(puzzle.part2(), 4);
 }
@@ -131,8 +118,7 @@ fn test05() {
 /// Test from puzzle input
 #[test]
 fn test06() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 80;
+    let puzzle = Puzzle::new("80");
     assert_eq!(puzzle.part1(), 6);
     assert_eq!(puzzle.part2(), 6);
 }
@@ -140,8 +126,7 @@ fn test06() {
 /// Test from puzzle input
 #[test]
 fn test07() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 120;
+    let puzzle = Puzzle::new("120");
     assert_eq!(puzzle.part1(), 6);
     assert_eq!(puzzle.part2(), 6);
 }
@@ -149,8 +134,7 @@ fn test07() {
 /// Test from puzzle input
 #[test]
 fn test08() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 130;
+    let puzzle = Puzzle::new("130");
     assert_eq!(puzzle.part1(), 8);
     assert_eq!(puzzle.part2(), 6);
 }
@@ -158,8 +142,7 @@ fn test08() {
 /// Test from puzzle input
 #[test]
 fn test09() {
-    let mut puzzle = Puzzle::new();
-    puzzle.house_present = 150;
+    let puzzle = Puzzle::new("150");
     assert_eq!(puzzle.part1(), 8);
     assert_eq!(puzzle.part2(), 8);
 }

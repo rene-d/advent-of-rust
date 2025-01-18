@@ -4,15 +4,13 @@ use rustc_hash::FxHashSet;
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    let mut args = aoc::parse_args();
 
-    println!("{}", part1(&data[0]));
-    println!("{}", part2(&data[0]));
+    args.run(|data| {
+        let line = data.trim_ascii();
+
+        (part1(line), part2(line))
+    });
 }
 
 fn part2(line: &str) -> usize {

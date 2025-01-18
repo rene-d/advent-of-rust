@@ -9,7 +9,7 @@ struct Puzzle {
     valves: FxHashMap<String, u8>,
     flow_rates: FxHashMap<u8, u32>,
     tunnels: FxHashMap<u8, Vec<u8>>,
-    distances: [[u32; 128]; 128],
+    distances: Box<[[u32; 128]]>,
 }
 
 impl Puzzle {
@@ -18,7 +18,7 @@ impl Puzzle {
             valves: FxHashMap::default(),
             flow_rates: FxHashMap::default(),
             tunnels: FxHashMap::default(),
-            distances: [[0u32; 128]; 128],
+            distances: vec![[0u32; 128]; 128].into_boxed_slice(),
         }
     }
 

@@ -21,12 +21,43 @@ pub type GridU<T> = gridu::GridU<T>;
 pub type Square<T> = square::Square<T>;
 pub type Counter<T> = counter::Counter<T>;
 
+/// Parse commandline arguments and load input file.
+///
+/// # Examples
+///
+/// Basic usage:
+///
+/// ```
+/// fn solve(data: &str) -> (i32, i32) {
+///     (1234, 5678)
+/// }
+///
+/// let mut args = aoc::parse_args();
+/// args.run(solve);
+/// ```
+///
+/// Advanced usage:
+///
+/// ```
+/// struct Puzzle {}
+/// impl Puzzle {
+///     fn new(data: &str) -> Self { Self { } }
+///     fn part1(&self) -> &'static str { "road" }
+///     fn part2(&self) -> u32 { 66 }
+/// }
+///
+/// let mut args = aoc::parse_args();
+/// args.run(|data| {
+///     let puzzle = Puzzle::new(data);
+///     (puzzle.part1(), puzzle.part2())
+/// });
+/// ```
 #[must_use]
 pub fn parse_args() -> args::Args {
     Args::parse_args()
 }
 
-/// Read the puzzle input
+/// Read the puzzle input.
 /// # Panics
 /// If the file cannot be found or read
 #[must_use]

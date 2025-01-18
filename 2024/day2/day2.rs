@@ -1,23 +1,22 @@
 //! [Day 2: Red-Nosed Reports](https://adventofcode.com/2024/day/2)
 
 struct Puzzle {
-    data: Vec<Vec<i32>>,
+    reports: Vec<Vec<i32>>,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { data: vec![] }
-    }
+    fn new(data: &str) -> Self {
+        let mut reports = Vec::new();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
-            self.data.push(
+            reports.push(
                 line.split_whitespace()
                     .filter_map(|s: &str| s.parse().ok())
                     .collect(),
             );
         }
+
+        Self { reports }
     }
 
     fn is_safe(v: &[i32]) -> bool {
@@ -42,7 +41,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> usize {
-        self.data
+        self.reports
             .iter()
             .filter(|v: &&Vec<i32>| Self::is_safe(v))
             .count()
@@ -50,7 +49,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> usize {
-        self.data
+        self.reports
             .iter()
             .filter(|v: &&Vec<i32>| Self::is_safe(v) || Self::is_safe_except_one(v))
             .count()
@@ -58,11 +57,12 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -70,19 +70,17 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 2);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 4);
     }
 }

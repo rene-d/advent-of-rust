@@ -8,15 +8,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            left: vec![],
-            right: vec![],
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut left = Vec::new();
+        let mut right = Vec::new();
 
-    /// Parse the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             let parts: Vec<i32> = line
                 .split_whitespace()
@@ -24,14 +19,16 @@ impl Puzzle {
                 .collect();
 
             if parts.len() == 2 {
-                self.left.push(parts[0]);
-                self.right.push(parts[1]);
+                left.push(parts[0]);
+                right.push(parts[1]);
             }
         }
 
         // Sort both arrays
-        self.left.sort_unstable();
-        self.right.sort_unstable();
+        left.sort_unstable();
+        right.sort_unstable();
+
+        Self { left, right }
     }
 
     /// Solve part one.
@@ -58,11 +55,12 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -70,19 +68,17 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let data = aoc::load_input_data("test.txt");
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 11);
     }
 
     #[test]
     fn test02() {
-        let data = aoc::load_input_data("test.txt");
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 31);
     }
 }

@@ -2,28 +2,26 @@
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    let mut args = aoc::parse_args();
 
-    solve(&data[0], 40);
-    solve(&data[0], 50);
+    args.run(|data| {
+        let data = data.trim_ascii();
+
+        (solve(data, 40), solve(data, 50))
+    });
 }
 
-fn solve(start_sequence: &str, turns: u32) {
-    let mut look = start_sequence.chars().collect::<Vec<char>>();
+fn solve(start_sequence: &str, turns: u32) -> usize {
+    let mut look = start_sequence.bytes().collect::<Vec<_>>();
 
     for _ in 0..turns {
-        let mut say: Vec<char> = Vec::new();
+        let mut say: Vec<_> = Vec::new();
 
         let mut count = 0;
-        let mut previous = '\0';
+        let mut previous = 0;
         for current in &look {
-            if previous != '\0' && previous != *current {
-                say.extend(count.to_string().chars());
+            if previous != 0 && previous != *current {
+                extend(&mut say, count);
                 say.push(previous);
                 count = 0;
             }
@@ -31,10 +29,28 @@ fn solve(start_sequence: &str, turns: u32) {
             previous = *current;
         }
 
-        say.extend(count.to_string().chars());
+        extend(&mut say, count);
         say.push(previous);
 
         look.clone_from(&say);
     }
-    println!("{}", look.len());
+
+    look.len()
+}
+
+fn extend(say: &mut Vec<u8>, num: u32) {
+    let mut tmp: u32 = num;
+    let mut base = 1;
+    loop {
+        tmp /= 10;
+        if tmp == 0 {
+            break;
+        }
+        base *= 10;
+    }
+
+    while base != 0 {
+        say.push(b'0' + ((num / base) % 10) as u8);
+        base /= 10;
+    }
 }

@@ -72,25 +72,20 @@ fn is_roles(set: &FxHashSet<Role>, f1: &Role, f2: &Role) -> bool {
 }
 
 struct Puzzle {
-    // data: String,
     wires: FxHashMap<String, u8>,
     gates: Vec<Gate>,
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            wires: FxHashMap::default(),
-            gates: Vec::new(),
-        }
-    }
-
     /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
+    fn new(data: &str) -> Self {
+        let mut wires = FxHashMap::default();
+        let mut gates = Vec::new();
+
         for line in data.lines() {
             if line.contains(": ") {
                 let (wire, value) = line.split_once(": ").unwrap();
-                self.wires.insert(wire.to_string(), value.parse().unwrap());
+                wires.insert(wire.to_string(), value.parse().unwrap());
             }
             if line.contains(" -> ") {
                 let v = line.split_ascii_whitespace().collect::<Vec<_>>();
@@ -102,9 +97,11 @@ impl Puzzle {
                     r: v[4].to_string(),
                 };
 
-                self.gates.push(gate);
+                gates.push(gate);
             }
         }
+
+        Self { wires, gates }
     }
 
     /// Solve part one.
@@ -229,11 +226,12 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -241,19 +239,18 @@ fn main() {
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+
     #[test]
     fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_1.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 4);
     }
 
     #[test]
     fn test_part2() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_2.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part1(), 2024);
     }
 }

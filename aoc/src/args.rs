@@ -1,15 +1,18 @@
 use colored::Colorize;
-use std::time::Instant;
+use std::{
+    fmt::Display,
+    time::{Duration, Instant},
+};
 
 use crate::load_input_data;
 
 #[derive(Debug)]
 pub struct Args {
-    pub input: String,
-    pub verbose: bool,
-    elapsed: bool,
-    instant: Instant,
-    pub has_option: fn(&str) -> bool,
+    pub input: String,    // puzzle input
+    pub verbose: bool,    // activate the verbose flag
+    options: Vec<String>, // copy of Args()
+    elapsed: bool,        // show elspaed time on exit
+    instant: Instant,     // time after input read
 }
 
 impl Args {
@@ -28,20 +31,22 @@ impl Args {
         let verbose = std::env::args().any(|a| a == "--verbose" || a == "-v");
         let elapsed = std::env::args().any(|a| a == "--elapsed");
         let input = load_input_data(&filename);
-        let has_option = |option: &str| -> bool { std::env::args().any(|a| a == option) };
+        let options = std::env::args().collect();
+
+        let instant = Instant::now();
 
         Self {
             input,
             verbose,
+            options,
             elapsed,
-            instant: Instant::now(),
-            has_option,
+            instant,
         }
     }
 
-    fn elapsed(&self) -> String {
-        let micros: u128 = self.instant.elapsed().as_micros();
-        format!("elapsed: {}.{:03} ms", micros / 1000, micros % 1000)
+    pub fn has_option(&self, option: &str) -> bool {
+        self.options.iter().filter(|s| *s == option).count() != 0
+        //self.options.contains(option)
     }
 }
 
@@ -49,7 +54,9 @@ impl Args {
 impl Drop for Args {
     fn drop(&mut self) {
         if self.elapsed {
-            println!("{}", self.elapsed());
+            #[allow(clippy::cast_possible_truncation)]
+            let micros = Duration::from_micros(self.instant.elapsed().as_micros() as u64);
+            println!("elapsed:  {micros:?}");
         }
     }
 }
@@ -74,11 +81,40 @@ fn usage() {
     println!();
     println!("{}", "Options:".green().bold());
     println!(
-        "  {}, {}           Use verbose output",
+        "  {}, {}          Use verbose output",
         "-v".cyan().bold(),
         "--verbose".cyan().bold()
     );
     println!("      {}          Show duration", "--elapsed".cyan().bold());
 
     std::process::exit(0); //std::process::ExitCode::SUCCESS);
+}
+
+impl Args {
+    pub fn run<U, V, T>(&mut self, solve: T)
+    where
+        U: Display,
+        V: Display,
+        T: Fn(&str) -> (U, V),
+    {
+        let instant = Instant::now();
+
+        let (p1, p2) = solve(&self.input);
+
+        #[allow(clippy::cast_possible_truncation)]
+        let micros = Duration::from_micros(instant.elapsed().as_micros() as u64);
+
+        println!("{p1}");
+
+        // day 25 should print only one answer
+        let p2 = format!("{p2}");
+        if !p2.is_empty() {
+            println!("{p2}");
+        }
+
+        if self.elapsed {
+            println!("elapsed: {micros:?}");
+            self.elapsed = false;
+        }
+    }
 }

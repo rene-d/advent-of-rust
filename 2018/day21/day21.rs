@@ -116,22 +116,20 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            ip_reg: 0,
-            program: vec![],
-        }
-    }
-
     /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
+    fn new(data: &str) -> Self {
+        let mut program = Vec::new();
+        let mut ip_reg = 0;
+
         for line in data.lines() {
             if let Some(value) = line.strip_prefix("#ip ") {
-                self.ip_reg = value.parse::<usize>().unwrap();
+                ip_reg = value.parse::<usize>().unwrap();
             } else {
-                self.program.push(line.parse().unwrap());
+                program.push(line.parse().unwrap());
             }
         }
+
+        Self { ip_reg, program }
     }
 
     fn run(&self, mut iterations: u32) {
@@ -237,17 +235,24 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    if args.verbose {
-        puzzle.run(1);
+    let mut args = aoc::parse_args();
+
+    let use_emulation = args.has_option("--assembly");
+
+    if use_emulation {
+        Puzzle::new(&args.input).run(1);
     } else {
-        println!("{}", puzzle.part1());
-        if (args.has_option)("--assembly") {
-            println!("{}", puzzle.part2());
-        } else {
-            println!("{}", puzzle.part2_fast());
-        }
+        args.run(|data| {
+            let puzzle = Puzzle::new(data);
+
+            (
+                puzzle.part1(),
+                if use_emulation {
+                    puzzle.part2()
+                } else {
+                    puzzle.part2_fast()
+                },
+            )
+        });
     }
 }

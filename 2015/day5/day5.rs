@@ -2,20 +2,14 @@
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    let mut args = aoc::parse_args();
 
-    part1(&data);
-    part2(&data);
+    args.run(|data| (part1(data), part2(data)));
 }
 
-fn part2(data: &[String]) {
+fn part2(data: &str) -> u32 {
     let mut nice_words = 0;
-    for word in data {
+    for word in data.lines() {
         // pair of any two letters that appears at least twice in the string without overlapping
         let mut twice = false;
         for i in 0..word.len() - 3 {
@@ -47,12 +41,12 @@ fn part2(data: &[String]) {
         }
     }
 
-    println!("{nice_words}");
+    nice_words
 }
 
-fn part1(data: &[String]) {
+fn part1(data: &str) -> u32 {
     let mut nice_words = 0;
-    for word in data {
+    for word in data.lines() {
         if word.contains("ab") || word.contains("cd") || word.contains("pq") || word.contains("xy")
         {
             continue;
@@ -77,5 +71,5 @@ fn part1(data: &[String]) {
         }
     }
 
-    println!("{nice_words}");
+    nice_words
 }

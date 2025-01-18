@@ -18,7 +18,7 @@ fn validate_field(field: &str, value: &str) -> bool {
         }
         ("hgt", _) => value.strip_suffix("in").map_or_else(
             || {
-                value.strip_suffix("cm").map_or(false, |centimeters| {
+                value.strip_suffix("cm").is_some_and(|centimeters| {
                     let height: u8 = centimeters.parse().unwrap_or(0);
                     (150..=193).contains(&height)
                 })

@@ -16,25 +16,19 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            sensors: vec![],
-            beacons: FxHashSet::default(),
-            max_d: 0,
-            field_size: 0,
-        }
-    }
-
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str, is_test: bool) {
-        let lines = data.split('\n').collect::<Vec<_>>();
-
-        self.field_size = if is_test { 20 } else { 4_000_000 };
+    fn new(data: &str, is_test: bool) -> Self {
+        let field_size = if is_test { 20 } else { 4_000_000 };
 
         let re = Regex::new(
             r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)",
         )
         .unwrap();
+
+        let lines = data.split('\n').collect::<Vec<_>>();
+
+        let mut sensors = Vec::new();
+        let mut beacons = FxHashSet::default();
+        let mut max_d = 0;
 
         for line in lines {
             if let Some(m) = re.captures(line) {
@@ -45,13 +39,20 @@ impl Puzzle {
 
                 let d = manhattan(sx, sy, bx, by);
 
-                if d > self.max_d {
-                    self.max_d = d;
+                if d > max_d {
+                    max_d = d;
                 }
 
-                self.sensors.push((sx, sy, d));
-                self.beacons.insert((bx, by));
+                sensors.push((sx, sy, d));
+                beacons.insert((bx, by));
             }
+        }
+
+        Self {
+            sensors,
+            beacons,
+            max_d,
+            field_size,
         }
     }
 
@@ -149,17 +150,20 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input, false);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    aoc::parse_args().run(|data| {
+        let puzzle = Puzzle::new(data, false);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"), true);
-    assert_eq!(puzzle.part1(), 26);
-    assert_eq!(puzzle.part2(), 56_000_011);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(include_str!("test.txt"), true);
+        assert_eq!(puzzle.part1(), 26);
+        assert_eq!(puzzle.part2(), 56_000_011);
+    }
 }

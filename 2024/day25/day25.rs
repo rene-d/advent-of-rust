@@ -48,9 +48,12 @@ impl<'a> Puzzle<'a> {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
+    let mut args = aoc::parse_args();
+
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), "")
+    });
 }
 
 /// Test from puzzle input
@@ -60,8 +63,8 @@ mod test {
 
     #[test]
     fn part1() {
-        let data = aoc::load_input_data("test.txt");
-        let puzzle = Puzzle::new(&data);
+        let data = include_str!("test.txt");
+        let puzzle = Puzzle::new(data);
         assert_eq!(puzzle.part1(), 3);
     }
 }

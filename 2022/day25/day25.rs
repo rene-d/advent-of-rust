@@ -59,9 +59,11 @@ impl Puzzle {
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), "")
+    });
 }
 
 /// Test from puzzle input

@@ -2,62 +2,33 @@
 
 use regex::Regex;
 
-struct Puzzle {
-    data: String,
-}
+/// Compute valid `mul()` operations.
+/// if part2 is true, take care of `do()`/`don't()` statements.
+fn solve(data: &str, part: u8) -> i32 {
+    let mut enabled = true;
+    let mut total_sum = 0;
 
-impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            data: String::new(),
+    let pattern = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)").unwrap();
+
+    for m in pattern.captures_iter(data) {
+        if m.get(0).unwrap().as_str() == "do()" {
+            enabled = true;
+        } else if m.get(0).unwrap().as_str() == "don't()" {
+            enabled = false;
+        } else if enabled || part == 1 {
+            let x = m[1].parse::<i32>().unwrap();
+            let y = m[2].parse::<i32>().unwrap();
+            total_sum += x * y;
         }
     }
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.data = data.to_string();
-    }
-
-    /// Compute valid `mul()` operations.
-    /// if part2 is true, take care of `do()`/`don't()` statements.
-    fn solve(data: &str, part2: bool) -> i32 {
-        let mut enabled = true;
-        let mut total_sum = 0;
-
-        let pattern = Regex::new(r"mul\((\d+),(\d+)\)|do\(\)|don't\(\)").unwrap();
-
-        for m in pattern.captures_iter(data) {
-            if m.get(0).unwrap().as_str() == "do()" {
-                enabled = true;
-            } else if m.get(0).unwrap().as_str() == "don't()" {
-                enabled = false;
-            } else if enabled || !part2 {
-                let x = m[1].parse::<i32>().unwrap();
-                let y = m[2].parse::<i32>().unwrap();
-                total_sum += x * y;
-            }
-        }
-
-        total_sum
-    }
-
-    /// Solve part one.
-    fn part1(&self) -> i32 {
-        Self::solve(&self.data, false)
-    }
-
-    /// Solve part two.
-    fn part2(&self) -> i32 {
-        Self::solve(&self.data, true)
-    }
+    total_sum
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+
+    args.run(|data| (solve(data, 1), solve(data, 2)));
 }
 
 /// Test from puzzle input
@@ -65,19 +36,18 @@ fn main() {
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
-        assert_eq!(puzzle.part1(), 161);
-        assert_eq!(puzzle.part2(), 161);
+        assert_eq!(solve(SAMPLE_1, 1), 161);
+        assert_eq!(solve(SAMPLE_1, 2), 161);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
-        assert_eq!(puzzle.part1(), 161);
-        assert_eq!(puzzle.part2(), 48);
+        assert_eq!(solve(SAMPLE_2, 1), 161);
+        assert_eq!(solve(SAMPLE_2, 2), 48);
     }
 }

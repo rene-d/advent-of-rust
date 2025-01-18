@@ -1,18 +1,10 @@
 //! [Day 2: I Was Told There Would Be No Math](https://adventofcode.com/2015/day/2)
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
-
+fn solve(data: &str) -> (u32, u32) {
     let mut total_paper = 0;
     let mut total_ribbon = 0;
 
-    for line in data {
+    for line in data.lines() {
         let mut dimensions = line
             .split('x')
             .map(|s| s.parse::<u32>().unwrap())
@@ -47,6 +39,28 @@ fn main() {
         total_ribbon += ribbon + bow;
     }
 
-    println!("{total_paper}");
-    println!("{total_ribbon}");
+    (total_paper, total_ribbon)
+}
+
+/// main function
+fn main() {
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test01() {
+        assert_eq!(solve("2x3x4").0, 58);
+        assert_eq!((solve("1x1x10").0), 43);
+    }
+
+    #[test]
+    fn test02() {
+        assert_eq!(solve("2x3x4").1, 34);
+        assert_eq!((solve("1x1x10").1), 14);
+    }
 }

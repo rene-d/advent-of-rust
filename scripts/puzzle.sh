@@ -116,23 +116,29 @@ create_python()
 # $title
 
 from pathlib import Path
+from argparse import ArgumentParser
+import atexit
+import time
 from copy import deepcopy
 from collections import defaultdict, deque, namedtuple, Counter
 import sys, re, math, itertools, time, re
 from functools import reduce
 from operator import mul
-from argparse import ArgumentParser
 
 parser = ArgumentParser()
 parser.add_argument("-v", "--verbose", action="store_true")
 parser.add_argument("-t", "--test", action="store_true")
+parser.add_argument("--elapsed", action="store_true")
 parser.add_argument("filename", nargs="?", type=Path, default="input.txt")
 args = parser.parse_args()
 if args.test:
     args.filename = Path("test.txt")
 
-data = args.filename.read_text().strip()
-lines = data.splitlines()
+data = args.filename.read_text()
+
+if args.elapsed:
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
 
 EOF
     chmod a+x day$day.py
@@ -176,10 +182,12 @@ impl<'a> Puzzle<'a> {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -187,19 +195,31 @@ fn main() {
 mod test {
     use super::*;
 
-    #[test]
-    fn part1() {
-        let data = aoc::load_input_data("test.txt");
-        let puzzle = Puzzle::new(&data);
-        assert_eq!(puzzle.part1(), 0);
-    }
+    // const TEST_INPUT: &str = include_str!("test.txt");
+EOF
 
-    #[test]
-    fn part2() {
-        let data = aoc::load_input_data("test.txt");
-        let puzzle = Puzzle::new(&data);
-        assert_eq!(puzzle.part2(), 0);
-    }
+    for sample in sample_*.txt ; do
+        local sample_name=$(echo ${sample%.txt} | tr "[:lower:]" "[:upper:]")
+        cat <<EOF >>day$day.rs
+    // const $sample_name: &str = include_str!("$sample");
+EOF
+    done
+
+
+    cat <<EOF >>day$day.rs
+
+    // #[test]
+    // fn part1() {
+    //     let puzzle = Puzzle::new(SAMPLE_1);
+    //     assert_eq!(puzzle.part1(), 0);
+    // }
+
+    // #[test]
+    // fn part2() {
+    //     let data = aoc::load_input_data("test.txt");
+    //     let puzzle = Puzzle::new(data);
+    //     assert_eq!(puzzle.part2(), 0);
+    // }
 }
 EOF
 

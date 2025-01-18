@@ -177,7 +177,7 @@ impl Puzzle {
         // program the robot
 
         // "Main:" prompt (sequence of functions)
-        for c in aoc::util::join_last(&pc.routines, b',', b'\n') {
+        for c in aoc::util::join_with_final(&pc.routines, b',', b'\n') {
             aft.push_byte(c);
         }
 

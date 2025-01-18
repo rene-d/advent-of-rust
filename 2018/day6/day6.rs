@@ -51,7 +51,7 @@ impl Puzzle {
     /// Solve part one.
     #[allow(clippy::needless_range_loop)] // much comprehensive (according to me...)
     fn part1(&self) -> u32 {
-        let mut grid = [[0u8; N]; N];
+        let mut grid = vec![[0u8; N]; N].into_boxed_slice();
 
         // find the areas of coordinates
         for y in 0..N {

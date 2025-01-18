@@ -20,8 +20,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
+    fn new(data: &str) -> Self {
+        let mut puzzle = Self {
             racetrack: Grid::new(),
             start: Coord::default(),
             end: Coord::default(),
@@ -29,32 +29,31 @@ impl Puzzle {
             to_end: FxHashMap::default(),
             boring: 0,
             track: Vec::new(),
-        }
-    }
+        };
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.racetrack = Grid::parse(data);
+        puzzle.racetrack = Grid::parse(data);
 
-        for (pos, &c) in &self.racetrack {
+        for (pos, &c) in &puzzle.racetrack {
             if c == 'S' {
-                self.start = pos;
+                puzzle.start = pos;
             } else if c == 'E' {
-                self.end = pos;
+                puzzle.end = pos;
             }
         }
 
-        self.from_start = self.compute_distances(self.start);
-        self.to_end = self.compute_distances(self.end);
+        puzzle.from_start = puzzle.compute_distances(puzzle.start);
+        puzzle.to_end = puzzle.compute_distances(puzzle.end);
 
-        self.boring = self.from_start[&self.end];
+        puzzle.boring = puzzle.from_start[&puzzle.end];
 
-        self.track = self
+        puzzle.track = puzzle
             .racetrack
             .iter()
-            .filter(|&(pos, _)| self.racetrack[pos] != '#')
+            .filter(|&(pos, _)| puzzle.racetrack[pos] != '#')
             .map(|(pos, _)| pos)
             .collect::<Vec<_>>();
+
+        puzzle
     }
 
     fn compute_distances(&self, start: Coord) -> FxHashMap<Coord, i32> {
@@ -119,11 +118,12 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -131,11 +131,11 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(
             puzzle.solve(2, 2),
             14 + 14 + 2 + 4 + 2 + 3 + 1 + 1 + 1 + 1 + 1
@@ -144,9 +144,7 @@ mod test {
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(
             puzzle.solve(20, 50),
             32 + 31 + 29 + 39 + 25 + 23 + 20 + 19 + 12 + 14 + 12 + 22 + 4 + 3

@@ -99,15 +99,6 @@ def get_cache(cache_file: Path = None):
     return cache
 
 
-def save_cache():
-    pass
-    # cache = get_cache()
-    # if cache["modified"]:
-    #     cache["db"].commit()
-    #     cache["modified"] = False
-    #     print(f"{FEINT}{ITALIC}cache commited{RESET}")
-
-
 def shorten_key(key: str) -> str:
     key = re.sub(r":([a-f\d]{9}[a-f\d]+):", lambda m: f":{m[1][:8]}…:", key)
     return key
@@ -163,7 +154,6 @@ def run(
     file: Path,
     expected: t.List,
     nb_expected: int,
-    warmup: bool,
 ) -> t.Dict[str, t.Any]:
     """
     TODO
@@ -180,11 +170,9 @@ def run(
     if interpreter:
         cmd.insert(0, interpreter)
 
-    if warmup and lang == "Rust":
-        # under macOS, the first launch of a Rust program is slower (why ???)
-        subprocess.call(cmd + ["--help"], stdout=subprocess.DEVNULL)
-
     cmd.append(file.absolute().as_posix())
+
+    cmd.append("--elapsed")
 
     start = time.time_ns()
     try:
@@ -197,13 +185,30 @@ def run(
             status = "error"
             answers = ""
         else:
-            answers = out.stdout.decode().strip().split("\n")
+            answers = out.stdout.decode().strip().splitlines()
+
+            for i in range(len(answers) - 1, -1, -1):
+                if answers[i].startswith("elapsed:"):
+                    elapsed2 = answers.pop(i).removeprefix("elapsed:")
+
+                    if elapsed2.endswith("ns"):
+                        elapsed = int(elapsed2.removesuffix("ns"))
+                    elif elapsed2.endswith("µs"):
+                        elapsed = int(1000 * float(elapsed2.removesuffix("µs")))
+                    elif elapsed2.endswith("ms"):
+                        elapsed = int(10**6 * float(elapsed2.removesuffix("ms")))
+                    elif elapsed2.endswith("s"):
+                        elapsed = int(10**9 * float(elapsed2.removesuffix("s")))
+                    else:
+                        print(elapsed, elapsed2, "unknown suffix")
+                        exit()
+
             nb_answers = len(answers)
             answers = " ".join(answers)
 
             status = "unknown"
             if expected:
-                expected = " ".join(expected.read_text().strip().split("\n"))
+                expected = " ".join(expected.read_text().strip().splitlines())
                 status = "ok" if answers == expected else "failed"
             else:
                 status = "unknown" if nb_answers == nb_expected else "failed"
@@ -367,7 +372,6 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
             inputs[year, day][crc] = input
             answers[year, day][crc] = answer
 
-    save_cache()
     return inputs, answers
 
 
@@ -384,16 +388,16 @@ def run_day(
 ):
     elapsed = defaultdict(list)
 
-    warmup = defaultdict(lambda: True)
-
     day_suffix = mday.removeprefix(str(day))
     name_max_len = 16 - len(day_suffix)
 
     for crc, file in sorted(day_inputs.items(), key=itemgetter(1)):
+
         input_name = file.parent.parent.name
         input_name = input_name.removeprefix("tmp-")[:16]
         input_name = input_name.removeprefix("ok-")[:17]
         input_name = input_name.removeprefix("other-")[:14]
+
         prefix = f"[{year}-{day:02d}{day_suffix}] {input_name[:name_max_len]:<{name_max_len}}"
 
         if day % 2 == 1:
@@ -422,11 +426,12 @@ def run_day(
                 in_cache = e is not None
 
             if not in_cache and not dry_run:
-                nb_expected = 2 if day <= 24 else 1
-                e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected, warmup[lang])
+
+                nb_expected = 1 if day == 25 else 2
+
+                e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected)
 
                 if e:
-                    warmup[lang] = False
                     update_cache(key, prog, "solutions", e)
 
             if not e:
@@ -441,7 +446,7 @@ def run_day(
                     globals()[script] = True
 
                 with script.open("at") as f:
-                    print(f"./scripts/runall.py --no-build -u {input_name} -l {lang} -r {year} {day}", file=f)
+                    print(f"{__file__} --no-build -u {input_name} -l {lang} -r {year} {day}", file=f)
 
             if e["status"] != "ok":
                 info = f" {file}"
@@ -474,9 +479,6 @@ def run_day(
 
             if e["status"] in ("error", "failed"):
                 problems.append(line)
-
-            if not in_cache and e["elapsed"] / 1e9 > 5:
-                save_cache()
 
             results.add(answers)
 
@@ -771,7 +773,6 @@ def main():
                         args.refresh,
                         args.dry_run,
                     )
-                    save_cache()
 
                     if elapsed:
                         if nb_samples > 1:
@@ -814,12 +815,19 @@ def main():
                 t = list(t for (_, _, i), (t, _) in stats_elapsed.items() if lang == i)
                 n = len(t)
                 t = sum(t)
+
+                average = t / n
+                if average < 0.001:
+                    average = f"{average:10.6f} s"
+                else:
+                    average = f"{average:7.3f} s"
+
                 lines.append(
                     (
                         t,
                         f"{YELLOW}{lang:<10}{RESET}"
                         f" : {GREEN}{t:9.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ' '},"
-                        f" average: {GREEN}{t/n:7.3f}s{RESET}",
+                        f" average: {GREEN}{average}{RESET}",
                     )
                 )
                 total_time += t
