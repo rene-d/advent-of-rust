@@ -9,6 +9,7 @@ import networkx as nx
 parser = ArgumentParser()
 parser.add_argument("-v", "--verbose", action="store_true")
 parser.add_argument("-t", "--test", action="store_true")
+parser.add_argument("--elapsed", action="store_true")
 parser.add_argument("filename", nargs="?", type=Path, default="input.txt")
 args = parser.parse_args()
 if args.test:
