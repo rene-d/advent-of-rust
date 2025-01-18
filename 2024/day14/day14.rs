@@ -87,7 +87,17 @@ impl Puzzle {
                 *grid.entry((px, py)).or_default() += 1;
             }
 
-            return seconds;
+            // check if we have an horizontal line
+            let mut horizontal_lines = 0;
+            for y in 0..self.height {
+                for x in 0..(self.width - 10) {
+                    horizontal_lines += u32::from((x..(x + 5)).all(|i| grid.contains_key(&(i, y))));
+                }
+            }
+
+            if horizontal_lines > 5 {
+                return seconds;
+            }
         }
 
         0

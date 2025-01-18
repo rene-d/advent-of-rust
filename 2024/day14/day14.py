@@ -102,5 +102,17 @@ for n in range(100_000):
     else:
         # assume there is a christmas tree in the middle of picture
         # when no robot is in the same place
-        print(n)
-        break
+
+        # it's probably necessary, but not sufficient: so look for
+        # and horizontal lines
+
+        horizontal = 0
+        for y in range(width):
+            for x in range(width - 5):
+                if all(grid.get((x + i, y), 0) > 0 for i in range(5)):
+                    horizontal += 1
+                    break
+
+        if horizontal > 5:
+            print(n)
+            break
