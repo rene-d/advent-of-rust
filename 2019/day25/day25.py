@@ -176,6 +176,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("--elapsed", action="store_true")
     parser.add_argument("input", nargs="?", default="input.txt")
     args = parser.parse_args()
 

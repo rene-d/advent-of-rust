@@ -11,23 +11,11 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            grid: Grid::default(),
-            start: Coord::ZERO,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let grid = Grid::parse(data);
+        let start = grid.iter().find(|(_, c)| c == &&b'^').unwrap().0;
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.grid = Grid::parse(data);
-
-        for (xy, p) in &self.grid {
-            if p == &b'^' {
-                self.start = xy;
-                break;
-            }
-        }
+        Self { grid, start }
     }
 
     fn move_guard(
@@ -151,11 +139,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -163,19 +151,17 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 41);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 6);
     }
 }

@@ -6,7 +6,7 @@ const fs = require('fs');
 // Main function to handle file reading and calculations
 async function main() {
     // Default input file or the one provided as a command line argument
-    const inputFile = process.argv.length === 3 ? process.argv[2] : 'input.txt';
+    const inputFile = process.argv.length >= 3 ? process.argv[2] : 'input.txt';
 
     let left = [];
     let right = [];

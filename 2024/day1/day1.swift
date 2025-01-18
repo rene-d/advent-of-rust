@@ -3,7 +3,7 @@ import Foundation
 // Main function to handle file reading and calculations
 func main() {
     // Default input file or the one provided as a command line argument
-    let inputFile = CommandLine.arguments.count == 2 ? CommandLine.arguments[1] : "input.txt"
+    let inputFile = CommandLine.arguments.count >= 2 ? CommandLine.arguments[1] : "input.txt"
 
     var left: [Int] = []
     var right: [Int] = []

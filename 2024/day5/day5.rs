@@ -8,15 +8,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            ordering_rules: FxHashMap::default(),
-            page_updates: Vec::new(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut ordering_rules: FxHashMap<i32, FxHashSet<i32>> = FxHashMap::default();
+        let mut page_updates = Vec::new();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         let data = data.split_once("\n\n").unwrap();
 
         //
@@ -26,13 +21,18 @@ impl Puzzle {
             let p1 = p1.parse().unwrap();
             let p2 = p2.parse().unwrap();
 
-            self.ordering_rules.entry(p1).or_default().insert(p2);
+            ordering_rules.entry(p1).or_default().insert(p2);
         }
 
         //
         for line in data.1.lines() {
             let v: Vec<_> = line.split(',').map(|x| x.parse::<i32>().unwrap()).collect();
-            self.page_updates.push(v);
+            page_updates.push(v);
+        }
+
+        Self {
+            ordering_rules,
+            page_updates,
         }
     }
 
@@ -105,11 +105,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -117,19 +117,17 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 143);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 123);
     }
 }

@@ -1,6 +1,5 @@
 //! [Day 21: RPG Simulator 20XX](https://adventofcode.com/2015/day/21)
 
-//! [Day 21: RPG Simulator 20XX](https://adventofcode.com/2015/day/21)
 use std::cmp::{max, min};
 use std::str::FromStr;
 
@@ -153,41 +152,23 @@ Defense +3   80     0       3
     (min_win_cost, max_loose_cost)
 }
 
-struct Puzzle {
-    min_win_cost: i32,
-    max_loose_cost: i32,
-}
+fn solve(data: &str) -> (i32, i32) {
+    let mut boss = Character::new("boss", 0, 0, 0);
 
-impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            min_win_cost: 0,
-            max_loose_cost: 0,
+    for line in data.lines() {
+        let parts: Vec<&str> = line.split(": ").collect();
+        match parts.first() {
+            Some(&"Hit Points") => boss.hitpoints = parts[1].parse().unwrap(),
+            Some(&"Damage") => boss.damage = parts[1].parse().unwrap(),
+            Some(&"Armor") => boss.armor = parts[1].parse().unwrap(),
+            _ => {}
         }
     }
 
-    /// Get the puzzle input.
-    fn solve(&mut self, data: &str) {
-        let mut boss = Character::new("boss", 0, 0, 0);
-
-        for line in data.lines() {
-            let parts: Vec<&str> = line.split(": ").collect();
-            match parts.first() {
-                Some(&"Hit Points") => boss.hitpoints = parts[1].parse().unwrap(),
-                Some(&"Damage") => boss.damage = parts[1].parse().unwrap(),
-                Some(&"Armor") => boss.armor = parts[1].parse().unwrap(),
-                _ => {}
-            }
-        }
-
-        (self.min_win_cost, self.max_loose_cost) = play(&boss);
-    }
+    play(&boss)
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.solve(&args.input);
-    println!("{}", puzzle.min_win_cost);
-    println!("{}", puzzle.max_loose_cost);
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }

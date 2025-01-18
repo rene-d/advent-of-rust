@@ -258,7 +258,10 @@ def make(year: int, source: Path, dest: Path, language: str):
         raise ValueError(language)
 
     print(f"{CR}{CLEAR_EOL}{cmdline}", end="")
-    subprocess.check_call(cmdline, shell=True)
+    try:
+        subprocess.check_call(cmdline, shell=True)
+    except subprocess.CalledProcessError:
+        print(f"{CR}{CLEAR_EOL}{RED}FAIL {year} {dest} {language}", end="")
 
 
 def build_all(filter_year: int, filter_lang: t.Iterable[str]):

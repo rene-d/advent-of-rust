@@ -114,19 +114,20 @@ def aoc_install(ctx: click.Context):
     if f.is_symlink():
         raise click.ClickException("Launch command with the real file, not the symlink.")
 
-    cli = Path("~/.local/bin/aoc").expanduser()
-    cli.unlink(True)
-    cli.parent.mkdir(parents=True, exist_ok=True)
-    cli.symlink_to(f)
-
     if os.getuid() == 0:
         # probably into a container
         cli = Path("/usr/local/bin/aoc").expanduser()
         cli.unlink(True)
         cli.parent.mkdir(parents=True, exist_ok=True)
         cli.symlink_to(f)
+        click.echo("Command aoc has been installed in /usr/local/bin .")
 
-    click.echo("Command aoc has been installed in ~/.local/bin .")
+    else:
+        cli = Path("~/.local/bin/aoc").expanduser()
+        cli.unlink(True)
+        cli.parent.mkdir(parents=True, exist_ok=True)
+        cli.symlink_to(f)
+        click.echo("Command aoc has been installed in ~/.local/bin .")
 
 
 @aoc.command(name="private-leaderboard")

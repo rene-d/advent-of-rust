@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # [Day 13: Care Package](https://adventofcode.com/2019/day/13)
 
+import argparse
 import sys
 import time
 from pathlib import Path
-import argparse
 
 sys.path.append(Path(__file__).parent.parent.as_posix())
 from intcode.Intcode import Computer  # noqa
@@ -124,6 +124,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("--elapsed", action="store_true")
     parser.add_argument("-p", "--play", action="store_true", help="play the game")
     parser.add_argument("input", nargs="?", default="input.txt")
     args = parser.parse_args()

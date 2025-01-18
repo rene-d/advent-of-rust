@@ -9,6 +9,7 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--elapsed", action="store_true")
 parser.add_argument("--png", action="store_true")
 parser.add_argument("-o", "--output", type=Path, default="pipemaze.png")
 parser.add_argument("-s", "--scale", type=int, default=5)
