@@ -5,10 +5,10 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-geo = "0.29"
-geo-types = "0.7"
-itertools = "0.13"
-rustc-hash = "2.1.0"
+geo = "*"
+geo-types = "*"
+itertools = "*"
+rustc-hash = "*"
 
 [[bin]]
 name = "day10"

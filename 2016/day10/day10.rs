@@ -5,14 +5,8 @@ use rustc_hash::{FxHashMap, FxHashSet};
 
 /// `main` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let args = aoc::parse_args();
-
-    let data = args.input.lines().collect::<Vec<&str>>();
-
-    let (part1, part2) = solve(data);
-
-    println!("{part1}");
-    println!("{part2}");
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// `BotOutput`represents the output of a bot
@@ -48,14 +42,14 @@ struct BotInstruction {
 /// `solve` solves part 1 and part 2 of the puzzle.
 /// First, it loads the move instructions and initializes the bots.
 /// Then, it runs the instructions until the puzzle is done.
-fn solve(data: Vec<&str>) -> (u32, u32) {
+fn solve(data: &str) -> (u32, u32) {
     let re_init = Regex::new(r"value ([\d]+) goes to bot (\d+)").unwrap();
     let re_move = Regex::new(r"bot (\d+) gives low to (bot|output) (\d+) and high to (bot|output) (\d+)").unwrap();
 
     let mut bots: FxHashMap<u32, FxHashSet<u32>> = FxHashMap::default();
     let mut moves: Vec<BotInstruction> = Vec::new();
 
-    for line in data {
+    for line in data.lines() {
         if line.is_empty() {
             continue;
         }
@@ -161,22 +155,30 @@ fn solve(data: Vec<&str>) -> (u32, u32) {
     }
 }
 
-#[test]
-fn test_solve() {
-    let instructions = [
-        // verify part 1
-        "value 17 goes to bot 20",                     // add value-17 chip to bot 20
-        "value 61 goes to bot 20",                     // add value-61 chip to bot 20
-        "bot 20 gives low to bot 1 and high to bot 1", // should complete part 1 with bot id = 20
-        // verify part 2
-        "bot 1 gives low to output 0 and high to output 1", // bin 0: 17, bin 1: 61
-        "value 29 goes to bot 2",
-        "value 56 goes to bot 2",
-        "bot 2 gives low to output 2 and high to bot 0", // bin 2: 29, part 2 should be completed with 17*61*29=30073
-    ];
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    let (part1, part2) = solve(instructions.to_vec());
+    #[test]
+    fn test_solve() {
+        let instructions = [
+            // verify part 1
+            "value 17 goes to bot 20",                     // add value-17 chip to bot 20
+            "value 61 goes to bot 20",                     // add value-61 chip to bot 20
+            "bot 20 gives low to bot 1 and high to bot 1", // should complete part 1 with bot id = 20
+            // verify part 2
+            "bot 1 gives low to output 0 and high to output 1", // bin 0: 17, bin 1: 61
+            "value 29 goes to bot 2",
+            "value 56 goes to bot 2",
+            "bot 2 gives low to output 2 and high to bot 0", // bin 2: 29, part 2 should be completed with 17*61*29=30073
+        ];
 
-    assert_eq!(part1, 20);
-    assert_eq!(part2, 30073);
+        // convert the array into a multiline character string
+        let data = aoc::util::join(instructions.as_slice(), "\n").collect::<String>();
+
+        let (part1, part2) = solve(&data);
+
+        assert_eq!(part1, 20);
+        assert_eq!(part2, 30073);
+    }
 }

@@ -81,15 +81,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
+    fn new(data: &str) -> Self {
         Self {
-            designer_number: 10, // the puzzle example
+            designer_number: data.trim().parse().unwrap(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.designer_number = data.trim().parse().unwrap();
     }
 
     /// Solve part one.
@@ -104,11 +99,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input

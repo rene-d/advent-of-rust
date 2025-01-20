@@ -5,13 +5,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { n: 0 }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.n = data.trim().parse().unwrap();
+    fn new(data: &str) -> Self {
+        Self {
+            n: data.trim().parse().unwrap(),
+        }
     }
 
     /// Solve part one.
@@ -117,12 +114,14 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (i32, i32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -132,7 +131,7 @@ mod test {
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
+        let mut puzzle = Puzzle::new("0");
 
         puzzle.n = 1;
         assert_eq!(puzzle.part1(), 0);

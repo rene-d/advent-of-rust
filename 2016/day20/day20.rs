@@ -1,11 +1,14 @@
 //! [Day 20: Firewall Rules](https://adventofcode.com/2016/day/20)
 
 fn main() {
-    let args = aoc::parse_args();
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
+fn solve(data: &str) -> (u32, u32) {
     // load the blacklist and sort it ascending
     let mut blacklist = Vec::new();
-    for line in args.input.lines() {
+    for line in data.lines() {
         if line.is_empty() {
             continue;
         }
@@ -23,7 +26,6 @@ fn main() {
         }
         not_blocked = not_blocked.max(max + 1);
     }
-    println!("{not_blocked}");
 
     // merge the ranges
     let mut merged = Vec::<(u32, u32)>::new();
@@ -38,8 +40,9 @@ fn main() {
             merged.push((min, max));
         }
     }
-    println!(
-        "{}",
-        u32::MAX - merged.iter().map(|&(min, max)| max - min + 1).sum::<u32>() + 1
-    );
+
+    (
+        not_blocked,
+        u32::MAX - merged.iter().map(|&(min, max)| max - min + 1).sum::<u32>() + 1,
+    )
 }

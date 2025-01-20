@@ -12,10 +12,8 @@ lazy_static! {
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let args = aoc::parse_args();
-
-    println!("{}", part1(&args.input));
-    println!("{}", part2(&args.input));
+    let mut args = aoc::parse_args();
+    args.run(|data| (part1(data), part2(data)));
 }
 
 /// ``part1`` returns the sum of sector id of valid rooms.
@@ -94,48 +92,52 @@ fn is_real_room(name: &str, checksum: &str) -> bool {
 }
 
 #[cfg(test)]
-#[test]
-fn test_extract() {
-    let (name, checksum, sector_id) = extract("aaaaa-bbb-z-y-x-123[abxyz]");
-    assert_eq!(name, "aaaaa-bbb-z-y-x");
-    assert_eq!(checksum, "abxyz");
-    assert_eq!(sector_id, 123);
+mod test {
+    use super::*;
 
-    let (name, checksum, sector_id) = extract("a-b-c-d-e-f-g-h-987[abcde]");
-    assert_eq!(name, "a-b-c-d-e-f-g-h");
-    assert_eq!(checksum, "abcde");
-    assert_eq!(sector_id, 987);
+    #[test]
+    fn test_extract() {
+        let (name, checksum, sector_id) = extract("aaaaa-bbb-z-y-x-123[abxyz]");
+        assert_eq!(name, "aaaaa-bbb-z-y-x");
+        assert_eq!(checksum, "abxyz");
+        assert_eq!(sector_id, 123);
 
-    let (name, checksum, sector_id) = extract("not-a-real-room-404[oarel]");
-    assert_eq!(name, "not-a-real-room");
-    assert_eq!(checksum, "oarel");
-    assert_eq!(sector_id, 404);
+        let (name, checksum, sector_id) = extract("a-b-c-d-e-f-g-h-987[abcde]");
+        assert_eq!(name, "a-b-c-d-e-f-g-h");
+        assert_eq!(checksum, "abcde");
+        assert_eq!(sector_id, 987);
 
-    let (name, checksum, sector_id) = extract("totally-real-room-200[decoy]");
-    assert_eq!(name, "totally-real-room");
-    assert_eq!(checksum, "decoy");
-    assert_eq!(sector_id, 200);
-}
+        let (name, checksum, sector_id) = extract("not-a-real-room-404[oarel]");
+        assert_eq!(name, "not-a-real-room");
+        assert_eq!(checksum, "oarel");
+        assert_eq!(sector_id, 404);
 
-#[test]
-fn test_is_real_room() {
-    assert!(is_real_room("aaaaa-bbb-z-y-x", "abxyz"));
-    assert!(is_real_room("a-b-c-d-e-f-g-h", "abcde"));
-    assert!(is_real_room("not-a-real-room", "oarel"));
-    assert!(!is_real_room("totally-real-room", "decoy"));
-}
+        let (name, checksum, sector_id) = extract("totally-real-room-200[decoy]");
+        assert_eq!(name, "totally-real-room");
+        assert_eq!(checksum, "decoy");
+        assert_eq!(sector_id, 200);
+    }
 
-#[test]
-fn test_part1() {
-    let data = "aaaaa-bbb-z-y-x-123[abxyz]
+    #[test]
+    fn test_is_real_room() {
+        assert!(is_real_room("aaaaa-bbb-z-y-x", "abxyz"));
+        assert!(is_real_room("a-b-c-d-e-f-g-h", "abcde"));
+        assert!(is_real_room("not-a-real-room", "oarel"));
+        assert!(!is_real_room("totally-real-room", "decoy"));
+    }
+
+    #[test]
+    fn test_part1() {
+        let data = "aaaaa-bbb-z-y-x-123[abxyz]
 a-b-c-d-e-f-g-h-987[abcde]
 not-a-real-room-404[oarel]
 totally-real-room-200[decoy]";
 
-    assert_eq!(part1(data), 1514);
-}
+        assert_eq!(part1(data), 1514);
+    }
 
-#[test]
-fn test_decrypt() {
-    assert_eq!(decrypt("qzmt-zixmtkozy-ivhz", 343), "very encrypted name");
+    #[test]
+    fn test_decrypt() {
+        assert_eq!(decrypt("qzmt-zixmtkozy-ivhz", 343), "very encrypted name");
+    }
 }

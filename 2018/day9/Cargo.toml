@@ -7,7 +7,7 @@ edition = "2021"
 aoc = { path = "../../aoc" }
 
 [build-dependencies]
-cc = "1.0"
+cc = "*"
 
 [[bin]]
 name = "day9"

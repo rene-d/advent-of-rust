@@ -2,18 +2,16 @@
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
+fn solve(data: &str) -> (usize, usize) {
     let mut total_raw = 0;
     let mut total_decoded = 0;
     let mut total_encoded = 0;
 
-    for line in &data {
+    for line in data.lines() {
         assert_eq!(line.chars().next().unwrap(), '"');
         assert_eq!(line.chars().last().unwrap(), '"');
 
@@ -45,6 +43,17 @@ fn main() {
         total_raw += line.len();
     }
 
-    println!("{}", total_raw - total_decoded);
-    println!("{}", total_encoded - total_raw);
+    (total_raw - total_decoded, total_encoded - total_raw)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve(TEST_INPUT), (12, 19));
+    }
 }

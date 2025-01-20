@@ -1,3 +1,4 @@
+# https://adventofcode.com/2015
 
 [workspace]
 members = ["day*"]

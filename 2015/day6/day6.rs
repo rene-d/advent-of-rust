@@ -4,18 +4,16 @@ use regex::Regex;
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
-
-    part1(&data);
-    part2(&data);
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
-fn part2(data: &[String]) {
+fn solve(data: &str) -> (u32, u32) {
+    let data = data.lines().collect::<Vec<_>>();
+    (part1(&data), part2(&data))
+}
+
+fn part2(data: &[&str]) -> u32 {
     let mut grid = vec![[0_i8; 1000]; 1000];
 
     let re = Regex::new(r"^(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)$").unwrap();
@@ -58,10 +56,11 @@ fn part2(data: &[String]) {
             count += u32::try_from(*cell).unwrap();
         }
     }
-    println!("{count}");
+
+    count
 }
 
-fn part1(data: &[String]) {
+fn part1(data: &[&str]) -> u32 {
     let mut grid = vec![[0_i8; 1000]; 1000];
 
     let re = Regex::new(r"^(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)$").unwrap();
@@ -102,5 +101,6 @@ fn part1(data: &[String]) {
             count += u32::try_from(*cell).unwrap();
         }
     }
-    println!("{count}");
+
+    count
 }

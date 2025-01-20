@@ -2,8 +2,6 @@
 
 use regex::Regex;
 
-const DURATION: u32 = 2503;
-
 #[derive(Debug)]
 struct Reinder {
     // name: String,
@@ -12,22 +10,15 @@ struct Reinder {
     rest: u32,
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
-
+fn solve_duration(data: &str, max_duration: u32) -> (u32, u32) {
     let mut reinders = Vec::new();
 
     let re = Regex::new(
         r"(\w+) can fly (\d+) km/s for (\d+) seconds, but then must rest for (\d+) seconds.",
     )
     .unwrap();
-    for line in &data {
+
+    for line in data.lines() {
         re.captures(line).map(|cap| {
             let reinder = Reinder {
                 // name: cap[1].to_string(),
@@ -45,7 +36,7 @@ fn main() {
     let max_distance = reinders
         .iter()
         .map(|reinder: &Reinder| -> u32 {
-            let mut seconds = DURATION;
+            let mut seconds = max_duration;
             let mut distance = 0;
             while seconds >= reinder.duration + reinder.rest {
                 seconds -= reinder.duration + reinder.rest;
@@ -57,13 +48,12 @@ fn main() {
         })
         .max()
         .unwrap();
-    println!("{max_distance}");
 
     // part 2
     let mut scores: Vec<u32> = vec![0; reinders.len()];
     let mut distances: Vec<u32> = vec![0; reinders.len()];
 
-    for elapsed in 1..DURATION {
+    for elapsed in 1..max_duration {
         for i in 0..reinders.len() {
             let reinder = &reinders[i];
 
@@ -86,5 +76,28 @@ fn main() {
             }
         }
     }
-    println!("{:?}", scores.iter().max().unwrap());
+
+    (max_distance, *scores.iter().max().unwrap())
+}
+
+fn solve(data: &str) -> (u32, u32) {
+    solve_duration(data, 2503)
+}
+
+/// Main function.
+fn main() {
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve_duration(TEST_INPUT, 1000), (1120, 689));
+    }
 }

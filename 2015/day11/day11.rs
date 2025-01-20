@@ -2,6 +2,7 @@
 
 use std::fmt;
 
+#[derive(Clone)]
 struct Password {
     pwd: Vec<char>,
     loops: usize,
@@ -68,11 +69,12 @@ impl Password {
         false
     }
 
-    fn next_valid(&mut self) {
+    fn next_valid(&mut self) -> Self {
         self.next();
         while !self.is_valid() {
             self.next();
         }
+        self.clone()
     }
 }
 
@@ -88,18 +90,32 @@ impl fmt::Display for Password {
     }
 }
 
+fn solve(data: &str) -> (Password, Password) {
+    let mut pwd: Password = Password::new(data.trim_ascii());
+
+    (pwd.next_valid(), pwd.next_valid())
+}
+
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args.input.trim_ascii();
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
-    let mut pwd: Password = Password::new(data);
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    // println!("init:  {}", pwd);
+    #[test]
+    fn test1() {
+        assert_eq!(
+            format!("{}", Password::new("abcdefgh").next_valid()),
+            "abcdffaa"
+        );
 
-    pwd.next_valid();
-    println!("{pwd}");
-
-    pwd.next_valid();
-    println!("{pwd}");
+        assert_eq!(
+            format!("{}", Password::new("ghijklmn").next_valid()),
+            "ghjaabcc"
+        );
+    }
 }

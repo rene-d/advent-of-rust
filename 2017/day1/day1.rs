@@ -1,24 +1,14 @@
 //! [Day 1: Inverse Captcha](https://adventofcode.com/2017/day/1)
 
-struct Puzzle {
-    data: String,
+struct Puzzle<'a> {
+    data: &'a str,
 }
 
-impl Puzzle {
-    const fn new() -> Self {
+impl<'a> Puzzle<'a> {
+    const fn new(data: &'a str) -> Self {
         Self {
-            data: String::new(),
+            data: data.trim_ascii(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.data = data.trim().to_string();
-    }
-
-    #[cfg(test)]
-    fn init(&mut self, data: &str) {
-        self.data = data.trim().to_string();
     }
 
     fn compute(&self, offset: usize) -> u32 {
@@ -47,12 +37,14 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -62,37 +54,34 @@ mod test {
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.init("1122");
+        let puzzle = Puzzle::new("1122");
         assert_eq!(puzzle.part1(), 3);
 
-        puzzle.init("1111");
+        let puzzle = Puzzle::new("1111");
         assert_eq!(puzzle.part1(), 4);
 
-        puzzle.init("1234");
+        let puzzle = Puzzle::new("1234");
         assert_eq!(puzzle.part1(), 0);
 
-        puzzle.init("91212129");
+        let puzzle = Puzzle::new("91212129");
         assert_eq!(puzzle.part1(), 9);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-
-        puzzle.init("1212");
+        let puzzle = Puzzle::new("1212");
         assert_eq!(puzzle.part2(), 6);
 
-        puzzle.init("1221");
+        let puzzle = Puzzle::new("1221");
         assert_eq!(puzzle.part2(), 0);
 
-        puzzle.init("123425");
+        let puzzle = Puzzle::new("123425");
         assert_eq!(puzzle.part2(), 4);
 
-        puzzle.init("123123");
+        let puzzle = Puzzle::new("123123");
         assert_eq!(puzzle.part2(), 12);
 
-        puzzle.init("12131415");
+        let puzzle = Puzzle::new("12131415");
         assert_eq!(puzzle.part2(), 4);
     }
 }

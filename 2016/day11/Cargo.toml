@@ -5,9 +5,9 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-itertools = "0.12"
-regex = "1.11.1"
-rustc-hash = "2.1.0"
+itertools = "*"
+regex = "*"
+rustc-hash = "*"
 
 [[bin]]
 name = "day11"

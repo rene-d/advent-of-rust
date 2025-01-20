@@ -106,12 +106,9 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { ops: vec![] }
-    }
+    fn new(data: &str) -> Self {
+        let mut ops = Vec::new();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         let re1 = Regex::new(r"rotate based on position of letter (\w)").unwrap();
         let re2 = Regex::new(r"move position (\d+) to position (\d+)").unwrap();
         let re3 = Regex::new(r"reverse positions (\d+) through (\d+)").unwrap();
@@ -123,33 +120,35 @@ impl Puzzle {
         for line in data.lines() {
             if let Some(m) = re1.captures(line) {
                 let c = m[1].chars().next().unwrap();
-                self.ops.push(Operation::RotateBased(c));
+                ops.push(Operation::RotateBased(c));
             } else if let Some(m) = re2.captures(line) {
                 let a = m[1].parse().unwrap();
                 let b = m[2].parse().unwrap();
-                self.ops.push(Operation::MovePosition(a, b));
+                ops.push(Operation::MovePosition(a, b));
             } else if let Some(m) = re3.captures(line) {
                 let a = m[1].parse().unwrap();
                 let b = m[2].parse().unwrap();
-                self.ops.push(Operation::ReversePositions(a, b));
+                ops.push(Operation::ReversePositions(a, b));
             } else if let Some(m) = re4.captures(line) {
                 let a = m[1].parse().unwrap();
-                self.ops.push(Operation::RotateLeft(a));
+                ops.push(Operation::RotateLeft(a));
             } else if let Some(m) = re5.captures(line) {
                 let a = m[1].parse().unwrap();
-                self.ops.push(Operation::RotateRight(a));
+                ops.push(Operation::RotateRight(a));
             } else if let Some(m) = re6.captures(line) {
                 let a = m[1].chars().next().unwrap();
                 let b = m[2].chars().next().unwrap();
-                self.ops.push(Operation::SwapLetter(a, b));
+                ops.push(Operation::SwapLetter(a, b));
             } else if let Some(m) = re7.captures(line) {
                 let a = m[1].parse().unwrap();
                 let b = m[2].parse().unwrap();
-                self.ops.push(Operation::SwapPosition(a, b));
+                ops.push(Operation::SwapPosition(a, b));
             } else {
                 panic!("error: {line}");
             }
         }
+
+        Self { ops }
     }
 
     /// Solve part one.
@@ -176,11 +175,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input

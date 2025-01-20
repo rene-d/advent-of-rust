@@ -18,25 +18,22 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
+    fn new(data: &str) -> Self {
         Self {
-            constellation: vec![],
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        for line in data.lines() {
-            let p: Point = line
-                .trim()
-                .split(',')
-                .map(|x| x.parse::<i32>().unwrap())
-                .collect::<Vec<_>>()
-                .as_slice()
-                .try_into()
-                .unwrap();
-
-            self.constellation.push(p);
+            constellation: data
+                .lines()
+                .map(|line| {
+                    let p: Point = line
+                        .trim()
+                        .split(',')
+                        .map(|x| x.parse::<i32>().unwrap())
+                        .collect::<Vec<_>>()
+                        .as_slice()
+                        .try_into()
+                        .unwrap();
+                    p
+                })
+                .collect(),
         }
     }
 
@@ -58,10 +55,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), aoc::CHRISTMAS)
+    });
 }
 
 /// Test from puzzle input
@@ -69,31 +67,32 @@ fn main() {
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+    const SAMPLE_3: &str = include_str!("sample_3.txt");
+    const SAMPLE_4: &str = include_str!("sample_4.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 2);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part1(), 4);
     }
 
     #[test]
     fn test03() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_3.txt"));
+        let puzzle = Puzzle::new(SAMPLE_3);
         assert_eq!(puzzle.part1(), 3);
     }
 
     #[test]
     fn test04() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_4.txt"));
+        let puzzle = Puzzle::new(SAMPLE_4);
         assert_eq!(puzzle.part1(), 8);
     }
 }

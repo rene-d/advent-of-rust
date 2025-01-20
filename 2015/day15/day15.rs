@@ -11,12 +11,7 @@ struct Ingredient {
     texture: i64,
     calories: i64,
 }
-
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let data = &args.input;
-
+fn solve(data: &str) -> (i64, i64) {
     // load data
     let mut ingredients = Vec::new();
     let re = Regex::new(r"(\w+): capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)").unwrap();
@@ -31,13 +26,12 @@ fn main() {
                 texture: cap[5].parse().unwrap(),
                 calories: cap[6].parse().unwrap(),
             };
-            // println!("{:?}", ingredient);
             ingredients.push(ingredient);
             0
         });
     }
 
-    for part in 1..=2 {
+    let score = |part| {
         let mut score_max = 0;
 
         // we can deal at most 4 ingredients
@@ -104,6 +98,26 @@ fn main() {
             }
         }
 
-        println!("{score_max}");
+        score_max
+    };
+
+    (score(1), score(2))
+}
+
+/// main function
+fn main() {
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve(TEST_INPUT), (62842880, 57600000));
     }
 }

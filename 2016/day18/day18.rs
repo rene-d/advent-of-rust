@@ -5,17 +5,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { tiles: vec![] }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.parse(data.trim());
-    }
-
-    fn parse(&mut self, tiles: &str) {
-        self.tiles = tiles.chars().map(|c| u32::from(c == '.')).collect();
+    fn new(data: &str) -> Self {
+        Self {
+            tiles: data.trim_ascii().chars().map(|c| u32::from(c == '.')).collect(),
+        }
     }
 
     fn guess(tiles: &mut [u32]) {
@@ -58,11 +51,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -72,15 +65,13 @@ mod test {
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.parse("..^^.");
+        let puzzle = Puzzle::new("..^^.");
         assert_eq!(puzzle.solve(3), 6);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.parse(".^^.^.^^^^");
+        let puzzle = Puzzle::new(".^^.^.^^^^");
         assert_eq!(puzzle.solve(10), 38);
     }
 }

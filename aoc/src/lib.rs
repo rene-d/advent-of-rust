@@ -21,6 +21,17 @@ pub type GridU<T> = gridu::GridU<T>;
 pub type Square<T> = square::Square<T>;
 pub type Counter<T> = counter::Counter<T>;
 
+pub struct Christmas(());
+
+/// Christmay Day
+pub const CHRISTMAS: Christmas = Christmas(());
+
+impl std::fmt::Display for Christmas {
+    fn fmt(&self, _f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        Ok(())
+    }
+}
+
 /// Parse commandline arguments and load input file.
 ///
 /// # Examples

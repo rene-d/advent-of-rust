@@ -3,8 +3,13 @@ name = "day18"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+ascii = []
+anim = ["image"]
+
 [dependencies]
 aoc = { path = "../../aoc" }
+image = { version = "*", optional = true }
 
 [[bin]]
 name = "day18"

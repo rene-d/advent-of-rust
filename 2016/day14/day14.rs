@@ -4,12 +4,8 @@ use rustc_hash::FxHashMap;
 
 /// Solve the day 14 puzzle.
 fn main() {
-    let args = aoc::parse_args();
-
-    let data = args.input.trim_ascii();
-
-    println!("{}", solve(data.as_bytes(), 0));
-    println!("{}", solve(data.as_bytes(), 2016));
+    let mut args = aoc::parse_args();
+    args.run(|data| (solve(data, 0), solve(data, 2016)));
 }
 
 const HEX_DIGITS: [u8; 16] = [
@@ -125,7 +121,9 @@ impl TripletHash {
 }
 
 /// Find the 64th key with the given salt and key stretching.
-fn solve(salt: &[u8], key_stretching: u32) -> u32 {
+fn solve(data: &str, key_stretching: u32) -> u32 {
+    let salt = data.trim_ascii().as_bytes();
+
     let mut memoize = FxHashMap::default();
 
     let mut hasher = |index| {
@@ -169,12 +167,18 @@ fn solve(salt: &[u8], key_stretching: u32) -> u32 {
     index
 }
 
-#[test]
-fn test_solve1() {
-    assert_eq!(solve("abc".as_bytes(), 0), 22728);
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test_solve2() {
-    // assert_eq!(solve("abc", 2016), 22551);
+    #[test]
+    fn test_solve1() {
+        assert_eq!(solve("abc", 0), 22728);
+    }
+
+    #[cfg(not(debug_assertions))]
+    #[test]
+    fn test_solve2() {
+        assert_eq!(solve("abc", 2016), 22551);
+    }
 }

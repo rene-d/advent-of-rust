@@ -8,27 +8,29 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            reg_a: 0,
-            reg_b: 0,
-            reg_c: 0,
-            program: Vec::new(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut program = Vec::new();
+        let mut reg_a = 0;
+        let mut reg_b = 0;
+        let mut reg_c = 0;
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if let Some(v) = line.strip_prefix("Register A: ") {
-                self.reg_a = v.parse().unwrap();
+                reg_a = v.parse().unwrap();
             } else if let Some(v) = line.strip_prefix("Register B: ") {
-                self.reg_b = v.parse().unwrap();
+                reg_b = v.parse().unwrap();
             } else if let Some(v) = line.strip_prefix("Register C: ") {
-                self.reg_c = v.parse().unwrap();
+                reg_c = v.parse().unwrap();
             } else if let Some(v) = line.strip_prefix("Program: ") {
-                self.program = v.split(',').filter_map(|i| i.parse().ok()).collect();
+                program = v.split(',').filter_map(|i| i.parse().ok()).collect();
             }
+        }
+
+        Self {
+            reg_a,
+            reg_b,
+            reg_c,
+            program,
         }
     }
 
@@ -192,17 +194,21 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (String, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
+    let mut args = aoc::parse_args();
 
     if args.verbose {
+        let puzzle = Puzzle::new(&args.input);
         puzzle.dump();
         return;
     }
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -210,19 +216,18 @@ fn main() {
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_1.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), "4,6,3,5,6,3,5,2,1,0");
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_2.txt");
-        puzzle.configure(&data);
+        let mut puzzle = Puzzle::new(SAMPLE_2);
         puzzle.reg_a = 117440;
         assert_eq!(puzzle.part1(), "0,3,5,4,3,0");
     }

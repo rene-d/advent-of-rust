@@ -2,12 +2,9 @@
 
 use itertools::Itertools;
 
-/// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let args = aoc::parse_args();
-
-    println!("{}", part1(&args.input));
-    println!("{}", part2(&args.input));
+    let mut args = aoc::parse_args();
+    args.run(|data| (part1(data), part2(data)));
 }
 
 fn parse(line: &str) -> (i32, i32, i32) {
@@ -19,7 +16,7 @@ fn parse(line: &str) -> (i32, i32, i32) {
     (x, y, z)
 }
 
-/// ``part`` counts the triangles in the input with the three sides on the same line.
+/// ``part1`` counts the triangles in the input with the three sides on the same line.
 fn part1(data: &str) -> u32 {
     data.lines()
         .map(|line| {
@@ -53,20 +50,24 @@ fn is_triangle(x: i32, y: i32, z: i32) -> u32 {
 }
 
 #[cfg(test)]
-#[test]
-fn test_part1() {
-    assert_eq!(part1("5 10 25"), 0);
-    assert_eq!(part1("5 10 10"), 1);
-}
+mod test {
+    use super::*;
 
-#[test]
-fn test_part2() {
-    let data = "101 301 501
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1("5 10 25"), 0);
+        assert_eq!(part1("5 10 10"), 1);
+    }
+
+    #[test]
+    fn test_part2() {
+        let data = "101 301 501
 102 302 502
 103 303 503
 201 401 601
 202 402 602
 203 403 603
 ";
-    assert_eq!(part2(data), 6);
+        assert_eq!(part2(data), 6);
+    }
 }

@@ -26,14 +26,13 @@ fn run_clock_signal(bunny_vm: &mut BunnyVM, a: i32) -> bool {
 }
 
 fn main() {
-    let args = aoc::parse_args();
+    let mut args = aoc::parse_args();
 
-    let mut bunny_vm = BunnyVM::new(&args.input);
+    args.run(|data| {
+        let mut bunny_vm = BunnyVM::new(data);
 
-    for a in 0..10000 {
-        if run_clock_signal(&mut bunny_vm, a) {
-            println!("{a}");
-            break;
-        }
-    }
+        let a = (0..10000).find(|a| run_clock_signal(&mut bunny_vm, *a)).unwrap_or(0);
+
+        (a, aoc::CHRISTMAS)
+    });
 }

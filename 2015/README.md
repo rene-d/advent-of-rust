@@ -26,7 +26,7 @@ Puzzle                                                                          
 [Day 15: Science for Hungry People](https://adventofcode.com/2015/day/15)            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2015/day15/day15.rs)
 [Day 16: Aunt Sue](https://adventofcode.com/2015/day/16)                             | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2015/day16/day16.rs) [![Python](../scripts/assets/python.png)](../2015/day16/day16.py)
 [Day 17: No Such Thing as Too Much](https://adventofcode.com/2015/day/17)            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2015/day17/day17.rs)
-[Day 18: Like a GIF For Your Yard](https://adventofcode.com/2015/day/18)             | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2015/day18/day18.rs)
+[Day 18: Like a GIF For Your Yard](https://adventofcode.com/2015/day/18)             | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2015/day18/day18.rs) [🎁](../2015/day18/README.md)
 [Day 19: Medicine for Rudolph](https://adventofcode.com/2015/day/19)                 | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2015/day19/day19.rs)
 [Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2015/day20/day20.rs)
 [Day 21: RPG Simulator 20XX](https://adventofcode.com/2015/day/21)                   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2015/day21/day21.rs) [![Python](../scripts/assets/python.png)](../2015/day21/day21.py)

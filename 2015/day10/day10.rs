@@ -3,15 +3,16 @@
 /// main function
 fn main() {
     let mut args = aoc::parse_args();
-
-    args.run(|data| {
-        let data = data.trim_ascii();
-
-        (solve(data, 40), solve(data, 50))
-    });
+    args.run(solve);
 }
 
-fn solve(start_sequence: &str, turns: u32) -> usize {
+fn solve(data: &str) -> (usize, usize) {
+    let data = data.trim_ascii();
+
+    (calc(data, 40), calc(data, 50))
+}
+
+fn calc(start_sequence: &str, turns: u32) -> usize {
     let mut look = start_sequence.bytes().collect::<Vec<_>>();
 
     for _ in 0..turns {

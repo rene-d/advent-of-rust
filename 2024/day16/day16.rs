@@ -86,37 +86,40 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            start: ZERO,
-            end: ZERO,
-            maze: FxHashSet::default(),
-            size: ZERO,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut start = ZERO;
+        let mut end = ZERO;
+        let mut maze = FxHashSet::default();
+        let mut size = ZERO;
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for (y, line) in data.lines().enumerate() {
             let y = i32::try_from(y).unwrap();
 
             for (x, c) in line.chars().enumerate() {
                 let x = i32::try_from(x).unwrap();
-                self.size.x = x;
 
                 if c == '#' {
                     continue;
                 }
 
                 if c == 'S' {
-                    self.start = Coord::new(x, y);
+                    start = Coord::new(x, y);
                 } else if c == 'E' {
-                    self.end = Coord::new(x, y);
+                    end = Coord::new(x, y);
                 }
-                self.maze.insert(Coord { x, y });
+
+                maze.insert(Coord { x, y });
+                size.x = x;
             }
 
-            self.size.y = y;
+            size.y = y;
+        }
+
+        Self {
+            start,
+            end,
+            maze,
+            size,
         }
     }
 
@@ -272,12 +275,14 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (u32, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -285,35 +290,30 @@ fn main() {
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_3: &str = include_str!("sample_3.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_1.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 7036);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_3.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(SAMPLE_3);
         assert_eq!(puzzle.part1(), 11048);
     }
 
     #[test]
     fn test03() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_1.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part2(), 45);
     }
 
     #[test]
     fn test04() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_3.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(SAMPLE_3);
         assert_eq!(puzzle.part2(), 64);
     }
 }

@@ -7,13 +7,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { lines: vec![] }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.lines = data.lines().map(str::to_string).collect();
+    fn new(data: &str) -> Self {
+        Self {
+            lines: data.lines().map(str::to_string).collect(),
+        }
     }
 
     /// Solve part one.
@@ -49,10 +46,12 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }

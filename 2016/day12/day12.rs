@@ -12,10 +12,11 @@ fn solve(bunny_vm: &mut BunnyVM, c: i32) -> i32 {
 }
 
 fn main() {
-    let args = aoc::parse_args();
+    let mut args = aoc::parse_args();
 
-    let mut bunny_vm = BunnyVM::new(&args.input);
+    args.run(|program| {
+        let mut bunny_vm = BunnyVM::new(program);
 
-    println!("{}", solve(&mut bunny_vm, 0));
-    println!("{}", solve(&mut bunny_vm, 1));
+        (solve(&mut bunny_vm, 0), solve(&mut bunny_vm, 1))
+    });
 }

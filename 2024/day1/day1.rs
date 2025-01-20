@@ -54,13 +54,14 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (i32, i32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
     let mut args = aoc::parse_args();
-
-    args.run(|data| {
-        let puzzle = Puzzle::new(data);
-        (puzzle.part1(), puzzle.part2())
-    });
+    args.run(solve);
 }
 
 /// Test from puzzle input

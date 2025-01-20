@@ -3,8 +3,11 @@
 /// main function
 fn main() {
     let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
-    args.run(|data| (part1(data), part2(data)));
+fn solve(data: &str) -> (u32, u32) {
+    (part1(data), part2(data))
 }
 
 fn part2(data: &str) -> u32 {

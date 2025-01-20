@@ -11,16 +11,9 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            antennas: FxHashMap::default(),
-            width: 0..=0,
-            height: 0..=0,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut antennas: FxHashMap<char, Vec<(i32, i32)>> = FxHashMap::default();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         let mut max_x = 0;
         let mut max_y = 0;
 
@@ -29,15 +22,18 @@ impl Puzzle {
             for (x, c) in line.chars().enumerate() {
                 let x: i32 = x.try_into().unwrap();
                 if c != '.' {
-                    self.antennas.entry(c).or_default().push((x, y));
+                    antennas.entry(c).or_default().push((x, y));
                 }
                 max_x = x;
             }
             max_y = y;
         }
 
-        self.width = 0..=max_x;
-        self.height = 0..=max_y;
+        Self {
+            antennas,
+            width: 0..=max_x,
+            height: 0..=max_y,
+        }
     }
 
     /// Solve part one.
@@ -101,12 +97,14 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -114,19 +112,17 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 14);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 34);
     }
 }

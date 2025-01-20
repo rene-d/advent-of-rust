@@ -4,10 +4,8 @@ use rustc_hash::FxHashSet;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let args = aoc::parse_args();
-
-    println!("{}", part1(&args.input));
-    println!("{}", part2(&args.input));
+    let mut args = aoc::parse_args();
+    args.run(|data| (part1(data), part2(data)));
 }
 
 /// ``part1`` counts the IPs that support TLS
@@ -89,18 +87,22 @@ fn support_ssl(address: &str) -> bool {
 }
 
 #[cfg(test)]
-#[test]
-fn test_tls() {
-    assert!(support_tls("abba[mnop]qrst"));
-    assert!(!support_tls("abcd[bddb]xyyx"));
-    assert!(!support_tls("aaaa[qwer]tyui"));
-    assert!(support_tls("ioxxoj[asdfgh]zxcvbn"));
-}
+mod test {
+    use super::*;
 
-#[test]
-fn test_ssl() {
-    assert!(support_ssl("aba[bab]xyz"));
-    assert!(!support_ssl("xyx[xyx]xyx"));
-    assert!(support_ssl("aaa[kek]eke"));
-    assert!(support_ssl("zazbz[bzb]cdb"));
+    #[test]
+    fn test_tls() {
+        assert!(support_tls("abba[mnop]qrst"));
+        assert!(!support_tls("abcd[bddb]xyyx"));
+        assert!(!support_tls("aaaa[qwer]tyui"));
+        assert!(support_tls("ioxxoj[asdfgh]zxcvbn"));
+    }
+
+    #[test]
+    fn test_ssl() {
+        assert!(support_ssl("aba[bab]xyz"));
+        assert!(!support_ssl("xyx[xyx]xyx"));
+        assert!(support_ssl("aaa[kek]eke"));
+        assert!(support_ssl("zazbz[bzb]cdb"));
+    }
 }

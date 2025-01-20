@@ -1,19 +1,14 @@
 //! [Day 19: An Elephant Named Joseph](https://adventofcode.com/2016/day/19)
 
 fn main() {
-    let elves = || {
-        if let Some(arg) = std::env::args().nth(1) {
-            if let Ok(n) = arg.parse::<usize>() {
-                return n;
-            }
-        }
-        let args = aoc::parse_args();
-        args.input.trim().parse::<usize>().unwrap()
-    };
-    let elves = elves();
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
-    println!("{}", part1(elves));
-    println!("{}", part2(elves));
+fn solve(data: &str) -> (usize, usize) {
+    let elves = data.trim_ascii().parse().unwrap();
+
+    (part1(elves), part2(elves))
 }
 
 #[cfg(test)]
@@ -77,8 +72,13 @@ const fn part2(elves: usize) -> usize {
     }
 }
 
-#[test]
-fn test_part1() {
-    assert_eq!(part1_naive(5), 3);
-    assert_eq!(part1(5), 3);
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1_naive(5), 3);
+        assert_eq!(part1(5), 3);
+    }
 }

@@ -1,4 +1,5 @@
-# http://adventofcode.com/2021
+# https://adventofcode.com/2021
+
 [workspace]
 members = ["day*"]
 resolver = "2"

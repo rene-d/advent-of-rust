@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-divisors = "0.2"
+divisors = "*"
 
 [[bin]]
 name = "day20"

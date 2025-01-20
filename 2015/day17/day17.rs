@@ -1,39 +1,55 @@
 //! [Day 17: No Such Thing as Too Much](https://adventofcode.com/2015/day/17)
 
-use permutator::LargeCombinationIterator;
+use itertools::Itertools;
 use rustc_hash::FxHashMap;
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = &args.input;
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
+fn solve(data: &str) -> (i32, usize) {
+    solve_eggnot(data, 150)
+}
+
+fn solve_eggnot(data: &str, eggnot: u32) -> (i32, usize) {
     // read data into an array
     let values = data
         .lines()
-        .filter(|line| !line.is_empty())
-        .map(|s| s.parse::<u32>().unwrap())
+        .filter_map(|line| line.parse().ok())
         .collect::<Vec<u32>>();
 
     let mut part1 = 0;
-    let mut part2: FxHashMap<usize, usize> = FxHashMap::default();
+    let mut part2 = FxHashMap::default();
 
-    for i in 1..=values.len() {
+    for k in 1..=values.len() {
         // try all the combinations with i containers
-        let combinator = LargeCombinationIterator::new(&values, i);
-        for combination in combinator {
+        for combination in values.iter().combinations(k) {
             let sum: u32 = combination.iter().copied().sum();
-            if sum == 150 {
+            if sum == eggnot {
                 // part 1: count solutions
                 part1 += 1;
 
                 // part 2: count solutions by number of container
-                *part2.entry(combination.len()).or_insert(0) += 1;
+                *part2.entry(k).or_insert(0) += 1;
             }
         }
     }
-    println!("{part1}");
 
     let min_container = part2.keys().min().unwrap();
-    println!("{}", part2[min_container]);
+
+    (part1, part2[min_container])
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve_eggnot(TEST_INPUT, 25), (4, 3));
+    }
 }

@@ -2,20 +2,20 @@
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    let mut args = aoc::parse_args();
+    args.run(|data| (solve(data), aoc::CHRISTMAS));
+}
+
+fn solve(data: &str) -> i32 {
+    let data = data.lines().collect::<Vec<&str>>();
 
     let nx = data[0].len();
     let ny = data.len();
-    let mut grid = vec![vec!['.'; nx]; ny];
+    let mut grid = vec![vec![b'.'; nx]; ny];
 
     // load the grid
     for (y, line) in data.iter().enumerate() {
-        for (x, col) in line.chars().enumerate() {
+        for (x, col) in line.bytes().enumerate() {
             grid[y][x] = col;
         }
     }
@@ -25,10 +25,10 @@ fn main() {
     while do_move(&mut grid) {
         step += 1;
     }
-    println!("{step}");
+    step
 }
 
-fn do_move(grid: &mut [Vec<char>]) -> bool {
+fn do_move(grid: &mut [Vec<u8>]) -> bool {
     let mut moved = false;
 
     let nx = grid[0].len();
@@ -37,11 +37,11 @@ fn do_move(grid: &mut [Vec<char>]) -> bool {
     // don't move blocked sea cucumbers
     for y in 0..ny {
         for x in 0..nx {
-            if grid[y][x] == '>' && grid[y][x] == grid[y][(x + 1) % nx] {
-                grid[y][x] = 'H';
+            if grid[y][x] == b'>' && grid[y][x] == grid[y][(x + 1) % nx] {
+                grid[y][x] = b'H';
             }
-            if grid[y][x] == 'v' && grid[y][x] == grid[(y + 1) % ny][x] {
-                grid[y][x] = 'V';
+            if grid[y][x] == b'v' && grid[y][x] == grid[(y + 1) % ny][x] {
+                grid[y][x] = b'V';
             }
         }
     }
@@ -49,9 +49,9 @@ fn do_move(grid: &mut [Vec<char>]) -> bool {
     // During a single step, the east-facing herd moves first,
     for line in grid.iter_mut() {
         for x in 0..nx {
-            if line[x] == '>' && line[(x + 1) % nx] == '.' {
-                line[(x + 1) % nx] = 'H';
-                line[x] = '.';
+            if line[x] == b'>' && line[(x + 1) % nx] == b'.' {
+                line[(x + 1) % nx] = b'H';
+                line[x] = b'.';
                 moved = true;
             }
         }
@@ -61,9 +61,9 @@ fn do_move(grid: &mut [Vec<char>]) -> bool {
     for y in 0..ny {
         for x in 0..nx {
             let c = grid[y][x];
-            if c == 'v' && grid[(y + 1) % ny][x] == '.' {
-                grid[(y + 1) % ny][x] = 'V';
-                grid[y][x] = '.';
+            if c == b'v' && grid[(y + 1) % ny][x] == b'.' {
+                grid[(y + 1) % ny][x] = b'V';
+                grid[y][x] = b'.';
                 moved = true;
             }
         }
@@ -73,8 +73,8 @@ fn do_move(grid: &mut [Vec<char>]) -> bool {
     for line in grid {
         for val in line {
             match val {
-                'H' => *val = '>',
-                'V' => *val = 'v',
+                b'H' => *val = b'>',
+                b'V' => *val = b'v',
                 _ => (),
             }
         }
@@ -82,4 +82,17 @@ fn do_move(grid: &mut [Vec<char>]) -> bool {
 
     // indicate if any sea cucumbers moved
     moved
+}
+
+/// Test from puzzle input
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn part1() {
+        assert_eq!(solve(TEST_INPUT), 58);
+    }
 }

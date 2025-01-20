@@ -186,7 +186,7 @@ fn main() {
 }
 
 #[cfg(test)]
-mod tests {
+mod test {
     use super::*;
 
     #[test]

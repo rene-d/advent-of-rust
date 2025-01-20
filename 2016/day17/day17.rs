@@ -2,27 +2,22 @@
 
 use std::collections::VecDeque;
 
-struct Puzzle {
-    password: String,
+struct Puzzle<'a> {
+    password: &'a str,
 }
 
-impl Puzzle {
-    const fn new() -> Self {
+impl<'a> Puzzle<'a> {
+    const fn new(data: &'a str) -> Self {
         Self {
-            password: String::new(),
+            password: data.trim_ascii(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.password = data.trim().to_string();
     }
 
     /// Solve part one.
     fn part1(&self) -> String {
         let mut base_digest = md5::Context::new();
 
-        base_digest.consume(&self.password);
+        base_digest.consume(self.password);
 
         let mut q = VecDeque::new();
 
@@ -73,7 +68,7 @@ impl Puzzle {
         let mut max_steps = 0;
 
         let mut base_digest = md5::Context::new();
-        base_digest.consume(&self.password);
+        base_digest.consume(self.password);
 
         let mut q = VecDeque::new();
         q.push_back((0, 0, 0, base_digest.clone()));
@@ -129,11 +124,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -143,48 +138,43 @@ mod test {
 
     #[test]
     fn test00() {
-        let mut puzzle = Puzzle::new();
-        puzzle.password = "hijkl".to_string();
+        let puzzle = Puzzle::new("hijkl");
         assert_eq!(puzzle.part1(), ""); // no path
     }
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.password = "ihgpwlah".to_string();
+        let puzzle = Puzzle::new("ihgpwlah");
         assert_eq!(puzzle.part1(), "DDRRRD");
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.password = "kglvqrro".to_string();
+        let puzzle = Puzzle::new("kglvqrro");
         assert_eq!(puzzle.part1(), "DDUDRLRRUDRD");
     }
 
     #[test]
     fn test03() {
-        let mut puzzle = Puzzle::new();
-        puzzle.password = "ulqzkmiv".to_string();
+        let puzzle = Puzzle::new("ulqzkmiv");
         assert_eq!(puzzle.part1(), "DRURDRUDDLLDLUURRDULRLDUUDDDRR");
     }
 
     #[test]
     fn test04() {
-        let mut puzzle = Puzzle::new();
-        puzzle.password = "ihgpwlah".to_string();
+        let puzzle = Puzzle::new("ihgpwlah");
         assert_eq!(puzzle.part2(), 370);
     }
+
     #[test]
     fn test05() {
-        let mut puzzle = Puzzle::new();
-        puzzle.password = "kglvqrro".to_string();
+        let puzzle = Puzzle::new("kglvqrro");
         assert_eq!(puzzle.part2(), 492);
     }
+
     #[test]
     fn test06() {
-        let mut puzzle = Puzzle::new();
-        puzzle.password = "ulqzkmiv".to_string();
+        let puzzle = Puzzle::new("ulqzkmiv");
         assert_eq!(puzzle.part2(), 830);
     }
 }

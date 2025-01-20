@@ -1,28 +1,25 @@
 //! [Day 2: Corruption Checksum](https://adventofcode.com/2017/day/2)
 
 struct Puzzle {
-    data: Vec<Vec<u32>>,
+    rows: Vec<Vec<u32>>,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { data: vec![] }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
+    fn new(data: &str) -> Self {
+        let mut rows = vec![];
         for line in data.lines() {
-            self.data.push(
+            rows.push(
                 line.split_ascii_whitespace()
                     .map(|x| x.parse().unwrap())
                     .collect(),
             );
         }
+        Self { rows }
     }
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        self.data
+        self.rows
             .iter()
             .map(|row| row.iter().max().unwrap() - row.iter().min().unwrap())
             .sum()
@@ -30,7 +27,7 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> u32 {
-        self.data
+        self.rows
             .iter()
             .map(|row| {
                 for a in row {
@@ -46,12 +43,14 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -59,17 +58,18 @@ fn main() {
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 18);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part2(), 9);
     }
 }

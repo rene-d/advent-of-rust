@@ -149,24 +149,21 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            boss_hp: 0,
-            boss_dmg: 0,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut boss_hp = 0;
+        let mut boss_dmg = 0;
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.trim().lines() {
             if let Some(hp) = line.strip_prefix("Hit Points: ") {
-                self.boss_hp = hp.parse().unwrap();
+                boss_hp = hp.parse().unwrap();
             } else if let Some(dmg) = line.strip_prefix("Damage: ") {
-                self.boss_dmg = dmg.parse().unwrap();
+                boss_dmg = dmg.parse().unwrap();
             } else {
                 panic!("bad input: {line}");
             }
         }
+
+        Self { boss_hp, boss_dmg }
     }
 
     fn play(&self, hard_mode: bool) -> i32 {
@@ -214,10 +211,12 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (i32, i32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }

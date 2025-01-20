@@ -13,23 +13,22 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            byte_positions: Vec::new(),
-            mem_size: 71,
-            num_corruptions: 1024,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut byte_positions = Vec::new();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             let (x, y) = line.split_once(',').unwrap();
 
             let x: i32 = x.parse().unwrap();
             let y: i32 = y.parse().unwrap();
 
-            self.byte_positions.push(Coord { x, y });
+            byte_positions.push(Coord { x, y });
+        }
+
+        Self {
+            byte_positions,
+            mem_size: 71,
+            num_corruptions: 1024,
         }
     }
 
@@ -98,12 +97,14 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (u32, String) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -111,11 +112,11 @@ fn main() {
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_1.txt");
-        puzzle.configure(&data);
+        let mut puzzle = Puzzle::new(SAMPLE_1);
         puzzle.num_corruptions = 12;
         puzzle.mem_size = 7;
         assert_eq!(puzzle.part1(), 22);
@@ -123,9 +124,7 @@ mod test {
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("sample_1.txt");
-        puzzle.configure(&data);
+        let mut puzzle = Puzzle::new(SAMPLE_1);
         puzzle.mem_size = 7;
         assert_eq!(puzzle.part2(), "6,1");
     }

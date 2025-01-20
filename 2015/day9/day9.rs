@@ -1,24 +1,22 @@
 //! [Day 9: All in a Single Night](https://adventofcode.com/2015/day/9)
 
-use permutator::HeapPermutationIterator;
+use itertools::Itertools;
 use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
 
 /// main function
 fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
+fn solve(data: &str) -> (u32, u32) {
     let mut places: FxHashSet<String> = FxHashSet::default();
     let mut distances: FxHashMap<(String, String), u32> = FxHashMap::default();
 
     let re = Regex::new(r"^(.+) to (.+) = (\d+)$").unwrap();
 
-    for line in &data {
+    for line in data.lines() {
         if let Some(op) = re.captures(line) {
             places.insert(op[1].to_string());
             places.insert(op[2].to_string());
@@ -34,13 +32,10 @@ fn main() {
         }
     }
 
-    let perm_places = &mut places.iter().collect::<Vec<&String>>();
-    let permutator = HeapPermutationIterator::new(perm_places);
-
     let mut min_distance = u32::MAX;
     let mut max_distance = u32::MIN;
 
-    for permutated in permutator {
+    for permutated in places.iter().permutations(places.len()) {
         let mut distance = 0;
         for i in 0..permutated.len() - 1 {
             let from = permutated[i];
@@ -48,8 +43,6 @@ fn main() {
 
             distance += distances.get(&(from.to_string(), to.to_string())).unwrap();
         }
-
-        // println!("{:?}  ->  {}", permutated, distance);
 
         if distance < min_distance {
             min_distance = distance;
@@ -59,6 +52,17 @@ fn main() {
         }
     }
 
-    println!("{min_distance}");
-    println!("{max_distance}");
+    (min_distance, max_distance)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test1() {
+        assert_eq!(solve(TEST_INPUT), (605, 982));
+    }
 }

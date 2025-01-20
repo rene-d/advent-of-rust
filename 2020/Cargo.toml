@@ -1,8 +1,5 @@
 # https://adventofcode.com/2020
 
 [workspace]
-members = [
-    "day*"
-]
-
+members = ["day*"]
 resolver = "2"

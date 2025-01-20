@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 aoc = { path = "../../aoc" }
 assembunny = { path = "../assembunny/" }
-num-traits = "0.2"
+num-traits = "*"
 
 [[bin]]
 name = "day25"

@@ -53,7 +53,7 @@ Calendar | Solutions | Stars | Rust | Python | 🎁
 [Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](2018/README.md) |  50⭐ |  25 |   4 |   1
 [Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](2017/README.md) |  50⭐ |  25 |  17 |    
 [Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](2016/README.md) |  50⭐ |  25 |   0 |    
-[Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/README.md) |  50⭐ |  25 |   5 |    
+[Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](2015/README.md) |  50⭐ |  25 |   5 |   1
 
 ## Bonus 🎁
 
@@ -64,6 +64,7 @@ Year | Count | Days
 2022 |     1 | [17](2022/day17/README.md)
 2019 |     2 | [13](2019/day13/README.md) [15](2019/day15/README.md)
 2018 |     1 | [18](2018/day18/README.md)
+2015 |     1 | [18](2015/day18/README.md)
 
 ## Under the hood 🎄
 

@@ -217,7 +217,6 @@ fn solve(program: &str) -> u64 {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-
-    println!("{}", solve(&args.input));
+    let mut args = aoc::parse_args();
+    args.run(|data| (solve(data), aoc::CHRISTMAS));
 }

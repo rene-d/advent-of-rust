@@ -362,7 +362,7 @@ class AocSession:
                 pass
 
         run(f"{year}/target/release/day{day}", "Rust")
-        run(f"{year}/day{day}/day{day}.py", "Python")
+        # run(f"{year}/day{day}/day{day}.py", "Python")
 
     @iter_all
     def print_stars(self, year=None, day=None):

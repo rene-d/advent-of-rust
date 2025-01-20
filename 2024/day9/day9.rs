@@ -2,20 +2,15 @@
 
 const FREE_SPACE: u32 = u32::MAX;
 
-struct Puzzle {
-    data: String,
+struct Puzzle<'a> {
+    data: &'a str,
 }
 
-impl Puzzle {
-    const fn new() -> Self {
+impl<'a> Puzzle<'a> {
+    const fn new(data: &'a str) -> Self {
         Self {
-            data: String::new(),
+            data: data.trim_ascii(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.data = data.trim_ascii().to_string();
     }
 
     fn load_disk(&self) -> Vec<u32> {
@@ -133,12 +128,14 @@ impl Puzzle {
     }
 }
 
+fn solve(data: &str) -> (u64, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -146,19 +143,17 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 1928);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        let data = aoc::load_input_data("test.txt");
-        puzzle.configure(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 2858);
     }
 }

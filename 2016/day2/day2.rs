@@ -2,10 +2,8 @@
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let args = aoc::parse_args();
-
-    println!("{}", part1(&args.input));
-    println!("{}", part2(&args.input));
+    let mut args = aoc::parse_args();
+    args.run(|data| (part1(data), part2(data)));
 }
 
 /// part 1
@@ -130,22 +128,18 @@ fn part2(data: &str) -> String {
 }
 
 #[cfg(test)]
-#[test]
-fn test_part1() {
-    let data = "ULL
-RRDDD
-LURDL
-UUUUD";
+mod test {
+    use super::*;
 
-    assert_eq!(part1(data), "1985");
-}
+    const TEST_INPUT: &str = include_str!("test.txt");
 
-#[test]
-fn test_part2() {
-    let data = "ULL
-RRDDD
-LURDL
-UUUUD";
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(TEST_INPUT), "1985");
+    }
 
-    assert_eq!(part2(data), "5DB3");
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(TEST_INPUT), "5DB3");
+    }
 }

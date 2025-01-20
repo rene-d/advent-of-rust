@@ -3,14 +3,17 @@
 use regex::Regex;
 
 fn main() {
-    let args = aoc::parse_args();
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
+fn solve(data: &str) -> (usize, usize) {
     let mut discs = Vec::new();
     let mut positions = Vec::new();
 
     let re = Regex::new(r"Disc #\d+ has (\d+) positions; at time=0, it is at position (\d+).").unwrap();
 
-    for line in args.input.lines() {
+    for line in data.lines() {
         let caps = re.captures(line).unwrap();
 
         discs.push(caps[2].parse::<usize>().unwrap());
@@ -18,23 +21,29 @@ fn main() {
     }
 
     // part 1
+    let mut part1 = 0;
+
     let nb_discsc = discs.len();
     for time in 0.. {
         if (0..nb_discsc).all(|i| (discs[i] + i + time + 1) % positions[i] == 0) {
-            println!("{time}");
+            part1 = time;
             break;
         }
     }
 
     // part 2
+    let mut part2 = 0;
+
     discs.push(0);
     positions.push(11);
 
     let nb_discsc = discs.len();
     for time in 0.. {
         if (0..nb_discsc).all(|i| (discs[i] + i + time + 1) % positions[i] == 0) {
-            println!("{time}");
+            part2 = time;
             break;
         }
     }
+
+    (part1, part2)
 }

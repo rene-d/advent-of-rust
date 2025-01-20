@@ -12,15 +12,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    fn new(data: &str) -> Self {
         Self {
-            grid: aoc::Grid::<char>::new(),
+            grid: aoc::Grid::<char>::parse(data),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.grid = data.into();
     }
 
     fn solve(&self) -> (u32, u32) {
@@ -85,11 +80,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -97,17 +92,17 @@ fn main() {
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 14);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part2(), 20);
     }
 }

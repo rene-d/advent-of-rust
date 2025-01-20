@@ -1,11 +1,14 @@
 //! [Day 16: Dragon Checksum](https://adventofcode.com/2016/day/16)
 
 fn main() {
-    let args = aoc::parse_args();
-    let data = args.input.trim_ascii();
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
-    println!("{}", checksum(&fill(data, 272)));
-    println!("{}", checksum(&fill(data, 35_651_584)));
+fn solve(data: &str) -> (String, String) {
+    let data = data.trim_ascii();
+
+    (checksum(&fill(data, 272)), checksum(&fill(data, 35_651_584)))
 }
 
 /// compute the checksum recursively
@@ -51,21 +54,27 @@ fn step(a: &str) -> String {
     result
 }
 
-#[test]
-fn test_step() {
-    assert_eq!(step("1"), "100");
-    assert_eq!(step("0"), "001");
-    assert_eq!(step("11111"), "11111000000");
-    assert_eq!(step("111100001010"), "1111000010100101011110000");
-}
-#[test]
-fn test_fill() {
-    assert_eq!(step("10000"), "10000011110");
-    assert_eq!(step("10000011110"), "10000011110010000111110");
-    assert_eq!(fill("10000", 20), "10000011110010000111");
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test_checksum() {
-    assert_eq!(checksum("110010110100"), "100");
+    #[test]
+    fn test_step() {
+        assert_eq!(step("1"), "100");
+        assert_eq!(step("0"), "001");
+        assert_eq!(step("11111"), "11111000000");
+        assert_eq!(step("111100001010"), "1111000010100101011110000");
+    }
+
+    #[test]
+    fn test_fill() {
+        assert_eq!(step("10000"), "10000011110");
+        assert_eq!(step("10000011110"), "10000011110010000111110");
+        assert_eq!(fill("10000", 20), "10000011110010000111");
+    }
+
+    #[test]
+    fn test_checksum() {
+        assert_eq!(checksum("110010110100"), "100");
+    }
 }

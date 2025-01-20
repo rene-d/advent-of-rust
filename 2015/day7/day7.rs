@@ -23,32 +23,6 @@ impl Parser {
     }
 }
 
-/// main function
-fn main() {
-    let mut args = aoc::parse_args();
-
-    args.run(|data| {
-        let parser = Parser::new();
-
-        let mut opcodes: FxHashMap<String, String> = FxHashMap::default();
-        let re_opcode = Regex::new(r"^(.+) \-> (\w+)$").unwrap();
-        for line in data.lines() {
-            if let Some(op) = re_opcode.captures(line) {
-                opcodes.insert(op[2].to_string(), op[1].to_string());
-            }
-        }
-
-        // part 1
-        let wire_a = wires(&parser, &opcodes, "a");
-
-        // part 2
-        opcodes.insert("b".to_string(), wire_a.to_string());
-        let wire_a_bis = wires(&parser, &opcodes, "a");
-
-        (wire_a, wire_a_bis)
-    });
-}
-
 fn run(
     parser: &Parser,
     opcodes: &FxHashMap<String, String>,
@@ -132,4 +106,32 @@ fn wires(parser: &Parser, opcodes: &FxHashMap<String, String>, wire: &str) -> u1
     let mut values: FxHashMap<String, u16> = FxHashMap::default();
 
     run(parser, opcodes, &mut values, wire, 0)
+}
+
+fn solve(data: &str) -> (u16, u16) {
+    let parser = Parser::new();
+
+    let mut opcodes: FxHashMap<String, String> = FxHashMap::default();
+    let re_opcode = Regex::new(r"^(.+) \-> (\w+)$").unwrap();
+    for line in data.lines() {
+        if let Some(op) = re_opcode.captures(line) {
+            opcodes.insert(op[2].to_string(), op[1].to_string());
+        }
+    }
+
+    // part 1
+    let wire_a = wires(&parser, &opcodes, "a");
+
+    // part 2
+    opcodes.insert("b".to_string(), wire_a.to_string());
+    let wire_a_bis = wires(&parser, &opcodes, "a");
+
+    (wire_a, wire_a_bis)
+}
+
+/// main function
+fn main() {
+    let mut args = aoc::parse_args();
+
+    args.run(solve);
 }

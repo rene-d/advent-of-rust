@@ -4,7 +4,7 @@ use regex::Regex;
 
 /// Compute valid `mul()` operations.
 /// if part2 is true, take care of `do()`/`don't()` statements.
-fn solve(data: &str, part: u8) -> i32 {
+fn calc(data: &str, part: u8) -> i32 {
     let mut enabled = true;
     let mut total_sum = 0;
 
@@ -25,10 +25,13 @@ fn solve(data: &str, part: u8) -> i32 {
     total_sum
 }
 
+fn solve(data: &str) -> (i32, i32) {
+    (calc(data, 1), calc(data, 2))
+}
+
 fn main() {
     let mut args = aoc::parse_args();
-
-    args.run(|data| (solve(data, 1), solve(data, 2)));
+    args.run(solve);
 }
 
 /// Test from puzzle input
@@ -41,13 +44,13 @@ mod test {
 
     #[test]
     fn test01() {
-        assert_eq!(solve(SAMPLE_1, 1), 161);
-        assert_eq!(solve(SAMPLE_1, 2), 161);
+        assert_eq!(calc(SAMPLE_1, 1), 161);
+        assert_eq!(calc(SAMPLE_1, 2), 161);
     }
 
     #[test]
     fn test02() {
-        assert_eq!(solve(SAMPLE_2, 1), 161);
-        assert_eq!(solve(SAMPLE_2, 2), 48);
+        assert_eq!(calc(SAMPLE_2, 1), 161);
+        assert_eq!(calc(SAMPLE_2, 2), 48);
     }
 }

@@ -122,7 +122,7 @@ fn part1(player: u8, computer: u8) -> u32 {
 }
 
 #[cfg(test)]
-mod tests {
+mod test {
     use super::*;
     #[test]
     fn test_part1() {

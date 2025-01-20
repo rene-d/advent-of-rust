@@ -1,71 +1,82 @@
 //! [Day 13: Knights of the Dinner Table](https://adventofcode.com/2015/day/13)
 
-use permutator::HeapPermutationIterator;
+use itertools::Itertools;
 use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
 
-fn calc(names: &FxHashSet<String>, happiness: &FxHashMap<(String, String), i32>) -> i32 {
-    let perm_names = &mut names.iter().collect::<Vec<&String>>();
-    let permutator = HeapPermutationIterator::new(perm_names);
+fn calc<'a>(names: &FxHashSet<&'a str>, happiness: &FxHashMap<(&'a str, &'a str), i32>) -> i32 {
+    let length = names.len();
 
-    let mut happiness_max = i32::MIN;
+    names
+        .iter()
+        .permutations(names.len())
+        .map(|permutated| {
+            (0..length)
+                .map(|i| {
+                    let n1 = permutated[i];
+                    let n2 = permutated[(i + 1) % length];
 
-    for permutated in permutator {
-        let mut happiness_sum = 0;
-        for i in 0..permutated.len() {
-            let n1 = permutated[i];
-            let n2 = permutated[(i + 1) % permutated.len()];
-
-            happiness_sum += happiness.get(&(n1.to_string(), n2.to_string())).unwrap();
-            happiness_sum += happiness.get(&(n2.to_string(), n1.to_string())).unwrap();
-        }
-
-        if happiness_max < happiness_sum {
-            happiness_max = happiness_sum;
-        }
-    }
-    happiness_max
+                    happiness.get(&(n1, n2)).unwrap() + happiness.get(&(n2, n1)).unwrap()
+                })
+                .sum()
+        })
+        .max()
+        .unwrap()
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
-
-    let mut names: FxHashSet<String> = FxHashSet::default();
-    let mut happiness: FxHashMap<(String, String), i32> = FxHashMap::default();
+fn solve<'a>(data: &'a str) -> (i32, i32) {
+    let mut names: FxHashSet<&'a str> = FxHashSet::default();
+    let mut happiness: FxHashMap<(&'a str, &'a str), i32> = FxHashMap::default();
 
     let re =
         Regex::new(r"^(.+) would (gain|lose) (\d+) happiness units by sitting next to (.+)\.$")
             .unwrap();
 
-    for line in &data {
+    for line in data.lines() {
         if let Some(op) = re.captures(line) {
-            names.insert(op[1].to_string());
-            names.insert(op[4].to_string());
+            let name = op.get(1).unwrap().as_str();
+            let neighbor = op.get(4).unwrap().as_str();
+
+            names.insert(name);
+            names.insert(neighbor);
 
             let mut gain: i32 = op[3].parse().unwrap();
-            if op[2].to_string() == "lose" {
+            if &op[2] == "lose" {
                 gain = -gain;
             }
 
-            happiness.insert((op[1].to_string(), op[4].to_string()), gain);
+            happiness.insert((name, neighbor), gain);
         }
     }
 
     // part 1
-    println!("{}", calc(&names, &happiness));
+    let part1 = calc(&names, &happiness);
 
     // part 2
     for name in &names {
-        happiness.insert((name.to_string(), "me".to_string()), 0);
-        happiness.insert(("me".to_string(), name.to_string()), 0);
+        happiness.insert((name, "me"), 0);
+        happiness.insert(("me", name), 0);
     }
-    names.insert("me".to_string());
+    names.insert("me");
+    let part2 = calc(&names, &happiness);
 
-    println!("{}", calc(&names, &happiness));
+    (part1, part2)
+}
+
+/// main function
+fn main() {
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test1() {
+        assert_eq!(solve(TEST_INPUT).0, 330);
+    }
 }

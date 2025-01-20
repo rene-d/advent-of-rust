@@ -8,12 +8,11 @@ use regex::Regex;
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let args = aoc::parse_args();
-
-    solve(&args.input);
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
-fn solve(data: &str) {
+fn solve(data: &str) -> (i32, String) {
     const WIDTH: usize = 50;
     const HEIGHT: usize = 6;
 
@@ -80,6 +79,5 @@ fn solve(data: &str) {
         crt.push('\n');
     }
 
-    println!("{lit}"); // part 1
-    println!("{}", scan_5x6(&crt)); // part 2
+    (lit, scan_5x6(&crt))
 }

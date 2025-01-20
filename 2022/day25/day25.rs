@@ -62,7 +62,7 @@ fn main() {
     let mut args = aoc::parse_args();
     args.run(|data| {
         let puzzle = Puzzle::new(data);
-        (puzzle.part1(), "")
+        (puzzle.part1(), aoc::CHRISTMAS)
     });
 }
 
@@ -71,9 +71,11 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let puzzle = Puzzle::new(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.sum_of_numbers, 4890);
         assert_eq!(puzzle.part1(), "2=-1=0");
     }

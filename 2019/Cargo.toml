@@ -1,6 +1,5 @@
 # https://adventofcode.com/2019
 
 [workspace]
-members = [ "day*", "intcode-rs" ]
-
+members = ["day*", "intcode-rs"]
 resolver = "2"

@@ -214,10 +214,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), puzzle.part2())
+    });
 }
 
 /// Test from puzzle input
@@ -225,10 +226,11 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn part1() {
-        let data = aoc::load_input_data("test.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 11);
     }
 }

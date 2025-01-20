@@ -8,21 +8,21 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            replacements: vec![],
-            medicine_molecule: String::new(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut replacements = vec![];
+        let mut medicine_molecule = String::new();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if let Some((a, b)) = line.split_once(" => ") {
-                self.replacements.push((a.to_string(), b.to_owned()));
+                replacements.push((a.to_string(), b.to_owned()));
             } else if !line.is_empty() {
-                line.clone_into(&mut self.medicine_molecule);
+                line.clone_into(&mut medicine_molecule);
             }
+        }
+
+        Self {
+            replacements,
+            medicine_molecule,
         }
     }
 
@@ -97,23 +97,26 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
+fn main() {
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
 /// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let mut puzzle = Puzzle::new(SAMPLE_1);
 
         puzzle.medicine_molecule = "HOH".to_string();
         assert_eq!(puzzle.part1(), 4);
@@ -124,8 +127,7 @@ mod test {
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
+        let mut puzzle = Puzzle::new(SAMPLE_2);
 
         puzzle.medicine_molecule = "HOH".to_string();
         assert_eq!(puzzle.part2(), 3);

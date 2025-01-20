@@ -1,7 +1,12 @@
 //! [Day 25: Let It Snow](https://adventofcode.com/2015/day/25)
 
 fn main() {
-    let (row, column) = read_data();
+    let mut args = aoc::parse_args();
+    args.run(solve);
+}
+
+fn solve(data: &str) -> (u64, aoc::Christmas) {
+    let (row, column) = read_data(data);
 
     let mut x = 1;
     let mut y = 1;
@@ -16,13 +21,12 @@ fn main() {
         }
         value = (value * 252_533) % 33_554_393;
     }
-    println!("{value}");
+
+    (value, aoc::CHRISTMAS)
 }
 
-fn read_data() -> (i32, i32) {
-    let args = aoc::parse_args();
-    let mut data = args.input.clone();
-
+fn read_data(data: &str) -> (i32, i32) {
+    let mut data = data.to_string();
     data.retain(|c| c.is_ascii_digit() || c.is_whitespace());
 
     let data: Vec<_> = data.trim().split_ascii_whitespace().collect();

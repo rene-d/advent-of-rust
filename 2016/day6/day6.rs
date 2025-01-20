@@ -1,18 +1,15 @@
 //! [Day 6: Signals and Noise](https://adventofcode.com/2016/day/6)
 
 fn main() {
-    let args = aoc::parse_args();
-
-    let (part1, part2) = solve(&args.input);
-    println!("{part1}");
-    println!("{part2}");
+    let mut args = aoc::parse_args();
+    args.run(solve);
 }
 
 /// solve both parts
 fn solve(data: &str) -> (String, String) {
     let mut freq = [[0; 26]; 8];
 
-    for line in data.split('\n') {
+    for line in data.lines() {
         for (i, c) in line.chars().enumerate() {
             assert!(i < 8, "too many chars");
             if c.is_ascii_lowercase() {
@@ -50,27 +47,16 @@ fn solve(data: &str) -> (String, String) {
 }
 
 #[cfg(test)]
-#[test]
-fn test_part1() {
-    let data = "eedadn
-drvtee
-eandsr
-raavrd
-atevrs
-tsrnev
-sdttsa
-rasrtv
-nssdts
-ntnada
-svetve
-tesnvt
-vntsnd
-vrdear
-dvrsen
-enarar";
+mod test {
+    use super::*;
 
-    let (part1, part2) = solve(data);
+    const TEST_INPUT: &str = include_str!("test.txt");
 
-    assert_eq!(part1, "easter  ".to_string());
-    assert_eq!(part2, "advent  ".to_string());
+    #[test]
+    fn test_part1() {
+        let (part1, part2) = solve(TEST_INPUT);
+
+        assert_eq!(part1, "easter  ");
+        assert_eq!(part2, "advent  ");
+    }
 }

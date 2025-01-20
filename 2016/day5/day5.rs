@@ -1,7 +1,7 @@
 //! [Day 5: How About a Nice Game of Chess?](https://adventofcode.com/2016/day/5)
 
 use indicatif::{ProgressBar, ProgressStyle};
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 const HEX_DIGITS: &[char] = &[
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
@@ -11,15 +11,19 @@ const TICK_CHARS: &str = "\u{280b}\u{2819}\u{2839}\u{2838}\u{283c}\u{2834}\u{282
 
 /// ``main`` reads the puzzle input then solves part 1 and part 2
 fn main() {
-    let args = aoc::parse_args();
+    let mut args = aoc::parse_args();
+    let verbose = args.verbose;
+    args.run(|data| solve(data, verbose));
+}
 
-    let door_id = args.input.trim();
+fn solve(data: &str, progress: bool) -> (String, String) {
+    let door_id = data.trim_ascii();
 
     let mut password_part1 = ['_'; 8];
     let mut password_part2 = ['_'; 8];
 
     let pb = ProgressBar::new_spinner();
-    if args.verbose {
+    if progress {
         pb.enable_steady_tick(Duration::from_millis(200));
         pb.set_style(
             ProgressStyle::default_spinner()
@@ -29,8 +33,6 @@ fn main() {
         );
         pb.set_prefix("cracking password");
     }
-
-    let now = Instant::now();
 
     // prepare a byte buffer to store the `door_id` and the `index``
     let mut hash = [0u8; 32];
@@ -99,7 +101,7 @@ fn main() {
         }
         index += 1;
 
-        if args.verbose && index % 10000 == 0 {
+        if progress && index % 10000 == 0 {
             pb.set_message(format!(
                 "{} {}",
                 password_part1.iter().collect::<String>(),
@@ -108,26 +110,26 @@ fn main() {
         }
     }
 
-    if args.verbose {
+    if progress {
         pb.finish_and_clear();
     }
 
-    println!("{}", password_part1.iter().collect::<String>());
-    println!("{}", password_part2.iter().collect::<String>());
-
-    if args.verbose {
-        let micros = now.elapsed().as_micros();
-        eprintln!("elapsed: {}.{:03} ms", micros / 1000, micros % 1000);
-    }
+    (
+        password_part1.iter().collect::<String>(),
+        password_part2.iter().collect::<String>(),
+    )
 }
 
+#[cfg(not(debug_assertions))]
 #[cfg(test)]
-#[test]
-fn test_part1() {
-    // assert_eq!(part1("abc"), "18f47a30");
-}
+mod test {
+    use super::*;
 
-#[test]
-fn test_part2() {
-    // assert_eq!(part2("abc"), "05ace8e3");
+    #[test]
+    fn test_solve() {
+        let r = solve("abc", false);
+
+        assert_eq!(r.0, "18f47a30");
+        assert_eq!(r.1, "05ace8e3");
+    }
 }

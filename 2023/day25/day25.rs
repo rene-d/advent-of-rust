@@ -12,30 +12,27 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            graph: G::new_undirected(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut graph = G::new_undirected();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         let mut nodes = FxHashMap::default();
 
         for line in data.lines() {
             let (node, cnx) = line.split_once(": ").unwrap();
             let connections = cnx.split_ascii_whitespace().collect::<Vec<_>>();
 
-            let node_index = *nodes.entry(node).or_insert_with(|| self.graph.add_node(()));
+            let node_index = *nodes.entry(node).or_insert_with(|| graph.add_node(()));
 
             for connection in connections {
                 let connection_index = *nodes
                     .entry(connection)
-                    .or_insert_with(|| self.graph.add_node(()));
+                    .or_insert_with(|| graph.add_node(()));
 
-                self.graph.add_edge(node_index, connection_index, ());
+                graph.add_edge(node_index, connection_index, ());
             }
         }
+
+        Self { graph }
     }
 
     /// Solve part one.
@@ -49,10 +46,11 @@ impl Puzzle {
 }
 
 fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
+    let mut args = aoc::parse_args();
+    args.run(|data| {
+        let puzzle = Puzzle::new(data);
+        (puzzle.part1(), aoc::CHRISTMAS)
+    });
 }
 
 /// Test from puzzle input
@@ -60,10 +58,11 @@ fn main() {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 54);
     }
 }

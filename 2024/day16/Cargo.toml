@@ -9,7 +9,7 @@ anim = []
 [dependencies]
 aoc = { path = "../../aoc" }
 image = "*"
-rustc-hash = "2.1.0"
+rustc-hash = "*"
 
 [[bin]]
 name = "day16"

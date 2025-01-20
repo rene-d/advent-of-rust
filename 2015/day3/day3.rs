@@ -5,12 +5,12 @@ use rustc_hash::FxHashSet;
 /// main function
 fn main() {
     let mut args = aoc::parse_args();
+    args.run(solve);
+}
 
-    args.run(|data| {
-        let line = data.trim_ascii();
-
-        (part1(line), part2(line))
-    });
+fn solve(data: &str) -> (usize, usize) {
+    let line = data.trim_ascii();
+    (part1(line), part2(line))
 }
 
 fn part2(line: &str) -> usize {
