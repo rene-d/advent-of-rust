@@ -2,7 +2,7 @@
 
 ![AoC2018](https://img.shields.io/badge/Advent_of_Code-2018-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 26](https://img.shields.io/badge/Rust-26-cyan?logo=Rust)
+![Rust: 27](https://img.shields.io/badge/Rust-27-cyan?logo=Rust)
 ![Python: 4](https://img.shields.io/badge/Python-4-cyan?logo=Python)
 
 ## 2018 ([Calendar](https://adventofcode.com/2018)) ([Solutions](../2018/)) : 50⭐
@@ -17,7 +17,7 @@ Puzzle                                                                          
 [Day 6: Chronal Coordinates](https://adventofcode.com/2018/day/6)                    | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day6/day6.rs)
 [Day 7: The Sum of Its Parts](https://adventofcode.com/2018/day/7)                   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day7/day7.rs)
 [Day 8: Memory Maneuver](https://adventofcode.com/2018/day/8)                        | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day8/day8.rs) [![Python](../scripts/assets/python.png)](../2018/day8/day8.py)
-[Day 9: Marble Mania](https://adventofcode.com/2018/day/9)                           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day9/day9.rs) [![C](../scripts/assets/c.png)](../2018/day9/day9.c)
+[Day 9: Marble Mania](https://adventofcode.com/2018/day/9)                           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day9/day9.rs) [![Rust](../scripts/assets/rust.png)](../2018/day9_c/day9.rs) [![C](../scripts/assets/c.png)](../2018/day9_c/day9.c)
 [Day 10: The Stars Align](https://adventofcode.com/2018/day/10)                      | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day10/day10.rs)
 [Day 11: Chronal Charge](https://adventofcode.com/2018/day/11)                       | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day11/day11.rs)
 [Day 12: Subterranean Sustainability](https://adventofcode.com/2018/day/12)          | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day12/day12.rs)
@@ -32,5 +32,5 @@ Puzzle                                                                          
 [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)                   | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day21/day21.rs)
 [Day 22: Mode Maze](https://adventofcode.com/2018/day/22)                            | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day22/day22.rs)
 [Day 23: Experimental Emergency Teleportation](https://adventofcode.com/2018/day/23) | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day23/day23.rs) [![Rust](../scripts/assets/rust.png)](../2018/day23_z3/day23.rs)
-[Day 24: Immune System Simulator 20XX](https://adventofcode.com/2018/day/24)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day24/src/main.rs)
+[Day 24: Immune System Simulator 20XX](https://adventofcode.com/2018/day/24)         | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day24/day24.rs)
 [Day 25: Four-Dimensional Adventure](https://adventofcode.com/2018/day/25)           | ⭐⭐  | [![Rust](../scripts/assets/rust.png)](../2018/day25/day25.rs)
