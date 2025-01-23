@@ -1,4 +1,4 @@
-use crate::mazecell::MazeCell; // needed for trait
+use super::mazecell::MazeCell; // needed for trait
 
 pub trait Multirobot {
     fn update(&mut self);
@@ -25,7 +25,6 @@ impl Multirobot for aoc::GridU<u8> {
     }
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;

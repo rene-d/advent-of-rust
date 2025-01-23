@@ -5,8 +5,7 @@ edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-pest = "*"
-pest_derive = "*"
+nom = "*"
 
 [[bin]]
 name = "day13"

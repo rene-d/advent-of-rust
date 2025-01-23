@@ -8,28 +8,27 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
+    fn new(data: &str) -> Self {
+        let mut puzzle = Self {
             mirrors: vec![],
             beams: vec![],
             sx: 0,
             sy: 0,
-        }
-    }
+        };
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.mirrors.push(vec![]);
+        puzzle.mirrors.push(vec![]);
         for line in data.lines() {
             let mut row = vec![];
             row.push(' ');
             for c in line.chars() {
                 row.push(c);
             }
-            self.mirrors.push(row);
+            puzzle.mirrors.push(row);
         }
-        self.sx = self.mirrors[1].len() - 1;
-        self.sy = self.mirrors.len() - 1;
+        puzzle.sx = puzzle.mirrors[1].len() - 1;
+        puzzle.sy = puzzle.mirrors.len() - 1;
+
+        puzzle
     }
 
     /// Set beams state to initial value.
@@ -146,30 +145,34 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let mut puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 46);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 51);
     }
 }

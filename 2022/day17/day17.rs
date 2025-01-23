@@ -121,7 +121,12 @@ impl Cave {
     }
 }
 
-fn solve(jets: &[u8]) -> (usize, usize) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let jets: Vec<u8> = data.trim().bytes().collect();
+
     let mut cave = Cave::new();
 
     // Part 1 and Part 2
@@ -134,7 +139,7 @@ fn solve(jets: &[u8]) -> (usize, usize) {
     let mut end = 0;
 
     for n in 1..10000 {
-        cave.fall(jets);
+        cave.fall(&jets);
 
         if n == 2022 {
             part1 = cave.height() - 1;
@@ -170,44 +175,26 @@ fn solve(jets: &[u8]) -> (usize, usize) {
     (part1, part2)
 }
 
-struct Puzzle {
-    part1: usize,
-    part2: usize,
-}
-
-impl Puzzle {
-    fn new(data: &str) -> Self {
-        let jets: Vec<u8> = data.trim().bytes().collect();
-
-        let (part1, part2) = solve(&jets);
-        Self { part1, part2 }
-    }
-}
-
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1);
-    println!("{}", puzzle.part2);
+    args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn part1() {
-        let data = aoc::load_input_data("test.txt");
-        let puzzle = Puzzle::new(&data);
-        assert_eq!(puzzle.part1, 3068);
+        let puzzle = solve(TEST_INPUT);
+        assert_eq!(puzzle.0, 3068);
     }
 
     #[test]
     fn part2() {
-        let data = aoc::load_input_data("test.txt");
-        let puzzle = Puzzle::new(&data);
-        assert_eq!(puzzle.part2, 1514285714288);
+        let puzzle = solve(TEST_INPUT);
+        assert_eq!(puzzle.1, 1514285714288);
     }
 }

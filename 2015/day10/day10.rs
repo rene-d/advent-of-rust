@@ -1,12 +1,15 @@
 //! [Day 10: Elves Look, Elves Say](https://adventofcode.com/2015/day/10)
 
 /// main function
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-fn solve(data: &str) -> (usize, usize) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
     let data = data.trim_ascii();
 
     (calc(data, 40), calc(data, 50))

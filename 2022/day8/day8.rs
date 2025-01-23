@@ -5,40 +5,32 @@
 
 struct Puzzle {
     nx: usize,
-    /// number of columns
     ny: usize,
-    /// number of lines
     trees: Vec<Vec<u8>>,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            nx: 0,
-            ny: 0,
-            trees: vec![],
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut trees = vec![];
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
         let lines = data.lines().collect::<Vec<_>>();
 
-        self.nx = lines.first().unwrap().len();
+        let nx = lines.first().unwrap().len();
+
         for line in lines {
             if line.is_empty() {
                 continue;
             }
-            let mut row = vec![0; self.nx];
+            let mut row = vec![0; nx];
             for (x, tree) in line.chars().enumerate() {
                 row[x] = tree.to_digit(10).unwrap() as u8;
             }
-            self.trees.push(row);
+            trees.push(row);
         }
-        self.ny = self.trees.len();
 
-        // println!("{}x{}", self.nx, self.ny);
-        // println!("{:?}", self.trees);
+        let ny = trees.len();
+
+        Self { nx, ny, trees }
     }
 
     // Solves part one
@@ -123,19 +115,27 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 21);
-    assert_eq!(puzzle.part2(), 8);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 21);
+        assert_eq!(puzzle.part2(), 8);
+    }
 }

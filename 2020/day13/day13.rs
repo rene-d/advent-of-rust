@@ -21,22 +21,13 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
+    fn new(data: &str) -> Self {
+        let data = data.split_once('\n').unwrap();
+
         Self {
-            depart: 0,
-            buses: vec![],
+            depart: data.0.parse().unwrap(),
+            buses: data.1.trim_ascii().split(',').map(str::to_string).collect(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        let mut lines = data.lines();
-        self.depart = lines.next().unwrap().parse().unwrap();
-        self.set_buses(lines.next().unwrap());
-    }
-
-    fn set_buses(&mut self, buses: &str) {
-        self.buses = buses.split(',').map(str::to_string).collect();
     }
 
     /// Solve part one.
@@ -71,50 +62,52 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, i64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 295);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 1_068_781);
     }
 
     #[test]
     fn test03() {
-        let mut puzzle = Puzzle::new();
-
-        puzzle.set_buses("17,x,13,19");
+        let puzzle = Puzzle::new("0\n17,x,13,19");
         assert_eq!(puzzle.part2(), 3417);
 
-        puzzle.set_buses("67,7,59,61");
+        let puzzle = Puzzle::new("0\n67,7,59,61");
         assert_eq!(puzzle.part2(), 754_018);
 
-        puzzle.set_buses("67,x,7,59,61");
+        let puzzle = Puzzle::new("0\n67,x,7,59,61");
         assert_eq!(puzzle.part2(), 779_210);
 
-        puzzle.set_buses("67,7,x,59,61");
+        let puzzle = Puzzle::new("0\n67,7,x,59,61");
         assert_eq!(puzzle.part2(), 1_261_476);
 
-        puzzle.set_buses("1789,37,47,1889");
+        let puzzle = Puzzle::new("0\n1789,37,47,1889");
         assert_eq!(puzzle.part2(), 1_202_161_486);
     }
 }

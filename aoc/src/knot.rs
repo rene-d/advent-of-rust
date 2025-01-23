@@ -47,7 +47,6 @@ pub fn hash(text: &str) -> String {
     hash_raw(text).hex_display().to_string()
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use crate::knot;

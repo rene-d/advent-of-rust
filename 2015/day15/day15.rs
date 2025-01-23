@@ -11,7 +11,11 @@ struct Ingredient {
     texture: i64,
     calories: i64,
 }
-fn solve(data: &str) -> (i64, i64) {
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
     // load data
     let mut ingredients = Vec::new();
     let re = Regex::new(r"(\w+): capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)").unwrap();
@@ -105,8 +109,8 @@ fn solve(data: &str) -> (i64, i64) {
 }
 
 /// main function
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 

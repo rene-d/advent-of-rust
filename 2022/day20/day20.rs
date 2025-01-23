@@ -11,19 +11,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
+    fn new(data: &str) -> Self {
         Self {
-            numbers: Vec::new(),
+            numbers: data.lines().map(|x| x.parse().unwrap()).collect(),
         }
-    }
-
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
-        self.numbers = data
-            .split('\n')
-            .filter(|x| !x.is_empty())
-            .map(|x| x.parse::<_>().unwrap())
-            .collect::<Vec<_>>();
     }
 
     // Solves part one
@@ -76,19 +67,27 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 3);
-    assert_eq!(puzzle.part2(), 1_623_178_306);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 3);
+        assert_eq!(puzzle.part2(), 1_623_178_306);
+    }
 }

@@ -67,16 +67,19 @@ impl Puzzle {
     }
 }
 
-fn solve(data: &str) -> (usize, usize) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
     let puzzle = Puzzle::new(data);
     (puzzle.part1(), puzzle.part2())
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
-/// Test from puzzle input
+
 #[test]
 fn test01() {
     let puzzle = Puzzle::new("10");
@@ -84,7 +87,6 @@ fn test01() {
     assert_eq!(puzzle.part2(), 1);
 }
 
-/// Test from puzzle input
 #[test]
 fn test02() {
     let puzzle = Puzzle::new("30");
@@ -92,7 +94,6 @@ fn test02() {
     assert_eq!(puzzle.part2(), 2);
 }
 
-/// Test from puzzle input
 #[test]
 fn test03() {
     let puzzle = Puzzle::new("40");
@@ -100,7 +101,6 @@ fn test03() {
     assert_eq!(puzzle.part2(), 3);
 }
 
-/// Test from puzzle input
 #[test]
 fn test04() {
     let puzzle = Puzzle::new("60");
@@ -108,7 +108,6 @@ fn test04() {
     assert_eq!(puzzle.part2(), 4);
 }
 
-/// Test from puzzle input
 #[test]
 fn test05() {
     let puzzle = Puzzle::new("70");
@@ -116,7 +115,6 @@ fn test05() {
     assert_eq!(puzzle.part2(), 4);
 }
 
-/// Test from puzzle input
 #[test]
 fn test06() {
     let puzzle = Puzzle::new("80");
@@ -124,7 +122,6 @@ fn test06() {
     assert_eq!(puzzle.part2(), 6);
 }
 
-/// Test from puzzle input
 #[test]
 fn test07() {
     let puzzle = Puzzle::new("120");
@@ -132,7 +129,6 @@ fn test07() {
     assert_eq!(puzzle.part2(), 6);
 }
 
-/// Test from puzzle input
 #[test]
 fn test08() {
     let puzzle = Puzzle::new("130");
@@ -140,7 +136,6 @@ fn test08() {
     assert_eq!(puzzle.part2(), 6);
 }
 
-/// Test from puzzle input
 #[test]
 fn test09() {
     let puzzle = Puzzle::new("150");

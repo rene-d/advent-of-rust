@@ -24,9 +24,12 @@ fn calc<'a>(names: &FxHashSet<&'a str>, happiness: &FxHashMap<(&'a str, &'a str)
         .unwrap()
 }
 
-fn solve<'a>(data: &'a str) -> (i32, i32) {
-    let mut names: FxHashSet<&'a str> = FxHashSet::default();
-    let mut happiness: FxHashMap<(&'a str, &'a str), i32> = FxHashMap::default();
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let mut names: FxHashSet<&str> = FxHashSet::default();
+    let mut happiness: FxHashMap<(&str, &str), i32> = FxHashMap::default();
 
     let re =
         Regex::new(r"^(.+) would (gain|lose) (\d+) happiness units by sitting next to (.+)\.$")
@@ -64,8 +67,8 @@ fn solve<'a>(data: &'a str) -> (i32, i32) {
 }
 
 /// main function
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 

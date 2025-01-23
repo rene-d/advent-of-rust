@@ -18,12 +18,15 @@ fn factorial(n: i32) -> i32 {
     (1..=n).product()
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-fn solve(program: &str) -> (i32, i32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(program: &str) -> (i32, i32) {
     let part1 = compute_until_safe(7, program);
 
     // as the program calculates n! + constant,

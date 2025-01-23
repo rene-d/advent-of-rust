@@ -2,12 +2,15 @@
 
 use rustc_hash::FxHashSet;
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-fn solve(data: &str) -> (i32, i32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
     let mut x = 0_i32;
     let mut y = 0_i32;
     let mut angle = 0;

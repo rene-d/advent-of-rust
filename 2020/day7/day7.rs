@@ -9,15 +9,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            bags: FxHashMap::default(),
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        // self.data = data;
+    fn new(data: &str) -> Self {
+        let mut bags = FxHashMap::default();
 
         let pat = Regex::new(r"^\s?(\d+) (.+) bags?$").unwrap();
 
@@ -41,8 +34,10 @@ impl Puzzle {
                 contained.insert(sub_bag.to_string(), n);
             }
 
-            self.bags.insert(bag.to_string(), contained);
+            bags.insert(bag.to_string(), contained);
         }
+
+        Self { bags }
     }
 
     fn contains_color(&self, bag: &str, color: &str) -> bool {
@@ -75,30 +70,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+
     #[test]
     fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 4);
     }
 
     #[test]
     fn test_part2() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part2(), 126);
     }
 }

@@ -3,10 +3,13 @@ name = "day15"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+anim = ["image"]
+
 [dependencies]
 aoc = { path = "../../aoc" }
-image = "*"
 rustc-hash = "*"
+image = { version = "*", optional = true }
 
 [[bin]]
 name = "day15"

@@ -2,20 +2,15 @@
 
 use aoc::knot;
 
-struct Puzzle {
-    data: String,
+struct Puzzle<'a> {
+    data: &'a str,
 }
 
-impl Puzzle {
-    const fn new() -> Self {
+impl<'a> Puzzle<'a> {
+    const fn new(data: &'a str) -> Self {
         Self {
-            data: String::new(),
+            data: data.trim_ascii(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        data.trim().clone_into(&mut self.data);
     }
 
     /// Solve part one.
@@ -37,14 +32,19 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> String {
-        knot::hash(&self.data)
+        knot::hash(self.data)
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, String) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }

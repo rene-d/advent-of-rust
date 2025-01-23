@@ -8,22 +8,19 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            state: String::new(),
-            rules: FxHashSet::default(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut state = String::new();
+        let mut rules = FxHashSet::default();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
-            if let Some(state) = line.strip_prefix("initial state: ") {
-                self.state = state.to_string();
+            if let Some(s) = line.strip_prefix("initial state: ") {
+                state = s.to_string();
             } else if let Some(from) = line.strip_suffix(" => #") {
-                self.rules.insert(from.chars().collect::<Vec<_>>());
+                rules.insert(from.chars().collect::<Vec<_>>());
             }
         }
+
+        Self { state, rules }
     }
 
     /// Solve part one.
@@ -135,30 +132,34 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 325);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 999_999_999_374);
     }
 }

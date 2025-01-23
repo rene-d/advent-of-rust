@@ -256,34 +256,38 @@ impl<'a> Puzzle<'a> {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-
-    if args.verbose {
-        puzzle.anim();
-    } else {
-        println!("{}", puzzle.part1());
-        println!("{}", puzzle.part2());
-    }
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    if args.verbose {
+        Puzzle::new(&args.input).anim();
+        return;
+    }
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let data = aoc::load_input_data("test.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 136);
     }
 
     #[test]
     fn test02() {
-        let data = aoc::load_input_data("test.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 64);
     }
 }

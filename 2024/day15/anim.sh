@@ -7,7 +7,7 @@ anim=${3:-anim.mp4}
 
 find . -name 'frame*.png' | xargs -r -n100 rm
 
-MAKE_ANIM=$part cargo run --release -- $input
+cargo run --release -F anim -- $input --anim$part
 
 echo "-delay 10 -loop 0" > anim.mgk
 find . -name 'frame*.png' | sort >> anim.mgk

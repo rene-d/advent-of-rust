@@ -1,10 +1,15 @@
 //! [Day 4: Giant Squid](https://adventofcode.com/2021/day/4)
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let data = data
         .lines()
         .map(std::string::ToString::to_string)
         .collect::<Vec<String>>();
@@ -34,7 +39,7 @@ fn main() {
         i += 6;
     }
 
-    let mut first_win = false;
+    let mut first_win = 0;
     let mut last_draw = 0;
 
     for draw in drawn {
@@ -54,16 +59,15 @@ fn main() {
 
             if win(grid) {
                 last_draw = draw * sum(grid);
-                if !first_win {
-                    first_win = true;
-                    println!("{last_draw}");
+                if first_win == 0 {
+                    first_win = last_draw;
                 }
                 grid[0][0] = -2; // invalidate the grid
             }
         }
     }
 
-    println!("{last_draw}");
+    (first_win, last_draw)
 }
 
 /// sum computes the sum of non-cleared cases
@@ -102,4 +106,16 @@ fn win(grid: &[[i32; 5]; 5]) -> bool {
     }
 
     false
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve(TEST_INPUT), (4512, 1924));
+    }
 }

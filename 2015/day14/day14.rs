@@ -80,13 +80,16 @@ fn solve_duration(data: &str, max_duration: u32) -> (u32, u32) {
     (max_distance, *scores.iter().max().unwrap())
 }
 
-fn solve(data: &str) -> (u32, u32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
     solve_duration(data, 2503)
 }
 
 /// Main function.
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 

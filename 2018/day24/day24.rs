@@ -1,25 +1,23 @@
 //! [Day 24: Immune System Simulator 20XX](https://adventofcode.com/2018/day/24)
 
-use day24::combat::Combat;
+mod army;
+mod attacktype;
+mod combat;
+mod group;
+
+use combat::Combat;
 
 struct Puzzle {
     combat: Combat,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            combat: Combat::new(),
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) -> Result<bool, Box<dyn std::error::Error>> {
+    fn new(data: &str) -> Self {
         let (army1, army2) = data.split_once("\n\n").unwrap();
 
-        self.combat = Combat::with_armies(army1.parse()?, army2.parse()?);
-
-        Ok(true)
+        Self {
+            combat: Combat::with_armies(army1.parse().unwrap(), army2.parse().unwrap()),
+        }
     }
 
     /// Solve part one.
@@ -55,31 +53,34 @@ impl Puzzle {
     }
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input)?;
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
-    Ok(())
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt")).unwrap();
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 5216);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt")).unwrap();
+        let mut puzzle = Puzzle::new(TEST_INPUT);
 
         puzzle.combat.set_army1_boost(1570);
 

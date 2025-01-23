@@ -5,13 +5,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { step: 0 }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.step = data.trim().parse().unwrap();
+    fn new(data: &str) -> Self {
+        Self {
+            step: data.trim().parse().unwrap(),
+        }
     }
 
     /// Solve part one.
@@ -45,23 +42,26 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.step = 3;
+        let puzzle = Puzzle::new("3");
         assert_eq!(puzzle.part1(), 638);
     }
 }

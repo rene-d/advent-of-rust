@@ -204,37 +204,43 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+    const SAMPLE_3: &str = include_str!("sample_3.txt");
+
     #[test]
     fn part1() {
-        let data = aoc::load_input_data("sample_1.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 23);
         assert_eq!(puzzle.part2(), 26);
     }
 
     #[test]
     fn part2() {
-        let data = aoc::load_input_data("sample_2.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part1(), 58);
     }
 
     #[test]
     fn part3() {
-        let data = aoc::load_input_data("sample_3.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_3);
         assert_eq!(puzzle.part2(), 396);
     }
 }

@@ -7,17 +7,14 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { nums: Vec::new() }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.nums = data
-            .trim()
-            .split(',')
-            .map(|s| s.parse::<usize>().unwrap())
-            .collect();
+    fn new(data: &str) -> Self {
+        Self {
+            nums: data
+                .trim()
+                .split(',')
+                .map(|s| s.parse::<usize>().unwrap())
+                .collect(),
+        }
     }
 
     fn solve(&self, number_spoken: usize) -> usize {
@@ -64,23 +61,28 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure("0,3,6");
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 436);
     }
 }

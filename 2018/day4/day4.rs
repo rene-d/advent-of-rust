@@ -8,14 +8,9 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            sleeping: FxHashMap::default(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut sleeping = FxHashMap::default();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         let mut lines: Vec<_> = data.lines().collect();
         lines.sort_unstable();
 
@@ -34,13 +29,15 @@ impl Puzzle {
             } else if &line[19..] == "falls asleep" {
                 asleep = minute;
             } else if &line[19..] == "wakes up" {
-                let e = self.sleeping.entry(current_guard).or_insert([0; 60]);
+                let e = sleeping.entry(current_guard).or_insert([0; 60]);
 
                 for m in asleep..minute {
                     e[m as usize] += 1;
                 }
             }
         }
+
+        Self { sleeping }
     }
 
     /// Solve part one.
@@ -85,30 +82,34 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 240);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 4455);
     }
 }

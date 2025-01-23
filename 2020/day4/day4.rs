@@ -41,20 +41,13 @@ fn validate_field(field: &str, value: &str) -> bool {
     }
 }
 
-struct Puzzle {
-    data: String,
+struct Puzzle<'a> {
+    data: &'a str,
 }
 
-impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            data: String::new(),
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.data = data.to_string();
+impl<'a> Puzzle<'a> {
+    const fn new(data: &'a str) -> Self {
+        Self { data }
     }
 
     /// Solve part one.
@@ -101,37 +94,42 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_3: &str = include_str!("sample_3.txt");
+    const SAMPLE_4: &str = include_str!("sample_4.txt");
+
     #[test]
     fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 2);
     }
 
     #[test]
     fn test_part2_invalid() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_3.txt"));
+        let puzzle = Puzzle::new(SAMPLE_3);
         assert_eq!(puzzle.part2(), 0);
     }
 
     #[test]
     fn test_part2_valid() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_4.txt"));
+        let puzzle = Puzzle::new(SAMPLE_4);
         assert_eq!(puzzle.part2(), 4);
     }
 }

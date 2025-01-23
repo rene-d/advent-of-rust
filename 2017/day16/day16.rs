@@ -5,17 +5,14 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { program: vec![] }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.program = data
-            .trim()
-            .split(',')
-            .map(std::string::ToString::to_string)
-            .collect();
+    fn new(data: &str) -> Self {
+        Self {
+            program: data
+                .trim()
+                .split(',')
+                .map(std::string::ToString::to_string)
+                .collect(),
+        }
     }
 
     fn dance(&self, text: &mut [u8]) {
@@ -77,30 +74,15 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, String) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
-#[cfg(test)]
-mod test {
-    // use super::*;
-
-    // #[test]
-    // fn test01() {
-    //     let mut puzzle = Puzzle::new();
-    //     puzzle.configure(&aoc::load_input_data("test.txt"));
-    //     assert_eq!(puzzle.part1(), 0);
-    // }
-
-    // #[test]
-    // fn test02() {
-    //     let mut puzzle = Puzzle::new();
-    //     puzzle.configure(&aoc::load_input_data("test.txt"));
-    //     assert_eq!(puzzle.part2(), 0);
-    // }
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }

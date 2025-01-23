@@ -1,10 +1,15 @@
 //! [Day 9: Smoke Basin](https://adventofcode.com/2021/day/9)
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let data = data
         .lines()
         .map(std::string::ToString::to_string)
         .collect::<Vec<String>>();
@@ -44,14 +49,11 @@ fn main() {
         }
     }
 
-    // part 1
-    println!("{risk}");
+    // part 1: => risk
 
     // part 2
-    if basins.len() >= 3 {
-        basins.sort_by(|a, b| b.cmp(a));
-        println!("{:?}", basins[0] * basins[1] * basins[2]);
-    }
+    basins.sort_by(|a, b| b.cmp(a));
+    (risk, basins[0] * basins[1] * basins[2])
 }
 
 fn basin(grid: &mut [Vec<i32>], y: usize, x: usize) -> i32 {
@@ -77,4 +79,16 @@ fn basin(grid: &mut [Vec<i32>], y: usize, x: usize) -> i32 {
         }
     }
     n
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve(TEST_INPUT), (15, 1134));
+    }
 }

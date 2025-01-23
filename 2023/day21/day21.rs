@@ -4,99 +4,38 @@ use num::Integer;
 use rustc_hash::FxHashSet;
 
 struct Puzzle {
-    garden: Vec<bool>, // twice as fast as the FxHashSet
-    // rocks: FxHashSet<(i32, i32)>,
+    garden: aoc::Grid<u8>,
+    start: aoc::Coord,
     n: i32,
-    start_x: i32,
-    start_y: i32,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            // rocks: FxHashSet::default(),
-            garden: vec![],
-            n: 0, // the map has to be a square n x n
-            start_x: 0,
-            start_y: 0,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let garden = aoc::Grid::<u8>::parse(data);
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        let n = data.lines().count();
+        let start = garden.iter().find(|(_, c)| **c == b'S').unwrap().0;
 
-        assert_eq!(n, data.lines().nth(0).unwrap().len());
+        let n = garden.width();
+        assert_eq!(n, garden.height());
 
-        self.n = i32::try_from(n).unwrap();
-
-        self.garden.resize(n * n, true);
-
-        for (y, line) in data.lines().enumerate() {
-            for (x, c) in line.chars().enumerate() {
-                match c {
-                    '#' => {
-                        self.garden[n * y + x] = false;
-
-                        // let x = i32::try_from(x).unwrap();
-                        // let y = i32::try_from(y).unwrap();
-                        // self.rocks.insert((x, y));
-                    }
-                    'S' => {
-                        self.start_x = i32::try_from(x).unwrap();
-                        self.start_y = i32::try_from(y).unwrap();
-                    }
-                    '.' => (),
-                    _ => panic!(),
-                };
-            }
-        }
+        Self { garden, start, n }
     }
 
     fn is_garden(&self, x: i32, y: i32) -> bool {
         let x = x.rem_euclid(self.n);
         let y = y.rem_euclid(self.n);
-        let i = self.n * y + x;
-
-        self.garden[usize::try_from(i).unwrap()]
+        self.garden[(x, y)] != b'#'
     }
 
     fn count(&self, n: i32) -> u64 {
         // nota: still not really optimized, could probably memoize something
         let mut p = FxHashSet::default();
-        p.insert((self.start_x, self.start_y));
+        p.insert((self.start.x, self.start.y));
 
         for _ in 0..n {
             let mut np = FxHashSet::default();
 
             for (x, y) in p {
-                /*
-                if !self
-                    .rocks
-                    .contains(&((x - 1).rem_euclid(self.n), y.rem_euclid(self.n)))
-                {
-                    np.insert((x - 1, y));
-                }
-                if !self
-                    .rocks
-                    .contains(&((x + 1).rem_euclid(self.n), y.rem_euclid(self.n)))
-                {
-                    np.insert((x + 1, y));
-                }
-                if !self
-                    .rocks
-                    .contains(&((x).rem_euclid(self.n), (y - 1).rem_euclid(self.n)))
-                {
-                    np.insert((x, y - 1));
-                }
-                if !self
-                    .rocks
-                    .contains(&(x.rem_euclid(self.n), (y + 1).rem_euclid(self.n)))
-                {
-                    np.insert((x, y + 1));
-                }
-                */
-
                 if self.is_garden(x - 1, y) {
                     np.insert((x - 1, y));
                 }
@@ -152,30 +91,34 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.count(6), 16);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.count(10), 50);
         assert_eq!(puzzle.count(50), 1594);
         assert_eq!(puzzle.count(100), 6536);

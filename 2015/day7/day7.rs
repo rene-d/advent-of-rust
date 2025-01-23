@@ -108,7 +108,10 @@ fn wires(parser: &Parser, opcodes: &FxHashMap<String, String>, wire: &str) -> u1
     run(parser, opcodes, &mut values, wire, 0)
 }
 
-fn solve(data: &str) -> (u16, u16) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u16, u16) {
     let parser = Parser::new();
 
     let mut opcodes: FxHashMap<String, String> = FxHashMap::default();
@@ -130,8 +133,8 @@ fn solve(data: &str) -> (u16, u16) {
 }
 
 /// main function
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
 
     args.run(solve);
 }

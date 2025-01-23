@@ -323,7 +323,7 @@ def aoc_quality(ctx: click.Context, strict: bool):
 
         try:
             print("cargo test")
-            subprocess.check_output(["cargo", "test", "--quiet", "--", "--test-threads", "4"])
+            subprocess.check_output(["cargo", "test", "--quiet", "--release", "--", "--test-threads", "4"])
 
         except subprocess.CalledProcessError:
             pass

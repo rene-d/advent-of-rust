@@ -161,7 +161,10 @@ impl fmt::Display for Snailfish {
     }
 }
 
-fn solve(data: &str) -> (Snailfish, u32, u32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
     let numbers: Vec<Snailfish> = data.lines().map(Snailfish::from_str).collect();
 
     let sum = numbers.iter().cloned().reduce(|a, b| a + b).unwrap();
@@ -175,25 +178,25 @@ fn solve(data: &str) -> (Snailfish, u32, u32) {
         .max()
         .unwrap();
 
-    (sum, part1, part2)
+    (part1, part2)
 }
 
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let (_, part1, part2) = solve(&args.input);
-    println!("{part1}");
-    println!("{part2}");
+    args.run(solve);
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_7: &str = include_str!("sample_7.txt");
+    const SAMPLE_8: &str = include_str!("sample_8.txt");
+
     #[test]
     fn test_from_str() {
-        let data = include_str!("sample_1.txt");
-
-        for line in data.lines() {
+        for line in SAMPLE_1.lines() {
             let a = Snailfish::from_str(line);
             assert_eq!(a.to_string().as_str(), line);
         }
@@ -261,7 +264,7 @@ mod test {
 
     #[test]
     fn test_additions() {
-        for addition in include_str!("sample_7.txt").split("\n\n") {
+        for addition in SAMPLE_7.split("\n\n") {
             let lines: Vec<_> = addition.lines().collect();
 
             let a = Snailfish::from_str(lines[0].trim_ascii());
@@ -303,14 +306,12 @@ mod test {
 
     #[test]
     fn test_solve() {
-        let data = include_str!("sample_8.txt");
+        let (mag, mag_max) = solve(SAMPLE_8);
 
-        let (sum, mag, mag_max) = solve(data);
-
-        assert_eq!(
-            sum,
-            Snailfish::from_str("[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]")
-        );
+        // assert_eq!(
+        //     sum,
+        //     Snailfish::from_str("[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]")
+        // );
         assert_eq!(mag, 4140);
         assert_eq!(mag_max, 3993);
 

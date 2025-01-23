@@ -177,7 +177,15 @@ const fn run_box(w: i64, z: i64, div: i64, n1: i64, n2: i64) -> i64 {
     }
 }
 
-fn solve(data: &[String]) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
+    let data = data
+        .lines()
+        .map(std::string::ToString::to_string)
+        .collect::<Vec<String>>();
+
     let boxes = &mut [(0i64, 0i64, 0i64); 14];
 
     for nbox in 0..14 {
@@ -204,7 +212,7 @@ fn solve(data: &[String]) {
     // verify the boxes vs. the assembly-like program
     for _ in 0..10 {
         let z_init: i64 = rand::thread_rng().gen_range(0..1_000_000_000);
-        let program = load_program(data);
+        let program = load_program(&data);
         let digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5];
         let z_program = run_program(&program, &digits, z_init, false);
 
@@ -258,30 +266,13 @@ fn solve(data: &[String]) {
 
     // println!("(valid MONAD count: {})", valid_monads.len());
 
-    println!("{}", valid_monads.iter().max().unwrap());
-    println!("{}", valid_monads.iter().min().unwrap());
+    (
+        *valid_monads.iter().max().unwrap(),
+        *valid_monads.iter().min().unwrap(),
+    )
 }
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
-
-    // let program = load_program(&data);
-
-    // if data.len() == 252 {
-    // puzzle input
-    solve(&data);
-    // } else {
-    //     let mut monad = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    //     monad[0] = args.w;
-    //     for (i, c) in args.input.chars().enumerate() {
-    //         monad[i] = (c as i64) - 48;
-    //     }
-    //     run_program(&program, &monad, args.z, true);
-    // }
+    args.run(solve);
 }

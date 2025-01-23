@@ -6,19 +6,19 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { a: 0, b: 0 }
-    }
+    fn new(data: &str) -> Self {
+        let mut a = 0;
+        let mut b = 0;
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
-            if let Some(a) = line.strip_prefix("Generator A starts with ") {
-                self.a = a.parse().unwrap();
-            } else if let Some(b) = line.strip_prefix("Generator B starts with ") {
-                self.b = b.parse().unwrap();
+            if let Some(gen_a) = line.strip_prefix("Generator A starts with ") {
+                a = gen_a.parse().unwrap();
+            } else if let Some(gen_b) = line.strip_prefix("Generator B starts with ") {
+                b = gen_b.parse().unwrap();
             }
         }
+
+        Self { a, b }
     }
 
     /// Solve part one.
@@ -64,22 +64,26 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
+        let mut puzzle = Puzzle::new("");
         puzzle.a = 65;
         puzzle.b = 8921;
         assert_eq!(puzzle.part1(), 588);
@@ -87,7 +91,7 @@ mod test {
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
+        let mut puzzle = Puzzle::new("");
         puzzle.a = 65;
         puzzle.b = 8921;
         assert_eq!(puzzle.part2(), 309);

@@ -17,18 +17,15 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
+    fn new(data: &str) -> Self {
+        let mut puzzle = Self {
             navigation: String::new(),
             network: FxHashMap::default(),
-        }
-    }
+        };
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         let mut lines = data.lines();
 
-        self.navigation = lines.next().unwrap().to_string();
+        puzzle.navigation = lines.next().unwrap().to_string();
         lines.next();
 
         for line in lines {
@@ -38,8 +35,10 @@ impl Puzzle {
             let left = u32::from_str_radix(&line[7..10], 36).unwrap();
             let right = u32::from_str_radix(&line[12..15], 36).unwrap();
 
-            self.network.insert(node, (left, right));
+            puzzle.network.insert(node, (left, right));
         }
+
+        puzzle
     }
 
     fn solve(&self, part1: bool) -> u64 {
@@ -101,30 +100,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT_1: &str = include_str!("test1.txt");
+    const TEST_INPUT_2: &str = include_str!("test2.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test1.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT_1);
         assert_eq!(puzzle.part1(), 6);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test2.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT_2);
         assert_eq!(puzzle.part2(), 6);
     }
 }

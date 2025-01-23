@@ -1,10 +1,14 @@
 //! [Day 10: Syntax Scoring](https://adventofcode.com/2021/day/10)
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = &args.input;
+    args.run(solve);
+}
 
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
     let mut part1 = 0;
     let mut part2 = vec![];
 
@@ -20,8 +24,7 @@ fn main() {
     // part2.sort_by(|a, b| a.cmp(b));
     part2.sort_unstable();
 
-    println!("{part1}");
-    println!("{:?}", part2[part2.len() / 2]);
+    (part1, part2[part2.len() / 2])
 }
 
 fn check(line: &str) -> (u64, u64) {
@@ -60,4 +63,16 @@ fn check(line: &str) -> (u64, u64) {
     }
 
     (0, score)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve(TEST_INPUT), (26397, 288957));
+    }
 }

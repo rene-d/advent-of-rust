@@ -22,37 +22,27 @@ struct Puzzle {
     template: String,
     generator: FxHashMap<String, Rule>,
     elements: FxHashSet<char>,
-    steps: u64,
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            template: String::new(),
-            generator: FxHashMap::default(),
-            elements: FxHashSet::default(),
-            steps: 0,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut generator = FxHashMap::default();
+        let mut elements = FxHashSet::default();
 
-    fn configure(&mut self, data: &str) {
-        let mut data: Vec<String> = data.lines().rev().map(ToString::to_string).collect();
+        let (template, rules) = data.split_once("\n\n").unwrap();
 
-        self.template = data.pop().unwrap();
-        data.pop();
-
-        for c in self.template.chars() {
-            self.elements.insert(c);
+        for c in template.chars() {
+            elements.insert(c);
         }
 
-        for insertion_rule in data {
+        for insertion_rule in rules.lines() {
             let mut halves = insertion_rule.split(" -> ");
             let first = halves.next().unwrap().to_string();
             let first_elem = (first.chars().next().unwrap(), first.chars().nth(1).unwrap());
             let second = halves.next().unwrap().parse::<char>().unwrap();
-            self.elements.insert(second);
-            self.elements.insert(first_elem.0);
-            self.elements.insert(first_elem.1);
+            elements.insert(second);
+            elements.insert(first_elem.0);
+            elements.insert(first_elem.1);
 
             let mut generated = Rule::new();
             generated.generated.0.push(first_elem.0);
@@ -60,13 +50,19 @@ impl Puzzle {
             generated.generated.1.push(second);
             generated.generated.1.push(first_elem.1);
             generated.output = second;
-            self.generator.insert(first, generated);
+            generator.insert(first, generated);
+        }
+
+        Self {
+            template: template.to_string(),
+            generator,
+            elements,
         }
     }
 
-    fn part1(&self) -> u64 {
+    fn part1(&self, steps: u32) -> u64 {
         let mut polymer = self.template.clone();
-        for _ in 0..self.steps {
+        for _ in 0..steps {
             let mut polymer_new = String::new();
             for index in 0..polymer.len() - 1 {
                 let slice = polymer.get(index..=index + 1).unwrap();
@@ -94,7 +90,7 @@ impl Puzzle {
         max - min
     }
 
-    fn part2(&self) -> u64 {
+    fn part2(&self, steps: u32) -> u64 {
         let mut elements_count = FxHashMap::default();
         let mut generators_count = FxHashMap::default();
 
@@ -118,7 +114,7 @@ impl Puzzle {
             *count += 1;
         }
 
-        for _ in 0..self.steps {
+        for _ in 0..steps {
             let mut generators_new = FxHashMap::default();
             for rule in &self.generator {
                 generators_new.insert(rule.0.clone(), 0_u64);
@@ -157,46 +153,44 @@ impl Puzzle {
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(10), puzzle.part2(40))
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-
-    let mut puzzle = Puzzle::new();
-
-    puzzle.configure(&args.input);
-
-    puzzle.steps = 10;
-    let result = puzzle.part1();
-    println!("{result}");
-
-    puzzle.steps = 40;
-    let result = puzzle.part2();
-    println!("{result}");
+    args.run(solve);
 }
 
-/// Test from puzzle input
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test01.txt"));
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    puzzle.steps = 10;
-    assert_eq!(puzzle.part1(), 1588);
-    assert_eq!(puzzle.part2(), 1588);
+    const TEST_INPUT_1: &str = include_str!("test01.txt");
+    const TEST_INPUT_2: &str = include_str!("test02.txt");
 
-    puzzle.steps = 40;
-    assert_eq!(puzzle.part2(), 2_188_189_693_529);
-}
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT_1);
 
-/// Test from a user's input
-#[test]
-fn test02() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test02.txt"));
+        assert_eq!(puzzle.part1(10), 1588);
+        assert_eq!(puzzle.part2(10), 1588);
 
-    puzzle.steps = 10;
-    assert_eq!(puzzle.part1(), 3058);
-    assert_eq!(puzzle.part2(), 3058);
+        assert_eq!(puzzle.part2(40), 2_188_189_693_529);
+    }
 
-    puzzle.steps = 40;
-    assert_eq!(puzzle.part2(), 3_447_389_044_530);
+    /// Test from a user's input
+    #[test]
+    fn test02() {
+        let puzzle = Puzzle::new(TEST_INPUT_2);
+
+        assert_eq!(puzzle.part1(10), 3058);
+        assert_eq!(puzzle.part2(10), 3058);
+
+        assert_eq!(puzzle.part2(40), 3_447_389_044_530);
+    }
 }

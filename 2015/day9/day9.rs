@@ -4,13 +4,17 @@ use itertools::Itertools;
 use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
 
-/// main function
-fn main() {
-    let mut args = aoc::parse_args();
+/// # Panics
+/// over malformed input
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-fn solve(data: &str) -> (u32, u32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
     let mut places: FxHashSet<String> = FxHashSet::default();
     let mut distances: FxHashMap<(String, String), u32> = FxHashMap::default();
 

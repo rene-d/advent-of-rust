@@ -2,7 +2,7 @@ use regex::Regex;
 use std::cell::Cell;
 use std::error::Error;
 
-use crate::attacktype::AttackType;
+use super::attacktype::AttackType;
 
 //  __
 // /__.__    ._
@@ -90,6 +90,7 @@ impl Group {
         self.id = id;
     }
 
+    #[allow(dead_code)]
     pub fn abbrev(&self) -> String {
         if self.army == "Infection" {
             format!("i{}", self.id)

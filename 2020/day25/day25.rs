@@ -40,42 +40,28 @@ fn discrete_log(a: u64, mut b: u64, order_n: u64) -> Option<u64> {
     None
 }
 
-#[derive(Debug)]
-struct Puzzle {
-    card_pub_key: u64,
-    door_pub_key: u64,
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, aoc::Christmas) {
+    let (a, b) = data.split_once('\n').unwrap();
+
+    let card_pub_key: u64 = a.trim().parse().unwrap();
+    let door_pub_key: u64 = b.trim().parse().unwrap();
+
+    let card_loop_count = discrete_log(7, card_pub_key, 20_201_227).unwrap();
+
+    (
+        door_pub_key.mod_exp(card_loop_count, 20_201_227),
+        aoc::CHRISTMAS,
+    )
 }
 
-impl Puzzle {
-    /// Initialize from the puzzle input.
-    fn new(data: &str) -> Self {
-        let (a, b) = data.split_once('\n').unwrap();
-
-        let card_pub_key = a.trim().parse().unwrap();
-        let door_pub_key = b.trim().parse().unwrap();
-        Self {
-            card_pub_key,
-            door_pub_key,
-        }
-    }
-
-    /// Solve part one.
-    fn part1(&self) -> u64 {
-        let card_loop_count = discrete_log(7, self.card_pub_key, 20_201_227).unwrap();
-
-        self.door_pub_key.mod_exp(card_loop_count, 20_201_227)
-    }
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
-    args.run(|data| {
-        let puzzle = Puzzle::new(data);
-        (puzzle.part1(), aoc::CHRISTMAS)
-    });
-}
-
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
@@ -84,7 +70,6 @@ mod test {
 
     #[test]
     fn part1() {
-        let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part1(), 14897079);
+        assert_eq!(solve(TEST_INPUT).0, 14897079);
     }
 }

@@ -1,11 +1,14 @@
 //! [Day 16: Dragon Checksum](https://adventofcode.com/2016/day/16)
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-fn solve(data: &str) -> (String, String) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, String) {
     let data = data.trim_ascii();
 
     (checksum(&fill(data, 272)), checksum(&fill(data, 35_651_584)))

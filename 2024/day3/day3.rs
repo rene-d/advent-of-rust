@@ -25,16 +25,18 @@ fn calc(data: &str, part: u8) -> i32 {
     total_sum
 }
 
-fn solve(data: &str) -> (i32, i32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
     (calc(data, 1), calc(data, 2))
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;

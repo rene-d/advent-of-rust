@@ -5,13 +5,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { data: vec![] }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.data = data.lines().map(|line| line.parse().unwrap()).collect();
+    fn new(data: &str) -> Self {
+        Self {
+            data: data.lines().map(|line| line.parse().unwrap()).collect(),
+        }
     }
 
     /// Solve part one.
@@ -36,22 +33,26 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
+        let mut puzzle = Puzzle::new("");
 
         puzzle.data = [12].to_vec();
         assert_eq!(puzzle.part1(), 2);
@@ -68,7 +69,7 @@ mod test {
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
+        let mut puzzle = Puzzle::new("");
 
         puzzle.data = [14].to_vec();
         assert_eq!(puzzle.part2(), 2);

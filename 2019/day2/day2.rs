@@ -8,19 +8,14 @@ const ADD: u32 = 1;
 const MUL: u32 = 2;
 
 impl Puzzle {
-    const fn new() -> Self {
+    fn new(data: &str) -> Self {
         Self {
-            program: Vec::new(),
+            program: data
+                .trim_ascii()
+                .split(',')
+                .map(|x| x.parse::<_>().unwrap())
+                .collect(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.program = data
-            .trim_ascii()
-            .split(',')
-            .map(|x| x.parse::<_>().unwrap())
-            .collect();
     }
 
     #[cfg(test)]
@@ -82,35 +77,37 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-
-        puzzle.configure("1,0,0,0,99");
+        let mut puzzle = Puzzle::new("1,0,0,0,99");
         Puzzle::run(&mut puzzle.program);
         assert_eq!(puzzle.dump(), "2,0,0,0,99");
 
-        puzzle.configure("2,3,0,3,99");
+        let mut puzzle = Puzzle::new("2,3,0,3,99");
         Puzzle::run(&mut puzzle.program);
         assert_eq!(puzzle.dump(), "2,3,0,6,99");
-        puzzle.configure("2,4,4,5,99,0");
+        let mut puzzle = Puzzle::new("2,4,4,5,99,0");
         Puzzle::run(&mut puzzle.program);
         assert_eq!(puzzle.dump(), "2,4,4,5,99,9801");
 
-        puzzle.configure("1,1,1,4,99,5,6,0,99");
+        let mut puzzle = Puzzle::new("1,1,1,4,99,5,6,0,99");
         Puzzle::run(&mut puzzle.program);
         assert_eq!(puzzle.dump(), "30,1,1,4,2,5,6,0,99");
     }

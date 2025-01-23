@@ -1,63 +1,63 @@
 //! [Day 12: Passage Pathing](https://adventofcode.com/2021/day/12)
 
-use rustc_hash::FxHashMap;
+use std::collections::VecDeque;
 
-fn compute_paths(data: &[&str], small_twice: bool) -> u32 {
+use rustc_hash::{FxHashMap, FxHashSet};
+
+fn compute_paths(data: &str, visite_small_twice: bool) -> u32 {
     // Map containing each cave and its neighbors as a list
-    let mut map: FxHashMap<String, Vec<String>> = FxHashMap::default();
+    let mut nodes: FxHashMap<&str, Vec<&str>> = FxHashMap::default();
 
     // Fill the map with caves
-    for entry in data {
+    for entry in data.lines() {
         // Split line between "left" cave and "right" cave
-        let mut split = entry.split('-');
-        let left = split.next().unwrap();
-        let right = split.next().unwrap();
+        let (left, right) = entry.split_once('-').unwrap();
 
         // Update map with eventual new caves and neighbors
-        let left_cave = map.entry(String::from(left)).or_default();
-        left_cave.push(String::from(right));
-
-        let right_cave = map.entry(String::from(right)).or_default();
-        right_cave.push(String::from(left));
+        nodes.entry(left).or_default().push(right);
+        nodes.entry(right).or_default().push(left);
     }
 
     // Initialize paths list
-    let mut path_list = vec![(String::from("start"), vec![String::from("start")], false)];
+    let mut heap = VecDeque::new();
     let mut path_count = 0;
 
-    while let Some((node, path, twice)) = path_list.pop() {
+    let mut start = FxHashSet::default();
+    start.insert("start");
+
+    heap.push_back(("start", start, None));
+
+    while let Some((node, once, twice)) = heap.pop_front() {
         if node == "end" {
             // Count this path and let it be removed from the paths list
             path_count += 1;
-        } else {
-            // Get neighbors from last node
-            let neighbor_list = map.get(&node).unwrap();
+            continue;
+        }
 
-            for neighbor in neighbor_list {
-                if neighbor.to_uppercase() == *neighbor {
+        // Get neighbors from last node
+        let neighbor_list = nodes.get(&node).unwrap();
+
+        for neighbor in neighbor_list {
+            // Check wether this small cave was visited
+            if !once.contains(neighbor) {
+                if neighbor.to_lowercase() == *neighbor {
                     // We add this new path
-                    let mut path_new = path.clone();
-
-                    path_new.push(String::from(neighbor));
-                    path_list.push((String::from(neighbor), path_new, twice));
+                    let mut new_once = once.clone();
+                    new_once.insert(neighbor);
+                    heap.push_back((neighbor, new_once, twice));
                 } else {
-                    // Check wether this small cave was visited
-                    if !path.contains(neighbor) {
-                        // We add this new path
-                        let mut path_new = path.clone();
-
-                        path_new.push(String::from(neighbor));
-                        path_list.push((String::from(neighbor), path_new, twice));
-                    }
-                    // Check wether we already visited twice a small cave
-                    else if small_twice && !twice && neighbor != "start" && neighbor != "end" {
-                        // We add this new path
-                        let mut path_new = path.clone();
-
-                        path_new.push(String::from(neighbor));
-                        path_list.push((String::from(neighbor), path_new, true));
-                    }
+                    heap.push_back((neighbor, once.clone(), twice));
                 }
+            }
+            // Check wether we already visited twice a small cave
+            else if visite_small_twice
+                && twice.is_none()
+                && once.contains(neighbor)
+                && *neighbor != "start"
+                && *neighbor != "end"
+            {
+                // We add this new path
+                heap.push_back((neighbor, once.clone(), Some(neighbor)));
             }
         }
     }
@@ -65,21 +65,28 @@ fn compute_paths(data: &[&str], small_twice: bool) -> u32 {
     path_count
 }
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args.input.lines().collect::<Vec<_>>();
-
-    let small_once = compute_paths(&data, false);
-    let small_twice = compute_paths(&data, true);
-
-    println!("{small_once}");
-    println!("{small_twice}");
+    args.run(solve);
 }
 
-#[test]
-fn test_slightly_larger() {
-    let data = "\
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let small_once = compute_paths(data, false);
+    let small_twice = compute_paths(data, true);
+
+    (small_once, small_twice)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_slightly_larger() {
+        let data = "\
 dc-end
 HN-start
 start-kj
@@ -90,17 +97,15 @@ HN-end
 kj-sa
 kj-HN
 kj-dc
-"
-    .lines()
-    .collect::<Vec<_>>();
+";
 
-    assert_eq!(compute_paths(&data, false), 19);
-    assert_eq!(compute_paths(&data, true), 103);
-}
+        assert_eq!(compute_paths(data, false), 19);
+        assert_eq!(compute_paths(data, true), 103);
+    }
 
-#[test]
-fn test_even_larger() {
-    let data = "\
+    #[test]
+    fn test_even_larger() {
+        let data = "\
 fs-end
 he-DX
 fs-he
@@ -119,10 +124,8 @@ he-WI
 zg-he
 pj-fs
 start-RW
-"
-    .lines()
-    .collect::<Vec<_>>();
-
-    assert_eq!(compute_paths(&data, false), 226);
-    assert_eq!(compute_paths(&data, true), 3509);
+";
+        assert_eq!(compute_paths(data, false), 226);
+        assert_eq!(compute_paths(data, true), 3509);
+    }
 }

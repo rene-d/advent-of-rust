@@ -9,3 +9,4 @@ rustc-hash = "*"
 
 [[bin]]
 name = "day18"
+path = "day18.rs"

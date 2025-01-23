@@ -92,22 +92,22 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { shuffles: vec![] }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        for line in data.lines() {
-            self.shuffles.push(if line == "deal into new stack" {
-                Shuffle::DealIntoNewStack
-            } else if let Some(cut) = line.strip_prefix("cut ") {
-                Shuffle::Cut(cut.parse().unwrap())
-            } else if let Some(inc) = line.strip_prefix("deal with increment ") {
-                Shuffle::DealWithIncrement(inc.parse().unwrap())
-            } else {
-                panic!("bad line: {line}");
-            });
+    fn new(data: &str) -> Self {
+        Self {
+            shuffles: data
+                .lines()
+                .map(|line| {
+                    if line == "deal into new stack" {
+                        Shuffle::DealIntoNewStack
+                    } else if let Some(cut) = line.strip_prefix("cut ") {
+                        Shuffle::Cut(cut.parse().unwrap())
+                    } else if let Some(inc) = line.strip_prefix("deal with increment ") {
+                        Shuffle::DealWithIncrement(inc.parse().unwrap())
+                    } else {
+                        panic!("bad line: {line}");
+                    }
+                })
+                .collect(),
         }
     }
 
@@ -167,26 +167,30 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i128, i128) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
-    // use super::*;
+    use super::*;
 
-    // #[test]
-    // fn test01() {
-    //     assert_eq!(modular_inverse(213, 1000000007), 32863850);
-    // }
+    #[test]
+    fn test01() {
+        assert_eq!(modular_inverse(213, 1000000007), 32863850);
+    }
 
-    // #[test]
-    // fn test02() {
-    //     assert_eq!(modular_exponent(29, 830, 20253), 14587);
-    // }
+    #[test]
+    fn test02() {
+        assert_eq!(modular_exponent(29, 830, 20253), 14587);
+    }
 }

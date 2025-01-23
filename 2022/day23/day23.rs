@@ -12,24 +12,20 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            elves: FxHashSet::default(),
-            round: 0,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut elves = FxHashSet::default();
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
         for (y, line) in data.lines().enumerate() {
             for (x, c) in line.chars().enumerate() {
                 let x = x as i32;
                 let y = y as i32;
                 if c == '#' {
-                    self.elves.insert((x, y));
+                    elves.insert((x, y));
                 }
             }
         }
+
+        Self { elves, round: 0 }
     }
 
     fn propose_move(&self, x: i32, y: i32) -> (i32, i32) {
@@ -142,19 +138,27 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let mut puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 110);
-    assert_eq!(puzzle.part2(), 20);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let mut puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 110);
+        assert_eq!(puzzle.part2(), 20);
+    }
 }

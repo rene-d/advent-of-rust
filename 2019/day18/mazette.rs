@@ -2,9 +2,9 @@ use rustc_hash::{FxHashMap, FxHashSet};
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, VecDeque};
 
-use crate::mazecell::MazeCell;
-use crate::path::Path;
-use crate::state::State;
+use super::mazecell::MazeCell;
+use super::path::Path;
+use super::state::State;
 
 pub trait Dijkstra {
     fn search(&self) -> usize;

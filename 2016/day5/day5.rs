@@ -9,14 +9,19 @@ const HEX_DIGITS: &[char] = &[
 
 const TICK_CHARS: &str = "\u{280b}\u{2819}\u{2839}\u{2838}\u{283c}\u{2834}\u{2826}\u{2827}\u{2807}\u{280f} ";
 
-/// ``main`` reads the puzzle input then solves part 1 and part 2
-fn main() {
-    let mut args = aoc::parse_args();
-    let verbose = args.verbose;
-    args.run(|data| solve(data, verbose));
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }
 
-fn solve(data: &str, progress: bool) -> (String, String) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, String) {
+    solve_verbose(data, false)
+}
+
+fn solve_verbose(data: &str, progress: bool) -> (String, String) {
     let door_id = data.trim_ascii();
 
     let mut password_part1 = ['_'; 8];
@@ -127,7 +132,7 @@ mod test {
 
     #[test]
     fn test_solve() {
-        let r = solve("abc", false);
+        let r = solve_verbose("abc", false);
 
         assert_eq!(r.0, "18f47a30");
         assert_eq!(r.1, "05ace8e3");

@@ -6,11 +6,16 @@ const PIXEL_UNKNOWN: u8 = 0;
 const PIXEL_OFF: u8 = 1;
 const PIXEL_ON: u8 = 2;
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let data = data
         .lines()
         .map(std::string::ToString::to_string)
         .collect::<Vec<String>>();
@@ -49,16 +54,18 @@ fn main() {
 
     display(&grid);
 
+    let mut part1 = 0;
+
     for step in 1..=50 {
         default_pixel = enhance(&mut grid, &decoder, default_pixel);
         display(&grid);
 
         if step == 2 {
-            println!("{}", count_lit(&grid));
+            part1 = count_lit(&grid);
         }
     }
 
-    println!("{}", count_lit(&grid));
+    (part1, count_lit(&grid))
 }
 
 fn display(grid: &Grid) {
@@ -170,5 +177,17 @@ fn enhance(grid: &mut Grid, decoder: &[u8], default_pixel: u8) -> u8 {
         PIXEL_OFF => decoder[0],            // pixel off decoded
         PIXEL_ON => decoder[0b1_1111_1111], // pixel on decoded
         _ => panic!("unknown pixel"),
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve(TEST_INPUT), (35, 3351));
     }
 }

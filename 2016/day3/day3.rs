@@ -2,9 +2,16 @@
 
 use itertools::Itertools;
 
-fn main() {
-    let mut args = aoc::parse_args();
-    args.run(|data| (part1(data), part2(data)));
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    (part1(data), part2(data))
 }
 
 fn parse(line: &str) -> (i32, i32, i32) {

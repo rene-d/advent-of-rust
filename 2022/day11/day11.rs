@@ -43,12 +43,9 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { monkeys: vec![] }
-    }
+    fn new(data: &str) -> Self {
+        let mut monkeys = Vec::new();
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
         let mut lines = data.trim().lines();
 
         // Nota: monkey definitions always start at id 0
@@ -106,8 +103,10 @@ impl Puzzle {
 
             lines.next().unwrap_or_default(); // skip the empty line after monkey definition
 
-            self.monkeys.push(monkey);
+            monkeys.push(monkey);
         }
+
+        Self { monkeys }
     }
 
     /// Solves part one
@@ -164,19 +163,27 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 10605);
-    assert_eq!(puzzle.part2(), 2_713_310_158);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 10605);
+        assert_eq!(puzzle.part2(), 2_713_310_158);
+    }
 }

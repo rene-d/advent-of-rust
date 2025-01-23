@@ -120,33 +120,38 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_4: &str = include_str!("sample_4.txt");
+
     #[test]
     fn part1() {
-        let data = aoc::load_input_data("sample_1.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(compute_energy(&puzzle.moons, 10), 179);
 
-        let data = aoc::load_input_data("sample_4.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_4);
         assert_eq!(compute_energy(&puzzle.moons, 100), 1940);
     }
 
     #[test]
     fn part2() {
-        let data = aoc::load_input_data("sample_4.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_4);
         assert_eq!(puzzle.part2(), 4686774924);
     }
 }

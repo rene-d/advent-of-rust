@@ -119,63 +119,54 @@ fn find_nth_vaporized(asteroids: &[Coord], station: Coord, mut vaporized: u32) -
     Coord { x: 0, y: 0 }
 }
 
-struct Puzzle {
-    part1: usize,
-    part2: i32,
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, i32) {
+    let asteroids = load_asteroids(data);
+
+    // part 1
+    let (part1, station) = find_station(&asteroids);
+
+    // part 2
+    let pos = find_nth_vaporized(&asteroids, station, 200);
+
+    (part1, 100 * pos.x + pos.y)
 }
 
-impl Puzzle {
-    fn solve(data: &str) -> Self {
-        let asteroids = load_asteroids(data);
-
-        // part 1
-        let (part1, station) = find_station(&asteroids);
-
-        // part 2
-        let pos = find_nth_vaporized(&asteroids, station, 200);
-
-        Self {
-            part1,
-            part2: 100 * pos.x + pos.y,
-        }
-    }
-}
-
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let puzzle = Puzzle::solve(&args.input);
-    println!("{}", puzzle.part1);
-    println!("{}", puzzle.part2);
+    args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_4: &str = include_str!("sample_4.txt");
+    const SAMPLE_5: &str = include_str!("sample_5.txt");
+    const SAMPLE_6: &str = include_str!("sample_6.txt");
+    const SAMPLE_7: &str = include_str!("sample_7.txt");
+
     #[test]
     fn part1() {
-        let data = aoc::load_input_data("sample_1.txt");
-        let asteroids = load_asteroids(&data);
+        let asteroids = load_asteroids(SAMPLE_1);
         assert_eq!(find_station(&asteroids).1, Coord { x: 3, y: 4 });
 
-        let data = aoc::load_input_data("sample_4.txt");
-        let asteroids = load_asteroids(&data);
+        let asteroids = load_asteroids(SAMPLE_4);
         assert_eq!(find_station(&asteroids), (33, Coord { x: 5, y: 8 }));
 
-        let data = aoc::load_input_data("sample_5.txt");
-        let asteroids = load_asteroids(&data);
+        let asteroids = load_asteroids(SAMPLE_5);
         assert_eq!(find_station(&asteroids), (35, Coord { x: 1, y: 2 }));
 
-        let data = aoc::load_input_data("sample_6.txt");
-        let asteroids = load_asteroids(&data);
+        let asteroids = load_asteroids(SAMPLE_6);
         assert_eq!(find_station(&asteroids), (41, Coord { x: 6, y: 3 }));
     }
 
     #[test]
     fn part2() {
-        let data = aoc::load_input_data("sample_7.txt");
-        let asteroids = load_asteroids(&data);
+        let asteroids = load_asteroids(SAMPLE_7);
 
         let (max_detected, station) = find_station(&asteroids);
         assert_eq!(max_detected, 210);

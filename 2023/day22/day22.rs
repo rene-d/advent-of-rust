@@ -46,16 +46,13 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
+    fn new(data: &str) -> Self {
+        let mut puzzle = Self {
             bricks: vec![],
             supports: FxHashMap::default(),
             supported_by: FxHashMap::default(),
-        }
-    }
+        };
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         // load the bricks of sand
         for line in data.lines() {
             let coords: Vec<_> = line
@@ -63,19 +60,19 @@ impl Puzzle {
                 .map(|s| s.parse::<i32>().unwrap())
                 .collect();
 
-            self.bricks.push(Brick::new(&coords));
+            puzzle.bricks.push(Brick::new(&coords));
         }
 
         // let a.z the lowest coordinate
-        self.bricks.sort_unstable_by_key(|brick| brick.a.z);
+        puzzle.bricks.sort_unstable_by_key(|brick| brick.a.z);
 
-        let n = self.bricks.len();
+        let n = puzzle.bricks.len();
 
         // let the bricks fall downward until blocked
         for i in 0..n {
-            let brick = &self.bricks[i];
+            let brick = &puzzle.bricks[i];
 
-            let max_z = self.bricks[..i]
+            let max_z = puzzle.bricks[..i]
                 .iter()
                 .filter(|&b| b.overlap(brick))
                 .map(|brick| brick.b.z)
@@ -83,25 +80,27 @@ impl Puzzle {
                 .unwrap_or(0)
                 + 1;
 
-            let brick = self.bricks.get_mut(i).unwrap();
+            let brick = puzzle.bricks.get_mut(i).unwrap();
             brick.b.z -= brick.a.z - max_z;
             brick.a.z = max_z;
         }
 
         // who supports whom ?
         for i in 0..n {
-            self.supports.insert(i, FxHashSet::default());
-            self.supported_by.insert(i, FxHashSet::default());
+            puzzle.supports.insert(i, FxHashSet::default());
+            puzzle.supported_by.insert(i, FxHashSet::default());
         }
 
-        for (i, upper) in self.bricks.iter().enumerate() {
-            for (j, lower) in self.bricks[..i].iter().enumerate() {
+        for (i, upper) in puzzle.bricks.iter().enumerate() {
+            for (j, lower) in puzzle.bricks[..i].iter().enumerate() {
                 if upper.overlap(lower) && upper.a.z == lower.b.z + 1 {
-                    self.supported_by.get_mut(&i).unwrap().insert(j);
-                    self.supports.get_mut(&j).unwrap().insert(i);
+                    puzzle.supported_by.get_mut(&i).unwrap().insert(j);
+                    puzzle.supports.get_mut(&j).unwrap().insert(i);
                 }
             }
         }
+
+        puzzle
     }
 
     /// Solve part one.
@@ -148,30 +147,34 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 5);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 7);
     }
 }

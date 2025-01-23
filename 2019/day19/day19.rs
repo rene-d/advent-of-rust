@@ -143,9 +143,15 @@ impl Puzzle {
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }

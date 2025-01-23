@@ -3,50 +3,22 @@
 use std::cmp::Ordering;
 use text_io::scan;
 
-/// main function
-fn main() {
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
     let abs_min: i32;
     let abs_max: i32;
     let ord_min: i32;
     let ord_max: i32;
 
-    let args = aoc::parse_args();
-    let data = &args.input;
+    scan!(data.bytes() => "target area: x={}..{}, y={}..{}",    abs_min, abs_max, ord_min, ord_max);
 
-    scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
-    abs_min, abs_max, ord_min, ord_max);
-
-    // let args: Vec<String> = std::env::args().collect();
-
-    // match args.len() {
-    //     5 => {
-    //         abs_min = args[1].parse::<i32>().unwrap();
-    //         abs_max = args[2].parse::<i32>().unwrap();
-    //         ord_min = args[3].parse::<i32>().unwrap();
-    //         ord_max = args[4].parse::<i32>().unwrap();
-    //     }
-    //     2 => {
-    //         let data = fs::read_to_string(&args[1]).unwrap();
-    //         scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
-    //               abs_min, abs_max, ord_min, ord_max);
-    //     }
-    //     1 => {
-    //         let data = std::fs::read_to_string("input.txt").unwrap();
-    //         scan!(data.bytes() => "target area: x={}..{}, y={}..{}",
-    //               abs_min, abs_max, ord_min, ord_max);
-    //     }
-    //     _ => {
-    //         panic!("Invalid number of arguments");
-    //     }
-    // }
-    // println!("target area: x={}..{}, y={}..{}", abs_min, abs_max, ord_min, ord_max);
-
-    let parts = solve(abs_min, abs_max, ord_min, ord_max);
-    println!("{}", parts.0);
-    println!("{}", parts.1);
-}
-
-fn solve(abs_min: i32, abs_max: i32, ord_min: i32, ord_max: i32) -> (i32, i32) {
     let mut part1 = 0;
     let mut part2 = 0;
 
@@ -97,10 +69,17 @@ fn solve(abs_min: i32, abs_max: i32, ord_min: i32, ord_max: i32) -> (i32, i32) {
     (part1, part2)
 }
 
-#[test]
-fn test_puzzle() {
-    let parts = solve(20, 30, -10, -5);
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    assert_eq!(parts.0, 45);
-    assert_eq!(parts.1, 112);
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_puzzle() {
+        let parts = solve(TEST_INPUT);
+
+        assert_eq!(parts.0, 45);
+        assert_eq!(parts.1, 112);
+    }
 }

@@ -107,51 +107,57 @@ impl<'a> Puzzle<'a> {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+    const SAMPLE_3: &str = include_str!("sample_3.txt");
+    const SAMPLE_4: &str = include_str!("sample_4.txt");
+    const SAMPLE_5: &str = include_str!("sample_5.txt");
+
     #[test]
     fn test1() {
-        let data = aoc::load_input_data("sample_1.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 31);
     }
 
     #[test]
     fn test2() {
-        let data = aoc::load_input_data("sample_2.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part1(), 165);
     }
 
     #[test]
     fn test3() {
-        let data = aoc::load_input_data("sample_3.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_3);
         assert_eq!(puzzle.part1(), 13312);
         assert_eq!(puzzle.part2(), 82892753);
     }
 
     #[test]
     fn test4() {
-        let data = aoc::load_input_data("sample_4.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_4);
         assert_eq!(puzzle.part1(), 180697);
         assert_eq!(puzzle.part2(), 5586022);
     }
     #[test]
     fn test5() {
-        let data = aoc::load_input_data("sample_5.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(SAMPLE_5);
         assert_eq!(puzzle.part1(), 2210736);
         assert_eq!(puzzle.part2(), 460664);
     }

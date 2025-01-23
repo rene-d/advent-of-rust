@@ -90,60 +90,60 @@ impl State {
         new_state.elevator -= 1;
         new_state
     }
-}
 
-fn solve(initial: &State) -> u32 {
-    let mut seen = FxHashSet::default();
-    let mut queue = VecDeque::new();
+    fn solve(&self) -> u32 {
+        let mut seen = FxHashSet::default();
+        let mut queue = VecDeque::new();
 
-    queue.push_front((initial.clone(), 0));
+        queue.push_front((self.clone(), 0));
 
-    let n_items = initial.items.len();
+        let n_items = self.items.len();
 
-    while let Some((state, steps)) = queue.pop_back() {
-        let hash = state.key();
+        while let Some((state, steps)) = queue.pop_back() {
+            let hash = state.key();
 
-        if seen.contains(&hash) {
-            continue;
-        }
+            if seen.contains(&hash) {
+                continue;
+            }
 
-        // seems to be a little faster to hash/lookup than to check if a chip will be fried
-        if !state.is_valid() {
-            continue;
-        }
+            // seems to be a little faster to hash/lookup than to check if a chip will be fried
+            if !state.is_valid() {
+                continue;
+            }
 
-        if state.is_solved() {
-            return steps;
-        }
+            if state.is_solved() {
+                return steps;
+            }
 
-        seen.insert(hash);
+            seen.insert(hash);
 
-        let floor = state.elevator;
+            let floor = state.elevator;
 
-        for i in 0..n_items {
-            if state.items[i] == floor {
-                if floor < 3 {
-                    queue.push_front((state.up(i), steps + 1));
-                }
+            for i in 0..n_items {
+                if state.items[i] == floor {
+                    if floor < 3 {
+                        queue.push_front((state.up(i), steps + 1));
+                    }
 
-                if floor > 0 {
-                    queue.push_front((state.down(i), steps + 1));
-                }
+                    if floor > 0 {
+                        queue.push_front((state.down(i), steps + 1));
+                    }
 
-                for j in (i + 1)..n_items {
-                    if state.items[j] == floor {
-                        if floor < 3 {
-                            queue.push_front((state.up_two(i, j), steps + 1));
-                        }
-                        if floor > 0 {
-                            queue.push_front((state.down_two(i, j), steps + 1));
+                    for j in (i + 1)..n_items {
+                        if state.items[j] == floor {
+                            if floor < 3 {
+                                queue.push_front((state.up_two(i, j), steps + 1));
+                            }
+                            if floor > 0 {
+                                queue.push_front((state.down_two(i, j), steps + 1));
+                            }
                         }
                     }
                 }
             }
         }
+        0
     }
-    0
 }
 
 struct Puzzle {
@@ -192,7 +192,7 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        solve(&self.initial)
+        self.initial.solve()
     }
 
     /// Solve part two.
@@ -209,19 +209,23 @@ impl Puzzle {
         new_items.items.insert(0, 0);
         new_items.items.insert(0, 0);
 
-        solve(&new_items)
+        new_items.solve()
     }
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
-    args.run(|data| {
-        let puzzle = Puzzle::new(data);
-        (puzzle.part1(), puzzle.part2())
-    });
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

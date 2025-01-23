@@ -66,36 +66,31 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            grid: FxHashMap::default(),
-            ymin: 0,
-            ymax: 0,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut grid = FxHashMap::default();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if let Ok((_, (x, y1, y2))) = x_yy(line) {
                 assert!(y1 < y2);
 
                 for y in y1..=y2 {
-                    self.grid.insert(Point { x, y }, CLAY);
+                    grid.insert(Point { x, y }, CLAY);
                 }
             } else if let Ok((_, (y, x1, x2))) = y_xx(line) {
                 assert!(x1 < x2);
 
                 for x in x1..=x2 {
-                    self.grid.insert(Point { x, y }, CLAY);
+                    grid.insert(Point { x, y }, CLAY);
                 }
             } else {
                 panic!("bad input line: {line}");
             }
         }
 
-        self.ymin = self.grid.keys().map(|p| p.y).min().unwrap();
-        self.ymax = self.grid.keys().map(|p| p.y).max().unwrap();
+        let ymin = grid.keys().map(|p| p.y).min().unwrap();
+        let ymax = grid.keys().map(|p| p.y).max().unwrap();
+
+        Self { grid, ymin, ymax }
 
         // self.grid.insert(Point { x: 500, y: 0 }, SPRING);
     }
@@ -196,39 +191,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let mut puzzle = Puzzle::new(data);
     puzzle.solve();
-
-    if args.verbose {
-        puzzle.show();
-    }
-
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    if args.verbose {
+        Puzzle::new(&args.input).show();
+        std::process::exit(0);
+    }
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
-    #[test]
-    fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
-        puzzle.solve();
-        assert_eq!(puzzle.part1(), 57);
-    }
+    const TEST_INPUT: &str = include_str!("test.txt");
 
     #[test]
-    fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+    fn test_solve() {
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         puzzle.solve();
+        assert_eq!(puzzle.part1(), 57);
         assert_eq!(puzzle.part2(), 29);
     }
 }

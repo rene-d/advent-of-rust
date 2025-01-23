@@ -71,24 +71,21 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { program: vec![] }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.program = data
-            .lines()
-            .filter_map(|s| s.split_once(' '))
-            .map(|(a, b)| {
-                (
-                    a.to_string(),
-                    b.split_ascii_whitespace()
-                        .map(String::from)
-                        .collect::<Vec<_>>(),
-                )
-            })
-            .collect();
+    fn new(data: &str) -> Self {
+        Self {
+            program: data
+                .lines()
+                .filter_map(|s| s.split_once(' '))
+                .map(|(a, b)| {
+                    (
+                        a.to_string(),
+                        b.split_ascii_whitespace()
+                            .map(String::from)
+                            .collect::<Vec<_>>(),
+                    )
+                })
+                .collect(),
+        }
     }
 
     /// Solve part one.
@@ -132,10 +129,15 @@ impl Puzzle {
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, i64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }

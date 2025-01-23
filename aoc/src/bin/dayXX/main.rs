@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 fn main() {
-    let mut args = aoc::parse_args();
+    let args = aoc::parse_args();
 
     if args.verbose {
         println!("{args:#?}");

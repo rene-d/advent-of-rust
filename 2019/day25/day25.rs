@@ -178,7 +178,10 @@ fn find_weight(computer: &mut Computer, inventory: &[&str], checkpoint_dir: &str
     0
 }
 
-fn solve(program: &str) -> u64 {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(program: &str) -> (u64, aoc::Christmas) {
     let mut computer = Computer::load(program);
 
     let mut map = HashMap::new();
@@ -213,10 +216,13 @@ fn solve(program: &str) -> u64 {
         .collect::<Vec<&str>>();
 
     // get the unlock code
-    find_weight(&mut computer, &inventory, checkpoint_dir)
+    (
+        find_weight(&mut computer, &inventory, checkpoint_dir),
+        aoc::CHRISTMAS,
+    )
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
-    args.run(|data| (solve(data), aoc::CHRISTMAS));
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }

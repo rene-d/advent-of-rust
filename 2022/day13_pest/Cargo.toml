@@ -1,12 +1,13 @@
 [package]
-name = "day13_nom"
+name = "day13_pest"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 aoc = { path = "../../aoc" }
-nom = "*"
+pest = "*"
+pest_derive = "*"
 
 [[bin]]
-name = "day13_nom"
+name = "day13_pest"
 path = "day13.rs"

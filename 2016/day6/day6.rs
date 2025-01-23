@@ -1,12 +1,14 @@
 //! [Day 6: Signals and Noise](https://adventofcode.com/2016/day/6)
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-/// solve both parts
-fn solve(data: &str) -> (String, String) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, String) {
     let mut freq = [[0; 26]; 8];
 
     for line in data.lines() {

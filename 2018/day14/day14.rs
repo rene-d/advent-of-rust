@@ -1,7 +1,9 @@
 //! [Day 14: Chocolate Charts](https://adventofcode.com/2018/day/14)
 
-fn score(iterations: usize) -> String {
-    let mut elf_one: usize = 0;
+fn score(recipes: &str) -> String {
+    let iterations: usize = recipes.trim_ascii().parse().unwrap();
+
+    let mut elf_one = 0;
     let mut elf_two = 1;
 
     let mut scores = [3u8, 7u8].to_vec();
@@ -47,6 +49,7 @@ fn appear(recipes: &str) -> usize {
     let mut elf_two = 1;
 
     let score: Vec<u8> = recipes
+        .trim_ascii()
         .chars()
         .map(|c| u8::try_from(c.to_digit(10).unwrap()).unwrap())
         .collect();
@@ -80,64 +83,40 @@ fn appear(recipes: &str) -> usize {
     0
 }
 
-struct Puzzle {
-    recipes: String,
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, usize) {
+    (score(data), appear(data))
 }
 
-impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            recipes: String::new(),
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        data.trim().clone_into(&mut self.recipes);
-    }
-
-    /// Solve part one.
-    fn part1(&self) -> String {
-        score(self.recipes.parse().unwrap())
-    }
-
-    /// Solve part two.
-    fn part2(&self) -> usize {
-        appear(&self.recipes)
-    }
-}
-
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test01() {
-        assert_eq!(score(9), "5158916779");
+        assert_eq!(score("9"), "5158916779");
     }
 
     #[test]
     fn test02() {
-        assert_eq!(score(5), "0124515891");
+        assert_eq!(score("5"), "0124515891");
     }
 
     #[test]
     fn test03() {
-        assert_eq!(score(18), "9251071085");
+        assert_eq!(score("18"), "9251071085");
     }
 
     #[test]
     fn test04() {
-        assert_eq!(score(2018), "5941429882");
+        assert_eq!(score("2018"), "5941429882");
     }
 
     #[test]

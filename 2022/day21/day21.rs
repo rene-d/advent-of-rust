@@ -23,14 +23,9 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            monkeys: FxHashMap::default(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut monkeys = FxHashMap::default();
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if line.is_empty() {
                 continue;
@@ -42,16 +37,17 @@ impl Puzzle {
             // println!("job {}={}", monkey, job);
 
             if let Ok(n) = job.parse::<i64>() {
-                self.monkeys.insert(monkey.to_string(), Job::Number(n));
+                monkeys.insert(monkey.to_string(), Job::Number(n));
             } else {
                 let mut args = job.split(' ');
                 let l = args.next().unwrap().to_string();
                 let o = args.next().unwrap().chars().next().unwrap();
                 let r = args.next().unwrap().to_string();
-                self.monkeys
-                    .insert(monkey.to_string(), Job::Operation((l, o, r)));
+                monkeys.insert(monkey.to_string(), Job::Operation((l, o, r)));
             }
         }
+
+        Self { monkeys }
     }
 
     fn eval(&self, var: &str) -> i64 {
@@ -121,21 +117,29 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 152);
-    assert_eq!(puzzle.part2(), 301);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 152);
+        assert_eq!(puzzle.part2(), 301);
+    }
 }
 
 impl Affine {

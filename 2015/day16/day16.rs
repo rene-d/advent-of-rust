@@ -67,12 +67,13 @@ impl<'a> Puzzle<'a> {
 }
 
 /// main function
-fn solve(data: &str) -> (u32, u32) {
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
     let puzzle = Puzzle::new(data);
     (puzzle.part1(), puzzle.part2())
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }

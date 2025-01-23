@@ -4,8 +4,8 @@ use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
 
 /// `main` reads the puzzle input then solves part 1 and part 2
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
@@ -42,7 +42,10 @@ struct BotInstruction {
 /// `solve` solves part 1 and part 2 of the puzzle.
 /// First, it loads the move instructions and initializes the bots.
 /// Then, it runs the instructions until the puzzle is done.
-fn solve(data: &str) -> (u32, u32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
     let re_init = Regex::new(r"value ([\d]+) goes to bot (\d+)").unwrap();
     let re_move = Regex::new(r"bot (\d+) gives low to (bot|output) (\d+) and high to (bot|output) (\d+)").unwrap();
 

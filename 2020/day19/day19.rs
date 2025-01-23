@@ -12,13 +12,9 @@ struct Rules {
 }
 
 impl Rules {
-    fn new() -> Self {
-        Self {
-            r: FxHashMap::default(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut r = FxHashMap::default();
 
-    fn parse(&mut self, data: &str) {
         for line in data.lines() {
             let mut line = line.split(": ");
 
@@ -30,7 +26,7 @@ impl Rules {
                 if let Some(arg) = arg.strip_suffix('"') {
                     let rule = Rule::Ch(arg.chars().nth(0).unwrap());
 
-                    self.r.insert(id, rule);
+                    r.insert(id, rule);
                 }
             } else {
                 let mut subids = vec![];
@@ -43,9 +39,11 @@ impl Rules {
                     subids.push(ids);
                 }
 
-                self.r.insert(id, Rule::Id(subids));
+                r.insert(id, Rule::Id(subids));
             }
         }
+
+        Self { r }
     }
 
     fn matches(&self, rule_id: u32, message: &str) -> bool {
@@ -126,25 +124,13 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    fn new(data: &str) -> Self {
+        let (rules, messages) = data.split_once("\n\n").unwrap();
+
         Self {
-            rules: Rules::new(),
-            messages: vec![],
+            rules: Rules::new(rules),
+            messages: messages.lines().map(str::to_string).collect(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        let rules = data.split("\n\n").nth(0).unwrap();
-        self.rules.parse(rules);
-
-        self.messages = data
-            .split("\n\n")
-            .nth(1)
-            .unwrap()
-            .lines()
-            .map(str::to_string)
-            .collect();
     }
 
     /// Solve part one.
@@ -166,30 +152,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let mut puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+    const TEST_INPUT_2: &str = include_str!("test2.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 2);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test2.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT_2);
         assert_eq!(puzzle.part2(), 12);
     }
 }

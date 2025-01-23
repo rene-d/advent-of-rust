@@ -2,10 +2,16 @@
 
 use rustc_hash::FxHashSet;
 
-/// ``main`` reads the puzzle input then solves part 1 and part 2
-fn main() {
-    let mut args = aoc::parse_args();
-    args.run(|data| (part1(data), part2(data)));
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    (part1(data), part2(data))
 }
 
 /// ``part1`` counts the IPs that support TLS

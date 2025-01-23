@@ -1,17 +1,18 @@
 //! [Day 7: The Treachery of Whales](https://adventofcode.com/2021/day/7)
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    args.run(solve);
+}
 
-    let positions = data[0]
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let positions = data
+        .trim_ascii()
         .split(',')
-        .map(|s| s.parse::<i32>().unwrap())
+        .map_while(|s| s.parse::<i32>().ok())
         .collect::<Vec<i32>>();
 
     let mut min_sum1 = i32::MAX;
@@ -36,6 +37,17 @@ fn main() {
         }
     }
 
-    println!("{min_sum1}");
-    println!("{min_sum2}");
+    (min_sum1, min_sum2)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve(TEST_INPUT), (37, 168));
+    }
 }

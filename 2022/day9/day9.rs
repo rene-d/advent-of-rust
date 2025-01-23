@@ -7,19 +7,18 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { moves: vec![] }
-    }
+    fn new(data: &str) -> Self {
+        Self {
+            moves: data
+                .lines()
+                .map(|line| {
+                    let mut split = line.split(' ');
+                    let direction = split.next().unwrap().chars().next().unwrap();
+                    let n = split.next().unwrap().parse().unwrap();
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
-        for line in data.split('\n') {
-            if !line.is_empty() {
-                let mut split = line.split(' ');
-                let direction = split.next().unwrap().chars().next().unwrap();
-                let n = split.next().unwrap().parse().unwrap();
-                self.moves.push((direction, n));
-            }
+                    (direction, n)
+                })
+                .collect(),
         }
     }
 
@@ -112,26 +111,34 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 13);
-    assert_eq!(puzzle.part2(), 1);
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test02() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test02.txt"));
-    assert_eq!(puzzle.part2(), 36);
+    const TEST_INPUT: &str = include_str!("test.txt");
+    const TEST_INPUT_2: &str = include_str!("test02.txt");
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 13);
+        assert_eq!(puzzle.part2(), 1);
+    }
+
+    #[test]
+    fn test02() {
+        let puzzle = Puzzle::new(TEST_INPUT_2);
+        assert_eq!(puzzle.part2(), 36);
+    }
 }

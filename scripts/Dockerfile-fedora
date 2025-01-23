@@ -1,7 +1,7 @@
 FROM fedora
 
 RUN dnf upgrade -y && \
-    dnf install -y vim curl wget sudo sqlite3 vim && \
+    dnf install -y vim curl wget sudo sqlite3 vim just && \
     dnf group install -y development-tools c-development && \
     dnf install -y cmake gdb clang llvm z3-devel
 
@@ -10,7 +10,7 @@ RUN dnf install -y python3-pip python3-devel python3-numpy python3-tabulate pyth
 RUN python3 -mvenv /venv/python --system-site-packages
 
 # Rust
-RUN dnf install -y cargo cargo-fmt cargo-clippy
+RUN dnf install -y cargo cargo-fmt cargo-clippy rust-src
 
 # Golang
 RUN dnf install -y golang

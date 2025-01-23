@@ -1,9 +1,5 @@
 //! [Day 24: Blizzard Basin](https://adventofcode.com/2022/day/24)
 
-#![allow(clippy::cast_sign_loss)]
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_possible_truncation)]
-
 use rustc_hash::FxHashSet;
 use std::collections::VecDeque;
 
@@ -21,8 +17,8 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
+    fn new(data: &str) -> Self {
+        let mut puzzle = Self {
             blizzards: [
                 FxHashSet::default(), // rightward blizzard
                 FxHashSet::default(), // downward blizzard
@@ -33,24 +29,17 @@ impl Puzzle {
             x_exit: 0,
             x_max: 0,
             y_max: 0,
-        }
-    }
+        };
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
-        for (y, row) in data.lines().enumerate() {
-            let y = y as i32;
-
-            for (x, c) in row.chars().enumerate() {
-                let x = x as i32;
-
+        for (y, row) in (0..).zip(data.lines()) {
+            for (x, c) in (0..).zip(row.chars()) {
                 if c == '.' {
                     if y == 0 {
                         // only one dot on the first line else #
-                        self.x_entry = x;
+                        puzzle.x_entry = x;
                     } else {
                         // the last dot will be on the last line
-                        self.x_exit = x;
+                        puzzle.x_exit = x;
                     }
                 } else if c != '#' {
                     let dir = match c {
@@ -60,20 +49,22 @@ impl Puzzle {
                         '^' => UP,
                         _ => panic!("bad input {x},{y} : {c}"),
                     };
-                    self.blizzards[dir].insert((x, y));
+                    puzzle.blizzards[dir].insert((x, y));
                 }
 
-                self.x_max = self.x_max.max(x);
+                puzzle.x_max = puzzle.x_max.max(x);
             }
 
-            self.y_max = self.y_max.max(y);
+            puzzle.y_max = puzzle.y_max.max(y);
         }
 
         #[cfg(debug_assertions)]
-        println!(
+        eprintln!(
             "entry:{} exit:{} x:0..{} y:0..{}",
-            self.x_entry, self.x_exit, self.x_max, self.y_max
+            puzzle.x_entry, puzzle.x_exit, puzzle.x_max, puzzle.y_max
         );
+
+        puzzle
     }
 
     // Solves part one
@@ -244,37 +235,39 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
 #[cfg(test)]
 mod test {
-    use crate::Puzzle;
+    use super::Puzzle;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+    const DEMO_INPUT: &str = include_str!("demo.txt");
 
     #[test]
     fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 18);
     }
 
     #[test]
     fn test_part2() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 54);
     }
 
     #[test]
     fn test_part2_details() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.solve(1, 0, 6, 5, 0), 18); // this is part 1 actually
         assert_eq!(puzzle.solve(6, 5, 1, 0, 18), 18 + 23);
         assert_eq!(puzzle.solve(1, 0, 6, 5, 18 + 23), 54);
@@ -282,9 +275,7 @@ mod test {
 
     #[test]
     fn test_show_demo() {
-        let mut puzzle = Puzzle::new();
-
-        puzzle.configure(&aoc::load_input_data("demo.txt"));
+        let puzzle = Puzzle::new(DEMO_INPUT);
 
         assert_eq!(
             puzzle.grid_str(-1, -1, 0),
@@ -367,9 +358,7 @@ mod test {
 
     #[test]
     fn test_show_test() {
-        let mut puzzle = Puzzle::new();
-
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
 
         assert_eq!(
             puzzle.grid_str(3, 1, 10),

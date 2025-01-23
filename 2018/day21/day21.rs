@@ -234,25 +234,21 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let puzzle: Puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2_fast())
+}
 
-    let use_emulation = args.has_option("--assembly");
+pub fn main() {
+    let args = aoc::parse_args();
 
-    if use_emulation {
+    if args.has_option("--emulate") {
         Puzzle::new(&args.input).run(1);
-    } else {
-        args.run(|data| {
-            let puzzle = Puzzle::new(data);
-
-            (
-                puzzle.part1(),
-                if use_emulation {
-                    puzzle.part2()
-                } else {
-                    puzzle.part2_fast()
-                },
-            )
-        });
+        std::process::exit(0)
     }
+
+    args.run(solve);
 }

@@ -2,31 +2,26 @@
 
 use rustc_hash::FxHashSet;
 
-struct Puzzle {
+struct Puzzle<'a> {
     /// Puzzle input
-    data: String,
+    data: &'a str,
 }
 
-impl Puzzle {
-    const fn new() -> Self {
+impl<'a> Puzzle<'a> {
+    const fn new(data: &'a str) -> Self {
         Self {
-            data: String::new(),
+            data: data.trim_ascii(),
         }
-    }
-
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
-        self.data = data.trim_ascii().to_string();
     }
 
     // Solves part one
     fn part1(&self) -> usize {
-        find_marker(&self.data, 4)
+        find_marker(self.data, 4)
     }
 
     // Solve part two
     fn part2(&self) -> usize {
-        find_marker(&self.data, 14)
+        find_marker(self.data, 14)
     }
 }
 
@@ -46,35 +41,43 @@ fn find_marker(data: &str, length: usize) -> usize {
     0
 }
 
-/// main function
-fn main() {
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 7);
-    assert_eq!(puzzle.part2(), 19);
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test02() {
-    assert_eq!(find_marker("bvwbjplbgvbhsrlpgdmjqwftvncz", 4), 5);
-    assert_eq!(find_marker("nppdvjthqldpwncqszvftbrmjlhg", 4), 6);
-    assert_eq!(find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 4), 10);
-    assert_eq!(find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 4), 11);
-}
+    const TEST_INPUT: &str = include_str!("test.txt");
 
-#[test]
-fn test03() {
-    assert_eq!(find_marker("bvwbjplbgvbhsrlpgdmjqwftvncz", 14), 23);
-    assert_eq!(find_marker("nppdvjthqldpwncqszvftbrmjlhg", 14), 23);
-    assert_eq!(find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 14), 29);
-    assert_eq!(find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 14), 26);
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 7);
+        assert_eq!(puzzle.part2(), 19);
+    }
+
+    #[test]
+    fn test02() {
+        assert_eq!(find_marker("bvwbjplbgvbhsrlpgdmjqwftvncz", 4), 5);
+        assert_eq!(find_marker("nppdvjthqldpwncqszvftbrmjlhg", 4), 6);
+        assert_eq!(find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 4), 10);
+        assert_eq!(find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 4), 11);
+    }
+
+    #[test]
+    fn test03() {
+        assert_eq!(find_marker("bvwbjplbgvbhsrlpgdmjqwftvncz", 14), 23);
+        assert_eq!(find_marker("nppdvjthqldpwncqszvftbrmjlhg", 14), 23);
+        assert_eq!(find_marker("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 14), 29);
+        assert_eq!(find_marker("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 14), 26);
+    }
 }

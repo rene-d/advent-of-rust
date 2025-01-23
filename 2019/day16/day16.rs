@@ -66,69 +66,79 @@ fn part2(data: &[u8]) -> u32 {
     p[0..8].iter().fold(0, |acc, d| acc * 10 + u32::from(*d))
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let data = parse_data(data);
+
+    (part1(&data), part2(&data))
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-
-    let data = parse_data(&args.input);
-
-    println!("{}", part1(&data));
-    println!("{}", part2(&data));
+    args.run(solve);
 }
 
-#[test]
-fn test_parse_data() {
-    assert_eq!(parse_data("123"), [1u8, 2u8, 3u8]);
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test_part1() {
-    // values given as examples in the puzzle
-    assert_eq!(
-        part1(&parse_data("80871224585914546619083218645595")),
-        24176176
-    );
-    assert_eq!(
-        part1(&parse_data("19617804207202209144916044189917")),
-        73745418
-    );
-    assert_eq!(
-        part1(&parse_data("69317163492948606335995924319873")),
-        52432133
-    );
-}
+    #[test]
+    fn test_parse_data() {
+        assert_eq!(parse_data("123"), [1u8, 2u8, 3u8]);
+    }
 
-#[test]
-fn test_part2() {
-    // values given as examples in the puzzle
-    assert_eq!(
-        part2(&parse_data("03036732577212944063491565474664")),
-        84462026
-    );
-    assert_eq!(
-        part2(&parse_data("02935109699940807407585447034323")),
-        78725270
-    );
-    assert_eq!(
-        part2(&parse_data("03081770884921959731165446850517")),
-        53553731
-    );
-}
+    #[test]
+    fn test_part1() {
+        // values given as examples in the puzzle
+        assert_eq!(
+            part1(&parse_data("80871224585914546619083218645595")),
+            24176176
+        );
+        assert_eq!(
+            part1(&parse_data("19617804207202209144916044189917")),
+            73745418
+        );
+        assert_eq!(
+            part1(&parse_data("69317163492948606335995924319873")),
+            52432133
+        );
+    }
 
-#[test]
-fn test_fft() {
-    // values given as examples in the puzzle
+    #[test]
+    fn test_part2() {
+        // values given as examples in the puzzle
+        assert_eq!(
+            part2(&parse_data("03036732577212944063491565474664")),
+            84462026
+        );
+        assert_eq!(
+            part2(&parse_data("02935109699940807407585447034323")),
+            78725270
+        );
+        assert_eq!(
+            part2(&parse_data("03081770884921959731165446850517")),
+            53553731
+        );
+    }
 
-    let mut signal = parse_data("12345678");
+    #[test]
+    fn test_fft() {
+        // values given as examples in the puzzle
 
-    let phases = [
-        parse_data("48226158"),
-        parse_data("34040438"),
-        parse_data("03415518"),
-        parse_data("01029498"),
-    ];
+        let mut signal = parse_data("12345678");
 
-    for i in 0..3 {
-        fft(&mut signal);
-        assert_eq!(signal, phases[i]);
+        let phases = [
+            parse_data("48226158"),
+            parse_data("34040438"),
+            parse_data("03415518"),
+            parse_data("01029498"),
+        ];
+
+        for i in 0..3 {
+            fft(&mut signal);
+            assert_eq!(signal, phases[i]);
+        }
     }
 }

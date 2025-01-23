@@ -1,9 +1,5 @@
 //! [Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)
 
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_sign_loss)]
-
 use rustc_hash::{FxHashMap, FxHashSet};
 use std::collections::VecDeque;
 
@@ -12,30 +8,20 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            cubes: FxHashSet::default(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut cubes = FxHashSet::default();
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
-        let lines = data.split('\n').collect::<Vec<_>>();
+        for line in data.lines() {
+            let mut xyz = line.split(',').map(|a| a.parse::<i32>().unwrap());
 
-        for line in lines {
-            if !line.is_empty() {
-                let mut xyz = line.split(',').map(|a| a.parse::<i32>().unwrap());
+            let x = xyz.next().unwrap();
+            let y = xyz.next().unwrap();
+            let z = xyz.next().unwrap();
 
-                let x = xyz.next().unwrap();
-                let y = xyz.next().unwrap();
-                let z = xyz.next().unwrap();
-
-                self.cubes.insert((x, y, z));
-            }
+            cubes.insert((x, y, z));
         }
 
-        // println!("{:?}", self.cubes.iter().map(|x| x.2).min());
-        // println!("{:?}", self.cubes.iter().map(|x| x.2).max());
+        Self { cubes }
     }
 
     // Solves part one
@@ -144,25 +130,33 @@ impl Puzzle {
         let sx = x_max - x_min + 1;
         let sy = y_max - y_min + 1;
         let sz = z_max - z_min + 1;
-        let surrounding_faces = ((sx * sy + sy * sz + sz * sx) * 2) as usize;
+        let surrounding_faces = usize::try_from((sx * sy + sy * sz + sz * sx) * 2).unwrap();
 
         faces.values().filter(|count| **count == 1).count() - surrounding_faces
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 64);
-    assert_eq!(puzzle.part2(), 58);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 64);
+        assert_eq!(puzzle.part2(), 58);
+    }
 }

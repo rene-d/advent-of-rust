@@ -80,33 +80,27 @@ fn hashable(area: &Area) -> Vec<u8> {
 
 struct Puzzle {
     area: Area,
-    n: usize,
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            area: Area::default(),
-            n: 0,
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut area = Area::default();
+        let mut n = 0;
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.n = 0;
         for (y, line) in data.lines().enumerate() {
-            if self.n == 0 {
-                self.n = line.len();
-                self.area.resize(self.n, self.n);
+            if n == 0 {
+                n = line.len();
+                area.resize(n, n);
             }
             for (x, acre) in line.chars().enumerate() {
-                self.area[(x, y)] = match acre {
+                area[(x, y)] = match acre {
                     '|' => TREE,
                     '#' => LUMBERYARD,
                     _ => OPEN_ACRE,
                 };
             }
         }
+        Self { area }
     }
 
     /// Solve part one.
@@ -131,7 +125,7 @@ impl Puzzle {
             values.push(value(&area));
 
             if seen.contains_key(&hashable(&area)) {
-                let cycle_start = seen.get(&hashable(&area)).unwrap();
+                let cycle_start = *seen.get(&hashable(&area)).unwrap();
                 let cycle_end = i;
 
                 let n = 1_000_000_000;
@@ -148,23 +142,28 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 1147);
     }
 }

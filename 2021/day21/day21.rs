@@ -2,28 +2,32 @@
 
 use rustc_hash::FxHashMap;
 
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let mut data = args.input.lines();
+    args.run(solve);
+}
 
-    let player = data
-        .next()
-        .unwrap()
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u64) {
+    let players = data.trim_ascii().split_once('\n').unwrap();
+
+    let player = players
+        .0
         .strip_prefix("Player 1 starting position: ")
         .unwrap()
         .parse::<u8>()
         .unwrap();
 
-    let computer = data
-        .next()
-        .unwrap()
+    let computer = players
+        .1
         .strip_prefix("Player 2 starting position: ")
         .unwrap()
         .parse::<u8>()
         .unwrap();
 
-    println!("{}", part1(player, computer));
-    println!("{}", part2(player, computer));
+    (part1(player, computer), part2(player, computer))
 }
 
 fn part2(player: u8, computer: u8) -> u64 {

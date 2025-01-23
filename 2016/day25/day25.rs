@@ -25,14 +25,18 @@ fn run_clock_signal(bunny_vm: &mut BunnyVM, a: i32) -> bool {
     output_index == output.len()
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, aoc::Christmas) {
+    let mut bunny_vm = BunnyVM::new(data);
 
-    args.run(|data| {
-        let mut bunny_vm = BunnyVM::new(data);
+    let a = (0..10000).find(|a| run_clock_signal(&mut bunny_vm, *a)).unwrap_or(0);
 
-        let a = (0..10000).find(|a| run_clock_signal(&mut bunny_vm, *a)).unwrap_or(0);
+    (a, aoc::CHRISTMAS)
+}
 
-        (a, aoc::CHRISTMAS)
-    });
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }

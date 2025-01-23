@@ -1,10 +1,15 @@
 //! [Day 11: Dumbo Octopus](https://adventofcode.com/2021/day/11)
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let data = data
         .lines()
         .map(std::string::ToString::to_string)
         .collect::<Vec<String>>();
@@ -19,6 +24,8 @@ fn main() {
     }
 
     let mut flashes = 0;
+    let mut part1 = 0;
+    let mut part2 = 0;
 
     for turn in 1..1000 {
         // First, the energy level of each octopus increases by 1.
@@ -64,14 +71,16 @@ fn main() {
         }
 
         if all_flashing(&grid) {
-            println!("{turn}");
+            part2 = turn;
             break;
         }
 
         if turn == 100 {
-            println!("{flashes}");
+            part1 = flashes;
         }
     }
+
+    (part1, part2)
 }
 
 fn all_flashing(grid: &[Vec<u8>]) -> bool {

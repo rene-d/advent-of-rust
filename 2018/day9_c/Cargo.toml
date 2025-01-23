@@ -1,0 +1,14 @@
+[package]
+name = "day9_c"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aoc = { path = "../../aoc" }
+
+[build-dependencies]
+cc = "*"
+
+[[bin]]
+name = "day9_c"
+path = "day9.rs"

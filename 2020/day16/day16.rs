@@ -14,34 +14,27 @@ struct Field {
 }
 
 struct Puzzle {
-    verbose: bool,
     fields: Vec<Field>,
     your_tickets: Vec<u32>,
     tickets: Vec<Vec<u32>>,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            verbose: false,
-            fields: Vec::new(),
-            your_tickets: Vec::new(),
-            tickets: Vec::new(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut fields = Vec::new();
+        let mut your_tickets = Vec::new();
+        let mut tickets = Vec::new();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         let data: Vec<&str> = data.split("\n\n").collect();
 
         let fields_data = data[0];
-        let your_tickets = data[1];
-        let tickets = data[2];
+        let your_tickets_data = data[1];
+        let tickets_data = data[2];
 
         let re = Regex::new(r"^([\w ]+): (\d+)-(\d+) or (\d+)-(\d+)$").unwrap();
         for line in fields_data.lines() {
             let caps = re.captures(line).unwrap();
-            self.fields.push(Field {
+            fields.push(Field {
                 name: caps[1].to_string(),
                 a: caps[2].parse().unwrap(),
                 b: caps[3].parse().unwrap(),
@@ -53,25 +46,31 @@ impl Puzzle {
         // imperative approach
         // for line in your_tickets.lines().skip(1) {
         //     for s in line.split(',') {
-        //         self.your_tickets.push(s.parse().unwrap())
+        //         your_tickets.push(s.parse().unwrap())
         //     }
         // }
 
         // functional approach
-        self.your_tickets.extend(
-            your_tickets
+        your_tickets.extend(
+            your_tickets_data
                 .lines()
                 .skip(1) // skip the line "your ticket:"
                 .flat_map(|line| line.split(','))
                 .map(|s| s.parse::<u32>().unwrap()),
         );
 
-        self.tickets.extend(
-            tickets
+        tickets.extend(
+            tickets_data
                 .lines()
                 .skip(1) // skip the line "nearby tickets:"
                 .map(|line| line.split(',').map(|s| s.parse().unwrap()).collect()),
         );
+
+        Self {
+            fields,
+            your_tickets,
+            tickets,
+        }
     }
 
     /// Solve part one.
@@ -161,10 +160,6 @@ impl Puzzle {
 
         // ⚠️⚠️⚠️
 
-        if self.verbose {
-            println!("equivalent: {equivalent:?}");
-        }
-
         equivalent
             .iter()
             .filter(|(&i, _)| self.fields[i].name.starts_with(field_name))
@@ -177,31 +172,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.verbose = args.verbose;
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+    const SAMPLE_3: &str = include_str!("sample_3.txt");
+
     #[test]
     fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part1(), 71);
     }
 
     #[test]
     fn test_part2() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_3.txt"));
+        let puzzle = Puzzle::new(SAMPLE_3);
 
         // Nota: the result is diverted for the test purpose
         assert_eq!(puzzle.solve_part2("class"), 12);

@@ -29,28 +29,19 @@ impl Ord for Cart {
 }
 
 struct Puzzle {
-    verbose: bool,
     grid: GridU<char>,
     carts: Vec<Cart>,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            verbose: false,
-            grid: GridU::<char>::new(),
-            carts: vec![],
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut grid = GridU::<char>::parse(data);
+        let mut carts = Vec::new();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.grid = GridU::<char>::parse(data);
-
-        for ((x, y), c) in self.grid.iter_mut() {
+        for ((x, y), c) in grid.iter_mut() {
             match c {
                 '<' => {
-                    self.carts.push(Cart {
+                    carts.push(Cart {
                         x,
                         y,
                         d: Direction::West,
@@ -60,7 +51,7 @@ impl Puzzle {
                     *c = '-';
                 }
                 '>' => {
-                    self.carts.push(Cart {
+                    carts.push(Cart {
                         x,
                         y,
                         d: Direction::East,
@@ -70,7 +61,7 @@ impl Puzzle {
                     *c = '-';
                 }
                 '^' => {
-                    self.carts.push(Cart {
+                    carts.push(Cart {
                         x,
                         y,
                         d: Direction::North,
@@ -80,7 +71,7 @@ impl Puzzle {
                     *c = '|';
                 }
                 'v' => {
-                    self.carts.push(Cart {
+                    carts.push(Cart {
                         x,
                         y,
                         d: Direction::South,
@@ -92,8 +83,11 @@ impl Puzzle {
                 _ => (),
             };
         }
+
+        Self { grid, carts }
     }
 
+    #[allow(dead_code)]
     fn show(&self, carts: &[Cart]) {
         let carts = carts
             .iter()
@@ -238,9 +232,9 @@ impl Puzzle {
         for _ in 0..100_000 {
             carts.sort_unstable();
 
-            if self.verbose {
-                self.show(&carts);
-            }
+            // if self.verbose {
+            //     self.show(&carts);
+            // }
 
             if let Some(c) = self.move_carts(&mut carts, false) {
                 return format!("{},{}", c.x, c.y);
@@ -272,31 +266,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.verbose = args.verbose;
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, String) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_4: &str = include_str!("sample_4.txt");
+    const SAMPLE_6: &str = include_str!("sample_6.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_4.txt"));
+        let puzzle = Puzzle::new(SAMPLE_4);
         assert_eq!(puzzle.part1(), "7,3");
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_6.txt"));
+        let puzzle = Puzzle::new(SAMPLE_6);
         assert_eq!(puzzle.part2(), "6,4");
     }
 }

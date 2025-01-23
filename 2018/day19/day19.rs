@@ -55,18 +55,13 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            ip_reg: 0,
-            program: vec![],
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut ip_reg = 0;
+        let mut program = vec![];
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if let Some(value) = line.strip_prefix("#ip ") {
-                self.ip_reg = value.parse::<usize>().unwrap();
+                ip_reg = value.parse::<usize>().unwrap();
             } else {
                 let line: Vec<_> = line.split_ascii_whitespace().collect();
 
@@ -77,9 +72,11 @@ impl Puzzle {
 
                 let instr = Instr { opcode, a, b, c };
 
-                self.program.push(instr);
+                program.push(instr);
             }
         }
+
+        Self { ip_reg, program }
     }
 
     fn solve_optimized(&self, r0: u32) -> u32 {
@@ -136,27 +133,32 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    if args.verbose {
-        println!("{}", puzzle.run(0));
-    } else {
-        println!("{}", puzzle.part1());
-        println!("{}", puzzle.part2());
-    }
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    if args.verbose {
+        println!("{}", Puzzle::new(&args.input).run(0));
+        std::process::exit(0);
+    }
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.run(0), 7);
     }
 }

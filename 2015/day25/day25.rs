@@ -1,11 +1,14 @@
 //! [Day 25: Let It Snow](https://adventofcode.com/2015/day/25)
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-fn solve(data: &str) -> (u64, aoc::Christmas) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, aoc::Christmas) {
     let (row, column) = read_data(data);
 
     let mut x = 1;

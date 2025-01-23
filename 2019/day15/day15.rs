@@ -1,9 +1,9 @@
 //! [Day 15: Oxygen System](https://adventofcode.com/2019/day/15)
 
+use rustc_hash::{FxHashMap, FxHashSet};
 use std::collections::VecDeque;
 
 use intcode::{Computer, State};
-use rustc_hash::{FxHashMap, FxHashSet};
 
 const NORTH: i64 = 1;
 const SOUTH: i64 = 2;
@@ -65,14 +65,19 @@ fn bfs(droid: &Computer) -> (Computer, i64, i64) {
     (Computer::new(), 0, max_steps)
 }
 
-fn main() {
-    let args = aoc::parse_args();
-
-    let droid = Computer::load(&args.input);
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
+    let droid = Computer::load(data);
 
     let (oxygen, steps, _) = bfs(&droid);
     let (_, _, distance) = bfs(&oxygen);
 
-    println!("{steps}"); // part 1
-    println!("{distance}"); //part 2
+    (steps, distance)
+}
+
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }

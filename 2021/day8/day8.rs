@@ -3,19 +3,19 @@
 use rustc_hash::FxHashMap;
 use rustc_hash::FxHashSet;
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
-
-    part1(&data);
-    part2(&data);
+    args.run(solve);
 }
 
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, u32) {
+    (part1(data), part2(data))
+}
+
+/// Return true if `a` contains all chars of string `b`
 fn contains(a: &str, b: &str) -> bool {
     for c in b.chars() {
         if !a.contains(c) {
@@ -25,10 +25,10 @@ fn contains(a: &str, b: &str) -> bool {
     true
 }
 
-fn part2(data: &[String]) {
+fn part2(data: &str) -> u32 {
     // Nota: the Python version is much more readable...
     let mut total = 0;
-    for line in data {
+    for line in data.lines() {
         let (notes1, code1) = line.split_once('|').unwrap();
 
         let notes = notes1.split_whitespace().collect::<Vec<&str>>();
@@ -109,16 +109,17 @@ fn part2(data: &[String]) {
         }
         total += r;
     }
-    println!("{total:?}");
+
+    total
 }
 
-fn part1(data: &[String]) {
+fn part1(data: &str) -> i32 {
     let mut digit_one = 0;
     let mut digit_four = 0;
     let mut digit_seven = 0;
     let mut digit_eight = 0;
 
-    for line in data {
+    for line in data.lines() {
         let x = line.split_once('|').unwrap().1.trim();
         for c in x.split_whitespace() {
             match c.len() {
@@ -131,12 +132,15 @@ fn part1(data: &[String]) {
         }
     }
 
-    println!("{}", digit_one + digit_four + digit_seven + digit_eight);
+    digit_one + digit_four + digit_seven + digit_eight
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test_contains() {
         assert!(contains("abcde", "ab"));
@@ -144,5 +148,15 @@ mod test {
         assert!(contains("abcde", "abcde"));
         assert!(!contains("abcde", "az"));
         assert!(!contains("abcde", "ef"));
+    }
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(TEST_INPUT), 26);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(TEST_INPUT), 61229);
     }
 }

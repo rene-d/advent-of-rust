@@ -95,11 +95,15 @@ impl ArcadeCabinet {
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, i64) {
+    let mut cab = ArcadeCabinet::new(data);
+    (cab.part1(), cab.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-
-    let mut cab = ArcadeCabinet::new(&args.input);
-
-    println!("{}", cab.part1());
-    println!("{}", cab.part2());
+    args.run(solve);
 }

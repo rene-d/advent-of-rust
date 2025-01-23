@@ -18,40 +18,39 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
+    fn new(data: &str) -> Self {
+        let mut puzzle = Self {
             grid_data: vec![],
             sx: 0,
             sy: 0,
             start_position: (0, 0),
             points: vec![],
-        }
-    }
+        };
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.points.clear();
-        self.grid_data.clear();
-        self.sx = 0;
+        puzzle.points.clear();
+        puzzle.grid_data.clear();
+        puzzle.sx = 0;
         for line in data.lines() {
-            if self.sx == 0 {
-                self.sx = i32::try_from(line.len()).unwrap();
+            if puzzle.sx == 0 {
+                puzzle.sx = i32::try_from(line.len()).unwrap();
             } else {
-                assert_eq!(self.sx, i32::try_from(line.len()).unwrap());
+                assert_eq!(puzzle.sx, i32::try_from(line.len()).unwrap());
             }
 
-            self.grid_data.push(line.chars().collect());
+            puzzle.grid_data.push(line.chars().collect());
         }
-        self.sy = i32::try_from(self.grid_data.len()).unwrap();
+        puzzle.sy = i32::try_from(puzzle.grid_data.len()).unwrap();
 
-        for (x, y) in iproduct!(0..self.sx, 0..self.sy) {
-            if self.grid(x, y) == 'S' {
-                self.start_position = (x, y);
+        for (x, y) in iproduct!(0..puzzle.sx, 0..puzzle.sy) {
+            if puzzle.grid(x, y) == 'S' {
+                puzzle.start_position = (x, y);
                 break;
             }
         }
 
-        self.maze();
+        puzzle.maze();
+
+        puzzle
     }
 
     fn grid(&self, x: i32, y: i32) -> char {
@@ -128,56 +127,61 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT_1: &str = include_str!("test1.txt");
+    const TEST_INPUT_2: &str = include_str!("test2.txt");
+    const TEST_INPUT_3: &str = include_str!("test3.txt");
+    const TEST_INPUT_4: &str = include_str!("test4.txt");
+    const TEST_INPUT_5: &str = include_str!("test5.txt");
+    const TEST_INPUT_6: &str = include_str!("test6.txt");
+
     #[test]
     fn test01_1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test1.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT_1);
         assert_eq!(puzzle.part1(), 4);
     }
     #[test]
     fn test01_2() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test2.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT_2);
         assert_eq!(puzzle.part1(), 8);
     }
 
     #[test]
     fn test02_3() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test3.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT_3);
         assert_eq!(puzzle.part2(), 4);
     }
 
     #[test]
     fn test02_4() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test4.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT_4);
         assert_eq!(puzzle.part2(), 4);
     }
     #[test]
     fn test02_5() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test5.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT_5);
         assert_eq!(puzzle.part2(), 8);
     }
 
     #[test]
     fn test02_6() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test6.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT_6);
         assert_eq!(puzzle.part2(), 10);
     }
 }

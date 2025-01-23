@@ -43,7 +43,7 @@ impl std::fmt::Display for Christmas {
 ///     (1234, 5678)
 /// }
 ///
-/// let mut args = aoc::parse_args();
+/// let args = aoc::parse_args();
 /// args.run(solve);
 /// ```
 ///
@@ -57,7 +57,7 @@ impl std::fmt::Display for Christmas {
 ///     fn part2(&self) -> u32 { 66 }
 /// }
 ///
-/// let mut args = aoc::parse_args();
+/// let args = aoc::parse_args();
 /// args.run(|data| {
 ///     let puzzle = Puzzle::new(data);
 ///     (puzzle.part1(), puzzle.part2())
@@ -66,6 +66,11 @@ impl std::fmt::Display for Christmas {
 #[must_use]
 pub fn parse_args() -> args::Args {
     Args::parse_args()
+}
+
+#[must_use]
+pub fn parse_args_raw() -> args::Args {
+    Args::parse_args_raw()
 }
 
 /// Read the puzzle input.

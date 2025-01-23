@@ -14,33 +14,33 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
+    fn new(data: &str) -> Self {
+        let mut pos = vec![];
+        let mut vel = vec![];
+
+        for line in data.lines() {
+            let row: Vec<_> = line.split(['<', '>', ',']).collect();
+
+            pos.push((
+                row[1].trim().parse().unwrap(),
+                row[2].trim().parse().unwrap(),
+            ));
+
+            vel.push((
+                row[4].trim().parse().unwrap(),
+                row[5].trim().parse().unwrap(),
+            ));
+        }
+
         Self {
-            pos: vec![],
-            vel: vec![],
+            pos,
+            vel,
             message: String::new(),
             seconds: 0,
         }
     }
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        for line in data.lines() {
-            let row: Vec<_> = line.split(['<', '>', ',']).collect();
-
-            self.pos.push((
-                row[1].trim().parse().unwrap(),
-                row[2].trim().parse().unwrap(),
-            ));
-
-            self.vel.push((
-                row[4].trim().parse().unwrap(),
-                row[5].trim().parse().unwrap(),
-            ));
-        }
-    }
-
-    fn solve(&mut self, verbose: bool) {
+    fn solve(&mut self) {
         let mut pos = self.pos.clone();
 
         let mut prev_height = i32::MAX;
@@ -94,10 +94,6 @@ impl Puzzle {
             .collect::<Vec<String>>()
             .join("\n");
 
-        if verbose {
-            println!("{lcd}");
-        }
-
         if height == 10 {
             self.message = scan_6x10(&lcd);
         }
@@ -119,11 +115,16 @@ impl Puzzle {
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, u32) {
+    let mut puzzle = Puzzle::new(data);
+    puzzle.solve();
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    puzzle.solve(args.verbose);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }

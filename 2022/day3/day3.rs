@@ -5,9 +5,9 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
+    fn new(data: &str) -> Self {
         Self {
-            rucksacks: Vec::new(),
+            rucksacks: data.lines().map(std::string::ToString::to_string).collect(),
         }
     }
 
@@ -16,11 +16,6 @@ impl Puzzle {
             'A'..='Z' => 27 + u32::from(c) - u32::from('A'),
             _ => 1 + u32::from(c) - u32::from('a'),
         }
-    }
-
-    fn configure(&mut self, data: &str) {
-        let lines = data.trim().lines().collect::<Vec<_>>();
-        self.rucksacks = lines.iter().map(std::string::ToString::to_string).collect();
     }
 
     fn part1(&self) -> u32 {
@@ -60,20 +55,29 @@ impl Puzzle {
     }
 }
 
-/// Solve the puzzle with the user input
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
-#[test]
-fn test_puzzle() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 157);
-    assert_eq!(puzzle.part2(), 70);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_puzzle() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 157);
+        assert_eq!(puzzle.part2(), 70);
+    }
 }

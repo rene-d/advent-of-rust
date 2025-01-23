@@ -1,11 +1,14 @@
 //! [Day 19: An Elephant Named Joseph](https://adventofcode.com/2016/day/19)
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-fn solve(data: &str) -> (usize, usize) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
     let elves = data.trim_ascii().parse().unwrap();
 
     (part1(elves), part2(elves))

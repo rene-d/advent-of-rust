@@ -121,10 +121,22 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    fn new(data: &str) -> Self {
+        let mut depth = 0;
+        let mut target = (0, 0);
+
+        for line in data.lines() {
+            if let Some(s) = line.strip_prefix("target: ") {
+                let (x, y) = s.split_once(',').unwrap();
+                target = (x.parse().unwrap(), y.parse().unwrap());
+            } else if let Some(x) = line.strip_prefix("depth: ") {
+                depth = x.parse().unwrap();
+            }
+        }
+
         Self {
-            depth: 0,
-            target: (0, 0),
+            depth,
+            target,
             lru: FxHashMap::default(),
         }
     }
@@ -181,18 +193,6 @@ impl Puzzle {
 }
 
 impl Puzzle {
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        for line in data.lines() {
-            if let Some(target) = line.strip_prefix("target: ") {
-                let (x, y) = target.split_once(',').unwrap();
-                self.target = (x.parse().unwrap(), y.parse().unwrap());
-            } else if let Some(depth) = line.strip_prefix("depth: ") {
-                self.depth = depth.parse().unwrap();
-            }
-        }
-    }
-
     /// Solve part one.
     fn part1(&mut self) -> u32 {
         (0..=self.target.0)
@@ -242,35 +242,40 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-
-    if args.verbose {
-        puzzle.show();
-    }
-
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let mut puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+
+    if args.verbose {
+        Puzzle::new(&args.input).show();
+        std::process::exit(0);
+    }
+
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 114);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 45);
     }
 }

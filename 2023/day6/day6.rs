@@ -6,28 +6,23 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            time: String::new(),
-            distance: String::new(),
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
+    fn new(data: &str) -> Self {
         let mut lines = data.lines();
-        self.time = lines
-            .next()
-            .unwrap()
-            .strip_prefix("Time:")
-            .unwrap()
-            .to_string();
-        self.distance = lines
-            .next()
-            .unwrap()
-            .strip_prefix("Distance:")
-            .unwrap()
-            .to_string();
+
+        Self {
+            time: lines
+                .next()
+                .unwrap()
+                .strip_prefix("Time:")
+                .unwrap()
+                .to_string(),
+            distance: lines
+                .next()
+                .unwrap()
+                .strip_prefix("Distance:")
+                .unwrap()
+                .to_string(),
+        }
     }
 
     fn win(t: u64, d: u64) -> u64 {
@@ -71,30 +66,34 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 288);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part2(), 71503);
     }
 }

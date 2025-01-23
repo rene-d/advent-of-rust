@@ -1,11 +1,14 @@
 //! [Day 20: Firewall Rules](https://adventofcode.com/2016/day/20)
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-fn solve(data: &str) -> (u32, u32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
     // load the blacklist and sort it ascending
     let mut blacklist = Vec::new();
     for line in data.lines() {

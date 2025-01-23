@@ -1,23 +1,18 @@
 //! [Day 4: Secure Container](https://adventofcode.com/2019/day/4)
 
-// use std::collections::{FxHashMap,FxHashSet};
-
 struct Puzzle {
     a: u32,
     b: u32,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { a: 0, b: 0 }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
+    fn new(data: &str) -> Self {
         let (a, b) = data.trim_ascii().split_once('-').unwrap();
 
-        self.a = a.parse().unwrap();
-        self.b = b.parse().unwrap();
+        Self {
+            a: a.parse().unwrap(),
+            b: b.parse().unwrap(),
+        }
     }
 
     /// Solve part one.
@@ -71,10 +66,15 @@ impl Puzzle {
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }

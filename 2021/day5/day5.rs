@@ -2,21 +2,21 @@
 
 use regex::Regex;
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    args.run(solve);
+}
 
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
     let re = Regex::new(r"^(\d+),(\d+) -> (\d+),(\d+)$").unwrap();
 
     // --- Part One ---
     let mut grid = vec![[0_i16; 1000]; 1000];
 
-    for line in &data {
+    for line in data.lines() {
         let drawn = re.captures(line).unwrap();
 
         let mut x1 = drawn[1].parse::<usize>().unwrap();
@@ -49,10 +49,9 @@ fn main() {
             }
         }
     }
-    println!("{sum:?}");
 
     // --- Part Two ---
-    for line in &data {
+    for line in data.lines() {
         let drawn = re.captures(line).unwrap();
 
         let mut x1 = drawn[1].parse::<usize>().unwrap();
@@ -85,5 +84,18 @@ fn main() {
             }
         }
     }
-    println!("{sum2:?}");
+
+    (sum, sum2)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_solve() {
+        assert_eq!(solve(TEST_INPUT), (5, 12));
+    }
 }

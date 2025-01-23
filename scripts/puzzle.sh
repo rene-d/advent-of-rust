@@ -190,7 +190,7 @@ fn main() {
     });
 }
 
-/// Test from puzzle input
+
 #[cfg(test)]
 mod test {
     use super::*;

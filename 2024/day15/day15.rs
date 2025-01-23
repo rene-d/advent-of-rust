@@ -107,6 +107,7 @@ fn move_boxes(grid: &mut Grid, robot: &mut Coord, d: Coord) {
     *robot += d;
 }
 
+#[cfg(feature = "anim")]
 fn save_warehouse(
     grid: &Grid,
     robot: Coord,
@@ -186,35 +187,27 @@ fn save_warehouse(
 struct Puzzle {
     data: String,
     moves: Vec<char>,
-    anim: u8,
 }
 
 impl Puzzle {
     fn new(data: &str) -> Self {
         let (a, b) = data.split_once("\n\n").unwrap();
 
-        let mut anim = 0;
-        if let Ok(anim_var) = std::env::var("MAKE_ANIM") {
-            if let Ok(anim_var) = anim_var.parse::<u8>() {
-                anim = anim_var;
-            }
-        }
-
         Self {
             data: a.to_string(),
             moves: b.chars().collect(),
-            anim,
         }
     }
 
     /// Solve part one.
     fn part1(&self) -> i32 {
         let (mut grid, mut robot) = init_first_warehouse(&self.data);
+
+        #[cfg(feature = "anim")]
         let mut n = 1;
 
-        if self.anim == 1 {
-            let _ = save_warehouse(&grid, robot, 0, 0);
-        }
+        #[cfg(feature = "anim")]
+        let _ = save_warehouse(&grid, robot, 0, 0);
 
         for m in &self.moves {
             let d = match m {
@@ -245,7 +238,8 @@ impl Puzzle {
                 _ => panic!(),
             };
 
-            if self.anim == 1 {
+            #[cfg(feature = "anim")]
+            {
                 let _ = save_warehouse(&grid, robot, n, self.moves.len());
                 n += 1;
             }
@@ -258,11 +252,11 @@ impl Puzzle {
     fn part2(&self) -> i32 {
         let (mut grid, mut robot) = init_second_warehouse(&self.data);
 
+        #[cfg(feature = "anim")]
         let mut n = 1;
 
-        if self.anim == 2 {
-            let _ = save_warehouse(&grid, robot, 0, 0);
-        }
+        #[cfg(feature = "anim")]
+        let _ = save_warehouse(&grid, robot, 0, 0);
 
         for m in &self.moves {
             let d = match m {
@@ -283,7 +277,8 @@ impl Puzzle {
                 _ => {}
             }
 
-            if self.anim == 2 {
+            #[cfg(feature = "anim")]
+            {
                 let _ = save_warehouse(&grid, robot, n, self.moves.len());
                 n += 1;
             }
@@ -293,17 +288,34 @@ impl Puzzle {
     }
 }
 
-fn solve(data: &str) -> (i32, i32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
     let puzzle = Puzzle::new(data);
     (puzzle.part1(), puzzle.part2())
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
+
+    #[cfg(feature = "anim")]
+    if args.has_option("--anim1") {
+        let puzzle = Puzzle::new(&args.input);
+        puzzle.part1();
+        std::process::exit(0);
+    }
+
+    #[cfg(feature = "anim")]
+    if args.has_option("--anim2") {
+        let puzzle = Puzzle::new(&args.input);
+        puzzle.part2();
+        std::process::exit(0);
+    }
+
     args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;

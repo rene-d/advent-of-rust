@@ -145,17 +145,14 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { nanobots: vec![] }
-    }
+    fn new(data: &str) -> Self {
+        let mut nanobots = vec![];
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         let re = Regex::new(r"^pos=<(-?\d+),(-?\d+),(-?\d+)>, r=(-?\d+)$").unwrap();
 
         for line in data.lines() {
             if let Some(caps) = re.captures(line) {
-                self.nanobots.push(Nanobot {
+                nanobots.push(Nanobot {
                     x: caps.get(1).unwrap().as_str().parse().unwrap(),
                     y: caps.get(2).unwrap().as_str().parse().unwrap(),
                     z: caps.get(3).unwrap().as_str().parse().unwrap(),
@@ -163,6 +160,8 @@ impl Puzzle {
                 });
             }
         }
+
+        Self { nanobots }
     }
 
     /// Solve part one.
@@ -212,30 +211,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, i32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_1.txt"));
+        let puzzle = Puzzle::new(SAMPLE_1);
         assert_eq!(puzzle.part1(), 7);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part2(), 36);
     }
 }

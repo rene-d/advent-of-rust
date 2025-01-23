@@ -1,7 +1,5 @@
 //! [Day 6: Universal Orbit Map](https://adventofcode.com/2019/day/6)
 
-// use std::collections::{FxHashMap,FxHashSet};
-
 use rustc_hash::FxHashMap;
 
 struct Puzzle {
@@ -9,19 +7,16 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            orbits: FxHashMap::default(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut orbits = FxHashMap::default();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             if let Some((a, b)) = line.split_once(')') {
-                self.orbits.insert(b.to_string(), a.to_string());
+                orbits.insert(b.to_string(), a.to_string());
             }
         }
+
+        Self { orbits }
     }
 
     /// Solve part one.
@@ -67,30 +62,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+    const SAMPLE_4: &str = include_str!("sample_4.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_2.txt"));
+        let puzzle = Puzzle::new(SAMPLE_2);
         assert_eq!(puzzle.part1(), 42);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("sample_4.txt"));
+        let puzzle = Puzzle::new(SAMPLE_4);
         assert_eq!(puzzle.part2(), 4);
     }
 }

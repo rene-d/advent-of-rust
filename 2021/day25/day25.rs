@@ -1,12 +1,14 @@
 //! [Day 25: Sea Cucumber](https://adventofcode.com/2021/day/25)
 
-/// main function
-fn main() {
-    let mut args = aoc::parse_args();
-    args.run(|data| (solve(data), aoc::CHRISTMAS));
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }
 
-fn solve(data: &str) -> i32 {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, aoc::Christmas) {
     let data = data.lines().collect::<Vec<&str>>();
 
     let nx = data[0].len();
@@ -25,7 +27,8 @@ fn solve(data: &str) -> i32 {
     while do_move(&mut grid) {
         step += 1;
     }
-    step
+
+    (step, aoc::CHRISTMAS)
 }
 
 fn do_move(grid: &mut [Vec<u8>]) -> bool {
@@ -84,7 +87,6 @@ fn do_move(grid: &mut [Vec<u8>]) -> bool {
     moved
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
@@ -93,6 +95,6 @@ mod test {
 
     #[test]
     fn part1() {
-        assert_eq!(solve(TEST_INPUT), 58);
+        assert_eq!(solve(TEST_INPUT).0, 58);
     }
 }

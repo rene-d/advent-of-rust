@@ -109,20 +109,23 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
-    let verbose = args.verbose;
-
-    args.run(|data| {
-        let puzzle = Puzzle::new(data);
-        if verbose {
-            puzzle.print();
-        }
-        (puzzle.part1(), puzzle.part2())
-    });
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    if args.verbose {
+        let puzzle = Puzzle::new(&args.input);
+        puzzle.print();
+    }
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

@@ -9,28 +9,13 @@ use pest_derive::Parser;
 #[grammar = "day8.pest"]
 struct MyParser;
 
-struct Puzzle {
+struct Cpu {
     registers: FxHashMap<String, i32>,
-
     last_max: i32,  // i.e. part 1
     value_max: i32, // i.e. part 2
 }
 
-impl Puzzle {
-    fn new() -> Self {
-        Self {
-            registers: FxHashMap::default(),
-            last_max: 0,
-            value_max: 0,
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.parse(data);
-    }
-
-    /// Parse the input.
+impl Cpu {
     fn parse_line(&mut self, line: &str) {
         let mut a = MyParser::parse(Rule::instr, line)
             .unwrap()
@@ -71,48 +56,40 @@ impl Puzzle {
             self.value_max = self.value_max.max(self.last_max);
         }
     }
-
-    fn parse(&mut self, data: &str) {
-        for line in data.lines() {
-            self.parse_line(line);
-        }
-    }
-
-    /// Solve part one.
-    const fn part1(&self) -> i32 {
-        self.last_max
-    }
-
-    /// Solve part two.
-    const fn part2(&self) -> i32 {
-        self.value_max
-    }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let mut cpu = Cpu {
+        registers: FxHashMap::default(),
+        last_max: 0,
+        value_max: 0,
+    };
+
+    for line in data.lines() {
+        cpu.parse_line(line);
+    }
+
+    (cpu.last_max, cpu.value_max)
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
 
-    #[test]
-    fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
-        assert_eq!(puzzle.part1(), 1);
-    }
+    const TEST_INPUT: &str = include_str!("test.txt");
 
     #[test]
-    fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
-        assert_eq!(puzzle.part2(), 10);
+    fn test_solve() {
+        let answer = solve(TEST_INPUT);
+        assert_eq!(answer.0, 1);
+        assert_eq!(answer.1, 10);
     }
 }

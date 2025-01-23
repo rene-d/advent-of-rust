@@ -21,15 +21,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            stacks: vec![String::new(); 9],
-            moves: Vec::new(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut stacks = vec![String::new(); 9];
+        let mut moves = Vec::new();
 
-    /// load data from input
-    fn configure(&mut self, data: &str) {
         let re = Regex::new(r"move (\d+) from (\d+) to (\d+)").unwrap();
 
         let mut state = State::Stacks;
@@ -43,7 +38,7 @@ impl Puzzle {
                 while p * 4 + 1 < line.len() {
                     let crate_id = line.chars().nth(p * 4 + 1).unwrap();
                     if crate_id.is_ascii_uppercase() {
-                        self.stacks[p].push(crate_id);
+                        stacks[p].push(crate_id);
                     }
                     p += 1;
                 }
@@ -53,9 +48,11 @@ impl Puzzle {
                     stack_from: m[2].parse::<usize>().unwrap(),
                     stack_to: m[3].parse::<usize>().unwrap(),
                 };
-                self.moves.push(mov);
+                moves.push(mov);
             }
         }
+
+        Self { stacks, moves }
     }
 
     /// solves part1
@@ -99,20 +96,30 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, String) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test_puzzle() {
-    let mut puzzle = Puzzle::new();
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
 
-    puzzle.configure(&aoc::load_input_data("test.txt"));
+#[cfg(test)]
+mod test {
+    use super::*;
 
-    assert_eq!(puzzle.part1(), "CMZ");
-    assert_eq!(puzzle.part2(), "MCD");
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_puzzle() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+
+        assert_eq!(puzzle.part1(), "CMZ");
+        assert_eq!(puzzle.part2(), "MCD");
+    }
 }

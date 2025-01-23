@@ -115,36 +115,28 @@ impl Expr {
     }
 }
 
-struct Puzzle {
-    part1: u64,
-    part2: u64,
-}
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let mut part1 = 0;
+    let mut part2 = 0;
 
-impl Puzzle {
-    /// Solve puzzle.
-    fn solve(data: &str) -> Self {
-        let mut part1 = 0;
-        let mut part2 = 0;
+    for line in data.lines() {
+        let expr = Expr::parse(line);
 
-        for line in data.lines() {
-            let expr = Expr::parse(line);
-
-            part1 += expr.eval(0).0;
-            part2 += expr.eval_mul(0).0;
-        }
-
-        Self { part1, part2 }
+        part1 += expr.eval(0).0;
+        part2 += expr.eval_mul(0).0;
     }
+
+    (part1, part2)
 }
 
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let puzzle = Puzzle::solve(&args.input);
-    println!("{}", puzzle.part1);
-    println!("{}", puzzle.part2);
+    args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;

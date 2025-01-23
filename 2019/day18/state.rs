@@ -1,4 +1,4 @@
-use crate::{mazecell::MazeCell, path::Path};
+use super::{mazecell::MazeCell, path::Path};
 use rustc_hash::FxHashMap;
 
 #[derive(Hash, Eq, PartialEq, Ord, PartialOrd, Clone)]

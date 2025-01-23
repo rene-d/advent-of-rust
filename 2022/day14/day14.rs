@@ -15,19 +15,14 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
+    fn new(data: &str) -> Self {
+        let mut puzzle = Self {
             wall: FxHashSet::default(),
             floor: 0,
             sand: 0,
-        }
-    }
+        };
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
-        let lines = data.split('\n').collect::<Vec<_>>();
-
-        for line in lines {
+        for line in data.lines() {
             if line.is_empty() {
                 continue;
             }
@@ -49,13 +44,13 @@ impl Puzzle {
                     let y1 = p1.y.min(p2.y);
                     let y2 = p1.y.max(p2.y);
                     for y in y1..=y2 {
-                        self.wall.insert(Coord { x: p1.x, y });
+                        puzzle.wall.insert(Coord { x: p1.x, y });
                     }
                 } else if p1.y == p2.y {
                     let x1 = p1.x.min(p2.x);
                     let x2 = p1.x.max(p2.x);
                     for x in x1..=x2 {
-                        self.wall.insert(Coord { x, y: p1.y });
+                        puzzle.wall.insert(Coord { x, y: p1.y });
                     }
                 } else {
                     panic!("{p1:?} {p2:?} diagonal");
@@ -63,7 +58,9 @@ impl Puzzle {
             }
         }
 
-        self.floor = self.wall.iter().map(|p| p.y).max().unwrap() + 2;
+        puzzle.floor = puzzle.wall.iter().map(|p| p.y).max().unwrap() + 2;
+
+        puzzle
     }
 
     fn fall(&mut self, part2: bool) -> bool {
@@ -133,19 +130,27 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let mut puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 24);
-    assert_eq!(puzzle.part2(), 93);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let mut puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 24);
+        assert_eq!(puzzle.part2(), 93);
+    }
 }

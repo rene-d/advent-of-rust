@@ -23,24 +23,18 @@ impl fmt::Debug for Point {
     }
 }
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    args.run(solve);
+}
 
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, i32) {
     // load puzzle data
     let scanners = load_scanners(data);
 
-    // let now = Instant::now();
-    solve(&scanners);
-    // println!("elapsed: {} s", now.elapsed().as_secs_f64());
-}
-
-fn solve(scanners: &[Vec<Point>]) {
     // the list of different beacons
     let mut beacons: FxHashSet<Point> = FxHashSet::default();
     for p in &scanners[0] {
@@ -60,7 +54,7 @@ fn solve(scanners: &[Vec<Point>]) {
 
     // compute all rotated coordinates of beacons
     let mut scanner_rotated_list: Vec<Vec<Vec<Point>>> = Vec::new();
-    for scanner in scanners {
+    for scanner in &scanners {
         let mut scanner_rotated: Vec<Vec<Point>> = Vec::new();
 
         for rotation in 0..24 {
@@ -137,8 +131,6 @@ fn solve(scanners: &[Vec<Point>]) {
         pending.remove(&found);
     }
 
-    println!("{}", beacons.len());
-
     let mut manhattan = 0;
     for p1 in &scanner_coords {
         for p2 in &scanner_coords {
@@ -149,14 +141,14 @@ fn solve(scanners: &[Vec<Point>]) {
         }
     }
 
-    println!("{manhattan}");
+    (beacons.len(), manhattan)
 }
 
-fn load_scanners(data: Vec<String>) -> Vec<Vec<Point>> {
+fn load_scanners(data: &str) -> Vec<Vec<Point>> {
     let mut scanners: Vec<Vec<Point>> = Vec::new();
     let mut beacons: Vec<Point> = Vec::new();
 
-    for line in data {
+    for line in data.lines() {
         if let Ok(_id) = scan_fmt!(&line, "--- scanner {} ---", i32) {
             if !beacons.is_empty() {
                 scanners.push(beacons);
@@ -213,5 +205,20 @@ const fn rotate(point: &Point, rotation: usize) -> Point {
         x: p.0,
         y: p.1,
         z: p.2,
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test_puzzle() {
+        let parts = solve(TEST_INPUT);
+
+        assert_eq!(parts.0, 79);
+        assert_eq!(parts.1, 3621);
     }
 }

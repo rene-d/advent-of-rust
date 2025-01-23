@@ -6,7 +6,10 @@ use std::collections::VecDeque;
 
 type Grid = aoc::Grid<u8>;
 
-fn solve(data: &str) -> (u32, u32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
     let grid = Grid::parse(data);
 
     let mut standard_price = 0;
@@ -83,8 +86,8 @@ fn solve(data: &str) -> (u32, u32) {
     (standard_price, discount_price)
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 

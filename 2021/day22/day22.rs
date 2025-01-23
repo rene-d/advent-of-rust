@@ -68,23 +68,10 @@ impl Cube {
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
-
-    println!("{}", part1(&data));
-    println!("{}", part2(&data));
-}
-
-fn part2(data: &[String]) -> i64 {
+fn part2(data: &str) -> i64 {
     let mut cubes: Vec<Cube> = vec![];
 
-    for line in data {
+    for line in data.lines() {
         let (flag_on, coords) = line.split_once(' ').unwrap();
 
         let cube = Cube::new(coords);
@@ -101,14 +88,14 @@ fn part2(data: &[String]) -> i64 {
     cubes.iter().map(Cube::volume).sum()
 }
 
-fn part1(data: &[String]) -> usize {
+fn part1(data: &str) -> usize {
     let re =
         Regex::new(r"^(on|off) x=(-?\d+)\.\.(-?\d+),y=(-?\d+)\.\.(-?\d+),z=(-?\d+)\.\.(-?\d+)$")
             .unwrap();
 
     let mut cubes_on: FxHashSet<(i32, i32, i32)> = FxHashSet::default();
 
-    for line in data {
+    for line in data.lines() {
         let cube = re.captures(line).unwrap();
 
         let flag_on = cube[1].to_string() == "on";
@@ -136,32 +123,39 @@ fn part1(data: &[String]) -> usize {
     cubes_on.len()
 }
 
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (usize, i64) {
+    (part1(data), part2(data))
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const SAMPLE_1: &str = include_str!("sample_1.txt");
+    const SAMPLE_2: &str = include_str!("sample_2.txt");
+    const SAMPLE_3: &str = include_str!("sample_3.txt");
+
     #[test]
     fn test1() {
-        let data = std::fs::read_to_string("sample_1.txt").unwrap();
-        let data: Vec<_> = data.lines().map(String::from).collect();
-
-        assert_eq!(part1(&data), 39);
+        assert_eq!(part1(SAMPLE_1), 39);
     }
 
     #[test]
     fn test2() {
-        let data = std::fs::read_to_string("sample_2.txt").unwrap();
-        let data: Vec<_> = data.lines().map(String::from).collect();
-
-        assert_eq!(part1(&data), 590784);
+        assert_eq!(part1(SAMPLE_2), 590784);
     }
 
     #[test]
     fn test3() {
-        let data = std::fs::read_to_string("sample_3.txt").unwrap();
-        let data: Vec<_> = data.lines().map(String::from).collect();
-
-        assert_eq!(part2(&data), 2758514936282235);
-        assert_eq!(part1(&data), 474140);
+        assert_eq!(part1(SAMPLE_3), 474140);
+        assert_eq!(part2(SAMPLE_3), 2758514936282235);
     }
 }

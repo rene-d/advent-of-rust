@@ -2,7 +2,7 @@
 
 use assembunny::{BunnyVM, REG_A, REG_C};
 
-fn solve(bunny_vm: &mut BunnyVM, c: i32) -> i32 {
+fn run_program(bunny_vm: &mut BunnyVM, c: i32) -> i32 {
     bunny_vm.reset();
     bunny_vm.registers[REG_C] = c;
 
@@ -11,12 +11,16 @@ fn solve(bunny_vm: &mut BunnyVM, c: i32) -> i32 {
     bunny_vm.registers[REG_A]
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let mut bunny_vm = BunnyVM::new(data);
 
-    args.run(|program| {
-        let mut bunny_vm = BunnyVM::new(program);
+    (run_program(&mut bunny_vm, 0), run_program(&mut bunny_vm, 1))
+}
 
-        (solve(&mut bunny_vm, 0), solve(&mut bunny_vm, 1))
-    });
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }

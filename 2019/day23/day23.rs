@@ -212,12 +212,14 @@ impl Task for Node {
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
+    Network::new(data).run()
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-
-    let mut net = Network::new(&args.input);
-    let puzzle = net.run();
-
-    println!("{}", puzzle.0);
-    println!("{}", puzzle.1);
+    args.run(solve);
 }

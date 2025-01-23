@@ -152,7 +152,10 @@ Defense +3   80     0       3
     (min_win_cost, max_loose_cost)
 }
 
-fn solve(data: &str) -> (i32, i32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
     let mut boss = Character::new("boss", 0, 0, 0);
 
     for line in data.lines() {
@@ -168,7 +171,7 @@ fn solve(data: &str) -> (i32, i32) {
     play(&boss)
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }

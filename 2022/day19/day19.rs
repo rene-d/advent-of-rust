@@ -210,17 +210,10 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { blueprints: vec![] }
-    }
-
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
-        self.blueprints.extend(
-            data.split('\n')
-                .filter(|x| !x.is_empty())
-                .map(Blueprint::new),
-        );
+    fn new(data: &str) -> Self {
+        Self {
+            blueprints: data.lines().map(Blueprint::new).collect(),
+        }
     }
 
     // Solves part one
@@ -240,23 +233,26 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 33);
     }
 
@@ -264,8 +260,7 @@ mod test {
     #[cfg(not(debug_assertions))]
     #[test]
     fn test_part2() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
 
         // assert_eq!(puzzle.blueprints[0].solve(32), 56);
         assert_eq!(puzzle.blueprints[1].solve(32), 62);

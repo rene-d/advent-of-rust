@@ -1,9 +1,15 @@
 //! [Day 9: Explosives in Cyberspace](https://adventofcode.com/2016/day/9)
 
-/// Solve the puzzle with the given input.
-fn main() {
-    let mut args = aoc::parse_args();
-    args.run(|data| (part1(data), part2(data)));
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    (part1(data), part2(data))
 }
 
 /// Do part 1 of the puzzle

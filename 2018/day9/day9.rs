@@ -1,15 +1,9 @@
 //! [Day 9: Marble Mania](https://adventofcode.com/2018/day/9)
 
-#[must_use]
-pub fn c_solve(elves: u32, points: u32) -> u32 {
-    extern "C" {
-        fn c_solve(elves: u32, points: u32) -> u32;
-    }
+use rustc_hash::FxHashMap;
+use std::collections::VecDeque;
 
-    unsafe { c_solve(elves, points) }
-}
-
-fn solve(nb_players: u32, nb_marbles: u32) -> u32 {
+fn play_slow(nb_players: u32, nb_marbles: u32) -> u32 {
     let mut marbles = vec![0u32];
     let mut scores = vec![0u32; nb_players as usize];
 
@@ -28,76 +22,87 @@ fn solve(nb_players: u32, nb_marbles: u32) -> u32 {
     *scores.iter().max().unwrap()
 }
 
+fn play_fast(nb_players: u32, marbles: u32) -> u32 {
+    let mut scores = FxHashMap::default();
+    let mut circle = VecDeque::with_capacity(usize::try_from(marbles).unwrap());
+    circle.push_back(0);
+    for (m, p) in (1..=marbles).zip((0..nb_players).cycle()) {
+        if m % 23 == 0 {
+            circle.rotate_right(8);
+            *scores.entry(p).or_default() += m + circle.pop_front().unwrap();
+            circle.rotate_left(1);
+        } else {
+            circle.rotate_left(1);
+            circle.push_back(m);
+        }
+    }
+    scores.values().copied().max().unwrap()
+}
+
 struct Puzzle {
     elves: u32,
     points: u32,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
-            elves: 0,
-            points: 0,
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
+    fn new(data: &str) -> Self {
         let row = data.split_ascii_whitespace().collect::<Vec<_>>();
         match &row[..] {
-            [n, _, _, _, _, _, p, _] => {
-                self.elves = n.parse().unwrap();
-                self.points = p.parse().unwrap();
-            }
-            _ => panic!("bad input: {data}"),
-        };
+            [n, _, _, _, _, _, p, _] => Self {
+                elves: n.parse().unwrap(),
+                points: p.parse().unwrap(),
+            },
+            _ => panic!("bad input: {data:?}"),
+        }
     }
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        solve(self.elves, self.points)
+        play_slow(self.elves, self.points)
     }
 
     /// Solve part two.
     fn part2(&self) -> u32 {
-        c_solve(self.elves, self.points * 100)
+        play_fast(self.elves, self.points * 100)
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.elves = 9;
-        puzzle.points = 25;
+        let puzzle = Puzzle::new("9 x x x x x 25 x");
         assert_eq!(puzzle.part1(), 32);
     }
 
     #[test]
     fn test02() {
-        assert_eq!(solve(10, 1618), 8317);
-        assert_eq!(solve(13, 7999), 146_373);
-        assert_eq!(solve(21, 6111), 54718);
-        assert_eq!(solve(30, 5807), 37305);
+        assert_eq!(play_fast(10, 1618), 8317);
+        assert_eq!(play_fast(13, 7999), 146_373);
+        assert_eq!(play_fast(21, 6111), 54718);
+        assert_eq!(play_fast(30, 5807), 37305);
     }
 
     #[test]
     fn test03() {
-        assert_eq!(c_solve(10, 1618), 8317);
-        assert_eq!(c_solve(13, 7999), 146_373);
-        assert_eq!(c_solve(21, 6111), 54718);
-        assert_eq!(c_solve(30, 5807), 37305);
+        assert_eq!(play_slow(10, 1618), 8317);
+        assert_eq!(play_slow(13, 7999), 146_373);
+        assert_eq!(play_slow(21, 6111), 54718);
+        assert_eq!(play_slow(30, 5807), 37305);
     }
 }

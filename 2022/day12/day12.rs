@@ -22,49 +22,48 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self {
+    fn new(data: &str) -> Self {
+        let mut puzzle = Self {
             grid: vec![],
             start: (0, 0),
             end: (0, 0),
             nx: 0,
             ny: 0,
-        }
-    }
+        };
 
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
         let lines = data.split('\n').collect::<Vec<_>>();
 
-        self.nx = lines.first().unwrap().len();
+        puzzle.nx = lines.first().unwrap().len();
         let mut y = 0;
         for line in lines {
             if line.is_empty() {
                 continue;
             }
-            let mut row = vec![0; self.nx];
+            let mut row = vec![0; puzzle.nx];
             for (x, pos) in line.chars().enumerate() {
                 if pos == 'S' {
-                    self.start = (x, y);
+                    puzzle.start = (x, y);
                 }
                 row[x] = match pos {
                     'S' => {
                         // start position: height 0
-                        self.start = (x, y);
+                        puzzle.start = (x, y);
                         1
                     }
                     'E' => {
                         // end position: height 26 (like 'z')
-                        self.end = (x, y);
+                        puzzle.end = (x, y);
                         26
                     }
                     _ => (pos as u8) - 96, // other locations: height 1 to 26
                 };
             }
-            self.grid.push(row);
+            puzzle.grid.push(row);
             y += 1;
         }
-        self.ny = self.grid.len();
+        puzzle.ny = puzzle.grid.len();
+
+        puzzle
     }
 
     /// Breadth-first search
@@ -141,19 +140,27 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-#[test]
-fn test01() {
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&aoc::load_input_data("test.txt"));
-    assert_eq!(puzzle.part1(), 31);
-    assert_eq!(puzzle.part2(), 29);
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 31);
+        assert_eq!(puzzle.part2(), 29);
+    }
 }

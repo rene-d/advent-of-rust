@@ -2,10 +2,11 @@
 
 use intcode::{Computer, State};
 
-fn main() {
-    let args = aoc::parse_args();
-
-    let mut program = Computer::load(&args.input);
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i64, i64) {
+    let mut program = Computer::load(data);
 
     let mut run = |init| {
         program.reset();
@@ -17,6 +18,10 @@ fn main() {
         result
     };
 
-    println!("{}", run(1)); // part 1
-    println!("{}", run(5)); // part 2
+    (run(1), run(5))
+}
+
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }

@@ -1,7 +1,8 @@
 //! [Day 1: Not Quite Lisp](https://adventofcode.com/2015/day/1)
 
 /// Solve the puzzle.
-fn solve(data: &str) -> (i32, i32) {
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
     let mut floor = 0;
     let mut position = 0;
     let mut enter = 0;
@@ -22,8 +23,8 @@ fn solve(data: &str) -> (i32, i32) {
 }
 
 /// Main function.
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
 
     args.run(solve);
 }

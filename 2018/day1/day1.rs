@@ -32,28 +32,35 @@ impl<'a> Puzzle<'a> {
     }
 }
 
-fn main() {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let puzzle = Puzzle::new(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT_1: &str = include_str!("test1.txt");
+    const TEST_INPUT_2: &str = include_str!("test2.txt");
+
     #[test]
     fn test01() {
-        let data = aoc::load_input_data("test1.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(TEST_INPUT_1);
         assert_eq!(puzzle.part1(), -6);
     }
 
     #[test]
     fn test02() {
-        let data = aoc::load_input_data("test2.txt");
-        let puzzle = Puzzle::new(&data);
+        let puzzle = Puzzle::new(TEST_INPUT_2);
         assert_eq!(puzzle.part2(), 14);
     }
 }

@@ -3,144 +3,106 @@
 use rustc_hash::{FxHashMap, FxHashSet};
 use std::collections::VecDeque;
 
-struct Puzzle {
-    edges: FxHashMap<(i32, i32), FxHashSet<(i32, i32)>>,
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let mut edges: FxHashMap<(i32, i32), FxHashSet<(i32, i32)>> = FxHashMap::default();
 
-    max_steps: u32,
-    thousand_doors: u32,
+    let mut branchs = vec![];
+
+    let mut x = 0;
+    let mut y = 0;
+
+    for c in data.trim_ascii().chars() {
+        match c {
+            '^' | '$' => (),
+            '(' => branchs.push((x, y)),
+            ')' => {
+                (x, y) = branchs.pop().unwrap();
+            }
+            '|' => {
+                (x, y) = *branchs.last().unwrap();
+            }
+            _ => {
+                let (dx, dy) = match c {
+                    'N' => (0, -1),
+                    'E' => (1, 0),
+                    'S' => (0, 1),
+                    'W' => (-1, 0),
+                    _ => panic!("unknown char '{c}"),
+                };
+                (*edges.entry((x, y)).or_default()).insert((dx, dy));
+
+                x += dx;
+                y += dy;
+            }
+        }
+    }
+
+    // solve
+
+    let mut q = VecDeque::new();
+    let mut seen = FxHashSet::default();
+
+    let mut max_steps = 0;
+    let mut thousand_doors = 0;
+
+    q.push_back((0, 0, 0));
+    seen.insert((0, 0));
+
+    while let Some((steps, x, y)) = q.pop_front() {
+        max_steps = max_steps.max(steps);
+
+        if steps >= 1000 {
+            thousand_doors += 1;
+        }
+
+        if let Some(neighbors) = edges.get(&(x, y)) {
+            for (dx, dy) in neighbors {
+                let nx = x + dx;
+                let ny = y + dy;
+
+                if seen.insert((nx, ny)) {
+                    q.push_back((steps + 1, nx, ny));
+                }
+            }
+        }
+    }
+
+    (max_steps, thousand_doors)
 }
 
-impl Puzzle {
-    fn new() -> Self {
-        Self {
-            edges: FxHashMap::default(),
-            max_steps: 0,
-            thousand_doors: 0,
-        }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.parse(data.trim());
-    }
-
-    fn parse(&mut self, input: &str) {
-        let mut branchs = vec![];
-
-        let mut x = 0;
-        let mut y = 0;
-
-        for c in input.chars() {
-            match c {
-                '^' | '$' => (),
-                '(' => branchs.push((x, y)),
-                ')' => {
-                    (x, y) = branchs.pop().unwrap();
-                }
-                '|' => {
-                    (x, y) = *branchs.last().unwrap();
-                }
-                _ => {
-                    let (dx, dy) = match c {
-                        'N' => (0, -1),
-                        'E' => (1, 0),
-                        'S' => (0, 1),
-                        'W' => (-1, 0),
-                        _ => panic!("unknown char '{c}"),
-                    };
-                    (*self.edges.entry((x, y)).or_default()).insert((dx, dy));
-
-                    x += dx;
-                    y += dy;
-                }
-            }
-        }
-    }
-
-    fn solve(&mut self) {
-        let mut q = VecDeque::new();
-        let mut seen = FxHashSet::default();
-
-        self.max_steps = 0;
-        self.thousand_doors = 0;
-
-        q.push_back((0, 0, 0));
-        seen.insert((0, 0));
-
-        while let Some((steps, x, y)) = q.pop_front() {
-            self.max_steps = self.max_steps.max(steps);
-
-            if steps >= 1000 {
-                self.thousand_doors += 1;
-            }
-
-            if let Some(neighbors) = self.edges.get(&(x, y)) {
-                for (dx, dy) in neighbors {
-                    let nx = x + dx;
-                    let ny = y + dy;
-
-                    if seen.insert((nx, ny)) {
-                        q.push_back((steps + 1, nx, ny));
-                    }
-                }
-            }
-        }
-    }
-
-    /// Solve part one.
-    const fn part1(&self) -> u32 {
-        self.max_steps
-    }
-
-    /// Solve part two.
-    const fn part2(&self) -> u32 {
-        self.thousand_doors
-    }
-}
-
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    puzzle.solve();
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
 
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.parse("^ENWWW(NEEE|SSE(EE|N))$");
-        puzzle.solve();
-        assert_eq!(puzzle.part1(), 10);
+        let answers = solve("^ENWWW(NEEE|SSE(EE|N))$");
+        assert_eq!(answers.0, 10);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.parse("^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$");
-        puzzle.solve();
-        assert_eq!(puzzle.part1(), 18);
+        let answers = solve("^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$");
+        assert_eq!(answers.0, 18);
     }
 
     #[test]
     fn test03() {
-        let mut puzzle = Puzzle::new();
-        puzzle.parse("^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$");
-        puzzle.solve();
-        assert_eq!(puzzle.part1(), 23);
+        let answers = solve("^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$");
+        assert_eq!(answers.0, 23);
     }
 
     #[test]
     fn test04() {
-        let mut puzzle = Puzzle::new();
-        puzzle.parse("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$");
-        puzzle.solve();
-        assert_eq!(puzzle.part1(), 31);
+        let answers = solve("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$");
+        assert_eq!(answers.0, 31);
     }
 }

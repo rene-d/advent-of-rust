@@ -5,7 +5,6 @@
 #![allow(clippy::cast_possible_truncation)]
 
 use rustc_hash::FxHashMap;
-use std::time::{Duration, Instant};
 
 struct Puzzle {
     sx: i32,
@@ -16,22 +15,15 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
+    fn new(data: &str) -> Self {
+        let grid = data.lines().map(String::from).collect::<Vec<_>>();
         Self {
-            sx: 0,
-            sy: 0,
-            grid: vec![],
+            sx: grid[0].len() as i32,
+            sy: grid.len() as i32,
+            grid,
             sum_parts: 0,
             gears: FxHashMap::default(),
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.grid = data.lines().map(String::from).collect::<Vec<_>>();
-
-        self.sx = self.grid[0].len() as i32;
-        self.sy = self.grid.len() as i32;
     }
 
     /// Access the engine schematic
@@ -112,38 +104,36 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-
-    let start = Instant::now();
-
-    puzzle.configure(&args.input);
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let mut puzzle = Puzzle::new(data);
     puzzle.parse();
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
-
-    let duration: Duration = start.elapsed();
-    eprintln!("Time elapsed: {duration:?}");
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         puzzle.parse();
         assert_eq!(puzzle.part1(), 4361);
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         puzzle.parse();
         assert_eq!(puzzle.part2(), 467835);
     }

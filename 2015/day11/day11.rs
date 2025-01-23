@@ -3,7 +3,7 @@
 use std::fmt;
 
 #[derive(Clone)]
-struct Password {
+pub struct Password {
     pwd: Vec<char>,
     loops: usize,
 }
@@ -90,15 +90,18 @@ impl fmt::Display for Password {
     }
 }
 
-fn solve(data: &str) -> (Password, Password) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (Password, Password) {
     let mut pwd: Password = Password::new(data.trim_ascii());
 
     (pwd.next_valid(), pwd.next_valid())
 }
 
 /// main function
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 

@@ -29,15 +29,14 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { seats: Vec::new() }
-    }
+    fn new(data: &str) -> Self {
+        let mut seats = Vec::new();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.seats.extend(data.lines().map(parse_seat));
+        seats.extend(data.lines().map(parse_seat));
 
-        self.seats.sort_unstable();
+        seats.sort_unstable();
+
+        Self { seats }
     }
 
     /// Solve part one.
@@ -56,15 +55,19 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

@@ -1,7 +1,7 @@
 //! [Day 11: Hex Ed](https://adventofcode.com/2017/day/11)
 
-struct Puzzle {
-    data: String,
+struct Puzzle<'a> {
+    data: &'a str,
     part1: u32,
     part2: u32,
 }
@@ -9,18 +9,13 @@ struct Puzzle {
 const STEP_X: i32 = 1;
 const STEP_Y: i32 = 1;
 
-impl Puzzle {
-    const fn new() -> Self {
+impl<'a> Puzzle<'a> {
+    const fn new(data: &'a str) -> Self {
         Self {
-            data: String::new(),
+            data: data.trim_ascii(),
             part1: 0,
             part2: 0,
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.data = data.trim().to_string();
     }
 
     /// Determine the fewest number of steps to return to (0,0).
@@ -78,23 +73,26 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
+    let mut puzzle = Puzzle::new(data);
     puzzle.solve();
-    println!("{}", puzzle.part1);
-    println!("{}", puzzle.part2);
+    (puzzle.part1, puzzle.part2)
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
     fn test(data: &str, result: u32) {
-        let mut puzzle = Puzzle::new();
-        puzzle.data = data.to_string();
+        let mut puzzle = Puzzle::new(data);
         puzzle.solve();
         assert_eq!(puzzle.part1, result);
     }

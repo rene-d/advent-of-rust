@@ -9,3 +9,4 @@ regex = "*"
 
 [[bin]]
 name = "day24"
+path = "day24.rs"

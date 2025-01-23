@@ -2,8 +2,10 @@
 
 use rustc_hash::FxHashSet;
 
-/// Initialize from the puzzle input.
-fn solve(data: &str) -> (u32, u32) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u32, u32) {
     let mut banks: Vec<u32> = data
         .split_ascii_whitespace()
         .map_while(|i| i.parse().ok())
@@ -60,12 +62,11 @@ fn solve(data: &str) -> (u32, u32) {
     (part1, part2)
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;

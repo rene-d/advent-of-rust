@@ -1,98 +1,78 @@
 //! [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)
 
-use pest::iterators::Pair;
-use pest::Parser;
-use pest_derive::Parser;
+use nom::{
+    branch::alt, bytes::complete::tag, character::complete::i32, combinator::map,
+    multi::separated_list0, sequence::delimited, IResult,
+};
 use std::cmp::Ordering;
 
-#[derive(Parser)]
-#[grammar = "day13.pest"]
-struct PacketParser;
+/// A signal packet, as described in the puzzle
+#[derive(Debug, Clone)]
+enum Packet {
+    Integer(i32),
+    Array(Vec<Packet>),
+}
 
-fn cmp(a: &str, b: &str) -> Ordering {
-    fn inner_cmp(a: Pair<Rule>, b: Pair<Rule>) -> Ordering {
-        match (a.as_rule(), b.as_rule()) {
-            (Rule::integer, Rule::integer) => {
-                let na = a.as_str().parse::<i32>().unwrap();
-                let nb = b.as_str().parse::<i32>().unwrap();
-                na.cmp(&nb)
-            }
-            (Rule::array, Rule::integer) => {
-                let right = "[".to_string() + b.as_str() + "]";
-                let b = PacketParser::parse(Rule::value, right.as_str())
-                    .unwrap()
-                    .next()
-                    .unwrap();
-                inner_cmp(a, b)
-            }
-            (Rule::integer, Rule::array) => {
-                let left = "[".to_string() + a.as_str() + "]";
-                let a = PacketParser::parse(Rule::value, left.as_str())
-                    .unwrap()
-                    .next()
-                    .unwrap();
-                inner_cmp(a, b)
-            }
-            (Rule::array, Rule::array) => {
-                let mut iter_a = a.into_inner();
-                let mut iter_b = b.into_inner();
+impl Packet {
+    fn new(input: &str) -> IResult<&str, Self> {
+        alt((
+            map(i32, Self::Integer),
+            map(
+                delimited(
+                    tag("["),                             // start of array
+                    separated_list0(tag(","), Self::new), // array element (array or integer)
+                    tag("]"),                             // end of array
+                ),
+                Self::Array,
+            ),
+        ))(input)
+    }
 
+    fn cmp(&self, other: &Self) -> Ordering {
+        match (self, other) {
+            (Self::Integer(a), Self::Integer(b)) => a.cmp(b),
+            (Self::Integer(_), Self::Array(_)) => Self::Array(vec![self.clone()]).cmp(other),
+            (Self::Array(_), Self::Integer(_)) => self.cmp(&Self::Array(vec![other.clone()])),
+            (Self::Array(a), Self::Array(b)) => {
+                let mut iter_a = a.iter();
+                let mut iter_b = b.iter();
                 loop {
                     let value_a = iter_a.next();
                     let value_b = iter_b.next();
-
-                    if value_a.is_none() && value_b.is_some() {
-                        return Ordering::Less;
-                    }
-                    if value_a.is_some() && value_b.is_none() {
-                        return Ordering::Greater;
-                    }
-                    if value_a.is_none() && value_b.is_none() {
+                    if value_a.is_none() || value_b.is_none() {
                         break;
                     }
-                    let c = inner_cmp(value_a.unwrap(), value_b.unwrap());
-                    if c.is_ne() {
+                    let c = value_a.unwrap().cmp(value_b.unwrap());
+                    if c != Ordering::Equal {
                         return c;
                     }
                 }
-                Ordering::Equal
+                a.len().cmp(&b.len())
             }
-            _ => panic!("unknown rule pair"),
         }
     }
-
-    let a = PacketParser::parse(Rule::value, a).unwrap().next().unwrap();
-    let b = PacketParser::parse(Rule::value, b).unwrap().next().unwrap();
-    inner_cmp(a, b)
 }
 
 struct Puzzle {
-    packets: Vec<String>,
+    packets: Vec<Packet>,
 }
 
 impl Puzzle {
-    const fn new() -> Self {
-        Self { packets: vec![] }
-    }
-
-    /// Loads data from input (one line)
-    fn configure(&mut self, data: &str) {
-        let lines = data.split('\n').collect::<Vec<_>>();
-
-        for line in &lines {
-            if !line.is_empty() {
-                self.packets.push((*line).to_string());
-            }
+    fn new(data: &str) -> Self {
+        Self {
+            packets: data
+                .lines()
+                .filter_map(|line| Packet::new(line).ok())
+                .map(|(_, p)| p)
+                .collect(),
         }
     }
 
-    // Solves part one
+    // Solve part one
     fn part1(&self) -> usize {
         let mut result = 0;
-        for (i, chunk) in self.packets.chunks(2).enumerate() {
-            let left = &chunk[0];
-            let right = &chunk[1];
-            if cmp(left, right).is_lt() {
+        for (i, p) in self.packets.chunks(2).enumerate() {
+            if p[0].cmp(&p[1]) == Ordering::Less {
                 result += i + 1;
             }
         }
@@ -101,15 +81,18 @@ impl Puzzle {
 
     // Solve part two
     fn part2(&self) -> usize {
-        let mut a = self.packets.clone();
-        a.push("[[2]]".to_string());
-        a.push("[[6]]".to_string());
+        let mut packets = self.packets.clone();
+        let divider1 = Packet::new("[[2]]").unwrap().1;
+        let divider2 = Packet::new("[[6]]").unwrap().1;
 
-        a.sort_by(|a, b| cmp(a.as_str(), b.as_str()));
+        packets.push(divider1.clone());
+        packets.push(divider2.clone());
+
+        packets.sort_by(Packet::cmp);
 
         let mut result = 1;
-        for (i, s) in a.iter().enumerate() {
-            if s == "[[2]]" || s == "[[6]]" {
+        for (i, p) in packets.iter().enumerate() {
+            if p.cmp(&divider1) == Ordering::Equal || p.cmp(&divider2) == Ordering::Equal {
                 result *= i + 1;
             }
         }
@@ -117,23 +100,26 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
+#[must_use]
+pub fn solve(data: &str) -> (usize, usize) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
     let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+    args.run(solve);
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), 13);
         assert_eq!(puzzle.part2(), 140);
     }

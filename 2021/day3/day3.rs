@@ -1,20 +1,20 @@
 //! [Day 3: Binary Diagnostic](https://adventofcode.com/2021/day/3)
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    args.run(solve);
+}
 
-    println!("{}", part1(&data));
-    println!("{}", part2(&data));
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, isize) {
+    let data: Vec<_> = data.lines().collect();
+    (part1(&data), part2(&data))
 }
 
 /// step 2
-fn part2(data: &[String]) -> isize {
+fn part2(data: &[&str]) -> isize {
     let nb_bits = data[0].len();
     // println!("nb_bits: {}", nb_bits);
 
@@ -74,7 +74,7 @@ fn part2(data: &[String]) -> isize {
 }
 
 /// step 1: compute `gamma_rate` * `espilon_rate`
-fn part1(data: &[String]) -> i32 {
+fn part1(data: &[&str]) -> i32 {
     let mut gamma_rate = 0;
     let mut freq_list: [i32; 12] = [0; 12];
     let mut nb = 0;
@@ -108,26 +108,22 @@ fn part1(data: &[String]) -> i32 {
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test_part1() {
-        let data = load_data("test.txt".into());
-
+        let data = load_data();
         assert_eq!(part1(&data), 198);
     }
 
     #[test]
     fn test_part2() {
-        let data = load_data("test.txt".into());
-
+        let data = load_data();
         assert_eq!(part2(&data), 230);
     }
 
     /// load data from file
-    fn load_data(filename: std::path::PathBuf) -> Vec<String> {
-        std::fs::read_to_string(filename)
-            .unwrap()
-            .lines()
-            .map(String::from)
-            .collect()
+    fn load_data<'a>() -> Vec<&'a str> {
+        TEST_INPUT.lines().collect()
     }
 }

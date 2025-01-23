@@ -6,17 +6,14 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    const fn new() -> Self {
+    fn new(data: &str) -> Self {
         Self {
-            numbers: Vec::new(),
+            numbers: data
+                .lines()
+                .map_while(|line| line.parse::<u64>().ok())
+                .collect(),
             window: 25,
         }
-    }
-
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
-        self.numbers
-            .extend(data.lines().map_while(|line| line.parse::<u64>().ok()));
     }
 
     /// Solve part one.
@@ -60,31 +57,35 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test_part1() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         puzzle.window = 5;
         assert_eq!(puzzle.part1(), 127);
     }
 
     #[test]
     fn test_part2() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let mut puzzle = Puzzle::new(TEST_INPUT);
         puzzle.window = 5;
         assert_eq!(puzzle.part2(), 62);
     }

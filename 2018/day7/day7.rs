@@ -7,14 +7,9 @@ struct Puzzle {
 }
 
 impl Puzzle {
-    fn new() -> Self {
-        Self {
-            deps: FxHashMap::default(),
-        }
-    }
+    fn new(data: &str) -> Self {
+        let mut deps: FxHashMap<char, FxHashSet<char>> = FxHashMap::default();
 
-    /// Get the puzzle input.
-    fn configure(&mut self, data: &str) {
         for line in data.lines() {
             let line: Vec<_> = line.split_ascii_whitespace().collect();
 
@@ -22,9 +17,11 @@ impl Puzzle {
             let a = line[1].chars().next().unwrap();
             let b = line[7].chars().next().unwrap();
 
-            self.deps.entry(b).or_default().insert(a);
-            self.deps.entry(a).or_default();
+            deps.entry(b).or_default().insert(a);
+            deps.entry(a).or_default();
         }
+
+        Self { deps }
     }
 
     /// Solve part one.
@@ -128,30 +125,34 @@ impl Puzzle {
     }
 }
 
-fn main() {
-    let args = aoc::parse_args();
-    let mut puzzle = Puzzle::new();
-    puzzle.configure(&args.input);
-    println!("{}", puzzle.part1());
-    println!("{}", puzzle.part2());
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (String, u32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
-/// Test from puzzle input
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.part1(), "CABDFE");
     }
 
     #[test]
     fn test02() {
-        let mut puzzle = Puzzle::new();
-        puzzle.configure(&aoc::load_input_data("test.txt"));
+        let puzzle = Puzzle::new(TEST_INPUT);
         assert_eq!(puzzle.solve_part2(2, 0), 15);
     }
 }

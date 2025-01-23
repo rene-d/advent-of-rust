@@ -2,20 +2,20 @@
 
 use aoc::ocr::scan_5x6;
 
-/// main function
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    let data = args
-        .input
-        .lines()
-        .map(std::string::ToString::to_string)
-        .collect::<Vec<String>>();
+    args.run(solve);
+}
 
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, String) {
     let n = 2000;
     let mut grid = vec![vec![0i8; n]; n];
-    let mut part1 = false;
+    let mut part1 = 0;
 
-    for line in &data {
+    for line in data.lines() {
         if line.is_empty() || line.starts_with("fold") {
             break;
         }
@@ -25,7 +25,7 @@ fn main() {
         grid[yy][xx] = 1;
     }
 
-    for line in &data {
+    for line in data.lines() {
         if !line.starts_with("fold") {
             continue;
         }
@@ -56,15 +56,12 @@ fn main() {
             grid.resize(fold, vec![0; grid[0].len()]);
         }
 
-        if !part1 {
-            part1 = true;
-            let mut sum = 0i32;
+        if part1 == 0 {
             for row in &grid {
                 for cell in row {
-                    sum += i32::from(*cell);
+                    part1 += i32::from(*cell);
                 }
             }
-            println!("{sum}");
         }
     }
 
@@ -75,5 +72,6 @@ fn main() {
         }
         crt.push('\n');
     }
-    println!("{}", scan_5x6(&crt));
+
+    (part1, scan_5x6(&crt))
 }

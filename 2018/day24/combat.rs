@@ -1,4 +1,4 @@
-use crate::army::Army;
+use super::army::Army;
 
 const MAX_FIGHTS: usize = 10000;
 

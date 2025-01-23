@@ -1,7 +1,7 @@
 use std::ops::AddAssign;
 
-use crate::group::Fight;
-use crate::group::Group;
+use super::group::Fight;
+use super::group::Group;
 
 #[derive(Debug, Clone)]
 pub struct Army {

@@ -1,12 +1,18 @@
 //! [Day 2: Dive!](https://adventofcode.com/2021/day/2)
 
-fn main() {
+pub fn main() {
     let args = aoc::parse_args();
-    part1(&args.input);
-    part2(&args.input);
+    args.run(solve);
 }
 
-fn part1(data: &str) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    (part1(data), part2(data))
+}
+
+fn part1(data: &str) -> i32 {
     let mut pos_h = 0;
     let mut pos_v = 0;
 
@@ -24,10 +30,10 @@ fn part1(data: &str) {
         }
     }
 
-    println!("{}", pos_h * pos_v);
+    pos_h * pos_v
 }
 
-fn part2(data: &str) {
+fn part2(data: &str) -> i32 {
     let mut pos_h = 0;
     let mut pos_v = 0;
     let mut aim = 0;
@@ -46,6 +52,22 @@ fn part2(data: &str) {
             }
         }
     }
+    pos_h * pos_v
+}
 
-    println!("{}", pos_h * pos_v);
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        assert_eq!(part1(TEST_INPUT), 150);
+    }
+
+    #[test]
+    fn test02() {
+        assert_eq!(part2(TEST_INPUT), 900);
+    }
 }

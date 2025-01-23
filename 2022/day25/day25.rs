@@ -40,33 +40,18 @@ fn to_snafu(mut n: i64) -> String {
     digits.iter().rev().collect::<String>()
 }
 
-struct Puzzle {
-    sum_of_numbers: i64,
+#[must_use]
+pub fn solve(data: &str) -> (String, aoc::Christmas) {
+    let sum_of_numbers = data.lines().map(from_snafu).sum();
+
+    (to_snafu(sum_of_numbers), aoc::CHRISTMAS)
 }
 
-impl Puzzle {
-    fn new(data: &str) -> Self {
-        Self {
-            sum_of_numbers: data.lines().map(from_snafu).sum(),
-        }
-    }
-
-    // Solves part one
-    fn part1(&self) -> String {
-        to_snafu(self.sum_of_numbers)
-    }
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }
 
-/// main function
-fn main() {
-    let mut args = aoc::parse_args();
-    args.run(|data| {
-        let puzzle = Puzzle::new(data);
-        (puzzle.part1(), aoc::CHRISTMAS)
-    });
-}
-
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
@@ -75,9 +60,8 @@ mod test {
 
     #[test]
     fn test01() {
-        let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.sum_of_numbers, 4890);
-        assert_eq!(puzzle.part1(), "2=-1=0");
+        let puzzle = solve(TEST_INPUT);
+        assert_eq!(puzzle.0, "2=-1=0");
     }
 
     #[test]

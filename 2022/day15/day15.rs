@@ -148,21 +148,26 @@ impl Puzzle {
     }
 }
 
-/// main function
-fn main() {
-    aoc::parse_args().run(|data| {
-        let puzzle = Puzzle::new(data, false);
-        (puzzle.part1(), puzzle.part2())
-    });
+#[must_use]
+pub fn solve(data: &str) -> (u32, i64) {
+    let puzzle = Puzzle::new(data, false);
+    (puzzle.part1(), puzzle.part2())
+}
+
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
+    const TEST_INPUT: &str = include_str!("test.txt");
+
     #[test]
     fn test01() {
-        let puzzle = Puzzle::new(include_str!("test.txt"), true);
+        let puzzle = Puzzle::new(TEST_INPUT, true);
         assert_eq!(puzzle.part1(), 26);
         assert_eq!(puzzle.part2(), 56_000_011);
     }

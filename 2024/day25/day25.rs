@@ -36,16 +36,18 @@ fn part1(data: &str) -> u64 {
     answer
 }
 
-fn solve(data: &str) -> (u64, aoc::Christmas) {
+/// # Panics
+/// over malformed input
+#[must_use]
+pub fn solve(data: &str) -> (u64, aoc::Christmas) {
     (part1(data), aoc::CHRISTMAS)
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
+pub fn main() {
+    let args = aoc::parse_args();
     args.run(solve);
 }
 
-/// Test from puzzle input
 #[cfg(test)]
 mod test {
     use super::*;
