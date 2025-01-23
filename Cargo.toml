@@ -1,0 +1,41 @@
+[package]
+name = "one"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+ascii = []
+anim = ["image"]
+
+[dependencies]
+aoc = { path = "crates/aoc" }
+assembunny = { path = "crates/assembunny" }
+intcode = { path = "crates/intcode" }
+
+rustc-hash = "*"
+colored = "*"
+pest = { version = "*", default-features = false }
+pest_derive = { version = "*", default-features = true }
+petgraph = "*"
+rand = "*"
+regex = "*"
+rustworkx-core = "*"
+scan_fmt = "*"
+serde_json = "*"
+strum = { version = "*", features = ["strum_macros", "derive"] }
+strum_macros = "*"
+text_io = "*"
+z3 = "*"
+nom = "*"
+num = "*"
+num-traits = "*"
+itertools = "*"
+lazy_static = "*"
+md5 = "*"
+image = { version = "*", optional = true }
+indicatif = "*"
+fraction = "*"
+geo = "*"
+geo-types = "*"
+bytecount = "*"
+divisors = "*"

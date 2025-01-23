@@ -1,5 +1,0 @@
-# https://adventofcode.com/2024
-
-[workspace]
-members = ["day*"]
-resolver = "2"
