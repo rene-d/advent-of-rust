@@ -1,8 +1,0 @@
-# https://adventofcode.com/2016
-
-[workspace]
-members = ["day*", "assembunny"]
-resolver = "2"
-
-[profile.release]
-opt-level = "s"

@@ -163,13 +163,25 @@ def aoc_download(ctx: click.Context):
 
 
 @aoc.command(name="puzzle")
+@click.option("-r", "--rust", is_flag=True, help="Create Rust stub")
+@click.option("-p", "--python", is_flag=True, help="Create Python stub")
+@click.option("-t", "--test", is_flag=True, help="Download input and test samples")
 @click.argument("day", type=int, default=0)
 @click.pass_context
-def aoc_puzzle(ctx: click.Context, day: int):
+def aoc_puzzle(ctx: click.Context, rust: bool, python: bool, test: bool, day: int):
     """
     Get input and write templates.
     """
-    ctx.obj.pass_thru("puzzle.sh", [str(day)])
+    cmd = []
+    if rust:
+        cmd.append("--rust")
+    if python:
+        cmd.append("--python")
+    if test:
+        cmd.append("--test")
+    if day > 0:
+        cmd.append(str(day))
+    ctx.obj.pass_thru("puzzle.sh", cmd)
 
 
 @aoc.command(name="run", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))

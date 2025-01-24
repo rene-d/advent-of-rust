@@ -22,7 +22,7 @@ parse_args()
             -h|--help) usage ;;
             -r|--rs|--rust) features+=("rust") ;;
             -p|--py|--python) features+=("python") ;;
-            -c|--c) features+=("c") ;;
+            -t|--test) features+=("test_samples") ;;
             *) args+=$i ;;
         esac
     done
@@ -30,8 +30,9 @@ parse_args()
 
     if [[ $(basename $PWD) =~ day* ]]; then
         day=$(basename $PWD)
-        day=${day/day/}
+        day=${day##day}
         year=$(basename $(realpath $PWD/..))
+        year=${year##year}
     else
         if [ $# -eq 0 ]; then
             usage
@@ -117,13 +118,11 @@ create_python()
 
 from pathlib import Path
 from argparse import ArgumentParser
-import atexit
-import time
 from copy import deepcopy
 from collections import defaultdict, deque, namedtuple, Counter
-import sys, re, math, itertools, time, re
 from functools import reduce
 from operator import mul
+import sys, re, math, itertools, time, atexit, re
 
 parser = ArgumentParser()
 parser.add_argument("-v", "--verbose", action="store_true")
@@ -160,36 +159,38 @@ create_rust()
     cat <<EOF >day$day.rs
 //! $title
 
-struct Puzzle<'a> {
-    data: &'a str,
+struct Puzzle {
+    //
 }
 
-impl<'a> Puzzle<'a> {
+impl Puzzle {
     /// Initialize from the puzzle input.
-    const fn new(data: &'a str) -> Self {
-        Self { data }
+    const fn new(data: &str) -> Self {
+        Self { }
     }
 
     /// Solve part one.
-    fn part1(&self) -> u64 {
+    fn part1(&self) -> i32 {
         0
     }
 
     /// Solve part two.
-    fn part2(&self) -> u64 {
+    fn part2(&self) -> i32 {
         0
     }
 }
 
-fn main() {
-    let mut args = aoc::parse_args();
-
-    args.run(|data| {
-        let puzzle = Puzzle::new(data);
-        (puzzle.part1(), puzzle.part2())
-    });
+/// # Panics
+#[must_use]
+pub fn solve(data: &str) -> (i32, i32) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2())
 }
 
+pub fn main() {
+    let args = aoc::parse_args();
+    args.run(solve);
+}
 
 #[cfg(test)]
 mod test {
@@ -205,7 +206,6 @@ EOF
 EOF
     done
 
-
     cat <<EOF >>day$day.rs
 
     // #[test]
@@ -216,8 +216,7 @@ EOF
 
     // #[test]
     // fn part2() {
-    //     let data = aoc::load_input_data("test.txt");
-    //     let puzzle = Puzzle::new(data);
+    //     let puzzle = Puzzle::new(TEST_INPUT);
     //     assert_eq!(puzzle.part2(), 0);
     // }
 }
@@ -233,7 +232,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aoc = { path = "../../aoc" }
+aoc = { path = "../../../crates/aoc" }
+rustc-hash = "*"
+itertools = "*"
 
 [[bin]]
 name = "day$day"
@@ -242,17 +243,6 @@ EOF
     fi
 }
 
-open_if_available()
-{
-    if [[ $available ]]; then
-        if [[ -f day$day.py ]]; then
-            code -n . day$day.py
-        else
-            code -n .
-        fi
-        open "https://adventofcode.com/$year/day/$day"
-    fi
-}
 
 
 parse_args "$@"
@@ -260,4 +250,3 @@ fetch_input
 fetch_samples
 create_python
 create_rust
-# open_if_available

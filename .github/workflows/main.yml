@@ -31,7 +31,7 @@ jobs:
           for manifest in `find . -maxdepth 3 ! -path '*/day*' -name Cargo.toml`
           do
               echo check clippy for $manifest
-              cargo clippy --manifest-path $manifest -- --no-deps -D clippy::all -A clippy::pedantic -A clippy::nursery
+              cargo clippy --manifest-path $manifest -- --no-deps -D clippy::all -D clippy::pedantic -F clippy::nursery
           done
 
   # Check non-regression tests
