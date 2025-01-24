@@ -12,7 +12,6 @@ fn run_program(bunny_vm: &mut BunnyVM, c: i32) -> i32 {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i32, i32) {
     let mut bunny_vm = BunnyVM::new(data);

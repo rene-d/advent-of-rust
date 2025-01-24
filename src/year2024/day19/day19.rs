@@ -50,7 +50,6 @@ impl<'a> Puzzle<'a> {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (usize, u64) {
     let puzzle = Puzzle::new(data);

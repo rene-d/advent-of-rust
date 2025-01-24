@@ -66,7 +66,6 @@ fn bfs(droid: &Computer) -> (Computer, i64, i64) {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i64, i64) {
     let droid = Computer::load(data);

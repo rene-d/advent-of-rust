@@ -84,7 +84,6 @@ fn appear(recipes: &str) -> usize {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (String, usize) {
     (score(data), appear(data))

@@ -4,7 +4,6 @@ use rustc_hash::{FxHashMap, FxHashSet};
 use std::collections::VecDeque;
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let mut edges: FxHashMap<(i32, i32), FxHashSet<(i32, i32)>> = FxHashMap::default();

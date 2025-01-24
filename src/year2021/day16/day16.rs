@@ -76,7 +76,6 @@ fn read_packet(packet: &str, mut offset: usize, sum_of_versions: &mut u32) -> (u
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u64) {
     let bin_data: String = data

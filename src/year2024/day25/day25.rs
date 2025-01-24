@@ -37,7 +37,6 @@ fn part1(data: &str) -> u64 {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u64, aoc::Christmas) {
     (part1(data), aoc::CHRISTMAS)

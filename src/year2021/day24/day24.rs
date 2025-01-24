@@ -178,7 +178,6 @@ const fn run_box(w: i64, z: i64, div: i64, n1: i64, n2: i64) -> i64 {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i64, i64) {
     let data = data

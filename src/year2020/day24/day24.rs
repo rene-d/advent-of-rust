@@ -130,7 +130,6 @@ impl Puzzle {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (usize, usize) {
     let puzzle = Puzzle::new(data);

@@ -96,7 +96,6 @@ impl ArcadeCabinet {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (usize, i64) {
     let mut cab = ArcadeCabinet::new(data);

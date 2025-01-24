@@ -3,7 +3,6 @@
 use intcode::{Computer, State};
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i64, i64) {
     let mut program = Computer::load(data);

@@ -2,21 +2,23 @@ set shell := ["bash", "-uc"]
 
 alias r := run
 
-# export RUSTFLAGS := "-C target-cpu=native"
-
 run:
     ./scripts/runall.py --working-dir {{invocation_directory()}} -lrust --verified
+
+# make
 
 clean:
     git clean -fd
 
 make-debug:
-    cargo build --manifest-path aoc/Cargo.toml --quiet
-    @for year in 20* ; do echo "cargo build $year" ; cargo build --manifest-path $year/Cargo.toml --quiet ; done
+    @for path in crates/*/Cargo.toml ; do cargo build --manifest-path $path --quiet ; done
+    cargo build --manifest-path ./Cargo.toml --quiet
 
 make:
-    cargo build --manifest-path aoc/Cargo.toml --release --quiet
-    @for year in 20* ; do echo "cargo build $year" ; cargo build --manifest-path $year/Cargo.toml --release --quiet ; done
+    @for path in crates/*/Cargo.toml ; do cargo build --manifest-path $path --quiet --release ; done
+    cargo build --manifest-path ./Cargo.toml --quiet --release
+
+# exec
 
 timings *ARGS:
     ./scripts/timings.py {{ ARGS }}
@@ -26,6 +28,8 @@ run-all *ARGS:
     for year in 20* ; do tmux new-window -t aoc:$year "./scripts/runall.py $year {{ ARGS }}" ; done
     tmux kill-window -t aoc:0
     tmux list-windows -t aoc
+
+# GitHub
 
 gh-fmt:
     #!/usr/bin/env bash
@@ -40,7 +44,7 @@ gh-clippy:
     for manifest in `find . -maxdepth 3 ! -path '*/day*' -name Cargo.toml`
     do
         echo check clippy for $manifest
-        cargo clippy --manifest-path $manifest -- --no-deps -D clippy::all -A clippy::pedantic  -A clippy::nursery
+        cargo clippy --manifest-path $manifest -- --no-deps -D clippy::all -D clippy::pedantic -F clippy::nursery
     done
 
 gh-test:
@@ -53,6 +57,7 @@ gh-test:
 
 gh: gh-fmt gh-clippy gh-test
 
+# Docker stuff
 
 debian:
     docker build -f scripts/Dockerfile -t aoc scripts/

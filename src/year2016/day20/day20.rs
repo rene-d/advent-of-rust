@@ -6,7 +6,6 @@ pub fn main() {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     // load the blacklist and sort it ascending

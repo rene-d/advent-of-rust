@@ -81,7 +81,6 @@ fn solve_duration(data: &str, max_duration: u32) -> (u32, u32) {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     solve_duration(data, 2503)

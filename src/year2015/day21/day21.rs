@@ -153,7 +153,6 @@ Defense +3   80     0       3
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i32, i32) {
     let mut boss = Character::new("boss", 0, 0, 0);

@@ -213,7 +213,6 @@ impl Task for Node {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i64, i64) {
     Network::new(data).run()

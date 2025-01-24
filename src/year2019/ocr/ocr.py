@@ -1,1 +1,1 @@
-../../2022/ocr/ocr.py
+../../year2022/ocr/ocr.py

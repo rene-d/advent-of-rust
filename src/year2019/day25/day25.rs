@@ -179,7 +179,6 @@ fn find_weight(computer: &mut Computer, inventory: &[&str], checkpoint_dir: &str
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(program: &str) -> (u64, aoc::Christmas) {
     let mut computer = Computer::load(program);

@@ -8,7 +8,6 @@ pub fn main() {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     (part1(data), part2(data))

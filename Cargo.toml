@@ -7,6 +7,9 @@ edition = "2021"
 ascii = []
 anim = ["image"]
 
+[build-dependencies]
+cc = "*"
+
 [dependencies]
 aoc = { path = "crates/aoc" }
 assembunny = { path = "crates/assembunny" }

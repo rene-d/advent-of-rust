@@ -26,7 +26,6 @@ fn run_clock_signal(bunny_vm: &mut BunnyVM, a: i32) -> bool {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i32, aoc::Christmas) {
     let mut bunny_vm = BunnyVM::new(data);

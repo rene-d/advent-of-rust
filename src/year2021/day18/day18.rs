@@ -162,7 +162,6 @@ impl fmt::Display for Snailfish {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let numbers: Vec<Snailfish> = data.lines().map(Snailfish::from_str).collect();

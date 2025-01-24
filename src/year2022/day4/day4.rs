@@ -4,7 +4,6 @@ use regex::Regex;
 use std::cmp::{max, min};
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let re = Regex::new(r"^(\d+)-(\d+),(\d+)-(\d+)").unwrap();

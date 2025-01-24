@@ -6,7 +6,6 @@ pub fn main() {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i32, isize) {
     let data: Vec<_> = data.lines().collect();

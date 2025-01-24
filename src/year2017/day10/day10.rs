@@ -37,7 +37,6 @@ impl<'a> Puzzle<'a> {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, String) {
     let puzzle = Puzzle::new(data);

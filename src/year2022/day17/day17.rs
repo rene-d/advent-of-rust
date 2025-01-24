@@ -122,7 +122,6 @@ impl Cave {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (usize, usize) {
     let jets: Vec<u8> = data.trim().bytes().collect();

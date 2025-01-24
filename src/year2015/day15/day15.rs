@@ -13,7 +13,6 @@ struct Ingredient {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i64, i64) {
     // load data
@@ -108,7 +107,6 @@ pub fn solve(data: &str) -> (i64, i64) {
     (score(1), score(2))
 }
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);

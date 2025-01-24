@@ -5,14 +5,12 @@ use regex::Regex;
 use rustc_hash::{FxHashMap, FxHashSet};
 
 /// # Panics
-/// over malformed input
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let mut places: FxHashSet<String> = FxHashSet::default();

@@ -10,7 +10,6 @@ struct Blueprint<'a> {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (usize, aoc::Christmas) {
     let mut blueprints: FxHashMap<&str, Blueprint> = FxHashMap::default();

@@ -1,5 +1,7 @@
 use std::iter::empty;
 
+use itertools::Itertools;
+
 /// Get the array of all available solutions.
 #[must_use]
 pub fn solutions() -> Vec<Solution> {
@@ -12,7 +14,9 @@ pub fn solutions() -> Vec<Solution> {
         .chain(year2020())
         .chain(year2021())
         .chain(year2022())
+        .chain(year2023())
         .chain(year2024())
+        .sorted_unstable_by_key(|sol| (sol.year, sol.day, sol.alt.is_some()))
         .collect()
 }
 
@@ -24,6 +28,7 @@ pub fn solutions() -> Vec<Solution> {
 pub struct Solution {
     pub year: u16,
     pub day: u8,
+    pub alt: Option<String>,
     pub solve: fn(&str) -> (String, String),
     pub main: fn() -> (),
 }
@@ -38,7 +43,10 @@ macro_rules! make_year {
         pub fn $year() -> Vec<Solution> {
             vec![$({
                 let year = stringify!($year)[4..].parse().unwrap();
-                let day = stringify!($day)[3..].parse().unwrap();
+                let day = &stringify!($day)[3..];
+
+                let (day, alt) = day.split_once('_').map_or((day,None), |(day,alt)| (day,Some(alt.to_string())) );
+                let day = day.parse().unwrap();
 
                 let solve = |data: &str| {
                     use crate::$year::$day::$day::solve;
@@ -51,7 +59,7 @@ macro_rules! make_year {
                     main();
                 };
 
-                Solution { year, day, solve, main }
+                Solution { year, day, alt, solve, main }
             },)*]
         }
     }
@@ -74,7 +82,8 @@ make_year!(year2017
 
 make_year!(year2018
     day1,day2,day3,day4,day5,day6,day7,day8,day9,day10,day11,day12,day13,
-    day14,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25
+    day14,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,
+    day9_c,day23_z3
 );
 
 make_year!(year2019
@@ -94,7 +103,8 @@ make_year!(year2021
 
 make_year!(year2022
     day1,day2,day3,day4,day5,day6,day7,day8,day9,day10,day11,day12,day13,
-    day14,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25
+    day14,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,
+    day13_pest
 );
 
 make_year!(year2023
@@ -104,5 +114,6 @@ make_year!(year2023
 
 make_year!(year2024
     day1,day2,day3,day4,day5,day6,day7,day8,day9,day10,day11,day12,day13,
-    day14,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25
+    day14,day15,day16,day17,day18,day19,day20,day21,day22,day23,day24,day25,
+    day13_z3
 );

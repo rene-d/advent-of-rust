@@ -66,7 +66,6 @@ impl<'a> Puzzle<'a> {
     }
 }
 
-/// main function
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let puzzle = Puzzle::new(data);

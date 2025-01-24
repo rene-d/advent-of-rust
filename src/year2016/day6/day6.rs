@@ -6,7 +6,6 @@ pub fn main() {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (String, String) {
     let mut freq = [[0; 26]; 8];

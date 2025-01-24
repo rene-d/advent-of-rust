@@ -120,7 +120,6 @@ fn find_nth_vaporized(asteroids: &[Coord], station: Coord, mut vaporized: u32) -
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (usize, i32) {
     let asteroids = load_asteroids(data);

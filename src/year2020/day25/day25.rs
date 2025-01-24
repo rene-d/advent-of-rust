@@ -41,7 +41,6 @@ fn discrete_log(a: u64, mut b: u64, order_n: u64) -> Option<u64> {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u64, aoc::Christmas) {
     let (a, b) = data.split_once('\n').unwrap();

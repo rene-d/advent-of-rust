@@ -6,7 +6,7 @@ use pest_derive::Parser;
 use std::cmp::Ordering;
 
 #[derive(Parser)]
-#[grammar = "day13.pest"]
+#[grammar = "./src/year2022/day13_pest/day13.pest"]
 struct PacketParser;
 
 fn cmp(a: &str, b: &str) -> Ordering {

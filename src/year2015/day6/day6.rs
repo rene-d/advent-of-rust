@@ -2,14 +2,12 @@
 
 use regex::Regex;
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let data = data.lines().collect::<Vec<_>>();

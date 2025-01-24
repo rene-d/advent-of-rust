@@ -3,14 +3,12 @@
 type Grid = [[u8; 100]; 100];
 const STEPS: u32 = 100;
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     (part1(data), part2(data))

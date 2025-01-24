@@ -35,7 +35,6 @@ fn emulate(opcode: &str, a: u32, b: u32, c: u32, regs: &[u32]) -> Vec<u32> {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let (samples, program) = data.split_once("\n\n\n\n").unwrap();

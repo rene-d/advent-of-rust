@@ -38,19 +38,19 @@ TERMINAL_COLS = 96
 
 
 LANGUAGES = {
-    "Python": "{year}/day{day}/day{day}.py",
-    "Rust": "{year}/target/release/day{day}",
-    "C": "{year}/build/day{day}_c",
-    "C++": "{year}/build/day{day}_cpp",
-    "Lua": "{year}/day{day}/day{day}.lua",
-    "JavaScript": "{year}/day{day}/day{day}.js",
-    "Ruby": "{year}/day{day}/day{day}.rb",
-    "Perl": "{year}/day{day}/day{day}.pl",
-    "Bash": "{year}/day{day}/day{day}.sh",
-    "Java": "{year}/build/day{day}.class",
-    "Go": "{year}/build/day{day}_go",
-    "C#": "{year}/build/day{day}_cs.exe",
-    "Swift": "{year}/build/day{day}_swift",
+    "Rust": "src/year{year}/day{day}/day{day}.rs",
+    "Python": "src/year{year}/day{day}/day{day}.py",
+    "C": "src/year{year}/build/day{day}_c",
+    "C++": "src/year{year}/build/day{day}_cpp",
+    "Lua": "src/year{year}/day{day}/day{day}.lua",
+    "JavaScript": "src/year{year}/day{day}/day{day}.js",
+    "Ruby": "src/year{year}/day{day}/day{day}.rb",
+    "Perl": "src/year{year}/day{day}/day{day}.pl",
+    "Bash": "src/year{year}/day{day}/day{day}.sh",
+    "Java": "src/year{year}/build/day{day}.class",
+    "Go": "src/year{year}/build/day{day}_go",
+    "C#": "src/year{year}/build/day{day}_cs.exe",
+    "Swift": "src/year{year}/build/day{day}_swift",
 }
 
 INTERPRETERS = {
@@ -154,30 +154,50 @@ def run(
     file: Path,
     expected: t.List,
     nb_expected: int,
+    year: int,
+    day: int,
 ) -> t.Dict[str, t.Any]:
     """
     TODO
     """
 
-    if prog.suffix == ".class":
-        cmd = ["java", "-cp", prog.parent, prog.stem]
-    elif prog.suffix == ".exe":
-        cmd = ["mono", prog.absolute().as_posix()]
-    else:
-        cmd = [prog.absolute().as_posix()]
+    if lang == "Rust":
 
-    # add the interpreter
-    if interpreter:
-        cmd.insert(0, interpreter)
+        cmd = []
+
+        f = Path("src/year{year}/day{day}/day{day}/target/release/day{day}")
+        if f.is_file():
+            cmd.append(f)
+        else:
+            cmd.append("target/release/one")
+            cmd.append("-r")
+            cmd.append(f"{year}:{day}")
+
+    else:
+
+        if prog.suffix == ".class":
+            cmd = ["java", "-cp", prog.parent, prog.stem]
+        elif prog.suffix == ".exe":
+            cmd = ["mono", prog.absolute().as_posix()]
+        else:
+            cmd = [prog.absolute().as_posix()]
+
+        # add the interpreter
+        if interpreter:
+            cmd.insert(0, interpreter)
 
     cmd.append(file.absolute().as_posix())
-
     cmd.append("--elapsed")
+
+    env = os.environ
+    env["NO_COLOR"] = "1"
+    cmdline = " ".join(map(str, cmd))
+    cmdline = cmdline.replace(Path(__file__).parent.parent.as_posix() + "/", "")
+    cmdline = cmdline.replace(Path.home().as_posix(), "~")
+    print(f"{FEINT}{cmdline}{RESET}", end=CR)
 
     start = time.time_ns()
     try:
-        env = os.environ
-        env["NO_COLOR"] = "1"
         out = subprocess.run(cmd, stdout=subprocess.PIPE, env=env)
         elapsed = time.time_ns() - start
 
@@ -280,6 +300,16 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str]):
                 # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
                 print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
                 subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy)
+
+            else:
+                m = Path(__file__).parent.parent / "Cargo.toml"
+                if m.is_file():
+                    env_copy = os.environ.copy()
+                    # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
+                    print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
+                    subprocess.check_call(
+                        ["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy
+                    )
 
         for day in range(1, 26):
             if not filter_lang or "c" in filter_lang:
@@ -411,6 +441,7 @@ def run_day(
         results = set()
 
         for lang, (pattern, interpreter) in languages.items():
+
             prog = Path(pattern.format(year=year, day=mday))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
@@ -418,6 +449,7 @@ def run_day(
                 # special case for day13_alt/day13.py
                 if "_" in prog.stem and prog.stem == prog.parent.name:
                     prog = prog.with_stem(prog.stem[: prog.stem.find("_")])
+
             if not prog.is_file():
                 continue
 
@@ -432,7 +464,7 @@ def run_day(
 
                 nb_expected = 1 if day == 25 else 2
 
-                e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected)
+                e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected, year, day)
 
                 if e:
                     update_cache(key, prog, "solutions", e)
@@ -704,23 +736,6 @@ def main():
         if args.consistency:
             return consistency(filter_year, filter_day)
 
-        # WTF ? why I have kept this ? get_languages() seems to do the job
-        # # resolve interpreters
-        # for lang, variants in INTERPRETERS.items():
-        #     for variant in list(variants.keys()):
-        #         interpreters = variants[variant]
-        #         if isinstance(interpreters, tuple) or isinstance(interpreters, list):
-        #             for prog in interpreters:
-        #                 prog = shutil.which(prog)
-        #                 if prog:
-        #                     variants[variant] = prog
-        #                     break
-        #             else:
-        #                 variants.pop(variant)
-        #         else:
-        #             if not shutil.which(interpreters):
-        #                 variants.pop(variant)
-
         # prepare the language filtering
         filter_lang = set(map(str.casefold, args.language or ()))
         languages = get_languages(filter_lang)
@@ -762,7 +777,10 @@ def main():
                 if filter_day and day not in filter_day:
                     continue
 
-                for mday in list(Path(f"{year}").glob(f"day{day}")) + list(Path(f"{year}").glob(f"day{day}_*")):
+                day_solutions = list(Path(f"src/year{year}").glob(f"day{day}"))
+                day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
+
+                for mday in day_solutions:
                     mday = mday.name.removeprefix("day")
 
                     elapsed, nb_samples = run_day(

@@ -24,7 +24,6 @@ pub fn main() {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(program: &str) -> (i32, i32) {
     let part1 = compute_until_safe(7, program);

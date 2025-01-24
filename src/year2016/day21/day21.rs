@@ -175,7 +175,6 @@ impl Puzzle {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (String, String) {
     let puzzle = Puzzle::new(data);

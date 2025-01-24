@@ -1,13 +1,11 @@
 //! [Day 10: Elves Look, Elves Say](https://adventofcode.com/2015/day/10)
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (usize, usize) {
     let data = data.trim_ascii();

@@ -1,13 +1,11 @@
 //! [Day 8: Matchsticks](https://adventofcode.com/2015/day/8)
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (usize, usize) {
     let mut total_raw = 0;

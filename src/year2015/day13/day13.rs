@@ -25,7 +25,6 @@ fn calc<'a>(names: &FxHashSet<&'a str>, happiness: &FxHashMap<(&'a str, &'a str)
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i32, i32) {
     let mut names: FxHashSet<&str> = FxHashSet::default();
@@ -66,7 +65,6 @@ pub fn solve(data: &str) -> (i32, i32) {
     (part1, part2)
 }
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);

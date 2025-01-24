@@ -1,6 +1,5 @@
 //! [Day 4: The Ideal Stocking Stuffer](https://adventofcode.com/2015/day/4)
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
 
@@ -8,7 +7,6 @@ pub fn main() {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let mut secret = [0u8; 32];

@@ -7,7 +7,6 @@ use std::collections::VecDeque;
 type Grid = aoc::Grid<u8>;
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let grid = Grid::parse(data);

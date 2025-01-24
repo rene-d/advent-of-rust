@@ -1,12 +1,9 @@
 //! [Day 7: No Space Left On Device](https://adventofcode.com/2022/day/7)
 
-#![allow(clippy::if_same_then_else)]
-
 use rustc_hash::FxHashMap;
 use std::path::PathBuf;
 
 struct Puzzle {
-    // Puzzle input
     total_dir_size: FxHashMap<String, usize>,
 }
 
@@ -32,9 +29,7 @@ impl Puzzle {
 
                 let key = current_path.as_path().to_str().unwrap().to_string();
                 dir_size.entry(key).or_insert(0);
-            } else if line == "$ ls" {
-                //  nothing to do
-            } else if line.starts_with("dir ") {
+            } else if line == "$ ls" || line.starts_with("dir ") {
                 //  nothing to do
             } else if !line.is_empty() {
                 // <size> <filename>

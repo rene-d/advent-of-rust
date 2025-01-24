@@ -1,7 +1,6 @@
 //! [Day 2: I Was Told There Would Be No Math](https://adventofcode.com/2015/day/2)
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let mut total_paper = 0;
@@ -45,7 +44,6 @@ pub fn solve(data: &str) -> (u32, u32) {
     (total_paper, total_ribbon)
 }
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);

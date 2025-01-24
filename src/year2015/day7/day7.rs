@@ -109,7 +109,6 @@ fn wires(parser: &Parser, opcodes: &FxHashMap<String, String>, wire: &str) -> u1
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u16, u16) {
     let parser = Parser::new();
@@ -132,7 +131,6 @@ pub fn solve(data: &str) -> (u16, u16) {
     (wire_a, wire_a_bis)
 }
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
 

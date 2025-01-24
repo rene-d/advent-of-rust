@@ -43,7 +43,6 @@ struct BotInstruction {
 /// First, it loads the move instructions and initializes the bots.
 /// Then, it runs the instructions until the puzzle is done.
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let re_init = Regex::new(r"value ([\d]+) goes to bot (\d+)").unwrap();

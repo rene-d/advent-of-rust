@@ -91,7 +91,6 @@ impl fmt::Display for Password {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (Password, Password) {
     let mut pwd: Password = Password::new(data.trim_ascii());
@@ -99,7 +98,6 @@ pub fn solve(data: &str) -> (Password, Password) {
     (pwd.next_valid(), pwd.next_valid())
 }
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);

@@ -3,14 +3,12 @@
 use itertools::Itertools;
 use rustc_hash::FxHashMap;
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (i32, usize) {
     solve_eggnot(data, 150)

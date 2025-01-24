@@ -15,7 +15,6 @@ pub fn main() {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (String, String) {
     solve_verbose(data, false)

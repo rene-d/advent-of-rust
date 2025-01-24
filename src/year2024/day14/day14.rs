@@ -99,7 +99,6 @@ impl Puzzle {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, i32) {
     let puzzle = Puzzle::new(data);

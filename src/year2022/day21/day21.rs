@@ -1,6 +1,5 @@
 //! [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)
 
-#![allow(clippy::option_if_let_else)]
 
 use num::Rational64;
 use rustc_hash::FxHashMap;
@@ -51,8 +50,11 @@ impl Puzzle {
     }
 
     fn eval(&self, var: &str) -> i64 {
-        if let Some(m) = self.monkeys.get(var) {
-            match m {
+        self.monkeys.get(var).map_or_else(
+            || {
+                panic!("???");
+            },
+            |m| match m {
                 Job::Number(n) => *n,
                 Job::Operation((l, o, r)) => {
                     let l = self.eval(l);
@@ -66,10 +68,8 @@ impl Puzzle {
                         _ => panic!("unknown operation"),
                     }
                 }
-            }
-        } else {
-            panic!("???");
-        }
+            },
+        )
     }
 
     fn eval_sym(&self, var: &str) -> Affine {

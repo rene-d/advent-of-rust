@@ -1,13 +1,11 @@
 //! [Day 5: Doesn't He Have Intern-Elves For This?](https://adventofcode.com/2015/day/5)
 
-/// main function
 pub fn main() {
     let args = aoc::parse_args();
     args.run(solve);
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     (part1(data), part2(data))

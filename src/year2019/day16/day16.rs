@@ -67,7 +67,6 @@ fn part2(data: &[u8]) -> u32 {
 }
 
 /// # Panics
-/// over malformed input
 #[must_use]
 pub fn solve(data: &str) -> (u32, u32) {
     let data = parse_data(data);
