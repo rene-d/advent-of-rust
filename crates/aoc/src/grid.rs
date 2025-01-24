@@ -370,14 +370,14 @@ impl From<&str> for Grid<char> {
     #[inline]
     #[must_use]
     fn from(value: &str) -> Self {
-        Self::parse(value)
+        Self::parse(value, '#')
     }
 }
 
 impl Grid<char> {
     /// # Panics
     #[must_use]
-    pub fn parse(input: &str) -> Self {
+    pub fn parse(input: &str, exterior: char) -> Self {
         let lines: Vec<_> = input.lines().collect();
 
         let width = lines.iter().map(|row| row.len()).max().unwrap();
@@ -393,7 +393,7 @@ impl Grid<char> {
         Self {
             size: Coord::new(width.try_into().unwrap(), height.try_into().unwrap()),
             data: g,
-            exterior: '#',
+            exterior,
             dummy: '?',
         }
     }

@@ -10,10 +10,8 @@ struct Puzzle {
 impl Puzzle {
     /// Initialize from the puzzle input.
     fn new(data: &str) -> Self {
-        let mut grid = aoc::Grid::<char>::parse(data);
+        let   grid = aoc::Grid::<char>::parse(data, ' ');
 
-        // value returned by Index if pos is out of the limits of the grid
-        grid.set_exterior(' ');
 
         // find start
         let start = (0..grid.width())

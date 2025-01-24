@@ -1,22 +1,16 @@
 //! [Day 12: Hill Climbing Algorithm](https://adventofcode.com/2022/day/12)
 
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_sign_loss)]
-
 use rustc_hash::FxHashSet;
 use std::collections::VecDeque;
 
 #[derive(Debug)]
 struct Node {
     pos: (usize, usize),
-    steps: usize,
+    steps: u32,
 }
 
 struct Puzzle {
-    grid: Vec<Vec<u8>>,
-    nx: usize,
-    ny: usize,
+    grid: aoc::GridU<u8>,
     start: (usize, usize),
     end: (usize, usize),
 }
@@ -24,50 +18,31 @@ struct Puzzle {
 impl Puzzle {
     fn new(data: &str) -> Self {
         let mut puzzle = Self {
-            grid: vec![],
+            grid: aoc::GridU::<u8>::parse(data.trim_ascii()),
             start: (0, 0),
             end: (0, 0),
-            nx: 0,
-            ny: 0,
         };
 
-        let lines = data.split('\n').collect::<Vec<_>>();
-
-        puzzle.nx = lines.first().unwrap().len();
-        let mut y = 0;
-        for line in lines {
-            if line.is_empty() {
-                continue;
-            }
-            let mut row = vec![0; puzzle.nx];
-            for (x, pos) in line.chars().enumerate() {
-                if pos == 'S' {
-                    puzzle.start = (x, y);
+        for (pos, c) in puzzle.grid.iter_mut() {
+            *c = match c {
+                b'S' => {
+                    puzzle.start = pos; // start position: height 1
+                    1
                 }
-                row[x] = match pos {
-                    'S' => {
-                        // start position: height 0
-                        puzzle.start = (x, y);
-                        1
-                    }
-                    'E' => {
-                        // end position: height 26 (like 'z')
-                        puzzle.end = (x, y);
-                        26
-                    }
-                    _ => (pos as u8) - 96, // other locations: height 1 to 26
-                };
-            }
-            puzzle.grid.push(row);
-            y += 1;
+                b'E' => {
+                    puzzle.end = pos; // end position: height 26 (like 'z')}
+                    26
+                }
+                b'a'..=b'z' => *c - b'a' + 1, // other locations: height 1 to 26
+                _ => panic!("unknown elevation {c}"),
+            };
         }
-        puzzle.ny = puzzle.grid.len();
 
         puzzle
     }
 
     /// Breadth-first search
-    fn bfs(&self, part: u8) -> usize {
+    fn bfs(&self, part: u8) -> u32 {
         let mut q: VecDeque<Node> = VecDeque::new();
         let mut seen: FxHashSet<(usize, usize)> = FxHashSet::default();
 
@@ -80,15 +55,10 @@ impl Puzzle {
                 steps: 0,
             });
         } else {
-            for y in 0..self.ny {
-                for x in 0..self.nx {
-                    if self.grid[y][x] == 1 {
-                        let n = Node {
-                            pos: (x, y),
-                            steps: 0,
-                        };
-                        q.push_back(n);
-                    }
+            for (pos, c) in self.grid.iter() {
+                if *c == 1 {
+                    let n = Node { pos, steps: 0 };
+                    q.push_back(n);
                 }
             }
         }
@@ -101,27 +71,16 @@ impl Puzzle {
                 return n.steps;
             }
 
-            if seen.contains(&pos) {
+            if !seen.insert(pos) {
                 continue;
             }
-            seen.insert(pos);
 
-            // Nota: need to figure out the best way to write this in Rust without ugly casts
-            for step in [(0, 1), (0, -1), (1, 0), (-1, 0)] {
-                let pos2 = (pos.0 as isize + step.0, pos.1 as isize + step.1);
-
-                if 0 <= pos2.0
-                    && pos2.0 < self.nx as isize
-                    && 0 <= pos2.1
-                    && pos2.1 < self.ny as isize
-                {
-                    let new_pos = (pos2.0 as usize, pos2.1 as usize);
-                    if self.grid[new_pos.1][new_pos.0] <= 1 + self.grid[pos.1][pos.0] {
-                        q.push_back(Node {
-                            pos: new_pos,
-                            steps: n.steps + 1,
-                        });
-                    }
+            for new_pos in self.grid.iter_directions(pos) {
+                if self.grid[new_pos] <= 1 + self.grid[pos] {
+                    q.push_back(Node {
+                        pos: new_pos,
+                        steps: n.steps + 1,
+                    });
                 }
             }
         }
@@ -130,18 +89,18 @@ impl Puzzle {
     }
 
     // Solves part one
-    fn part1(&self) -> usize {
+    fn part1(&self) -> u32 {
         self.bfs(1)
     }
 
     // Solve part two
-    fn part2(&self) -> usize {
+    fn part2(&self) -> u32 {
         self.bfs(2)
     }
 }
 
 #[must_use]
-pub fn solve(data: &str) -> (usize, usize) {
+pub fn solve(data: &str) -> (u32, u32) {
     let puzzle = Puzzle::new(data);
     (puzzle.part1(), puzzle.part2())
 }

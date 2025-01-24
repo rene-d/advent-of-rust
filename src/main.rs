@@ -9,7 +9,7 @@ fn main() -> std::io::Result<()> {
     let args = aoc::parse_args_raw();
 
     // in a YEAR/dayDAY directory, we act as the standalone binary
-    if !args.has_option("-r") && !args.has_option("-l") && run_day()? {
+    if args.params.is_empty() && run_day_zzz()? {
         return Ok(());
     }
 
@@ -74,7 +74,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-fn run_day() -> std::io::Result<bool> {
+fn run_day_zzz() -> std::io::Result<bool> {
     let path = std::env::current_dir()?;
 
     if let Some(day) = path.file_name() {
@@ -97,7 +97,9 @@ fn run_day() -> std::io::Result<bool> {
 
                     for sol in &solutions() {
                         if sol.day == day && sol.year == year && sol.alt == alt {
-                            (sol.main)();
+                            // (sol.main)();
+
+                            run_day(sol, true);
                             break;
                         }
                     }
@@ -130,11 +132,106 @@ fn print_part_result(part: u8, answer: &str, ok: &str, day: u8) {
     }
 }
 
-fn find_path(sol: &Solution) -> PathBuf {
-    let hint = Path::new("input")
-        .join(sol.year.to_string())
-        .join(sol.day.to_string())
-        .with_extension("in");
+fn run_all(sols: &[Solution], alt: bool) {
+    println!("💫 {} 🎄✨ 💫", "Advent of Code".green());
+
+    let mut total_elapsed = Duration::ZERO;
+    let mut puzzles = 0;
+    let mut success = 0;
+    let mut failed = 0;
+
+    for sol in sols {
+        if sol.alt.is_some() && !alt {
+            continue;
+        }
+
+        // if sol.alt.is_none() {
+        //     continue;
+        // }
+
+        if let Some((elapsed, ok, ko)) = run_day(sol, false) {
+            puzzles += 1;
+            total_elapsed += elapsed;
+            success += i32::from(ok);
+            failed += i32::from(ko);
+        }
+    }
+
+    if puzzles > 1 {
+        println!();
+        println!("Elapsed: {total_elapsed:#?} for {puzzles} puzzle(s) - success: {success}, failed: {failed}");
+    }
+}
+
+fn run_day(sol: &Solution, input_txt: bool) -> Option<(Duration, bool, bool)> {
+    let (path_input, path_answer) = find_input_path(sol, input_txt);
+
+    if let Some(alt) = &sol.alt {
+        println!(
+            "{} day {} ({}): {}",
+            sol.year,
+            sol.day,
+            alt.magenta(),
+            path_input.as_os_str().to_str().unwrap().dimmed()
+        );
+    } else {
+        println!(
+            "{} day {}: {}",
+            sol.year,
+            sol.day,
+            path_input.as_os_str().to_str().unwrap().dimmed()
+        );
+    }
+
+    if path_input.is_file() {
+        if let Ok(data) = std::fs::read_to_string(&path_input) {
+            // run the solution
+            let instant = Instant::now();
+            let (part1, part2) = (sol.solve)(&data);
+            let elapsed = instant.elapsed();
+
+            let mut success = false;
+            let mut failed = false;
+
+            let micros = Duration::new(elapsed.as_secs(), elapsed.subsec_micros() * 1000);
+
+            if let Ok(ok) = std::fs::read_to_string(path_answer) {
+                let (ok1, ok2) = ok.trim_ascii().split_once('\n').unwrap_or((&ok, ""));
+
+                print_part_result(1, &part1, ok1, sol.day);
+                print_part_result(2, &part2, ok2, sol.day);
+
+                if ok1.trim_ascii() == part1 && ok2.trim_ascii() == part2 {
+                    success = true;
+                } else {
+                    failed = true;
+                }
+            } else {
+                print_part_result(1, &part1, "", sol.day);
+                print_part_result(2, &part2, "", sol.day);
+            }
+
+            println!("{}", format!("  Elapsed : {micros:#?}").italic());
+            println!();
+
+            return Some((elapsed, success, failed));
+        }
+    }
+
+    println!("  missing file: {}", path_input.to_str().unwrap().red());
+
+    None
+}
+
+fn find_input_path(sol: &Solution, input_txt: bool) -> (PathBuf, PathBuf) {
+    let hint = if input_txt {
+        PathBuf::new().with_file_name("input.txt")
+    } else {
+        Path::new("input")
+            .join(sol.year.to_string())
+            .join(sol.day.to_string())
+            .with_extension("in")
+    };
 
     let mut path = hint.clone();
 
@@ -170,79 +267,13 @@ fn find_path(sol: &Solution) -> PathBuf {
         }
     }
 
-    if path.is_file() {
-        path
+    if !path.is_file() {
+        path = hint;
+    }
+
+    if path.file_name() == Path::new("input.txt").file_name() {
+        (path.clone(), path.with_file_name("answer.txt"))
     } else {
-        hint
-    }
-}
-
-fn run_all(sols: &[Solution], alt: bool) {
-    println!("💫 {} 🎄✨ 💫", "Advent of Code".green());
-
-    let mut total_elapsed = Duration::ZERO;
-    let mut puzzles = 0;
-    let mut success = 0;
-    let mut failed = 0;
-
-    for sol in sols {
-        if sol.alt.is_some() && !alt {
-            continue;
-        }
-
-        // if sol.alt.is_none() {
-        //     continue;
-        // }
-
-        let path = find_path(sol);
-
-        let ok = path.with_extension("ok");
-
-        println!();
-        if let Some(alt) = &sol.alt {
-            println!("{} day {} ({}):", sol.year, sol.day, alt.magenta());
-        } else {
-            println!("{} day {}:", sol.year, sol.day);
-        }
-
-        if path.is_file() {
-            if let Ok(data) = std::fs::read_to_string(&path) {
-                // run the solution
-                let instant = Instant::now();
-                let (part1, part2) = (sol.solve)(&data);
-                let elapsed = instant.elapsed();
-
-                total_elapsed += elapsed;
-                puzzles += 1;
-
-                #[allow(clippy::cast_possible_truncation)]
-                let micros = Duration::from_micros(elapsed.as_micros() as u64);
-
-                if let Ok(ok) = std::fs::read_to_string(ok) {
-                    let (ok1, ok2) = ok.trim_ascii().split_once('\n').unwrap_or((&ok, ""));
-
-                    print_part_result(1, &part1, ok1, sol.day);
-                    print_part_result(2, &part2, ok2, sol.day);
-
-                    if ok1.trim_ascii() == part1 && ok2.trim_ascii() == part2 {
-                        success += 1;
-                    } else {
-                        failed += 1;
-                    }
-                } else {
-                    print_part_result(1, &part1, "", sol.day);
-                    print_part_result(2, &part2, "", sol.day);
-                }
-
-                println!("{}", format!("  Elapsed : {micros:#?}").italic());
-            }
-        } else {
-            println!("  missing file: {}", path.to_str().unwrap().red());
-        }
-    }
-
-    if puzzles > 1 {
-        println!();
-        println!("Elapsed: {total_elapsed:#?} for {puzzles} puzzle(s) - success: {success}, failed: {failed}");
+        (path.clone(), path.with_extension("ok"))
     }
 }

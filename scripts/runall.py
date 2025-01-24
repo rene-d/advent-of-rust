@@ -194,7 +194,7 @@ def run(
     cmdline = " ".join(map(str, cmd))
     cmdline = cmdline.replace(Path(__file__).parent.parent.as_posix() + "/", "")
     cmdline = cmdline.replace(Path.home().as_posix(), "~")
-    print(f"{FEINT}{cmdline}{RESET}", end=CR)
+    print(f"{FEINT}{cmdline}{RESET}", end=TRANSIENT)
 
     start = time.time_ns()
     try:

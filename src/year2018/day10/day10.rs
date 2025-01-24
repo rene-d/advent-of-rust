@@ -1,8 +1,5 @@
 //! [Day 10: The Stars Align](https://adventofcode.com/2018/day/10)
 
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_sign_loss)]
-
 use aoc::ocr::scan_6x10;
 
 struct Puzzle {
@@ -78,13 +75,13 @@ impl Puzzle {
         let ymin = pos.iter().map(|p| p.1).min().unwrap();
         let ymax = pos.iter().map(|p| p.1).max().unwrap();
 
-        let width = (xmax - xmin + 1) as usize;
-        let height = (ymax - ymin + 1) as usize;
+        let width = usize::try_from(xmax - xmin + 1).unwrap();
+        let height = usize::try_from(ymax - ymin + 1).unwrap();
 
         let mut lcd = vec![vec!['.'; width]; height];
         for p in &pos {
-            let x = (p.0 - xmin) as usize;
-            let y = (p.1 - ymin) as usize;
+            let x = usize::try_from(p.0 - xmin).unwrap();
+            let y = usize::try_from(p.1 - ymin).unwrap();
             lcd[y][x] = '#';
         }
 

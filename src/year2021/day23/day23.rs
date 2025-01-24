@@ -1,7 +1,5 @@
 //! [Day 23: Amphipod](https://adventofcode.com/2021/day/23)
 
-#![allow(dead_code)]
-
 use rustc_hash::FxHashMap;
 use std::ops::{Index, Range};
 
@@ -142,13 +140,14 @@ struct Puzzle {
 }
 
 const fn movements(hi: usize, ri: usize) -> Range<usize> {
-    #[allow(clippy::range_plus_one)]
     if hi <= ri {
-        (hi + 1)..(ri + 1) // clippy is sometimes a pain: I need a Range, not a RangeInclusive here
+        let ri_plus_1 = ri + 1;
+        (hi + 1)..ri_plus_1 // clippy is stupid: we need here a Range, not a RangeInclusive
     } else {
         ri..hi
     }
 }
+
 impl Puzzle {
     fn new(data: &str) -> Self {
         let mut rooms = vec![vec![]; 4];

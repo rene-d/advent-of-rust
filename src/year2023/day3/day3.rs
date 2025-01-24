@@ -1,51 +1,33 @@
 //! [Day 3: Gear Ratios](https://adventofcode.com/2023/day/3)
 
-#![allow(clippy::cast_sign_loss)]
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_possible_truncation)]
-
 use rustc_hash::FxHashMap;
 
 struct Puzzle {
-    sx: i32,
-    sy: i32,
-    grid: Vec<String>,
+    grid: aoc::Grid<char>,
     sum_parts: u64,
     gears: FxHashMap<[i32; 2], Vec<u64>>,
 }
 
 impl Puzzle {
     fn new(data: &str) -> Self {
-        let grid = data.lines().map(String::from).collect::<Vec<_>>();
         Self {
-            sx: grid[0].len() as i32,
-            sy: grid.len() as i32,
-            grid,
+            grid: aoc::Grid::<char>::parse(data, '.'),
             sum_parts: 0,
             gears: FxHashMap::default(),
         }
     }
 
-    /// Access the engine schematic
-    fn g(&self, x: i32, y: i32) -> char {
-        if 0 <= x && x < self.sx && 0 <= y && y < self.sy {
-            self.grid[y as usize].chars().nth(x as usize).unwrap()
-        } else {
-            '.'
-        }
-    }
-
     /// Read the schematic to find part numbers and gears
     fn parse(&mut self) {
-        for y in 0..self.sy {
+        for y in 0..self.grid.height() {
             let mut x = 0;
 
-            while x < self.sx {
+            while x < self.grid.width() {
                 let mut symbol = false;
                 let mut gear = [0, 0];
 
                 let mut n = 0;
-                while let Some(d) = self.g(x, y).to_digit(10) {
+                while let Some(d) = self.grid[(x, y)].to_digit(10) {
                     n = n * 10 + u64::from(d);
 
                     for (ix, iy) in [
@@ -58,7 +40,7 @@ impl Puzzle {
                         (1, 0),
                         (1, 1),
                     ] {
-                        let c = self.g(x + ix, y + iy);
+                        let c = self.grid[(x + ix, y + iy)];
                         if c != '.' && !c.is_ascii_digit() {
                             symbol = true;
                             if c == '*' {

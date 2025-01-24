@@ -1,9 +1,5 @@
 //! [Day 18: Duet](https://adventofcode.com/2017/day/18)
 
-#![allow(clippy::cast_sign_loss)]
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_possible_truncation)]
-
 use rustc_hash::FxHashMap;
 use std::collections::VecDeque;
 
@@ -11,7 +7,7 @@ struct Program {
     id: i64,
     opcodes: Vec<(String, Vec<String>)>,
     regs: FxHashMap<String, i64>,
-    ip: i64,
+    ip: usize,
     terminated: bool,
     messages: VecDeque<i64>,
     mode_sound: bool,
@@ -38,8 +34,8 @@ impl Program {
     }
 
     fn run(&mut self) -> Option<i64> {
-        while self.ip >= 0 && self.ip < (self.opcodes.len() as i64) {
-            let (instr, args) = &self.opcodes[self.ip as usize];
+        while self.ip < self.opcodes.len() {
+            let (instr, args) = &self.opcodes[self.ip];
             self.ip += 1;
 
             let mut value = |i: usize| {
@@ -91,7 +87,8 @@ impl Program {
                 }
                 "jgz" => {
                     if value(0) > 0 {
-                        self.ip += value(1) - 1;
+                        let offset: isize = (value(1) - 1).try_into().unwrap();
+                        self.ip = self.ip.wrapping_add_signed(offset);
                     }
                 }
                 _ => panic!("unknown instr {instr}"),

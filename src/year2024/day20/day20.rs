@@ -31,7 +31,7 @@ impl Puzzle {
             track: Vec::new(),
         };
 
-        puzzle.racetrack = Grid::parse(data);
+        puzzle.racetrack = Grid::parse(data, '#');
 
         for (pos, &c) in &puzzle.racetrack {
             if c == 'S' {

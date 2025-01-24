@@ -1,8 +1,5 @@
 //! [Day 8: Treetop Tree House](https://adventofcode.com/2022/day/8)
 
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_possible_truncation)]
-
 struct Puzzle {
     nx: usize,
     ny: usize,
@@ -22,8 +19,8 @@ impl Puzzle {
                 continue;
             }
             let mut row = vec![0; nx];
-            for (x, tree) in line.chars().enumerate() {
-                row[x] = tree.to_digit(10).unwrap() as u8;
+            for (x, tree) in line.bytes().enumerate() {
+                row[x] = tree;
             }
             trees.push(row);
         }

@@ -315,46 +315,50 @@ impl BunnyVM {
     }
 }
 
-#[test]
-fn test_program() {
-    let demo = "cpy 41 a
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_program() {
+        let demo = "cpy 41 a
 inc a
 inc a
 dec a
 jnz a 2
 dec a";
 
-    let mut program = BunnyVM::new(demo);
+        let mut program = BunnyVM::new(demo);
 
-    assert!(program.run(100));
-    assert_eq!(program.registers[REG_A], 42);
-}
+        assert!(program.run(100));
+        assert_eq!(program.registers[REG_A], 42);
+    }
 
-#[test]
-fn test_jnz() {
-    assert_eq!(BunnyVM::new_ip(10, 2), 12);
-    assert_eq!(BunnyVM::new_ip(10, -2), 8);
-}
+    #[test]
+    fn test_jnz() {
+        assert_eq!(BunnyVM::new_ip(10, 2), 12);
+        assert_eq!(BunnyVM::new_ip(10, -2), 8);
+    }
 
-#[test]
-fn test_inc_a() {
-    let mut program = BunnyVM::new("inc a");
-    program.registers[REG_A] = 42;
-    program.step();
-    assert_eq!(program.registers[REG_A], 43);
-}
+    #[test]
+    fn test_inc_a() {
+        let mut program = BunnyVM::new("inc a");
+        program.registers[REG_A] = 42;
+        program.step();
+        assert_eq!(program.registers[REG_A], 43);
+    }
 
-#[test]
-fn test_dec_b() {
-    let mut program = BunnyVM::new("dec b");
-    program.registers[REG_B] = 42;
-    program.step();
-    assert_eq!(program.registers[REG_B], 41);
-}
+    #[test]
+    fn test_dec_b() {
+        let mut program = BunnyVM::new("dec b");
+        program.registers[REG_B] = 42;
+        program.step();
+        assert_eq!(program.registers[REG_B], 41);
+    }
 
-#[test]
-fn test_toggle() {
-    let demo = "cpy 2 a
+    #[test]
+    fn test_toggle() {
+        let demo = "cpy 2 a
 tgl a
 tgl a
 tgl a
@@ -362,10 +366,11 @@ cpy 1 a
 dec a
 dec a";
 
-    let mut program = BunnyVM::new(demo);
+        let mut program = BunnyVM::new(demo);
 
-    let ok = program.run(100);
-    assert!(ok);
+        let ok = program.run(100);
+        assert!(ok);
 
-    assert_eq!(program.registers[REG_A], 3);
+        assert_eq!(program.registers[REG_A], 3);
+    }
 }

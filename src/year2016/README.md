@@ -36,4 +36,4 @@ Puzzle                                                                          
 
 ## Bonus
 
-[Assembunny assembler](../2016/assembunny/assembler/asm.py)
+[Assembunny assembler](../../crates/assembunny/assembler/asm.py)

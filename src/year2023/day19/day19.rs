@@ -1,8 +1,5 @@
 //! [Day 19: Aplenty](https://adventofcode.com/2023/day/19)
 
-#![allow(clippy::too_many_lines)]
-// #![allow(clippy::option_if_let_else)]
-
 use core::panic;
 use regex::Regex;
 use rustc_hash::FxHashMap;
@@ -45,7 +42,8 @@ struct Puzzle {
     parts: Vec<[u64; 4]>,
 }
 
-fn new_range(op: &Comparison, n: u64, mut lo: u64, mut hi: u64) -> (u64, u64) {
+fn new_range(op: &Comparison, n: u64, rating: (u64, u64)) -> (u64, u64) {
+    let (mut lo, mut hi) = rating;
     match op {
         Comparison::Greater => lo = (n + 1).max(lo),
         Comparison::Lesser => hi = (n - 1).min(hi),
@@ -53,6 +51,80 @@ fn new_range(op: &Comparison, n: u64, mut lo: u64, mut hi: u64) -> (u64, u64) {
         Comparison::LesserOrEqual => hi = n.min(hi),
     };
     (lo, hi)
+}
+
+#[derive(Clone)]
+struct Ratings {
+    x: (u64, u64),
+    m: (u64, u64),
+    a: (u64, u64),
+    s: (u64, u64),
+}
+
+impl Ratings {
+    const fn new() -> Self {
+        Self {
+            x: (1, 4000),
+            m: (1, 4000),
+            a: (1, 4000),
+            s: (1, 4000),
+        }
+    }
+
+    const fn is_valid(&self) -> bool {
+        self.x.0 <= self.x.1 && self.m.0 <= self.m.1 && self.a.0 <= self.a.1 && self.s.0 <= self.s.1
+    }
+
+    const fn product(&self) -> u64 {
+        (self.x.1 - self.x.0 + 1)
+            * (self.m.1 - self.m.0 + 1)
+            * (self.a.1 - self.a.0 + 1)
+            * (self.s.1 - self.s.0 + 1)
+    }
+
+    fn update_x(&mut self, op: &Comparison, value: u64) -> Self {
+        let new_x = new_range(op, value, self.x);
+        self.x = new_range(&op.opposite(), value, self.x);
+        Self {
+            x: new_x,
+            m: self.m,
+            a: self.a,
+            s: self.s,
+        }
+    }
+
+    fn update_m(&mut self, op: &Comparison, value: u64) -> Self {
+        let new_m = new_range(op, value, self.m);
+        self.m = new_range(&op.opposite(), value, self.m);
+        Self {
+            x: self.x,
+            m: new_m,
+            a: self.a,
+            s: self.s,
+        }
+    }
+
+    fn update_a(&mut self, op: &Comparison, value: u64) -> Self {
+        let new_a = new_range(op, value, self.a);
+        self.a = new_range(&op.opposite(), value, self.a);
+        Self {
+            x: self.x,
+            m: self.m,
+            a: new_a,
+            s: self.s,
+        }
+    }
+
+    fn update_s(&mut self, op: &Comparison, value: u64) -> Self {
+        let new_s = new_range(op, value, self.s);
+        self.s = new_range(&op.opposite(), value, self.s);
+        Self {
+            x: self.x,
+            m: self.m,
+            a: self.a,
+            s: new_s,
+        }
+    }
 }
 
 impl Puzzle {
@@ -190,27 +262,15 @@ impl Puzzle {
         let mut accepted = 0;
         let mut q = VecDeque::new();
 
-        q.push_back(("in".to_string(), 1, 4000, 1, 4000, 1, 4000, 1, 4000));
+        q.push_back(("in".to_string(), Ratings::new()));
 
-        while let Some((
-            workflow,
-            mut x_lo,
-            mut x_hi,
-            mut m_lo,
-            mut m_hi,
-            mut a_lo,
-            mut a_hi,
-            mut s_lo,
-            mut s_hi,
-        )) = q.pop_back()
-        {
-            if x_lo > x_hi || m_lo > m_hi || a_lo > a_hi || s_lo > s_hi {
+        while let Some((workflow, mut ratings)) = q.pop_back() {
+            if !ratings.is_valid() {
                 continue;
             }
 
             if workflow == "A" {
-                accepted +=
-                    (x_hi - x_lo + 1) * (m_hi - m_lo + 1) * (a_hi - a_lo + 1) * (s_hi - s_lo + 1);
+                accepted += ratings.product();
                 continue;
             }
 
@@ -221,73 +281,25 @@ impl Puzzle {
             for rule in &self.workflows[&workflow] {
                 match rule {
                     Rule::Link(name) => {
-                        q.push_back((name.clone(), x_lo, x_hi, m_lo, m_hi, a_lo, a_hi, s_lo, s_hi));
+                        q.push_back((name.clone(), ratings.clone()));
                     }
 
                     Rule::Condition((variable, op, value, link)) => {
                         match variable.as_str() {
                             "x" => {
-                                let (new_x1, new_x2) = new_range(op, *value, x_lo, x_hi);
-                                q.push_back((
-                                    link.clone(),
-                                    new_x1,
-                                    new_x2,
-                                    m_lo,
-                                    m_hi,
-                                    a_lo,
-                                    a_hi,
-                                    s_lo,
-                                    s_hi,
-                                ));
-                                (x_lo, x_hi) = new_range(&op.opposite(), *value, x_lo, x_hi);
+                                q.push_back((link.clone(), ratings.update_x(op, *value)));
                             }
 
                             "m" => {
-                                let (new_m_lo, new_m_hi) = new_range(op, *value, m_lo, m_hi);
-                                q.push_back((
-                                    link.clone(),
-                                    x_lo,
-                                    x_hi,
-                                    new_m_lo,
-                                    new_m_hi,
-                                    a_lo,
-                                    a_hi,
-                                    s_lo,
-                                    s_hi,
-                                ));
-                                (m_lo, m_hi) = new_range(&op.opposite(), *value, m_lo, m_hi);
+                                q.push_back((link.clone(), ratings.update_m(op, *value)));
                             }
 
                             "a" => {
-                                let (new_a_lo, new_a_hi) = new_range(op, *value, a_lo, a_hi);
-                                q.push_back((
-                                    link.clone(),
-                                    x_lo,
-                                    x_hi,
-                                    m_lo,
-                                    m_hi,
-                                    new_a_lo,
-                                    new_a_hi,
-                                    s_lo,
-                                    s_hi,
-                                ));
-                                (a_lo, a_hi) = new_range(&op.opposite(), *value, a_lo, a_hi);
+                                q.push_back((link.clone(), ratings.update_a(op, *value)));
                             }
 
                             "s" => {
-                                let (new_s_lo, new_s_hi) = new_range(op, *value, s_lo, s_hi);
-                                q.push_back((
-                                    link.clone(),
-                                    x_lo,
-                                    x_hi,
-                                    m_lo,
-                                    m_hi,
-                                    a_lo,
-                                    a_hi,
-                                    new_s_lo,
-                                    new_s_hi,
-                                ));
-                                (s_lo, s_hi) = new_range(&op.opposite(), *value, s_lo, s_hi);
+                                q.push_back((link.clone(), ratings.update_s(op, *value)));
                             }
 
                             _ => panic!(),
