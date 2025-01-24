@@ -68,12 +68,12 @@ Year | Count | Days
 
 ## Under the hood 🎄
 
-All solutions are *tested* and *verified* with numerous puzzle inputs (over 15: personal accounts, family accounts, friends' accounts and those found on GitHub). They can be considered totally generic.
+All solutions are *tested* and *verified* with a lot of puzzle inputs and answers (personal accounts, family accounts, friends' accounts and those found on GitHub). Thus, they can be considered totally generic.
 
 By choice, I use the most recent versions of the languages, and therefore sometimes new paradigms and functionalities, since AoC is an excellent way to practice, explore and learn (while having fun!).
 
-Rust solutions are mostly just `cargo clippy -- -F clippy::all -F clippy::pedantic -F clippy::nursery`, which is a pretty strong hardening. In the older ones, I allow myself to do unsafe integer casts or sign conversions. It's time-consuming to correct when you haven't necessarily planned for it from the start.
+Rust solutions respect `cargo clippy -- -D clippy::all -F clippy::pedantic -F clippy::nursery`, which is a pretty strong hardening (except one `clippy::too_many_lines`).
 
-They also include, for the most part, unit tests taken from example puzzle statements.
+They also include, for the most part, unit tests taken from the examples of puzzle statements.
 
 On average, with all the inputs I have, 80% of them run in less than 100ms on my Apple Silicon M1, and 95% in less than half a second.

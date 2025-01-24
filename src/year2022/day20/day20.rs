@@ -1,9 +1,5 @@
 //! [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20)
 
-#![allow(clippy::cast_sign_loss)]
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_possible_wrap)]
-
 use std::collections::VecDeque;
 
 struct Puzzle {
@@ -32,7 +28,7 @@ impl Puzzle {
 
         q.extend(self.numbers.iter().map(|x| (*x) * key).zip(0..));
 
-        let nb = self.numbers.len() as i64;
+        let nb = self.numbers.len();
 
         for _ in 0..rounds {
             for i in 0..nb {
@@ -47,8 +43,8 @@ impl Puzzle {
                 }
 
                 match shift.0 {
-                    o if o > 0 => q.rotate_left(((o) % (nb - 1)) as usize),
-                    o if o < 0 => q.rotate_right(((-o) % (nb - 1)) as usize),
+                    o if o > 0 => q.rotate_left(usize::try_from(o).unwrap() % (nb - 1)),
+                    o if o < 0 => q.rotate_right(usize::try_from(-o).unwrap() % (nb - 1)),
                     _ => (),
                 }
 
@@ -58,9 +54,9 @@ impl Puzzle {
 
         for (v, i) in q.iter().zip(0..) {
             if v.0 == 0 {
-                return q.get(((i + 1000) % nb) as usize).unwrap().0
-                    + q.get(((i + 2000) % nb) as usize).unwrap().0
-                    + q.get(((i + 3000) % nb) as usize).unwrap().0;
+                return q.get((i + 1000) % nb).unwrap().0
+                    + q.get((i + 2000) % nb).unwrap().0
+                    + q.get((i + 3000) % nb).unwrap().0;
             }
         }
         0

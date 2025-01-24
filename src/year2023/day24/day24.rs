@@ -44,17 +44,14 @@ impl Puzzle {
         }
     }
 
-    #[allow(clippy::many_single_char_names)]
     fn collisions(&self, area_min: i64, area_max: i64) -> u32 {
         let area_min = Q128::from(area_min);
         let area_max = Q128::from(area_max);
 
         let mut result = 0;
 
-        let n = self.hailstones.len();
-
-        for i in 0..(n - 1) {
-            for j in (i + 1)..n {
+        for i in 0..(self.hailstones.len() - 1) {
+            for j in (i + 1)..self.hailstones.len() {
                 let a = &self.hailstones[i];
                 let b = &self.hailstones[j];
 

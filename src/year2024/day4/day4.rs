@@ -11,7 +11,7 @@ struct Puzzle {
 impl Puzzle {
     fn new(data: &str) -> Self {
         Self {
-            grid: Grid::parse(data),
+            grid: Grid::parse(data,'#'),
         }
     }
 

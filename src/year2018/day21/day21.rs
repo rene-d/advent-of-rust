@@ -1,9 +1,11 @@
 //! [Day 21: Chronal Conversion](https://adventofcode.com/2018/day/21)
 
-#![allow(clippy::cast_possible_truncation)]
-
 use rustc_hash::FxHashSet;
 use std::fmt::Error;
+
+fn us(a: u64) -> usize {
+    usize::try_from(a).unwrap()
+}
 
 #[derive(Debug, PartialEq)]
 enum OpCodes {
@@ -54,23 +56,23 @@ impl std::str::FromStr for OpCodes {
 
 impl OpCodes {
     fn emulate(&self, a: u64, b: u64, c: u64, regs: &mut [u64]) {
-        regs[c as usize] = match &self {
-            Self::Addr => regs[a as usize] + regs[b as usize],
-            Self::Addi => regs[a as usize] + b,
-            Self::Mulr => regs[a as usize] * regs[b as usize],
-            Self::Muli => regs[a as usize] * b,
-            Self::Banr => regs[a as usize] & regs[b as usize],
-            Self::Bani => regs[a as usize] & b,
-            Self::Borr => regs[a as usize] | regs[b as usize],
-            Self::Bori => regs[a as usize] | b,
-            Self::Setr => regs[a as usize],
+        regs[us(c)] = match &self {
+            Self::Addr => regs[us(a)] + regs[us(b)],
+            Self::Addi => regs[us(a)] + b,
+            Self::Mulr => regs[us(a)] * regs[us(b)],
+            Self::Muli => regs[us(a)] * b,
+            Self::Banr => regs[us(a)] & regs[us(b)],
+            Self::Bani => regs[us(a)] & b,
+            Self::Borr => regs[us(a)] | regs[us(b)],
+            Self::Bori => regs[us(a)] | b,
+            Self::Setr => regs[us(a)],
             Self::Seti => a,
-            Self::Gtir => u64::from(a > regs[b as usize]),
-            Self::Gtri => u64::from(regs[a as usize] > b),
-            Self::Gtrr => u64::from(regs[a as usize] > regs[b as usize]),
-            Self::Eqir => u64::from(a == regs[b as usize]),
-            Self::Eqri => u64::from(regs[a as usize] == b),
-            Self::Eqrr => u64::from(regs[a as usize] == regs[b as usize]),
+            Self::Gtir => u64::from(a > regs[us(b)]),
+            Self::Gtri => u64::from(regs[us(a)] > b),
+            Self::Gtrr => u64::from(regs[us(a)] > regs[us(b)]),
+            Self::Eqir => u64::from(a == regs[us(b)]),
+            Self::Eqri => u64::from(regs[us(a)] == b),
+            Self::Eqrr => u64::from(regs[us(a)] == regs[us(b)]),
         };
     }
 }
@@ -136,7 +138,7 @@ impl Puzzle {
         let mut regs = [0, 0, 0, 0, 0, 0];
 
         loop {
-            let ip = regs[self.ip_reg] as usize;
+            let ip = us(regs[self.ip_reg]);
 
             if ip >= self.program.len() {
                 break;
@@ -164,7 +166,7 @@ impl Puzzle {
         let mut regs = [0, 0, 0, 0, 0, 0];
 
         loop {
-            let ip = regs[self.ip_reg] as usize;
+            let ip = us(regs[self.ip_reg]);
 
             if ip == 28 {
                 return *regs.iter().max().unwrap();
@@ -184,7 +186,7 @@ impl Puzzle {
         let mut last = 0;
 
         loop {
-            let ip = regs[self.ip_reg] as usize;
+            let ip = us(regs[self.ip_reg]);
 
             if ip == 28 {
                 let m = *regs.iter().max().unwrap();

@@ -79,65 +79,70 @@ pub fn main() {
     args.run(solve);
 }
 
-#[test]
-fn test01() {
-    let puzzle = Puzzle::new("10");
-    assert_eq!(puzzle.part1(), 1);
-    assert_eq!(puzzle.part2(), 1);
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test02() {
-    let puzzle = Puzzle::new("30");
-    assert_eq!(puzzle.part1(), 2);
-    assert_eq!(puzzle.part2(), 2);
-}
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new("10");
+        assert_eq!(puzzle.part1(), 1);
+        assert_eq!(puzzle.part2(), 1);
+    }
 
-#[test]
-fn test03() {
-    let puzzle = Puzzle::new("40");
-    assert_eq!(puzzle.part1(), 3);
-    assert_eq!(puzzle.part2(), 3);
-}
+    #[test]
+    fn test02() {
+        let puzzle = Puzzle::new("30");
+        assert_eq!(puzzle.part1(), 2);
+        assert_eq!(puzzle.part2(), 2);
+    }
 
-#[test]
-fn test04() {
-    let puzzle = Puzzle::new("60");
-    assert_eq!(puzzle.part1(), 4);
-    assert_eq!(puzzle.part2(), 4);
-}
+    #[test]
+    fn test03() {
+        let puzzle = Puzzle::new("40");
+        assert_eq!(puzzle.part1(), 3);
+        assert_eq!(puzzle.part2(), 3);
+    }
 
-#[test]
-fn test05() {
-    let puzzle = Puzzle::new("70");
-    assert_eq!(puzzle.part1(), 4);
-    assert_eq!(puzzle.part2(), 4);
-}
+    #[test]
+    fn test04() {
+        let puzzle = Puzzle::new("60");
+        assert_eq!(puzzle.part1(), 4);
+        assert_eq!(puzzle.part2(), 4);
+    }
 
-#[test]
-fn test06() {
-    let puzzle = Puzzle::new("80");
-    assert_eq!(puzzle.part1(), 6);
-    assert_eq!(puzzle.part2(), 6);
-}
+    #[test]
+    fn test05() {
+        let puzzle = Puzzle::new("70");
+        assert_eq!(puzzle.part1(), 4);
+        assert_eq!(puzzle.part2(), 4);
+    }
 
-#[test]
-fn test07() {
-    let puzzle = Puzzle::new("120");
-    assert_eq!(puzzle.part1(), 6);
-    assert_eq!(puzzle.part2(), 6);
-}
+    #[test]
+    fn test06() {
+        let puzzle = Puzzle::new("80");
+        assert_eq!(puzzle.part1(), 6);
+        assert_eq!(puzzle.part2(), 6);
+    }
 
-#[test]
-fn test08() {
-    let puzzle = Puzzle::new("130");
-    assert_eq!(puzzle.part1(), 8);
-    assert_eq!(puzzle.part2(), 6);
-}
+    #[test]
+    fn test07() {
+        let puzzle = Puzzle::new("120");
+        assert_eq!(puzzle.part1(), 6);
+        assert_eq!(puzzle.part2(), 6);
+    }
 
-#[test]
-fn test09() {
-    let puzzle = Puzzle::new("150");
-    assert_eq!(puzzle.part1(), 8);
-    assert_eq!(puzzle.part2(), 8);
+    #[test]
+    fn test08() {
+        let puzzle = Puzzle::new("130");
+        assert_eq!(puzzle.part1(), 8);
+        assert_eq!(puzzle.part2(), 6);
+    }
+
+    #[test]
+    fn test09() {
+        let puzzle = Puzzle::new("150");
+        assert_eq!(puzzle.part1(), 8);
+        assert_eq!(puzzle.part2(), 8);
+    }
 }

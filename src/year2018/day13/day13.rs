@@ -1,11 +1,11 @@
 //! [Day 13: Mine Cart Madness](https://adventofcode.com/2018/day/13)
 
-#![allow(clippy::too_many_lines)]
-
 use aoc::Direction;
 use aoc::GridU;
 use rustc_hash::FxHashMap;
 use std::collections::VecDeque;
+
+type Grid = GridU<char>;
 
 #[derive(Clone, Debug, Eq, PartialEq, Copy)]
 struct Cart {
@@ -28,8 +28,90 @@ impl Ord for Cart {
     }
 }
 
+impl Cart {
+    fn update(&mut self, grid: &Grid) {
+        match self.d {
+            Direction::West => {
+                self.x -= 1;
+                match grid[(self.x, self.y)] {
+                    '-' => (),
+                    '/' => self.d = Direction::South,
+                    '\\' => self.d = Direction::North,
+                    '+' => {
+                        self.d = match self.turn {
+                            0 => Direction::South, // turn left
+                            1 => Direction::West,  // go straight
+                            2 => Direction::North, // turn right
+                            _ => unreachable!(),
+                        };
+                        self.turn = (self.turn + 1) % 3;
+                    }
+                    _ => panic!(),
+                }
+            }
+
+            Direction::East => {
+                self.x += 1;
+                match grid[(self.x, self.y)] {
+                    '-' => (),
+                    '/' => self.d = Direction::North,
+                    '\\' => self.d = Direction::South,
+                    '+' => {
+                        self.d = match self.turn {
+                            0 => Direction::North, // turn left
+                            1 => Direction::East,  // go straight
+                            2 => Direction::South, // turn right
+                            _ => unreachable!(),
+                        };
+                        self.turn = (self.turn + 1) % 3;
+                    }
+                    _ => panic!(),
+                }
+            }
+
+            Direction::North => {
+                self.y -= 1;
+                match grid[(self.x, self.y)] {
+                    '|' => (),
+                    '/' => self.d = Direction::East,
+                    '\\' => self.d = Direction::West,
+                    '+' => {
+                        self.d = match self.turn {
+                            0 => Direction::West,  // turn left
+                            1 => Direction::North, // go straight
+                            2 => Direction::East,  // turn right
+                            _ => unreachable!(),
+                        };
+                        self.turn = (self.turn + 1) % 3;
+                    }
+                    _ => panic!(),
+                }
+            }
+
+            Direction::South => {
+                self.y += 1;
+                match grid[(self.x, self.y)] {
+                    '|' => (),
+                    '/' => self.d = Direction::West,
+                    '\\' => self.d = Direction::East,
+                    '+' => {
+                        self.d = match self.turn {
+                            0 => Direction::East,  // turn left
+                            1 => Direction::South, // go straight
+                            2 => Direction::West,  // turn right
+                            _ => unreachable!(),
+                        };
+                        self.turn = (self.turn + 1) % 3;
+                    }
+                    _ => panic!(),
+                }
+            }
+        }
+    }
+}
+
 struct Puzzle {
-    grid: GridU<char>,
+    grid: Grid,
     carts: Vec<Cart>,
 }
 
@@ -115,83 +197,7 @@ impl Puzzle {
         'q: while let Some(cart) = q.pop_front() {
             let mut nc = cart;
 
-            match nc.d {
-                Direction::West => {
-                    nc.x -= 1;
-                    match self.grid[(nc.x, nc.y)] {
-                        '-' => (),
-                        '/' => nc.d = Direction::South,
-                        '\\' => nc.d = Direction::North,
-                        '+' => {
-                            nc.d = match nc.turn {
-                                0 => Direction::South, // turn left
-                                1 => Direction::West,  // go straight
-                                2 => Direction::North, // turn right
-                                _ => unreachable!(),
-                            };
-                            nc.turn = (nc.turn + 1) % 3;
-                        }
-                        _ => panic!(),
-                    }
-                }
-
-                Direction::East => {
-                    nc.x += 1;
-                    match self.grid[(nc.x, nc.y)] {
-                        '-' => (),
-                        '/' => nc.d = Direction::North,
-                        '\\' => nc.d = Direction::South,
-                        '+' => {
-                            nc.d = match nc.turn {
-                                0 => Direction::North, // turn left
-                                1 => Direction::East,  // go straight
-                                2 => Direction::South, // turn right
-                                _ => unreachable!(),
-                            };
-                            nc.turn = (nc.turn + 1) % 3;
-                        }
-                        _ => panic!(),
-                    }
-                }
-
-                Direction::North => {
-                    nc.y -= 1;
-                    match self.grid[(nc.x, nc.y)] {
-                        '|' => (),
-                        '/' => nc.d = Direction::East,
-                        '\\' => nc.d = Direction::West,
-                        '+' => {
-                            nc.d = match nc.turn {
-                                0 => Direction::West,  // turn left
-                                1 => Direction::North, // go straight
-                                2 => Direction::East,  // turn right
-                                _ => unreachable!(),
-                            };
-                            nc.turn = (nc.turn + 1) % 3;
-                        }
-                        _ => panic!(),
-                    }
-                }
-
-                Direction::South => {
-                    nc.y += 1;
-                    match self.grid[(nc.x, nc.y)] {
-                        '|' => (),
-                        '/' => nc.d = Direction::West,
-                        '\\' => nc.d = Direction::East,
-                        '+' => {
-                            nc.d = match nc.turn {
-                                0 => Direction::East,  // turn left
-                                1 => Direction::South, // go straight
-                                2 => Direction::West,  // turn right
-                                _ => unreachable!(),
-                            };
-                            nc.turn = (nc.turn + 1) % 3;
-                        }
-                        _ => panic!(),
-                    }
-                }
-            }
+            nc.update(&self.grid);
 
             for z in &mut new_carts {
                 if nc.x == z.x && nc.y == z.y {

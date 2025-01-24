@@ -15,7 +15,7 @@ fn score(grid: &Grid) -> i32 {
 }
 
 fn init_first_warehouse(input: &str) -> (Grid, Coord) {
-    let mut grid = Grid::parse(input);
+    let mut grid = Grid::parse(input, '#');
     let mut start = Coord { x: 0, y: 0 };
 
     for (pos, &c) in &grid {
@@ -30,7 +30,7 @@ fn init_first_warehouse(input: &str) -> (Grid, Coord) {
 }
 
 fn init_second_warehouse(input: &str) -> (Grid, Coord) {
-    let simple = Grid::parse(input);
+    let simple = Grid::parse(input,'#');
     let mut grid = Grid::with_size(simple.width() * 2, simple.height(), ' ', '#');
     let mut start = Coord::new(0, 0);
 

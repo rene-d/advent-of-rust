@@ -1,9 +1,5 @@
 //! [Day 23: Unstable Diffusion](https://adventofcode.com/2022/day/23)
 
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_sign_loss)]
-
 use rustc_hash::{FxHashMap, FxHashSet};
 
 struct Puzzle {
@@ -15,10 +11,8 @@ impl Puzzle {
     fn new(data: &str) -> Self {
         let mut elves = FxHashSet::default();
 
-        for (y, line) in data.lines().enumerate() {
-            for (x, c) in line.chars().enumerate() {
-                let x = x as i32;
-                let y = y as i32;
+        for (y, line) in (0..).zip(data.lines()) {
+            for (x, c) in (0..).zip(line.chars()) {
                 if c == '#' {
                     elves.insert((x, y));
                 }
@@ -128,7 +122,7 @@ impl Puzzle {
         let y_min = self.elves.iter().map(|(_, y)| y).min().unwrap();
         let y_max = self.elves.iter().map(|(_, y)| y).max().unwrap();
 
-        ((x_max - x_min + 1) * (y_max - y_min + 1)) as usize - self.elves.len()
+        usize::try_from((x_max - x_min + 1) * (y_max - y_min + 1)).unwrap() - self.elves.len()
     }
 
     // Solve part two

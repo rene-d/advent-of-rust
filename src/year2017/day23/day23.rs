@@ -1,16 +1,12 @@
 //! [Day 23: Coprocessor Conflagration](https://adventofcode.com/2017/day/23)
 
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_precision_loss)]
-#![allow(clippy::cast_possible_wrap)]
-#![allow(clippy::cast_sign_loss)]
-
+use num::integer::Roots;
 use rustc_hash::FxHashMap;
 
 struct Program {
     opcodes: Vec<(String, Vec<String>)>,
     regs: FxHashMap<String, i64>,
-    ip: i64,
+    ip: usize,
     mul_called: u32,
 }
 
@@ -24,8 +20,8 @@ impl Program {
         }
     }
     fn run(&mut self) {
-        while self.ip >= 0 && self.ip < (self.opcodes.len() as i64) {
-            let (instr, args) = &self.opcodes[self.ip as usize];
+        while self.ip < self.opcodes.len() {
+            let (instr, args) = &self.opcodes[self.ip];
             self.ip += 1;
 
             let mut value = |i: usize| {
@@ -54,7 +50,8 @@ impl Program {
 
                 "jnz" => {
                     if value(0) != 0 {
-                        self.ip += value(1) - 1;
+                        let offset: isize = (value(1) - 1).try_into().unwrap();
+                        self.ip = self.ip.wrapping_add_signed(offset);
                     }
                 }
                 "hcf" => {
@@ -115,8 +112,7 @@ impl Puzzle {
             if n % 2 == 0 {
                 h += 1;
             } else {
-                let sqrt = ((n as f32).sqrt()).round() as i64;
-                for i in 3..=sqrt {
+                for i in 3..=n.sqrt() {
                     if n % i == 0 {
                         h += 1;
                         break;

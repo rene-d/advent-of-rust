@@ -1,13 +1,9 @@
 //! [Day 6: Chronal Coordinates](https://adventofcode.com/2018/day/6)
 
-#![allow(clippy::cast_possible_truncation)]
-#![allow(clippy::cast_sign_loss)]
-#![allow(clippy::cast_possible_wrap)]
-
 const N: usize = 512;
 
 struct Puzzle {
-    points: Vec<(usize, usize)>,
+    points: Vec<(i32, i32)>,
 }
 
 impl Puzzle {
@@ -56,9 +52,12 @@ impl Puzzle {
                 // find the nearest points
                 let mut manhattan = vec![];
 
-                for (i, &(px, py)) in self.points.iter().enumerate() {
+                for (i, &(px, py)) in (0..).zip(self.points.iter()) {
+                    let x = i32::try_from(x).unwrap();
+                    let y = i32::try_from(y).unwrap();
+
                     let d = px.abs_diff(x) + py.abs_diff(y);
-                    manhattan.push((d, i as u8));
+                    manhattan.push((d, i));
                 }
 
                 manhattan.sort_unstable();
@@ -107,13 +106,13 @@ impl Puzzle {
                 let mut d = 0;
 
                 for &(px, py) in &self.points {
-                    d += x.abs_diff(px as i32) + y.abs_diff(py as i32);
-                    if d >= limit as u32 {
+                    d += (x - px).abs() + (y - py).abs();
+                    if d >= limit {
                         break;
                     }
                 }
 
-                if d < (limit as u32) {
+                if d < limit {
                     result += 1;
                 }
             }

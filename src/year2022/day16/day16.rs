@@ -1,14 +1,12 @@
 //! [Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)
 
-#![allow(clippy::cast_possible_truncation)]
-
 use regex::Regex;
 use rustc_hash::FxHashMap;
 
 struct Puzzle {
-    valves: FxHashMap<String, u8>,
-    flow_rates: FxHashMap<u8, u32>,
-    tunnels: FxHashMap<u8, Vec<u8>>,
+    valves: FxHashMap<String, usize>,
+    flow_rates: FxHashMap<usize, u32>,
+    tunnels: FxHashMap<usize, Vec<usize>>,
     distances: Box<[[u32; 128]]>,
 }
 
@@ -48,7 +46,7 @@ impl Puzzle {
         let max_id = puzzle.valves.len();
         for a in 0..max_id {
             for b in 0..max_id {
-                let d = puzzle.calc_dist(a as u8, b as u8, 0);
+                let d = puzzle.calc_dist(a, b, 0);
                 puzzle.distances[a][b] = d;
             }
         }
@@ -56,11 +54,11 @@ impl Puzzle {
         puzzle
     }
 
-    const fn distance(&self, a: u8, b: u8) -> u32 {
-        self.distances[a as usize][b as usize]
+    const fn distance(&self, a: usize, b: usize) -> u32 {
+        self.distances[a][b]
     }
 
-    fn calc_dist(&self, a: u8, b: u8, visited: u128) -> u32 {
+    fn calc_dist(&self, a: usize, b: usize, visited: u128) -> u32 {
         let d = self.distance(a, b);
         if d != 0 {
             d
@@ -81,19 +79,19 @@ impl Puzzle {
     }
 
     /// Returns the valve ID with its name or create a new ID.
-    fn valve_id_new(&mut self, name: &str) -> u8 {
-        let next_id = self.valves.len() as u8;
+    fn valve_id_new(&mut self, name: &str) -> usize {
+        let next_id = self.valves.len();
         assert!(next_id <= 127);
         *self.valves.entry(name.to_string()).or_insert(next_id)
     }
 
     /// Returns the valve ID with its name. Valve must exist.
-    fn valve_id(&self, name: &str) -> u8 {
+    fn valve_id(&self, name: &str) -> usize {
         *self.valves.get(name).unwrap()
     }
 
     /// Returns the valve name with its ID. Used only in `show()`.
-    fn valve_name(&self, valve_id: u8) -> &str {
+    fn valve_name(&self, valve_id: usize) -> &str {
         self.valves.iter().find(|x| *x.1 == valve_id).unwrap().0
     }
 
@@ -127,10 +125,10 @@ impl Puzzle {
     /// Recursively search for the best flow rate.
     fn max_flow(
         &self,
-        valve: u8,
+        valve: usize,
         opened: u128,
         time_left: u32,
-        seen: &mut FxHashMap<(u8, u128, u32), u32>,
+        seen: &mut FxHashMap<(usize, u128, u32), u32>,
     ) -> u32 {
         if let Some(e) = seen.get(&(valve, opened, time_left)) {
             return *e;
@@ -205,13 +203,13 @@ impl Puzzle {
         best
     }
 
-    fn max_flow_valves(&self, valve: u8, time_left: u32, nodes: u128) -> u32 {
+    fn max_flow_valves(&self, valve: usize, time_left: u32, nodes: u128) -> u32 {
         if time_left <= 1 {
             return 0;
         }
 
         let mut best = 0; // max flow for the set of nodes
-        let mut node = 0u8; // dest valve ID
+        let mut node = 0usize; // dest valve ID
         let mut nodes_bitfield = nodes; // excessively complicated, I admit
 
         while nodes_bitfield != 0 {
