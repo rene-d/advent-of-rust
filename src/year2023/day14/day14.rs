@@ -1,6 +1,6 @@
 //! [Day 14: Parabolic Reflector Dish](https://adventofcode.com/2023/day/14)
 
-use rustc_hash::{FxHashMap, FxHashSet};
+use rustc_hash::FxHashMap;
 
 /// Parabolic Reflector Dish.
 struct Dish {
@@ -160,6 +160,90 @@ impl std::fmt::Display for Dish {
     }
 }
 
+#[cfg(feature = "anim")]
+impl Dish {
+    fn export_frame(&self, frame: u32) {
+        const SCALE: u32 = 2;
+
+        let mut imgbuf = image::ImageBuffer::new(self.sx as u32 * SCALE, self.sy as u32 * SCALE);
+
+        // Iterate over the coordinates and pixels of the image
+        for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
+            let g = (0.4 * y as f32) as u8;
+            let b = (0.4 * x as f32) as u8;
+            *pixel = image::Rgb([0, g, b]);
+        }
+
+        for (y, row) in (0..).zip(self.grid.iter()) {
+            for (x, c) in (0..).zip(row.iter()) {
+                let color = match c {
+                    'O' => image::Rgb([240, 200, 30]),
+                    '#' => image::Rgb([40, 80, 250]),
+                    '.' => continue,
+                    _ => panic!("unexpected char {c}"),
+                };
+
+                for k in 0..(SCALE * SCALE) {
+                    let pixel = imgbuf.get_pixel_mut(x * SCALE + k % SCALE, y * SCALE + k / SCALE);
+                    *pixel = color;
+                }
+            }
+        }
+
+        imgbuf.save(format!("frame_{frame:03}.png")).unwrap();
+    }
+
+    /// Export frames to make an animation of the platform's tilt.
+    fn anim(data: &str) -> std::io::Result<()> {
+        let mut dish = Self::new(data);
+        let mut seen = rustc_hash::FxHashSet::default();
+
+        let mut frame = 0;
+
+        let mut show = |dish: &Dish| {
+            dish.export_frame(frame);
+            frame += 1;
+        };
+
+        while seen.insert(dish.state()) {
+            dish.north();
+            show(&dish);
+
+            dish.west();
+            show(&dish);
+
+            dish.south();
+            show(&dish);
+
+            dish.east();
+            show(&dish);
+        }
+
+        use std::io::Write;
+
+        let mut magick = std::process::Command::new("magick")
+            .args(["-script", "-"])
+            .stdin(std::process::Stdio::piped())
+            // .stdout(std::process::Stdio::piped())
+            .spawn()?;
+
+        let child_stdin = magick.stdin.as_mut().unwrap();
+        child_stdin.write(b"-delay 20 -loop 0\n")?;
+        for i in (0..frame).step_by(9) {
+            child_stdin.write_fmt(format_args!("frame_{i:03}.png\n"))?;
+        }
+        child_stdin.write(b"-write anim.gif\n")?;
+
+        magick.wait_with_output()?;
+
+        for i in 0..frame {
+            let _ = std::fs::remove_file(format!("frame_{i:03}.png"));
+        }
+
+        Ok(())
+    }
+}
+
 struct Puzzle<'a> {
     data: &'a str,
 }
@@ -218,42 +302,6 @@ impl<'a> Puzzle<'a> {
 
         0
     }
-
-    /// Displays an ASCII animation of the platform's tilt.
-    /// Rather useless.
-    fn anim(&self) {
-        let mut dish = Dish::new(self.data);
-        let mut seen = FxHashSet::default();
-
-        let tempo = std::time::Duration::from_millis(100);
-
-        let show = |dish: &Dish| {
-            println!("\x1b[H\x1b[2J{dish}");
-            std::thread::sleep(tempo);
-        };
-
-        loop {
-            dish.north();
-            show(&dish);
-
-            dish.west();
-            show(&dish);
-
-            dish.south();
-            show(&dish);
-
-            dish.east();
-            show(&dish);
-
-            let key = dish.state();
-
-            if seen.contains(&key) {
-                break;
-            }
-
-            seen.insert(key);
-        }
-    }
 }
 
 /// # Panics
@@ -265,10 +313,11 @@ pub fn solve(data: &str) -> (usize, usize) {
 
 pub fn main() {
     let args = aoc::parse_args();
-    if args.verbose {
-        Puzzle::new(&args.input).anim();
-        return;
-    }
+
+    #[cfg(feature = "anim")]
+    let _ = Dish::anim(&args.input());
+
+    #[cfg(not(feature = "anim"))]
     args.run(solve);
 }
 

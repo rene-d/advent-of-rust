@@ -300,14 +300,14 @@ pub fn main() {
 
     #[cfg(feature = "anim")]
     if args.has_option("--anim1") {
-        let puzzle = Puzzle::new(&args.input);
+        let puzzle = Puzzle::new(args.input());
         puzzle.part1();
         std::process::exit(0);
     }
 
     #[cfg(feature = "anim")]
     if args.has_option("--anim2") {
-        let puzzle = Puzzle::new(&args.input);
+        let puzzle = Puzzle::new(args.input());
         puzzle.part2();
         std::process::exit(0);
     }

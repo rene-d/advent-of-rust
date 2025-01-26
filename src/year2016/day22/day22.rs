@@ -118,10 +118,12 @@ pub fn solve(data: &str) -> (usize, u32) {
 
 pub fn main() {
     let args = aoc::parse_args();
-    if args.verbose {
-        let puzzle = Puzzle::new(&args.input);
+
+    if args.is_verbose() {
+        let puzzle = Puzzle::new(args.input());
         puzzle.print();
     }
+
     args.run(solve);
 }
 

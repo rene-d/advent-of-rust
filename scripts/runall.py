@@ -165,13 +165,18 @@ def run(
 
         cmd = []
 
-        f = Path("src/year{year}/day{day}/day{day}/target/release/day{day}")
+        f = Path(f"{prog.parent}/{prog.stem}/target/release/{prog.stem}")
         if f.is_file():
             cmd.append(f)
         else:
             cmd.append("target/release/one")
             cmd.append("-r")
-            cmd.append(f"{year}:{day}")
+
+            alt = re.match(r"day\d+_(\w+)$", prog.stem)
+            if alt:
+                cmd.append(f"{year}:{day}:{alt[1]}")
+            else:
+                cmd.append(f"{year}:{day}")
 
     else:
 

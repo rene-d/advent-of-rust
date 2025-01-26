@@ -4,8 +4,8 @@ use itertools::Itertools;
 
 /// Get the array of all available solutions.
 #[must_use]
-pub fn solutions() -> Vec<Solution> {
-    empty()
+pub fn solutions(year: Option<u16>, day: Option<u8>, alt: &Option<String>) -> Vec<Solution> {
+    let sols = empty()
         .chain(year2015())
         .chain(year2016())
         .chain(year2017())
@@ -15,7 +15,11 @@ pub fn solutions() -> Vec<Solution> {
         .chain(year2021())
         .chain(year2022())
         .chain(year2023())
-        .chain(year2024())
+        .chain(year2024());
+
+    sols.filter(|sol| year.is_none_or(|x| x == sol.year))
+        .filter(|sol| day.is_none_or(|x| x == sol.day))
+        .filter(|sol| alt == &Some("*".to_string()) || alt == &sol.alt)
         .sorted_unstable_by_key(|sol| (sol.year, sol.day, sol.alt.is_some()))
         .collect()
 }
@@ -45,8 +49,12 @@ macro_rules! make_year {
                 let year = stringify!($year)[4..].parse().unwrap();
                 let day = &stringify!($day)[3..];
 
-                let (day, alt) = day.split_once('_').map_or((day,None), |(day,alt)| (day,Some(alt.to_string())) );
+                let (day, alt) = day
+                    .split_once('_')
+                    .map_or((day, None), |(day, alt)| (day, Some(alt.to_string())));
                 let day = day.parse().unwrap();
+
+                // eprintln!("=> {year} {day} {alt:?}");
 
                 let solve = |data: &str| {
                     use crate::$year::$day::$day::solve;

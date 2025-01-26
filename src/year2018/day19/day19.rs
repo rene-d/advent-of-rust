@@ -142,10 +142,12 @@ pub fn solve(data: &str) -> (u32, u32) {
 
 pub fn main() {
     let args = aoc::parse_args();
-    if args.verbose {
-        println!("{}", Puzzle::new(&args.input).run(0));
-        std::process::exit(0);
+
+    if args.is_verbose() {
+        println!("{}", Puzzle::new(args.input()).run(0));
+        return;
     }
+
     args.run(solve);
 }
 

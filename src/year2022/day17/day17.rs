@@ -1,6 +1,6 @@
 //! [Day 17: Pyroclastic Flow](https://adventofcode.com/2022/day/17)
 
-use std::collections::HashMap;
+use rustc_hash::FxHashMap;
 
 // Rocks structure with variable sizes
 const ROCKS: &[&[&[u8]]] = &[
@@ -133,7 +133,7 @@ pub fn solve(data: &str) -> (usize, usize) {
     let mut part2 = 0;
 
     let mut heights = vec![0];
-    let mut keys: HashMap<(usize, usize, Vec<u8>), usize> = HashMap::new();
+    let mut keys = FxHashMap::default();
     let mut start = 0;
     let mut end = 0;
 

@@ -1,7 +1,7 @@
 //! [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)
 
 
-use num::Rational64;
+use num::rational::Rational64;
 use rustc_hash::FxHashMap;
 use std::ops;
 

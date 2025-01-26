@@ -5,22 +5,34 @@ use std::os::unix::ffi::OsStrExt;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
-fn main() -> std::io::Result<()> {
+fn main() {
     let args = aoc::parse_args_raw();
 
-    // in a YEAR/dayDAY directory, we act as the standalone binary
-    if args.params.is_empty() && run_day_zzz()? {
-        return Ok(());
+    // in raw/runall.py mode we need a file input path
+    if args.has_option("-r") {
+        runall_wrapper();
+        return;
+    }
+
+    // print list of solutions, can be filtered
+    if args.has_option("-l") {
+        list_solutions();
+        return;
+    }
+
+    // in a YEAR/dayDAY directory, we act as the standalone daily binary
+    if run_day_directory() {
+        return;
     }
 
     // get the year or year/day filter
     let mut year: Option<u16> = None;
     let mut day: Option<u8> = None;
 
-    if !args.params.is_empty() {
+    if !args.params().is_empty() {
         let re = regex::Regex::new(r"(\d+)").unwrap();
 
-        let mut m = re.find_iter(&args.params[0]);
+        let mut m = re.find_iter(&args.params()[0]);
 
         if let Some(y) = m.next() {
             year = y.as_str().parse().ok();
@@ -30,87 +42,61 @@ fn main() -> std::io::Result<()> {
         }
     }
 
+    let alt = if args.has_option("-a") {
+        Some("*".to_string())
+    } else {
+        None
+    };
+
     // and apply it to the solution inventory
-    let sols = solutions()
-        .iter()
-        .filter(|sol| year.is_none_or(|x| x == sol.year))
-        .filter(|sol| day.is_none_or(|x| x == sol.day))
-        .cloned()
-        .collect::<Vec<_>>();
+    let sols = solutions(year, day, &alt);
 
-    // print list of solutions, can be filtered
-    if args.has_option("-l") {
-        for sol in &sols {
-            println!("Year {} day {:2} {:?}", sol.year, sol.day, sol.alt);
-        }
-    }
-    // in raw mode (for runall.py) we need a file input path
-    else if args.has_option("-r") {
-        // remove alternative solutions, if any
-        let sols: Vec<_> = sols.iter().filter(|sol| sol.alt.is_none()).collect();
-
-        if sols.len() != 1 {
-            println!("-r requires a filter ({})", sols.len());
-            return Ok(());
-        }
-
-        if args.params.len() != 2 {
-            println!("-r requires a path");
-            return Ok(());
-        }
-
-        let path = &args.params[1];
-        let data = aoc::load_input_data(path);
-        let sol = &sols[0];
-
-        args.run_data(sol.solve, &data);
-    }
-    // else run all solutions
-    else {
-        let alt = args.has_option("-a");
-        run_all(&sols, alt);
-    }
-
-    Ok(())
+    //  run all solutions
+    run_all(&sols);
 }
 
-fn run_day_zzz() -> std::io::Result<bool> {
-    let path = std::env::current_dir()?;
+/// Test in we are in yearXXXX/dayYY directory.
+/// IF yes, run the corresponding solution with
+/// input in `input.txt` if found.
+fn run_day_directory() -> bool {
+    if let Ok(path) = std::env::current_dir() {
+        if let Some(day) = path.file_name() {
+            if let Some(day) = day.to_str().unwrap().strip_prefix("day") {
+                //
+                let (day, alt) = day
+                    .split_once('_')
+                    .map_or((day, None), |(day, alt)| (day, Some(alt.to_string())));
 
-    if let Some(day) = path.file_name() {
-        if let Some(day) = day.to_str().unwrap().strip_prefix("day") {
-            //
-            let (day, alt) = day
-                .split_once('_')
-                .map_or((day, None), |(day, alt)| (day, Some(alt.to_string())));
+                if let Some(year) = path.parent() {
+                    if let Some(year) = year
+                        .file_name()
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .strip_prefix("year")
+                    {
+                        let year: Option<u16> = year.parse().ok();
+                        let day: Option<u8> = day.parse().ok();
 
-            if let Some(year) = path.parent() {
-                if let Some(year) = year
-                    .file_name()
-                    .unwrap()
-                    .to_str()
-                    .unwrap()
-                    .strip_prefix("year")
-                {
-                    let year: u16 = year.parse().unwrap();
-                    let day: u8 = day.parse().unwrap();
+                        if let Some(sol) = solutions(year, day, &alt).first() {
+                            // eprintln!("run solution {} {} {}", sol.year,sol.day, sol.alt.clone().unwrap_or("".to_string()));
 
-                    for sol in &solutions() {
-                        if sol.day == day && sol.year == year && sol.alt == alt {
-                            // (sol.main)();
-
-                            run_day(sol, true);
-                            break;
+                            let args = aoc::parse_args_raw();
+                            if args.params().is_empty() {
+                                run_day(sol, true);
+                            } else {
+                                (sol.main)();
+                            }
                         }
                     }
-                }
 
-                return Ok(true);
+                    return true;
+                }
             }
         }
     }
 
-    Ok(false)
+    false
 }
 
 fn print_part_result(part: u8, answer: &str, ok: &str, day: u8) {
@@ -132,7 +118,7 @@ fn print_part_result(part: u8, answer: &str, ok: &str, day: u8) {
     }
 }
 
-fn run_all(sols: &[Solution], alt: bool) {
+fn run_all(sols: &[Solution]) {
     println!("💫 {} 🎄✨ 💫", "Advent of Code".green());
 
     let mut total_elapsed = Duration::ZERO;
@@ -141,9 +127,9 @@ fn run_all(sols: &[Solution], alt: bool) {
     let mut failed = 0;
 
     for sol in sols {
-        if sol.alt.is_some() && !alt {
-            continue;
-        }
+        // if sol.alt.is_some() && !alt {
+        //     continue;
+        // }
 
         // if sol.alt.is_none() {
         //     continue;
@@ -275,5 +261,82 @@ fn find_input_path(sol: &Solution, input_txt: bool) -> (PathBuf, PathBuf) {
         (path.clone(), path.with_file_name("answer.txt"))
     } else {
         (path.clone(), path.with_extension("ok"))
+    }
+}
+
+fn runall_wrapper() {
+    let args = aoc::parse_args_raw();
+
+    if args.params().len() != 2 {
+        println!("-r requires a filter and a path");
+        std::process::exit(1);
+    }
+
+    let filter = &args.params()[0];
+    // let input_file = &args.params()[1];
+
+    let re = regex::Regex::new(r"(\d+):(\d+)(?:[:_](\w+))?").unwrap();
+
+    let mut year: Option<u16> = None;
+    let mut day: Option<u8> = None;
+    let mut alt: Option<String> = None;
+
+    if let Some(caps) = re.captures(filter) {
+        year = caps[1].parse().ok();
+        day = caps[2].parse().ok();
+        if let Some(s) = caps.get(3) {
+            alt = Some(s.as_str().to_string());
+        }
+    }
+
+    let sols = solutions(year, day, &alt);
+
+    if sols.len() != 1 {
+        println!("-r requires exactly one solution ({} found with year={year:?} day={day:?} alt={alt:?})", sols.len());
+        std::process::exit(1);
+    }
+
+    let path = &args.params()[1];
+    let data = aoc::load_input_data(path);
+    let sol = &sols[0];
+
+    args.run_data(sol.solve, &data);
+}
+
+fn list_solutions() {
+    let args = aoc::parse_args_raw();
+
+    // get the year or year/day filter
+    let mut year: Option<u16> = None;
+    let mut day: Option<u8> = None;
+    let alt = Some("*".to_string());
+
+    if !args.params().is_empty() {
+        let re = regex::Regex::new(r"(\d+)").unwrap();
+
+        let mut m = re.find_iter(&args.params()[0]);
+
+        if let Some(y) = m.next() {
+            year = y.as_str().parse().ok();
+        }
+        if let Some(d) = m.next() {
+            day = d.as_str().parse().ok();
+        }
+    }
+
+    for sol in &solutions(year, day, &alt) {
+        let alt = sol
+            .alt
+            .clone()
+            .map_or(String::new(), |alt| format!(" ({})", alt.magenta()));
+
+        println!(
+            "{} {} {} {:2}{}",
+            "Year".green(),
+            sol.year,
+            "day".green(),
+            sol.day,
+            alt
+        );
     }
 }

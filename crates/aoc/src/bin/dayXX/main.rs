@@ -3,7 +3,7 @@ use std::time::Duration;
 fn main() {
     let args = aoc::parse_args();
 
-    if args.verbose {
+    if args.is_verbose() {
         println!("{args:#?}");
     }
 

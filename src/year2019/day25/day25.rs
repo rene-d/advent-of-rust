@@ -1,12 +1,11 @@
 //! [Day 25: Cryostasis](https://adventofcode.com/2019/day/25)
 
-use std::collections::{HashMap, HashSet};
-
 use intcode::{Computer, State};
+use rustc_hash::{FxHashMap, FxHashSet};
 
 type Room = String;
 type Direction = String;
-type Map = HashMap<Room, HashMap<Direction, Room>>;
+type Map = FxHashMap<Room, FxHashMap<Direction, Room>>;
 
 fn run(computer: &mut Computer, command: &str) -> String {
     computer.input_flush();
@@ -117,7 +116,7 @@ fn explore(computer: &mut Computer, map: &mut Map, output: &str) {
 }
 
 fn find_path<'a>(map: &'a Map, start: &str, target: &str) -> Vec<&'a str> {
-    let mut seen = HashSet::new();
+    let mut seen = FxHashSet::default();
 
     let mut stack = Vec::new();
 
@@ -183,7 +182,7 @@ fn find_weight(computer: &mut Computer, inventory: &[&str], checkpoint_dir: &str
 pub fn solve(program: &str) -> (u64, aoc::Christmas) {
     let mut computer = Computer::load(program);
 
-    let mut map = HashMap::new();
+    let mut map = FxHashMap::default();
 
     let output = run(&mut computer, "");
     let (start_room, _, _) = parse(&output);

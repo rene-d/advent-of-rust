@@ -8,11 +8,11 @@ use crate::load_input_data;
 
 #[derive(Debug)]
 pub struct Args {
-    pub input: String,       // puzzle input
-    pub verbose: bool,       // activate the verbose flag
-    options: Vec<String>,    // copy of Args() (with a leading -)
-    pub params: Vec<String>, // copy of Args() (without the leading -)
-    elapsed: bool,           // flag to show elapsed time
+    input: String,        // puzzle input
+    verbose: bool,        // activate the verbose flag
+    options: Vec<String>, // copy of Args() (with a leading -)
+    params: Vec<String>,  // copy of Args() (without the leading -)
+    elapsed: bool,        // flag to show elapsed time
 }
 
 impl Args {
@@ -25,6 +25,15 @@ impl Args {
         args.input = load_input_data(path);
 
         args
+    }
+
+    pub const fn input(&self) -> &String {
+        &self.input
+    }
+
+    /// Return `true` if the flag -v/--verbose is on commandline.
+    pub const fn is_verbose(&self) -> bool {
+        self.verbose
     }
 
     #[must_use]
@@ -55,6 +64,10 @@ impl Args {
     pub fn has_option(&self, option: &str) -> bool {
         self.options.iter().filter(|s| *s == option).count() != 0
         //self.options.contains(option)
+    }
+
+    pub fn params(&self) -> &[String] {
+        self.params.as_slice()
     }
 }
 
@@ -107,8 +120,8 @@ impl Args {
 
         let (p1, p2) = solve(data);
 
-        #[allow(clippy::cast_possible_truncation)]
-        let micros = Duration::from_micros(instant.elapsed().as_micros() as u64);
+        let elapsed = instant.elapsed();
+        let micros = Duration::new(elapsed.as_secs(), elapsed.subsec_micros() * 1000);
 
         println!("{p1}");
 

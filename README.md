@@ -45,7 +45,7 @@ Puzzle                                                                 | Stars |
 Calendar | Solutions | Stars | Rust | Python | 🎁
 -------- | --------- | ----- | ---- | ------ | --
 [Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](src/year2024/README.md) |  50⭐ |  25 |  10 |   3
-[Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](src/year2023/README.md) |  50⭐ |  25 |  11 |   1
+[Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](src/year2023/README.md) |  50⭐ |  25 |  11 |   2
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](src/year2022/README.md) |  50⭐ |  25 |  18 |   1
 [Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](src/year2021/README.md) |  50⭐ |  25 |  12 |    
 [Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](src/year2020/README.md) |  50⭐ |  25 |  23 |    
@@ -60,7 +60,7 @@ Calendar | Solutions | Stars | Rust | Python | 🎁
 Year | Count | Days
 ---- | ----- | --------------------
 2024 |     3 | [14](src/year2024/day14/README.md) [15](src/year2024/day15/README.md) [16](src/year2024/day16/README.md)
-2023 |     1 | [10](src/year2023/day10/README.md)
+2023 |     2 | [10](src/year2023/day10/README.md) [14](src/year2023/day14/README.md)
 2022 |     1 | [17](src/year2022/day17/README.md)
 2019 |     2 | [13](src/year2019/day13/README.md) [15](src/year2019/day15/README.md)
 2018 |     1 | [18](src/year2018/day18/README.md)

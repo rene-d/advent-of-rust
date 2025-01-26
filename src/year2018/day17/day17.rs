@@ -114,8 +114,6 @@ impl Puzzle {
             }
             println!();
         }
-
-        println!();
     }
 
     fn is(&self, p: &Point, t: u8) -> bool {
@@ -201,10 +199,12 @@ pub fn solve(data: &str) -> (usize, usize) {
 
 pub fn main() {
     let args = aoc::parse_args();
-    if args.verbose {
-        Puzzle::new(&args.input).show();
-        std::process::exit(0);
+
+    if args.is_verbose() {
+        Puzzle::new(args.input()).show();
+        return;
     }
+
     args.run(solve);
 }
 

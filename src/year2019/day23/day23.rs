@@ -1,8 +1,9 @@
 //! [Day 23: Category Six](https://adventofcode.com/2019/day/23)
 
-use std::collections::{HashSet, VecDeque};
+use std::collections::VecDeque;
 
 use intcode::{Computer, State};
+use rustc_hash::FxHashSet;
 
 enum SchedState {
     Idle,
@@ -40,7 +41,7 @@ trait Task {
 struct Network {
     nodes: Vec<Node>,
     nat: Nat,
-    idle: HashSet<usize>,
+    idle: FxHashSet<usize>,
 }
 
 impl Network {
@@ -54,13 +55,13 @@ impl Network {
         Self {
             nodes,
             nat: Nat::new(),
-            idle: HashSet::new(),
+            idle: FxHashSet::default(),
         }
     }
 
     fn run(&mut self) -> (i64, i64) {
         let mut part1 = 0;
-        let mut idle_y = HashSet::new();
+        let mut idle_y = FxHashSet::default();
 
         let mut id = 0;
 

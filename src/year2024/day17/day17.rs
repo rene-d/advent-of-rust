@@ -204,9 +204,8 @@ pub fn solve(data: &str) -> (String, u64) {
 pub fn main() {
     let args = aoc::parse_args();
 
-    if args.verbose {
-        let puzzle = Puzzle::new(&args.input);
-        puzzle.dump();
+    if args.is_verbose() {
+        Puzzle::new(args.input()).dump();
         return;
     }
 

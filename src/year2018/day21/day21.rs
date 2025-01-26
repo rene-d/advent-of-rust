@@ -247,7 +247,7 @@ pub fn main() {
     let args = aoc::parse_args();
 
     if args.has_option("--emulate") {
-        Puzzle::new(&args.input).run(1);
+        Puzzle::new(args.input()).run(1);
         std::process::exit(0)
     }
 

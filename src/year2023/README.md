@@ -22,7 +22,7 @@ Puzzle                                                                        | 
 [Day 11: Cosmic Expansion](https://adventofcode.com/2023/day/11)              | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day11/day11.rs)
 [Day 12: Hot Springs](https://adventofcode.com/2023/day/12)                   | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day12/day12.rs)
 [Day 13: Point of Incidence](https://adventofcode.com/2023/day/13)            | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day13/day13.rs)
-[Day 14: Parabolic Reflector Dish](https://adventofcode.com/2023/day/14)      | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day14/day14.rs)
+[Day 14: Parabolic Reflector Dish](https://adventofcode.com/2023/day/14)      | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day14/day14.rs) [🎁](day14/README.md)
 [Day 15: Lens Library](https://adventofcode.com/2023/day/15)                  | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day15/day15.rs)
 [Day 16: The Floor Will Be Lava](https://adventofcode.com/2023/day/16)        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day16/day16.rs) [![Python](../../scripts/assets/python.png)](day16/day16.py)
 [Day 17: Clumsy Crucible](https://adventofcode.com/2023/day/17)               | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day17/day17.rs)

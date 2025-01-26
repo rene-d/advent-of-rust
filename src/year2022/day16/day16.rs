@@ -245,8 +245,8 @@ pub fn solve(data: &str) -> (u32, u32) {
 pub fn main() {
     let args = aoc::parse_args();
 
-    if args.verbose {
-        Puzzle::new(&args.input).show();
+    if args.is_verbose() {
+        Puzzle::new(args.input()).show();
         return;
     }
 
