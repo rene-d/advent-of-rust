@@ -27,32 +27,20 @@ for line in lines:
         sensors.append((sx, sy, d))
         beacons.add((bx, by))
 
-######################
 
-# the search range
-bx_min = min(x for x, _ in beacons) - d_max
-bx_max = max(x for x, _ in beacons) + d_max
+######################
 
 part1 = 0
 y = 10 if filename == "test.txt" else 2_000_000
-for x in range(bx_min, bx_max + 1):
-    if (x, y) in beacons:
-        continue
 
-    ok = True
-    for sx, sy, nearest_beacon in sensors:
-        d = manhattan((sx, sy), (x, y))
-        if d <= nearest_beacon:
-            # the sensors always report the nearest beacon
-            # if the distance is less than the distance measured by the sensor,
-            # there cannot be a beacon at this position
-            ok = False
-            break
-    if not ok:
-        part1 += 1
+bad_pos = set()
+for sx, sy, d in sensors:
+    for x in range(sx - d, sx + d + 1):
+        if sy - (d - abs(sx - x)) <= y <= sy + (d - abs(sx - x)):
+            if (x, y) not in beacons:
+                bad_pos.add((x, y))
 
-print(part1)
-
+print(len(bad_pos))
 
 ######################
 

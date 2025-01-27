@@ -675,6 +675,7 @@ def main():
     parser.add_argument("-x", "--exclude", type=str, action="append", metavar="Y:D", help="exclude day")
     parser.add_argument("--verified", action="store_true", help="only inputs with solution")
     parser.add_argument("--no-slow", action="store_true", help="exclude slow solutions")
+    parser.add_argument("--alt", action="store_true", help="run alternarive solutions too")
 
     parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
@@ -783,7 +784,9 @@ def main():
                     continue
 
                 day_solutions = list(Path(f"src/year{year}").glob(f"day{day}"))
-                day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
+
+                if args.alt:
+                    day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
 
                 for mday in day_solutions:
                     mday = mday.name.removeprefix("day")
@@ -811,7 +814,7 @@ def main():
                             print(end=f"{CR}{CLEAR_EOL}")
 
                         for lang, e in elapsed.items():
-                            stats_elapsed[year, day, lang] = (e, nb_samples)
+                            stats_elapsed[year, day, mday, lang] = (e, nb_samples)
 
             if filter_year == 0:
                 print(
@@ -829,16 +832,17 @@ def main():
 
     finally:
         if stats_elapsed:
-            languages = sorted(set(map(itemgetter(2), stats_elapsed.keys())))
+            languages = sorted(set(map(itemgetter(3), stats_elapsed.keys())))
 
-            nb_puzzles = len(set((y, d) for y, d, _ in stats_elapsed.keys()))
+            nb_puzzles = len(set((y, d) for y, d, _, _ in stats_elapsed.keys()))
             nb_solutions = 0
 
             # compute elapsed time by language
             total_time = 0
             lines = []
             for lang in languages:
-                t = list(t for (_, _, i), (t, _) in stats_elapsed.items() if lang == i)
+
+                t = list(t for (_, _, _, i), (t, _) in stats_elapsed.items() if lang == i)
                 n = len(t)
                 t = sum(t)
 

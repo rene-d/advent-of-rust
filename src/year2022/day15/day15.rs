@@ -70,7 +70,6 @@ impl Puzzle {
                 continue;
             }
 
-            let mut ok = true;
             for (sx, sy, nearest_beacon) in &self.sensors {
                 let d = manhattan(x, y, *sx, *sy);
                 if d <= *nearest_beacon {
@@ -78,12 +77,9 @@ impl Puzzle {
                     // if the distance is less than the distance measured by the sensor,
                     // there cannot be a beacon at this position
 
-                    ok = false;
+                    part1 += 1;
                     break;
                 }
-            }
-            if !ok {
-                part1 += 1;
             }
         }
         part1
