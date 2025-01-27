@@ -43,8 +43,12 @@ impl Puzzle {
                 }
 
                 match shift.0 {
-                    o if o > 0 => q.rotate_left(usize::try_from(o).unwrap() % (nb - 1)),
-                    o if o < 0 => q.rotate_right(usize::try_from(-o).unwrap() % (nb - 1)),
+                    o if o > 0 => q.rotate_left(
+                        usize::try_from(o % i64::try_from(q.len()).unwrap()).unwrap() % (nb - 1),
+                    ),
+                    o if o < 0 => q.rotate_right(
+                        usize::try_from((-o) % i64::try_from(q.len()).unwrap()).unwrap() % (nb - 1),
+                    ),
                     _ => (),
                 }
 

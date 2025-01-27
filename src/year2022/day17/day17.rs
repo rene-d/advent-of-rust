@@ -123,7 +123,7 @@ impl Cave {
 
 /// # Panics
 #[must_use]
-pub fn solve(data: &str) -> (usize, usize) {
+pub fn solve(data: &str) -> (usize, u64) {
     let jets: Vec<u8> = data.trim().bytes().collect();
 
     let mut cave = Cave::new();
@@ -162,13 +162,13 @@ pub fn solve(data: &str) -> (usize, usize) {
     }
 
     if start != 0 && end != 0 {
-        let remaining_rocks = 1_000_000_000_000 - start;
-        let cycle_length = end - start;
+        let remaining_rocks = 1_000_000_000_000 - u64::try_from(start).unwrap();
+        let cycle_length = u64::try_from(end - start).unwrap();
 
         let q = remaining_rocks / cycle_length;
-        let r = remaining_rocks % cycle_length;
+        let r = usize::try_from(remaining_rocks % cycle_length).unwrap();
 
-        part2 = heights[start + r] + q * (heights[end] - heights[start]);
+        part2 = u64::try_from(heights[start + r]).unwrap() + q * u64::try_from(heights[end] - heights[start]).unwrap();
     }
 
     (part1, part2)
