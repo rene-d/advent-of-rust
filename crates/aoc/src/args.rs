@@ -27,11 +27,13 @@ impl Args {
         args
     }
 
+    #[must_use]
     pub const fn input(&self) -> &String {
         &self.input
     }
 
     /// Return `true` if the flag -v/--verbose is on commandline.
+    #[must_use]
     pub const fn is_verbose(&self) -> bool {
         self.verbose
     }
@@ -61,11 +63,13 @@ impl Args {
         }
     }
 
+    #[must_use]
     pub fn has_option(&self, option: &str) -> bool {
         self.options.iter().filter(|s| *s == option).count() != 0
         //self.options.contains(option)
     }
 
+    #[must_use]
     pub fn params(&self) -> &[String] {
         self.params.as_slice()
     }
@@ -101,16 +105,21 @@ fn usage() {
 }
 
 impl Args {
+    /// Run a day solution, with input data read from file `input.txt`
+    /// or the first non flag argument of the commandline.
+    /// Display the elapsed time in the flag `--elapsed` is present.
     pub fn run<U, V, T>(&self, solve: T)
     where
         U: Display,
         V: Display,
         T: Fn(&str) -> (U, V),
     {
-        self.run_data(solve, &self.input);
+        let _ = self.run_data(solve, &self.input);
     }
 
-    pub fn run_data<U, V, T>(&self, solve: T, data: &str)
+    /// Run a day solution with the given input data.
+    /// Display the elapsed time in the flag `--elapsed` is present.
+    pub fn run_data<U, V, T>(&self, solve: T, data: &str) -> Duration
     where
         U: Display,
         V: Display,
@@ -134,5 +143,7 @@ impl Args {
         if self.elapsed {
             println!("elapsed: {micros:?}");
         }
+
+        elapsed
     }
 }

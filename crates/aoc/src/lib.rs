@@ -1,5 +1,3 @@
-use args::Args;
-
 mod args;
 mod coord;
 mod counter;
@@ -12,7 +10,11 @@ pub mod knot;
 pub mod math;
 pub mod ocr;
 mod square;
+mod unwraperror;
 pub mod util;
+
+pub use args::Args;
+pub use unwraperror::DAMN;
 
 pub type Coord = coord::Coord;
 pub type Direction = direction::Direction;
@@ -64,12 +66,12 @@ impl std::fmt::Display for Christmas {
 /// });
 /// ```
 #[must_use]
-pub fn parse_args() -> args::Args {
+pub fn parse_args() -> Args {
     Args::parse_args()
 }
 
 #[must_use]
-pub fn parse_args_raw() -> args::Args {
+pub fn parse_args_raw() -> Args {
     Args::parse_args_raw()
 }
 

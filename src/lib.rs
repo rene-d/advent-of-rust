@@ -1,6 +1,7 @@
-use std::iter::empty;
+pub mod rundb;
 
 use itertools::Itertools;
+use std::iter::empty;
 
 /// Get the array of all available solutions.
 #[must_use]
@@ -53,8 +54,6 @@ macro_rules! make_year {
                     .split_once('_')
                     .map_or((day, None), |(day, alt)| (day, Some(alt.to_string())));
                 let day = day.parse().unwrap();
-
-                // eprintln!("=> {year} {day} {alt:?}");
 
                 let solve = |data: &str| {
                     use crate::$year::$day::$day::solve;

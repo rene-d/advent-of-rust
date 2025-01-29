@@ -25,3 +25,4 @@ build/
 
 resolve_error.sh
 resolve_unknown.sh
+.run.db
