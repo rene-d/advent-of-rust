@@ -153,7 +153,7 @@ impl<T: Clone + Copy + Default> Square<T> {
                     square.flip_vertical_inplace();
                 }
                 _ => panic!(),
-            };
+            }
             square.clone()
         })
     }

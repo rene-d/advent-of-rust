@@ -163,7 +163,7 @@ impl Puzzle {
                     *c = '|';
                 }
                 _ => (),
-            };
+            }
         }
 
         Self { grid, carts }

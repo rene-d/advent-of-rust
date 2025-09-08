@@ -1,14 +1,12 @@
 //! [Day 4: Security Through Obscurity](https://adventofcode.com/2016/day/4)
 
-use lazy_static::lazy_static;
 use regex::Regex;
 use rustc_hash::FxHashMap;
 use std::convert::TryFrom;
 
-lazy_static! {
-    /// Regex that matches a line of input
-    static ref RE_INPUT: Regex = Regex::new(r"([\w-]+)\-(\d+)\[(\w+)\]").unwrap();
-}
+/// Regex that matches a line of input
+static RE_INPUT: std::sync::LazyLock<Regex> =
+    std::sync::LazyLock::new(|| Regex::new(r"([\w-]+)\-(\d+)\[(\w+)\]").unwrap());
 
 pub fn main() {
     let args = aoc::parse_args();

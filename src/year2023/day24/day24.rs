@@ -95,12 +95,9 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> i64 {
-        use z3::ast::{Ast, Int, Real};
+        use z3::ast::{Int, Real};
 
-        let cfg = z3::Config::new();
-        let ctx = z3::Context::new(&cfg);
-
-        let solver = z3::Solver::new(&ctx);
+        let solver = z3::Solver::new();
 
         let mut p = vec![];
         let mut v = vec![];
@@ -108,31 +105,31 @@ impl Puzzle {
 
         // Nota: some inputs mess the solver if I use the z3::ast::Int datatype
         for _ in 0..3 {
-            p.push(Real::fresh_const(&ctx, "p")); // positions
-            v.push(Real::fresh_const(&ctx, "v")); // velocity
+            p.push(Real::fresh_const("p")); // positions
+            v.push(Real::fresh_const("v")); // velocity
         }
 
         for _ in 0..self.hailstones.len() {
-            t.push(Real::fresh_const(&ctx, "t")); // time
+            t.push(Real::fresh_const("t")); // time
         }
 
-        let zero = Int::from_i64(&ctx, 0);
+        let zero = Int::from_i64(0);
         let zero = Real::from_int(&zero);
 
         // normally, 3*3 constraints are sufficient
         // with 4, the model should still be satisfiable, except a problem...
         for (i, hail) in self.hailstones.iter().take(4).enumerate() {
             // constraint: t[i] >= 0
-            solver.assert(&t[i].ge(&zero));
+            solver.assert(t[i].ge(&zero));
 
             // constraint: hail.p[i] + t[i] * hail.v[i] == p[i] + t[i] * v[i]
             for j in 0..3 {
-                let p_j = Real::from_int(&Int::from_i64(&ctx, hail.p[j]));
-                let v_j = Real::from_int(&Int::from_i64(&ctx, hail.v[j]));
+                let p_j = Real::from_int(&Int::from_i64(hail.p[j]));
+                let v_j = Real::from_int(&Int::from_i64(hail.v[j]));
 
                 let left = &p_j + &t[i] * &v_j;
                 let right = &p[j] + &t[i] * &v[j];
-                solver.assert(&left._eq(&right));
+                solver.assert(left.eq(&right));
             }
         }
 
@@ -142,7 +139,7 @@ impl Puzzle {
                     let result: i64 = p
                         .iter()
                         .filter_map(|i| model.eval(i, true))
-                        .filter_map(|i| i.as_real())
+                        .filter_map(|i| i.as_rational())
                         .filter_map(|(num, den)| (den == 1).then_some(num))
                         .sum();
 

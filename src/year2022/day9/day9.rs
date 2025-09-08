@@ -81,7 +81,7 @@ impl Puzzle {
     }
 
     /// Move a segment
-    fn move_segment(direction: char, head: &mut (i32, i32), tail: &mut (i32, i32)) {
+    const fn move_segment(direction: char, head: &mut (i32, i32), tail: &mut (i32, i32)) {
         // head movement
         let (dx, dy) = match direction {
             'R' => (1, 0),

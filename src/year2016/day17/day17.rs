@@ -30,7 +30,7 @@ impl<'a> Puzzle<'a> {
 
             let mut digest = base_digest.clone();
             digest.consume(&path);
-            let hash = digest.compute();
+            let hash = digest.finalize();
             let hash: Vec<_> = format!("{hash:x}").chars().collect();
 
             let is_open = |i| 'b' <= hash[i] && hash[i] <= 'f';
@@ -81,7 +81,7 @@ impl<'a> Puzzle<'a> {
                 continue;
             }
 
-            let hash = digest.clone().compute();
+            let hash = digest.clone().finalize();
             let hash: Vec<_> = format!("{hash:x}").chars().collect();
 
             let is_open = |i| 'b' <= hash[i] && hash[i] <= 'f';

@@ -28,7 +28,7 @@ impl Puzzle {
                 }
                 State::Input => panic!("missing input ?!"),
                 State::Halted => break robot_report,
-            };
+            }
         }
     }
 

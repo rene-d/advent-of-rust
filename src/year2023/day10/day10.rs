@@ -101,7 +101,7 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    fn part1(&self) -> usize {
+    const fn part1(&self) -> usize {
         self.points.len() / 2
     }
 

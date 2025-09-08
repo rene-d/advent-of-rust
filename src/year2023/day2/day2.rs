@@ -65,7 +65,7 @@ impl<'a> Puzzle<'a> {
             let mut blue = 0;
 
             // get the string at the right of ':'
-            let subsets = line.split(':').last().unwrap();
+            let subsets = line.split(':').next_back().unwrap();
 
             // split the sets of cubes
             for subset in subsets.split(';') {
@@ -83,7 +83,7 @@ impl<'a> Puzzle<'a> {
                         Some(&"green") => green = green.max(n),
                         Some(&"blue") => blue = blue.max(n),
                         _ => panic!(),
-                    };
+                    }
                 }
             }
 

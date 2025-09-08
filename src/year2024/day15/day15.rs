@@ -51,7 +51,7 @@ fn init_second_warehouse(input: &str) -> (Grid, Coord) {
                 grid[pos1] = c;
                 grid[pos2] = c;
             }
-        };
+        }
     }
 
     (grid, start)
@@ -84,7 +84,7 @@ fn move_boxes(grid: &mut Grid, robot: &mut Coord, d: Coord) {
             }
             '.' => (),
             _ => panic!(),
-        };
+        }
     }
 
     while !seen.is_empty() {
@@ -236,7 +236,7 @@ impl Puzzle {
                 }
                 '#' => (),
                 _ => panic!(),
-            };
+            }
 
             #[cfg(feature = "anim")]
             {

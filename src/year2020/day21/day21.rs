@@ -80,7 +80,8 @@ impl<'a> Puzzle<'a> {
 
             for (&k, v) in &mut allergens {
                 if v.len() == 1 {
-                    v.drain().for_each(|ingr| dangerous.push((k, ingr)));
+                    //v.drain().for_each(|ingr| dangerous.push((k, ingr)));
+                    for ingr in v.drain() { dangerous.push((k, ingr)); }
                     break;
                 }
             }

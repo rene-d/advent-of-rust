@@ -63,7 +63,7 @@ impl Puzzle {
                 }
             }
             _ => unreachable!(),
-        };
+        }
 
         false
     }

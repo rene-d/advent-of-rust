@@ -152,7 +152,6 @@ impl MulAssign<i32> for Coord {
 
 impl From<u8> for Coord {
     #[inline]
-    #[must_use]
     fn from(value: u8) -> Self {
         match value {
             b'^' | b'U' => Self::UP,
@@ -166,7 +165,6 @@ impl From<u8> for Coord {
 
 impl From<char> for Coord {
     #[inline]
-    #[must_use]
     fn from(value: char) -> Self {
         match value {
             '^' | 'U' => Self::UP,

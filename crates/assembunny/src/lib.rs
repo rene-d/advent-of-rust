@@ -198,7 +198,7 @@ impl BunnyVM {
 
     /// returns true if the program is finished (instruction pointer is out of bounds)
     #[must_use]
-    pub fn is_terminated(&self) -> bool {
+    pub const fn is_terminated(&self) -> bool {
         self.ip >= self.instructions.len()
     }
 
@@ -266,7 +266,7 @@ impl BunnyVM {
     }
 
     /// reset the program to the initial state
-    pub fn reset(&mut self) {
+    pub const fn reset(&mut self) {
         self.registers = [0, 0, 0, 0];
         self.ip = 0;
         self.output = None;

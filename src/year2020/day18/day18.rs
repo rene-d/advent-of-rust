@@ -79,7 +79,7 @@ impl Expr {
                     left *= right;
                 }
                 op => panic!("unexpected token {op:?}"),
-            };
+            }
         }
 
         (left, next_idx)
@@ -97,7 +97,7 @@ impl Expr {
                     left += right;
                 }
                 op => panic!("unexpected token {op:?}"),
-            };
+            }
         }
 
         (left, next_idx)

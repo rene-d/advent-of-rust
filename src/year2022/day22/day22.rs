@@ -87,7 +87,7 @@ impl Puzzle {
                 }
             }
             _ => panic!(""),
-        };
+        }
 
         if self.grid[y].chars().nth(x).unwrap() == '.' {
             *orig_x = x;

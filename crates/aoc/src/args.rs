@@ -70,7 +70,7 @@ impl Args {
     }
 
     #[must_use]
-    pub fn params(&self) -> &[String] {
+    pub const fn params(&self) -> &[String] {
         self.params.as_slice()
     }
 }

@@ -31,7 +31,7 @@ impl Puzzle {
                 n = 0;
             } else {
                 n = last_spoken[&last] - last_last_spoken[&n];
-            };
+            }
 
             if turn == number_spoken {
                 break;

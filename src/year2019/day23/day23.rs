@@ -80,7 +80,7 @@ impl Network {
                 SchedState::Idle => {
                     self.idle.insert(id);
                 }
-            };
+            }
 
             for m in a.messages {
                 // deal with part 2

@@ -59,7 +59,7 @@ fn read_packet(packet: &str, mut offset: usize, sum_of_versions: &mut u32) -> (u
             count -= 1;
             offset = new_offset;
         }
-    };
+    }
 
     let computed = match type_id {
         0 => values.iter().sum(),

@@ -44,7 +44,7 @@ impl State {
         }
     }
 
-    fn apply_effects(&mut self) -> Option<CastResult> {
+    const fn apply_effects(&mut self) -> Option<CastResult> {
         if self.timer_recharge > 0 {
             self.timer_recharge -= 1;
             self.mana += 101;

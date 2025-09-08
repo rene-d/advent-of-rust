@@ -69,9 +69,9 @@ impl Dichotomy3D {
         let right_y2 = self.y2;
         let top_z2 = self.z2;
 
-        let front_x2 = (self.x1 + self.x2) / 2;
-        let left_y2 = (self.y1 + self.y2) / 2;
-        let bottom_z2 = (self.z1 + self.z2) / 2;
+        let front_x2 = i32::midpoint(self.x1, self.x2);
+        let left_y2 = i32::midpoint(self.y1, self.y2);
+        let bottom_z2 = i32::midpoint(self.z1, self.z2);
 
         let rear_x1 = front_x2 + 1;
         let right_y1 = left_y2 + 1;

@@ -1,7 +1,7 @@
 //! [Day 13: Claw Contraption](https://adventofcode.com/2024/day/13)
 
 use regex::Regex;
-use z3::ast::{Ast, Int};
+use z3::ast::Int;
 
 struct ClawMachine {
     a_x: u64,
@@ -32,21 +32,19 @@ impl ClawMachine {
     }
 
     fn price(&self, position_offset: u64) -> u64 {
-        let cfg = z3::Config::new();
-        let ctx = z3::Context::new(&cfg);
-        let solver: z3::Solver<'_> = z3::Solver::new(&ctx);
+        let solver: z3::Solver = z3::Solver::new();
 
         // unknowns
-        let a = Int::new_const(&ctx, "a");
-        let b = Int::new_const(&ctx, "b");
+        let a = Int::new_const("a");
+        let b = Int::new_const("b");
 
         // prize position
-        let p_x = &Int::from_u64(&ctx, self.p_x + position_offset);
-        let p_y = &Int::from_u64(&ctx, self.p_y + position_offset);
+        let p_x = &Int::from_u64(self.p_x + position_offset);
+        let p_y = &Int::from_u64(self.p_y + position_offset);
 
         // constraints
-        solver.assert(&(&a * self.a_x + &b * self.b_x)._eq(p_x));
-        solver.assert(&(&a * self.a_y + &b * self.b_y)._eq(p_y));
+        solver.assert((&a * self.a_x + &b * self.b_x).eq(p_x));
+        solver.assert((&a * self.a_y + &b * self.b_y).eq(p_y));
 
         // find a solution
         if solver.check() == z3::SatResult::Sat {

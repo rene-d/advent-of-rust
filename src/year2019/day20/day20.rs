@@ -37,7 +37,7 @@ impl Puzzle {
                 }
                 b'#' | b' ' => {}
                 _ => panic!("unexpected char: {c}"),
-            };
+            }
         }
 
         // map of coord/name

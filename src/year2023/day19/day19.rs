@@ -49,7 +49,7 @@ fn new_range(op: &Comparison, n: u64, rating: (u64, u64)) -> (u64, u64) {
         Comparison::Lesser => hi = (n - 1).min(hi),
         Comparison::GreaterOrEqual => lo = n.max(lo),
         Comparison::LesserOrEqual => hi = n.min(hi),
-    };
+    }
     (lo, hi)
 }
 
@@ -240,7 +240,7 @@ impl Puzzle {
                                 break;
                             }
                         }
-                    };
+                    }
                 }
 
                 match workflow {
@@ -303,12 +303,12 @@ impl Puzzle {
                             }
 
                             _ => panic!(),
-                        };
+                        }
                     }
                 }
             }
 
-            continue;
+            //continue;
         }
         accepted
     }

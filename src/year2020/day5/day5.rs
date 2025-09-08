@@ -1,21 +1,21 @@
 //! [Day 5: Binary Boarding](https://adventofcode.com/2020/day/5)
 
 fn parse_seat(seat: &str) -> u32 {
-    let (mut a, mut b) = (0, 127);
+    let (mut a, mut b) = (0u32, 127u32);
     for letter in seat.chars().take(7) {
         match letter {
-            'F' => b = (b - a + 1) / 2 - 1 + a,
-            'B' => a = b + 1 - (b - a + 1) / 2,
+            'F' => b = (b - a).div_ceil(2) - 1 + a,
+            'B' => a = b + 1 - (b - a).div_ceil(2),
             _ => (),
         }
     }
     let row = a;
 
-    let (mut a, mut b) = (0, 7);
+    let (mut a, mut b) = (0u32, 7u32);
     for letter in seat.chars().skip(7) {
         match letter {
-            'L' => b = (b - a + 1) / 2 - 1 + a,
-            'R' => a = b + 1 - (b - a + 1) / 2,
+            'L' => b = (b - a).div_ceil(2) - 1 + a,
+            'R' => a = b + 1 - (b - a).div_ceil(2),
             _ => (),
         }
     }

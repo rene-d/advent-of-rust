@@ -87,7 +87,7 @@ impl Puzzle {
                     c = a >> combo();
                 }
                 _ => panic!(),
-            };
+            }
 
             ip += 2;
         }

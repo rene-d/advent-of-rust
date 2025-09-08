@@ -53,37 +53,34 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> i64 {
-        let cfg = z3::Config::new();
-        let ctx = z3::Context::new(&cfg);
+        let ooo = z3::Optimize::new();
 
-        let ooo = z3::Optimize::new(&ctx);
+        let x = Int::new_const("x");
+        let y = Int::new_const("y");
+        let z = Int::new_const("z");
 
-        let x = Int::new_const(&ctx, "x");
-        let y = Int::new_const(&ctx, "y");
-        let z = Int::new_const(&ctx, "z");
-
-        let one = Int::from_u64(&ctx, 1);
-        let zero = Int::from_u64(&ctx, 0);
-        let mut count = Int::from_u64(&ctx, 0);
+        let one = Int::from_u64(1);
+        let zero = Int::from_u64(0);
+        let mut count = Int::from_u64(0);
 
         let dist = |px, py, pz| -> _ {
-            let px = Int::from_i64(&ctx, px);
-            let py = Int::from_i64(&ctx, py);
-            let pz = Int::from_i64(&ctx, pz);
+            let px = Int::from_i64(px);
+            let py = Int::from_i64(py);
+            let pz = Int::from_i64(pz);
 
             let dx = x
                 .ge(&px) // x-px if x>=px, px-x otherwises
-                .ite(&Int::sub(&ctx, &[&x, &px]), &Int::sub(&ctx, &[&px, &x]));
+                .ite(&Int::sub(&[&x, &px]), &Int::sub(&[&px, &x]));
 
             let dy = y
                 .ge(&py)
-                .ite(&Int::sub(&ctx, &[&y, &py]), &Int::sub(&ctx, &[&py, &y]));
+                .ite(&Int::sub(&[&y, &py]), &Int::sub(&[&py, &y]));
 
             let dz = z
                 .ge(&pz)
-                .ite(&Int::sub(&ctx, &[&z, &pz]), &Int::sub(&ctx, &[&pz, &z]));
+                .ite(&Int::sub(&[&z, &pz]), &Int::sub(&[&pz, &z]));
 
-            Int::add(&ctx, &[&dx, &dy, &dz])
+            Int::add(&[&dx, &dy, &dz])
         };
 
         for bot in &self.nanobots {
@@ -91,7 +88,7 @@ impl Puzzle {
 
             count.add_assign(
                 d // manhattan distance
-                    .le(&Int::from_u64(&ctx, bot.r)) // <=r
+                    .le(Int::from_u64(bot.r)) // <=r
                     .ite(&one, &zero), // count of
             );
         }

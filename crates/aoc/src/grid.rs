@@ -337,11 +337,11 @@ impl<'a, T: Clone + Default> Iterator for Iter<'a, T> {
 
 impl<T: Clone + Default> Grid<T> {
     #[must_use]
-    pub fn iter(&self) -> Iter<T> {
+    pub fn iter(&self) -> Iter<'_, T> {
         Iter::new(self)
     }
 
-    pub fn iter_mut(&mut self) -> IterMut<T> {
+    pub fn iter_mut(&mut self) -> IterMut<'_, T> {
         IterMut::new(self)
     }
 }
@@ -368,7 +368,6 @@ impl<'a, T: Clone + Default> IntoIterator for &'a mut Grid<T> {
 
 impl From<&str> for Grid<char> {
     #[inline]
-    #[must_use]
     fn from(value: &str) -> Self {
         Self::parse(value, '#')
     }
@@ -420,7 +419,6 @@ impl std::fmt::Display for Grid<char> {
 
 impl From<&str> for Grid<u8> {
     #[inline]
-    #[must_use]
     fn from(value: &str) -> Self {
         Self::parse(value)
     }

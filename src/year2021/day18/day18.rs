@@ -104,7 +104,7 @@ impl Snailfish {
                     while k > 0 {
                         let j = i + k;
                         if j < MAX_SIZE && self.v[j].is_none() {
-                            self.v[j] = Some((num + 1) / 2);
+                            self.v[j] = Some(num.div_ceil(2));
                             return true;
                         }
                         k /= 2;

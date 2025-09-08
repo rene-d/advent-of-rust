@@ -14,7 +14,7 @@ fn run(boot_code: &[String]) -> (i32, bool) {
         let (op, imm) = instr.split_once(' ').unwrap();
 
         match op {
-            "nop" => continue,
+            "nop" => {}
             "acc" => {
                 acc += imm.parse::<i32>().unwrap();
             }
@@ -22,7 +22,7 @@ fn run(boot_code: &[String]) -> (i32, bool) {
                 ip = ip.wrapping_add_signed(imm.parse::<isize>().unwrap()) - 1;
             }
             _ => panic!("invalid instr {instr}"),
-        };
+        }
     }
 
     (acc, ip == boot_code.len())

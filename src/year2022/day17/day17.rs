@@ -28,7 +28,7 @@ impl Cave {
         }
     }
     // Function to calculate the current height of the cave
-    fn height(&self) -> usize {
+    const fn height(&self) -> usize {
         self.rows.len() + self.bottom
     }
 

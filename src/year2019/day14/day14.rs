@@ -94,7 +94,7 @@ impl<'a> Puzzle<'a> {
         let mut b = ore;
 
         while b - a > 1 {
-            let m = (a + b) / 2;
+            let m = i64::midpoint(a, b);
             let c = c.calc(m, "FUEL");
             if c > ore {
                 b = m;

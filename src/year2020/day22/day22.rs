@@ -37,13 +37,13 @@ impl Deck {
     }
 
     #[inline]
-    fn push(&mut self, card: u8) {
+    const fn push(&mut self, card: u8) {
         self.cards[(self.bottom + self.length) % SIZE] = card;
         self.length += 1;
     }
 
     #[inline]
-    fn pop(&mut self) -> u8 {
+    const fn pop(&mut self) -> u8 {
         let card = self.cards[self.bottom];
         self.bottom = (self.bottom + 1) % SIZE;
         self.length -= 1;

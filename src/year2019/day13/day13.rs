@@ -77,7 +77,7 @@ impl ArcadeCabinet {
                     Self::TILE_BALL => self.ball = (x, y),
                     Self::TILE_PADDLE => self.paddle = (x, y),
                     _ => (),
-                };
+                }
             }
         }
 

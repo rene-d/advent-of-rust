@@ -158,7 +158,7 @@ fn find_key(data: &str, key_stretching: u32) -> u32 {
                 break;
             }
 
-            if q.quintuplet.iter().any(|&x| x == h.triplet) {
+            if q.quintuplet.contains(&h.triplet) {
                 found += 1;
                 if found == 64 {
                     break 'a;

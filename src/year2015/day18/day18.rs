@@ -54,7 +54,7 @@ fn part2(data: &str) -> u32 {
     count_lights(&grid)
 }
 
-fn corners_on(grid: &mut Grid) {
+const fn corners_on(grid: &mut Grid) {
     grid[0][0] = 1;
     grid[0][99] = 1;
     grid[99][0] = 1;

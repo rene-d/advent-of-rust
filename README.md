@@ -72,7 +72,7 @@ All solutions are *tested* and *verified* with a lot of puzzle inputs and answer
 
 By choice, I use the most recent versions of the languages, and therefore sometimes new paradigms and functionalities, since AoC is an excellent way to practice, explore and learn (while having fun!).
 
-Rust solutions respect `cargo clippy -- -D clippy::all -F clippy::pedantic -F clippy::nursery`, which is a pretty strong hardening (except one `clippy::too_many_lines`).
+Rust solutions respect `cargo clippy -- -D clippy::all -F clippy::pedantic -F clippy::nursery`, which is a pretty strong hardening.
 
 They also include, for the most part, unit tests taken from the examples of puzzle statements.
 

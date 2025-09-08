@@ -79,7 +79,7 @@ impl Puzzle {
         while a + 1 < b {
             let mut memory = Grid::<u8>::with_size(self.mem_size, self.mem_size, b' ', b'#');
 
-            let m = (a + b) / 2;
+            let m = usize::midpoint(a, b);
 
             // corrupt the first m bytes
             for &pos in self.byte_positions.iter().take(m) {

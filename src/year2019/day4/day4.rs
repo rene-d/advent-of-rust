@@ -57,7 +57,7 @@ impl Puzzle {
                 for c in s.chars() {
                     freq[c.to_digit(10).unwrap() as usize] += 1;
                 }
-                if freq.iter().any(|&x| x == 2) {
+                if freq.contains(&2) {
                     result += 1;
                 }
             }

@@ -46,7 +46,7 @@ fn parse(output: &str) -> (&str, Vec<&str>, Vec<&str>) {
             match s {
                 "north" | "east" | "south" | "west" => dirs.push(s),
                 _ => items.push(s),
-            };
+            }
         }
     }
 

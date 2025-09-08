@@ -36,7 +36,7 @@ impl State {
 }
 
 impl State {
-    fn n(&self) -> usize {
+    const fn n(&self) -> usize {
         self.items.len() / 2
     }
 

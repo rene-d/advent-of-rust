@@ -33,7 +33,7 @@ impl Puzzle {
         let mut b = 2000;
 
         while a <= b {
-            let m = (a + b) / 2;
+            let m = u32::midpoint(a, b);
 
             let mut combat: Combat = self.combat.clone();
             combat.set_army1_boost(m);
@@ -43,7 +43,7 @@ impl Puzzle {
                 units if units > 0 => a = m + 1,
                 0 => b = m - 1,
                 _ => (),
-            };
+            }
         }
 
         let mut combat: Combat = self.combat.clone();

@@ -44,7 +44,7 @@ impl Puzzle {
                     _ => panic!(),
                 },
                 _ => panic!(),
-            };
+            }
         }
 
         x.abs() + y.abs()
@@ -75,7 +75,7 @@ impl Puzzle {
                 },
                 'F' => (x, y) = (x + wx * n, y + wy * n),
                 _ => panic!(),
-            };
+            }
         }
 
         x.abs() + y.abs()

@@ -81,13 +81,13 @@ impl FoldedBug {
             0 => n.push(Self::new(1, 2, self.level - 1)),
             4 => n.push(Self::new(3, 2, self.level - 1)),
             _ => {}
-        };
+        }
 
         match y {
             0 => n.push(Self::new(2, 1, self.level - 1)),
             4 => n.push(Self::new(2, 3, self.level - 1)),
             _ => {}
-        };
+        }
 
         n
     }

@@ -165,7 +165,7 @@ fn print_part_result(part: u8, answer: &str, ok: &str, day: u8) {
             println!("{}", answer.bright_green());
         } else {
             println!("{}", answer.bright_red());
-        };
+        }
     }
 }
 

@@ -82,13 +82,13 @@ impl Puzzle {
                     let l = self.eval_sym(l);
                     let r = self.eval_sym(r);
 
-                    return match o {
+                    match o {
                         '+' => l + r,
                         '-' => l - r,
                         '*' => l * r,
                         '/' => l / r,
                         _ => panic!("unknown operation"),
-                    };
+                    }
                 }
             }
         } else {

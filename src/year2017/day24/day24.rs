@@ -39,7 +39,7 @@ pub fn solve(data: &str) -> (u32, u32) {
                 max_length_strength = max_length_strength.max(strength);
             }
             _ => {}
-        };
+        }
 
         for (i, &(a, b)) in ports.iter().enumerate() {
             let c = if a == pin {

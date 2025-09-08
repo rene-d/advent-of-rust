@@ -99,19 +99,19 @@ impl Group {
         }
     }
 
-    pub fn set_boost(&mut self, boost: u32) {
+    pub const fn set_boost(&mut self, boost: u32) {
         self.damage += boost;
     }
 
-    pub fn alive_units(&self) -> u32 {
+    pub const fn alive_units(&self) -> u32 {
         self.num_units.get()
     }
 
-    pub fn is_alive(&self) -> bool {
+    pub const fn is_alive(&self) -> bool {
         self.num_units.get() != 0
     }
 
-    fn effective_power(&self) -> u32 {
+    const fn effective_power(&self) -> u32 {
         self.num_units.get() * self.damage
     }
 

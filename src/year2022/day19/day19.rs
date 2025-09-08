@@ -1,7 +1,5 @@
 //! [Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)
 
-#![allow(clippy::too_many_lines)]
-
 use regex::Regex;
 use rustc_hash::FxHashSet;
 
@@ -16,6 +14,82 @@ struct State {
     obsidian_robots: u32,   //
     geode_robots: u32,      //
     minutes_remaining: u32, // remaining time
+}
+
+impl State {
+    const fn nothing(&self) -> Self {
+        Self {
+            ore: self.ore + self.ore_robots,
+            clay: self.clay + self.clay_robots,
+            obsidian: self.obsidian + self.obsidian_robots,
+            geode: self.geode + self.geode_robots,
+
+            ore_robots: self.ore_robots,
+            clay_robots: self.clay_robots,
+            obsidian_robots: self.obsidian_robots,
+            geode_robots: self.geode_robots,
+
+            minutes_remaining: self.minutes_remaining - 1,
+        }
+    }
+
+    const fn ore_robot(&self, ore_cost_in_ore: u32) -> Self {
+        Self {
+            ore: self.ore - ore_cost_in_ore + self.ore_robots,
+            clay: self.clay + self.clay_robots,
+            obsidian: self.obsidian + self.obsidian_robots,
+            geode: self.geode + self.geode_robots,
+
+            ore_robots: self.ore_robots + 1,
+            clay_robots: self.clay_robots,
+            obsidian_robots: self.obsidian_robots,
+            geode_robots: self.geode_robots,
+
+            minutes_remaining: self.minutes_remaining - 1,
+        }
+    }
+
+    const fn clay_robot(&self, clay_cost_in_ore: u32) -> Self {
+        Self {
+            ore: self.ore - clay_cost_in_ore + self.ore_robots,
+            clay: self.clay + self.clay_robots,
+            obsidian: self.obsidian + self.obsidian_robots,
+            geode: self.geode + self.geode_robots,
+            ore_robots: self.ore_robots,
+            clay_robots: self.clay_robots + 1,
+            obsidian_robots: self.obsidian_robots,
+            geode_robots: self.geode_robots,
+            minutes_remaining: self.minutes_remaining - 1,
+        }
+    }
+
+    const fn obsidian_robot(&self, obsidian_cost_in_ore: u32, obsidian_cost_in_clay: u32) -> Self {
+        Self {
+            ore: self.ore - obsidian_cost_in_ore + self.ore_robots,
+            clay: self.clay - obsidian_cost_in_clay + self.clay_robots,
+            obsidian: self.obsidian + self.obsidian_robots,
+            geode: self.geode + self.geode_robots,
+            ore_robots: self.ore_robots,
+            clay_robots: self.clay_robots,
+            obsidian_robots: self.obsidian_robots + 1,
+            geode_robots: self.geode_robots,
+            minutes_remaining: self.minutes_remaining - 1,
+        }
+    }
+
+    const fn geode_robot(&self, geode_cost_in_ore: u32, geode_cost_in_obsidian: u32) -> Self {
+        Self {
+            ore: self.ore - geode_cost_in_ore + self.ore_robots,
+            clay: self.clay + self.clay_robots,
+            obsidian: self.obsidian - geode_cost_in_obsidian + self.obsidian_robots,
+            geode: self.geode + self.geode_robots,
+            ore_robots: self.ore_robots,
+            clay_robots: self.clay_robots,
+            obsidian_robots: self.obsidian_robots,
+            geode_robots: self.geode_robots + 1,
+            minutes_remaining: self.minutes_remaining - 1,
+        }
+    }
 }
 
 // Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.
@@ -124,80 +198,26 @@ impl Blueprint {
             seen.insert(e);
 
             // build nothing
-            q.push(State {
-                ore: e.ore + e.ore_robots,
-                clay: e.clay + e.clay_robots,
-                obsidian: e.obsidian + e.obsidian_robots,
-                geode: e.geode + e.geode_robots,
-
-                ore_robots: e.ore_robots,
-                clay_robots: e.clay_robots,
-                obsidian_robots: e.obsidian_robots,
-                geode_robots: e.geode_robots,
-
-                minutes_remaining: e.minutes_remaining - 1,
-            });
+            q.push(e.nothing());
 
             // build an ore robot
             if e.ore >= self.ore_cost_in_ore {
-                q.push(State {
-                    ore: e.ore - self.ore_cost_in_ore + e.ore_robots,
-                    clay: e.clay + e.clay_robots,
-                    obsidian: e.obsidian + e.obsidian_robots,
-                    geode: e.geode + e.geode_robots,
-
-                    ore_robots: e.ore_robots + 1,
-                    clay_robots: e.clay_robots,
-                    obsidian_robots: e.obsidian_robots,
-                    geode_robots: e.geode_robots,
-
-                    minutes_remaining: e.minutes_remaining - 1,
-                });
+                q.push(e.ore_robot(self.ore_cost_in_ore));
             }
 
             // build a clay robot
             if e.ore >= self.clay_cost_in_ore {
-                q.push(State {
-                    ore: e.ore - self.clay_cost_in_ore + e.ore_robots,
-                    clay: e.clay + e.clay_robots,
-                    obsidian: e.obsidian + e.obsidian_robots,
-                    geode: e.geode + e.geode_robots,
-                    ore_robots: e.ore_robots,
-                    clay_robots: e.clay_robots + 1,
-                    obsidian_robots: e.obsidian_robots,
-                    geode_robots: e.geode_robots,
-                    minutes_remaining: e.minutes_remaining - 1,
-                });
+                q.push(e.clay_robot(self.clay_cost_in_ore));
             }
 
             // build an obsidian robot
             if e.ore >= self.obsidian_cost_in_ore && e.clay >= self.obsidian_cost_in_clay {
-                q.push(State {
-                    ore: e.ore - self.obsidian_cost_in_ore + e.ore_robots,
-                    clay: e.clay - self.obsidian_cost_in_clay + e.clay_robots,
-                    obsidian: e.obsidian + e.obsidian_robots,
-                    geode: e.geode + e.geode_robots,
-                    ore_robots: e.ore_robots,
-                    clay_robots: e.clay_robots,
-                    obsidian_robots: e.obsidian_robots + 1,
-                    geode_robots: e.geode_robots,
-                    minutes_remaining: e.minutes_remaining - 1,
-                });
+                q.push(e.obsidian_robot(self.obsidian_cost_in_ore, self.obsidian_cost_in_clay));
             }
 
             // build a geode robot
             if e.ore >= self.geode_cost_in_ore && e.obsidian >= self.geode_cost_in_obsidian {
-                q.push(State {
-                    ore: e.ore - self.geode_cost_in_ore + e.ore_robots,
-                    clay: e.clay + e.clay_robots,
-                    obsidian: e.obsidian - self.geode_cost_in_obsidian + e.obsidian_robots,
-                    geode: e.geode + e.geode_robots,
-                    ore_robots: e.ore_robots,
-                    clay_robots: e.clay_robots,
-                    obsidian_robots: e.obsidian_robots,
-                    geode_robots: e.geode_robots + 1,
-                    minutes_remaining: e.minutes_remaining - 1,
-                });
+                q.push(e.geode_robot(self.geode_cost_in_ore, self.geode_cost_in_obsidian));
             }
         }
 

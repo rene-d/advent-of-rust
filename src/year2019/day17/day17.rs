@@ -2,6 +2,7 @@
 
 use aoc::{Coord, Grid};
 use intcode::{Computer, State};
+use std::fmt::Write as _; // import without risk of name clashing
 
 /// Little tribute to [Mars Pathfinder](https://en.wikipedia.org/wiki/Mars_Pathfinder)
 /// and the [JPL](https://www.jpl.nasa.gov).
@@ -50,7 +51,8 @@ fn pathfinder(grid: &Grid<u8>) -> String {
             3 => 'L',
             _ => unreachable!(),
         };
-        path.push_str(&format!("{letter_d},{length};"));
+        // path.push_str(&format!("{letter_d},{length};"));
+        let _ = write!(path, "{letter_d},{length};");
     }
 
     path
@@ -202,7 +204,7 @@ impl Puzzle {
                 }
                 State::Input => panic!("missing input ?!"),
                 State::Halted => break,
-            };
+            }
         }
 
         robot_report
