@@ -34,7 +34,7 @@ pub fn hash_raw(text: &str) -> [u8; 16] {
 
     let dense: Vec<_> = sparse
         .chunks(16)
-        .map(|chunk| chunk.iter().copied().reduce(|x, y| (x ^ y)).unwrap())
+        .map(|chunk| chunk.iter().copied().reduce(|x, y| x ^ y).unwrap())
         .collect();
 
     dense.try_into().unwrap()

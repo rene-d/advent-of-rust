@@ -182,7 +182,7 @@ impl Puzzle {
                 .flow_rates
                 .iter()
                 .enumerate()
-                .filter(|(bit, _)| (partition & (1 << bit) != 0))
+                .filter(|(bit, _)| partition & (1 << bit) != 0)
                 .map(|(_, (valve, _))| 1u128 << *valve)
                 .sum();
 
@@ -191,7 +191,7 @@ impl Puzzle {
                 .flow_rates
                 .iter()
                 .enumerate()
-                .filter(|(bit, _)| (partition & (1 << bit) == 0))
+                .filter(|(bit, _)| partition & (1 << bit) == 0)
                 .map(|(_, (valve, _))| 1u128 << *valve)
                 .sum();
 
