@@ -105,7 +105,7 @@ fn solve_verbose(data: &str, progress: bool) -> (String, String) {
         }
         index += 1;
 
-        if progress && index % 10000 == 0 {
+        if progress && index.is_multiple_of(10000) {
             pb.set_message(format!(
                 "{} {}",
                 password_part1.iter().collect::<String>(),

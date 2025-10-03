@@ -33,9 +33,9 @@ impl Puzzle {
     fn enhance(&self, grid: &Square) -> Square {
         let n = grid.size();
 
-        let m = if n % 2 == 0 {
+        let m = if n.is_multiple_of(2) {
             2
-        } else if n % 3 == 0 {
+        } else if n.is_multiple_of(3) {
             3
         } else {
             panic!();

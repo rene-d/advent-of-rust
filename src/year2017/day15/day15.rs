@@ -45,13 +45,13 @@ impl Puzzle {
         for _ in 0..5_000_000 {
             loop {
                 a = a.wrapping_mul(16807) % 2_147_483_647;
-                if a % 4 == 0 {
+                if a.is_multiple_of(4) {
                     break;
                 }
             }
             loop {
                 b = b.wrapping_mul(48271) % 2_147_483_647;
-                if b % 8 == 0 {
+                if b.is_multiple_of(8) {
                     break;
                 }
             }

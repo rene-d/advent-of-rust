@@ -96,7 +96,7 @@ impl Puzzle {
         }
 
         let n = *regs.iter().max().unwrap();
-        (1..=n).filter(|k| n % k == 0).sum()
+        (1..=n).filter(|k| n.is_multiple_of(*k)).sum()
     }
 
     fn run(&self, r0: u32) -> u32 {

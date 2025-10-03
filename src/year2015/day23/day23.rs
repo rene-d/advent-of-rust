@@ -67,7 +67,7 @@ impl Puzzle {
                 return op[1].parse().unwrap();
             }
             "jie" => {
-                if regs[&op[1]] % 2 == 0 {
+                if regs[&op[1]].is_multiple_of(2) {
                     return op[2].parse().unwrap();
                 }
             }
