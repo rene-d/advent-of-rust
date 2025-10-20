@@ -61,6 +61,7 @@ INTERPRETERS = {
         "Py3.11": ".venv/py3.11/bin/python3",
         "Py3.12": ".venv/py3.12/bin/python3",
         "Py3.13": ".venv/py3.13/bin/python3",
+        "Py3.14": ".venv/py3.14/bin/python3",
     },
     "JavaScript": {
         "NodeJS": "node",
@@ -665,8 +666,8 @@ def main():
     parser.add_argument("--cache", type=Path, help="cache database")
     parser.add_argument("--working-dir", type=Path, help=argparse.SUPPRESS)
 
-    parser.add_argument("--venv", type=Path, help="create and install virtual environment")
-    parser.add_argument("--reqs", action="store_true", help="install requirements into virtual environments")
+    # parser.add_argument("--venv", type=Path, help="create and install virtual environment")
+    # parser.add_argument("--reqs", action="store_true", help="install requirements into virtual environments")
     parser.add_argument("-c", "--consistency", action="store_true", help="verify duration consistency")
 
     parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
@@ -895,7 +896,10 @@ def main():
                 for lang1, lang2 in itertools.combinations(languages, 2):
                     n, t1, t2 = 0, 0, 0
                     for y, d in puzzles:
-                        t = dict((lang, t) for (yy, dd, lang), (t, _) in stats_elapsed.items() if (yy, dd) == (y, d))
+
+                        t = dict(
+                            (lang, t) for (yy, dd, dd_str, lang), (t, _) in stats_elapsed.items() if (yy, dd) == (y, d)
+                        )
                         if lang1 in t and lang2 in t:
                             n += 1
                             t1 += t[lang1]

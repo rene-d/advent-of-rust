@@ -5,8 +5,6 @@ RUN apt-get update && \
     apt-get install -y vim curl wget sudo sqlite3 vim && \
     apt-get install -y build-essential cmake gdb python3-full python3-numpy python3-tabulate python3-click && \
     apt-get install -y clang llvm && \
-    # seems to be mandatory/useful to compile Python 3.x
-    apt-get install -y libssl-dev liblzma-dev libreadline-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libgdbm-compat-dev libbz2-dev libffi-dev zlib1g-dev && \
     # dependency for some puzzles
     apt-get install -y z3 && \
     # required to build shapely and numpy, if needed
@@ -21,12 +19,12 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
     rustup component add rust-src && \
     chmod -R 777 /usr/local/cargo
 
-# Python 3.13
+# Python 3.12
 COPY allpython.sh /
-RUN /allpython.sh 3.13.1
+RUN /allpython.sh 3.12.12
 
 COPY requirements.txt /
-RUN /opt/python/Python-3.13.1/bin/python3.13 -mvenv /venv/python && \
+RUN /opt/python/Python-3.12.12/bin/python3.12 -mvenv /venv/python && \
     /venv/python/bin/pip install -r /requirements.txt
 
 # Golang
