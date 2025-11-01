@@ -48,7 +48,7 @@ impl Puzzle {
     fn part2(&self) -> i32 {
         let mut boot_code = self.boot_code.clone();
         for ip in 0..boot_code.len() {
-            let instr = &boot_code[ip].to_string();
+            let instr = &boot_code[ip].clone();
 
             let (op, imm) = instr.split_once(' ').unwrap();
 
@@ -67,7 +67,7 @@ impl Puzzle {
                 return acc;
             }
 
-            boot_code[ip] = instr.to_string();
+            boot_code[ip].clone_from(instr);
         }
         0
     }

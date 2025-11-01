@@ -87,14 +87,14 @@ fn part2(data: &str) -> u32 {
         }
 
         map.insert(zero.to_string(), 0);
-        map.insert(one.to_string(), 1);
+        map.insert(one.clone(), 1);
         map.insert(two.to_string(), 2);
         map.insert(three.to_string(), 3);
-        map.insert(four.to_string(), 4);
+        map.insert(four.clone(), 4);
         map.insert(five.to_string(), 5);
         map.insert(six.to_string(), 6);
-        map.insert(seven.to_string(), 7);
-        map.insert(eight.to_string(), 8);
+        map.insert(seven.clone(), 7);
+        map.insert(eight.clone(), 8);
         map.insert(nine.to_string(), 9);
 
         let mut r = 0;

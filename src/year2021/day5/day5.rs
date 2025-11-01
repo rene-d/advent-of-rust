@@ -27,6 +27,8 @@ pub fn solve(data: &str) -> (i32, i32) {
             if y1 > y2 {
                 std::mem::swap(&mut y1, &mut y2);
             }
+
+            #[allow(clippy::needless_range_loop)]
             for y in y1..=y2 {
                 grid[x1][y] += 1;
             }

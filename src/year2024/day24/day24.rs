@@ -116,7 +116,7 @@ impl Puzzle {
                 if let Some(&a) = wires.get(&gate.a) {
                     if let Some(&b) = wires.get(&gate.b) {
                         let r = gate.op.eval(a, b);
-                        *wires.entry(gate.r.to_string()).or_default() = r;
+                        *wires.entry(gate.r.clone()).or_default() = r;
                         continue;
                     }
                 }

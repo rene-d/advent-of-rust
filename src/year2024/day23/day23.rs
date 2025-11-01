@@ -54,14 +54,14 @@ impl Puzzle {
 
         for (n1, n2) in &self.connections {
             graph
-                .entry(n1.to_string())
+                .entry(n1.clone())
                 .or_default()
-                .insert(n2.to_string());
+                .insert(n2.clone());
 
             graph
-                .entry(n2.to_string())
+                .entry(n2.clone())
                 .or_default()
-                .insert(n1.to_string());
+                .insert(n1.clone());
         }
 
         for (node, neighbors) in &graph {

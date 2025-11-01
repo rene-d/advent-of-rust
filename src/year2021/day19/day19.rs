@@ -80,8 +80,7 @@ pub fn solve(data: &str) -> (usize, i32) {
                 g_scan.push(point);
             }
 
-            for rotation in 0..24 {
-                let b_scan = scanner_rotated_list[*scanner_id][rotation].clone();
+            for b_scan in scanner_rotated_list[*scanner_id].iter().take(24) {
 
                 let mut match_points: FxHashMap<Point, i32> = FxHashMap::default();
 
@@ -106,7 +105,7 @@ pub fn solve(data: &str) -> (usize, i32) {
                     if count >= 12 {
                         scanner_coords[*scanner_id] = point.clone();
 
-                        for p in &b_scan {
+                        for p in b_scan {
                             let q = Point {
                                 x: point.x + p.x,
                                 y: point.y + p.y,

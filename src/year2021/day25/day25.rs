@@ -60,6 +60,7 @@ fn do_move(grid: &mut [Vec<u8>]) -> bool {
     }
 
     // then the south-facing herd moves.
+    #[allow(clippy::needless_range_loop)]
     for y in 0..ny {
         for x in 0..nx {
             let c = grid[y][x];

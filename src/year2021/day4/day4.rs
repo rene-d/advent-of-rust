@@ -84,6 +84,8 @@ fn sum(grid: &[[i32; 5]; 5]) -> i32 {
 
 /// `has_win` returns true if the grid has an cleared row or column
 fn win(grid: &[[i32; 5]; 5]) -> bool {
+
+    #[allow(clippy::needless_range_loop)]
     for i in 0..5 {
         if grid[i][0] == -1
             && grid[i][1] == -1

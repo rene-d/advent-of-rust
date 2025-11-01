@@ -43,7 +43,7 @@ pub fn solve(data: &str) -> (u32, u32) {
             let from = permutated[i];
             let to = permutated[i + 1];
 
-            distance += distances.get(&(from.to_string(), to.to_string())).unwrap();
+            distance += distances.get(&(from.clone(), to.clone())).unwrap();
         }
 
         if distance < min_distance {
