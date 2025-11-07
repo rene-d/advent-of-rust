@@ -178,7 +178,7 @@ def main():
 
             current_user = 0
 
-            languages = ("Rust", "Python", "C", "C++", "Go")
+            languages = ("Rust", "Python", "Py3.11", "Py3.12", "Py3.13", "Py3.14", "C", "C++", "Go")
             current_language = 0
 
             done = False
