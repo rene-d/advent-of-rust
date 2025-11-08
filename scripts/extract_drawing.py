@@ -40,7 +40,7 @@ def rgb(s: str) -> str:
         return ""
     try:
         rgb = re.search(r"#([\da-f]+);", s).group(1)
-    except:
+    except Exception:
         print("color problem:", s)
         exit(2)
     if len(rgb) == 3:

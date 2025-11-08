@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # [Day 14: Restroom Redoubt](https://adventofcode.com/2024/day/14)
 
+import atexit
 import itertools
 import re
 import sys
+import time
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import reduce
@@ -18,7 +20,10 @@ if self_tests:
     sys.argv.remove("-T")
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text().strip()
-lines = data.splitlines()
+if "--elapsed" in sys.argv:
+    sys.argv.remove("--elapsed")
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
 
 
 @dataclass
@@ -28,6 +33,8 @@ class Robot:
     vx: int
     vy: int
 
+
+lines = data.splitlines()
 
 robots = []
 for line in lines:
@@ -44,7 +51,6 @@ if filename == "test.txt":
 
 quadrants = defaultdict(int)
 for robot in robots:
-
     px = (robot.px + robot.vx * 100) % width
     py = (robot.py + robot.vy * 100) % height
 
@@ -62,7 +68,6 @@ if filename == "test.txt":
 if verbose:
     # investigation
     for n in itertools.count():
-
         print(n, end="\r")
 
         grid = defaultdict(int)

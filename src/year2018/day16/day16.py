@@ -1,11 +1,27 @@
 #!/usr/bin/env python3
 # [Day 16: Chronal Classification](https://adventofcode.com/2018/day/16)
 
+import atexit
 import sys
+import time
 import typing as t
 from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
+
+verbose = "-v" in sys.argv
+if verbose:
+    sys.argv.remove("-v")
+self_tests = "-T" in sys.argv
+if self_tests:
+    sys.argv.remove("-T")
+filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
+data = Path(filename).read_text().strip()
+if "--elapsed" in sys.argv:
+    sys.argv.remove("--elapsed")
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
+
 
 OPCODES = (
     "addi",
@@ -81,15 +97,6 @@ def emulate(opcode, a, b, c, regs: t.List) -> t.List:
 
     return regs
 
-
-verbose = "-v" in sys.argv
-if verbose:
-    sys.argv.remove("-v")
-self_tests = "-T" in sys.argv
-if self_tests:
-    sys.argv.remove("-T")
-filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
-data = Path(filename).read_text().strip()
 
 samples, program = data.split("\n\n\n\n", maxsplit=1)
 

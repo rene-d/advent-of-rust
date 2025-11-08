@@ -2,6 +2,7 @@
 # [Day 13: Care Package](https://adventofcode.com/2019/day/13)
 
 import argparse
+import atexit
 import sys
 import time
 from pathlib import Path
@@ -130,6 +131,10 @@ def main():
     args = parser.parse_args()
 
     software = Path(args.input).read_text()
+
+    if args.elapsed:
+        start_time_ns = time.time_ns()
+        atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
 
     game = ArcadeCabinet(software)
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # [Day 23: LAN Party](https://adventofcode.com/2024/day/23)
 
+import atexit
+import time
 from argparse import ArgumentParser
 from pathlib import Path
 
@@ -14,8 +16,12 @@ parser.add_argument("filename", nargs="?", type=Path, default="input.txt")
 args = parser.parse_args()
 if args.test:
     args.filename = Path("test.txt")
-
 data = args.filename.read_text().strip()
+if args.elapsed:
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
+
+
 lines = data.splitlines()
 
 # init

@@ -219,7 +219,7 @@ class AocSession:
                     f.parent.mkdir(parents=True, exist_ok=True)
                     f.write_text("\n".join(answers) + "\n")
 
-                    print(f"{self.prefix} Stars for {year} day {day:2}: {'⭐'*nb_stars}")
+                    print(f"{self.prefix} Stars for {year} day {day:2}: {'⭐' * nb_stars}")
 
             return f
 
@@ -388,7 +388,7 @@ class AocSession:
     @iter_all
     def print_stars(self, year=None, day=None):
         nb_stars = self.get_stars(year, day)
-        print(f"{self.prefix} Stars for {year} day {day:2}: {'⭐'*nb_stars}")
+        print(f"{self.prefix} Stars for {year} day {day:2}: {'⭐' * nb_stars}")
 
     def print_stars_year(self, year=None):
         @AocSession.iter_all

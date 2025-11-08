@@ -3,11 +3,17 @@
 # Day 8: Seven Segment Search
 # https://adventofcode.com/2021/day/8
 
+import atexit
 import sys
+import time
 from collections import defaultdict
 
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = open(filename).readlines()
+if "--elapsed" in sys.argv:
+    sys.argv.remove("--elapsed")
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
 
 
 # Part 1

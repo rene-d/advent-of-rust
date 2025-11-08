@@ -53,10 +53,10 @@ for file in ${FILES[*]} ; do
 		isort -l120 --profile black $file
 		black -l120 --quiet $file
 		ruff check $file
-		bandit -q -s B101 $(realpath -- $file)
-		# if [[ $file =~ .+\.py ]]; then
-		# 	flake8 $file
-		# fi
+		# bandit -q -s B101 $(realpath -- $file)
+		if [[ $file =~ .+\.py ]]; then
+			flake8 --max-line-length 120 --ignore E203,W503 $file
+		fi
 		echo $file
 		git add $file
 	fi

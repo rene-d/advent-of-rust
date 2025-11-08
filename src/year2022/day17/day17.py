@@ -4,6 +4,7 @@
 # Nota: not sure to write it in Rust, nor to make it cleaner and more Pythonic...
 
 import argparse
+import atexit
 import time
 from pathlib import Path
 
@@ -206,6 +207,10 @@ def main():
         args.filename = Path("test.txt")
 
     data = args.filename.read_text().strip()
+
+    if args.elapsed:
+        start_time_ns = time.time_ns()
+        atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
 
     tetris = Tetris(data)
     part1, part2 = tetris.solve(args.verbose)

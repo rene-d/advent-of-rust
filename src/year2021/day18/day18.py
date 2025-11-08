@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # [Day 18: Snailfish](https://adventofcode.com/2021/day/18)
 
+import atexit
 import functools
 import itertools
+import time
 import typing as t
 from argparse import ArgumentParser
 from pathlib import Path
@@ -81,18 +83,18 @@ class Snailfish:
 
     def explode(self):
         for i in range(0, Snailfish.MAX_SIZE, 2):
-
             # two consecutive numbers form a pair and this pair is necessarily «nested inside four pairs»
             if self.v[i] is not None and self.v[i + 1] is not None:
-
-                # «the pair's left value is added to the first regular number to the left of the exploding pair (if any)»
+                # «the pair's left value is added to the first regular number
+                # to the left of the exploding pair (if any)»
                 k = i
                 while k > 0 and self.v[k - 1] is None:
                     k -= 1
                 if k > 0:
                     self.v[k - 1] += self.v[i]
 
-                # «"the pair's right value is added to the first regular number to the right of the exploding pair (if any)»
+                # «"the pair's right value is added to the first regular number
+                # to the right of the exploding pair (if any)»
                 k = i + 1
                 while k < Snailfish.MAX_SIZE - 1 and self.v[k + 1] is None:
                     k += 1
@@ -109,10 +111,8 @@ class Snailfish:
 
     def split(self):
         for i in range(0, Snailfish.MAX_SIZE, 2):
-
             # «If any regular number is 10 or greater, the leftmost such regular number splits»
             if self.v[i] is not None and self.v[i] >= 10:
-
                 # «the left element of the pair should be the regular number divided by two and rounded down»
                 num = self.v[i]
                 self.v[i] = num // 2
@@ -270,6 +270,11 @@ def main():
         return test()
 
     data = args.filename.read_text().strip()
+
+    if args.elapsed:
+        start_time_ns = time.time_ns()
+        atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
+
     _, part1, part2 = solve(data)
     print(part1)
     print(part2)

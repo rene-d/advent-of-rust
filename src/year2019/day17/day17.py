@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
 # [Day 17: Set and Forget](https://adventofcode.com/2019/day/17)
 
+import atexit
 import sys
+import time
 from pathlib import Path
-
-sys.path.append(Path(__file__).parent.parent.as_posix())
-from intcode.Intcode import Computer  # noqa
 
 verbose = "-v" in sys.argv
 if verbose:
     sys.argv.remove("-v")
 filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text()
-
+if "--elapsed" in sys.argv:
+    sys.argv.remove("--elapsed")
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
 
 #################################################################
+
+
+sys.path.append(Path(__file__).parent.parent.as_posix())
+from intcode.Intcode import Computer  # noqa
 
 
 # part 1
@@ -105,7 +111,7 @@ def part2():
     functions = ["" for _ in range(3)]
 
     def compress(path: str) -> bool:
-        nonlocal routine, functions
+        # nonlocal: routine, functions
 
         if len(path) == 0:
             return False

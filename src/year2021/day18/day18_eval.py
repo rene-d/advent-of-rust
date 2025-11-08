@@ -42,7 +42,8 @@ def explode(number):
     exploded = False
 
     def _explode(number, depth):
-        nonlocal i_flat, flat, exploded
+        nonlocal i_flat, exploded
+        # nonlocal: flat
 
         if exploded:
             # no more action to perform
@@ -64,7 +65,8 @@ def explode(number):
                 if i_flat > 0:
                     flat[i_flat - 1].value += flat[i_flat].value
 
-                # the pair's right value is added to the first regular number to the right of the exploding pair (if any)
+                # the pair's right value is added to the first regular number
+                # to the right of the exploding pair (if any)
                 if i_flat + 1 < len(flat) - 1:
                     flat[i_flat + 2].value += flat[i_flat + 1].value
 
@@ -133,7 +135,10 @@ def reduced_addition(a, b):
 
 
 def magnitude(number):
-    """The magnitude of a pair is 3 times the magnitude of its left element plus 2 times the magnitude of its right element."""
+    """
+    The magnitude of a pair is 3 times the magnitude of its left element
+    plus 2 times the magnitude of its right element.
+    """
 
     if isinstance(number, RegularNumber):
         return number.value

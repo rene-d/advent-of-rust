@@ -3,9 +3,16 @@
 # Day 25: Sea Cucumber
 # https://adventofcode.com/2021/day/25
 
+import atexit
 import sys
+import time
 
 data = [line.strip() for line in open("input.txt" if len(sys.argv) == 1 else sys.argv[1])]
+if "--elapsed" in sys.argv:
+    sys.argv.remove("--elapsed")
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
+
 
 ny = len(data)
 nx = len(data[0])

@@ -163,7 +163,6 @@ def run(
     """
 
     if lang == "Rust":
-
         cmd = []
 
         f = Path(f"{prog.parent}/{prog.stem}/target/release/{prog.stem}")
@@ -180,7 +179,6 @@ def run(
                 cmd.append(f"{year}:{day}")
 
     else:
-
         if prog.suffix == ".class":
             cmd = ["java", "-cp", prog.parent, prog.stem]
         elif prog.suffix == ".exe":
@@ -202,7 +200,9 @@ def run(
     cmdline = cmdline.replace(Path.home().as_posix(), "~")
     print(f"{FEINT}{cmdline}{RESET}", end=TRANSIENT)
 
+    elapsed_measurement = "process"
     start = time.time_ns()
+
     try:
         out = subprocess.run(cmd, stdout=subprocess.PIPE, env=env)
         elapsed = time.time_ns() - start
@@ -229,6 +229,8 @@ def run(
                         print(elapsed, elapsed2, "unknown suffix")
                         exit()
 
+                    elapsed_measurement = "internal"
+
             nb_answers = len(answers)
             answers = " ".join(answers)
 
@@ -247,7 +249,7 @@ def run(
     result = {"elapsed": elapsed, "status": status, "answers": answers}
 
     with Path("run.log").open("at") as f:
-        line = f"{datetime.now()} {lang} {cmd} {elapsed/1e9} {status} '{answers}'"
+        line = f"{datetime.now()} {lang} {cmd} {elapsed / 1e9} {elapsed_measurement} {status} '{answers}'"
         line = line.replace(Path(__file__).parent.parent.as_posix() + "/", "")
         print(line, file=f)
 
@@ -431,7 +433,6 @@ def run_day(
     name_max_len = 16 - len(day_suffix)
 
     for crc, file in sorted(day_inputs.items(), key=itemgetter(1)):
-
         input_name = file.parent.parent.name
         input_name = input_name.removeprefix("tmp-")[:16]
         input_name = input_name.removeprefix("ok-")[:17]
@@ -447,7 +448,6 @@ def run_day(
         results = set()
 
         for lang, (pattern, interpreter) in languages.items():
-
             prog = Path(pattern.format(year=year, day=mday))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
@@ -467,7 +467,6 @@ def run_day(
                 in_cache = e is not None
 
             if not in_cache and not dry_run:
-
                 nb_expected = 1 if day == 25 else 2
 
                 e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected, year, day)
@@ -508,7 +507,7 @@ def run_day(
                 f"{prefix}"
                 f" {YELLOW}{lang:<7}{RESET}:"
                 f" {status_color}{e['status']:7}{RESET}"
-                f" {WHITE}{e['elapsed']/1e9:7.3f}s"
+                f" {WHITE}{e['elapsed'] / 1e9:7.3f}s"
                 f" {GRAY}{'☽' if in_cache else ' '}"
                 f" {status_color}{str(answers):<50}{RESET}"
                 f" {FEINT}{file}{RESET}"
@@ -540,11 +539,8 @@ def run_day(
 def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Union[str, None]]]:
     languages = {}
     for lang, v in LANGUAGES.items():
-
         if lang in INTERPRETERS:
-
             for lang2, interpreter in INTERPRETERS[lang].items():
-
                 if filter_lang and lang2.casefold() not in filter_lang:
                     continue
 
@@ -809,7 +805,7 @@ def main():
                             print(
                                 f"{CR}{CLEAR_EOL}--> ",
                                 " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())),
-                                f"{FEINT}({nb_samples} input{'s' if nb_samples>1 else ''}){RESET}",
+                                f"{FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}",
                             )
                         else:
                             print(end=f"{CR}{CLEAR_EOL}")
@@ -842,7 +838,6 @@ def main():
             total_time = 0
             lines = []
             for lang in languages:
-
                 t = list(t for (_, _, _, i), (t, _) in stats_elapsed.items() if lang == i)
                 n = len(t)
                 t = sum(t)
@@ -857,7 +852,7 @@ def main():
                     (
                         t,
                         f"{YELLOW}{lang:<10}{RESET}"
-                        f" : {GREEN}{t:9.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ' '},"
+                        f" : {GREEN}{t:9.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n > 1 else ' '},"
                         f" average: {GREEN}{average}{RESET}",
                     )
                 )
@@ -870,8 +865,8 @@ def main():
             print(
                 "total     "
                 f" : {GREEN}{total_time:9.3f}s{RESET}"
-                f" for {WHITE}{nb_puzzles:3}{RESET} puzzle{'s' if nb_puzzles>1 else ' '}"
-                f" and {WHITE}{nb_solutions:5}{RESET} solution{'s' if nb_solutions>1 else ''}"
+                f" for {WHITE}{nb_puzzles:3}{RESET} puzzle{'s' if nb_puzzles > 1 else ' '}"
+                f" and {WHITE}{nb_solutions:5}{RESET} solution{'s' if nb_solutions > 1 else ''}"
             )
 
             overall_total_time = sum(t * ns for t, ns in stats_elapsed.values())
@@ -884,8 +879,8 @@ def main():
             print(
                 "overall   "
                 f" : {GREEN}{overall_total_time:9.3f}s{RESET}"
-                f" for {WHITE}{nb_puzzles:3}{RESET} puzzle{'s' if nb_puzzles>1 else ' '}"
-                f" and {WHITE}{overall_nb_solutions:5}{RESET} solution{'s' if overall_nb_solutions>1 else ''}"
+                f" for {WHITE}{nb_puzzles:3}{RESET} puzzle{'s' if nb_puzzles > 1 else ' '}"
+                f" and {WHITE}{overall_nb_solutions:5}{RESET} solution{'s' if overall_nb_solutions > 1 else ''}"
                 f"{inputs_per_puzzle}"
             )
 
@@ -896,7 +891,6 @@ def main():
                 for lang1, lang2 in itertools.combinations(languages, 2):
                     n, t1, t2 = 0, 0, 0
                     for y, d in puzzles:
-
                         t = dict(
                             (lang, t) for (yy, dd, dd_str, lang), (t, _) in stats_elapsed.items() if (yy, dd) == (y, d)
                         )
@@ -915,8 +909,8 @@ def main():
                                 t2 / n,
                                 f"{YELLOW}{lang1:<7}{RESET}"
                                 f" vs. {YELLOW}{lang2:<7}{RESET}:"
-                                f" {GREEN}{t1/n:7.3f}s{RESET} vs. {GREEN}{t2/n:7.3f}s{RESET}"
-                                f" (x {faster:4.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n>1 else ''}",
+                                f" {GREEN}{t1 / n:7.3f}s{RESET} vs. {GREEN}{t2 / n:7.3f}s{RESET}"
+                                f" (x {faster:4.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n > 1 else ''}",
                             )
                         )
                 print()

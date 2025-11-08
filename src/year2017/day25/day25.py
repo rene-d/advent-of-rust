@@ -1,17 +1,11 @@
 #!/usr/bin/env python3
 # [Day 25: The Halting Problem](https://adventofcode.com/2017/day/25)
 
+import atexit
 import re
 import sys
+import time
 from pathlib import Path
-
-
-class Blueprint:
-    def __init__(self):
-        self.write_if = [None, None]
-        self.move_if = [None, None]
-        self.state_if = [None, None]
-
 
 verbose = "-v" in sys.argv
 if verbose:
@@ -21,6 +15,17 @@ if self_tests:
     sys.argv.remove("-T")
 filename = ("test.txt" if sys.argv[1] == "-t" else sys.argv[1]) if len(sys.argv) > 1 else "input.txt"
 data = Path(filename).read_text().strip()
+if "--elapsed" in sys.argv:
+    sys.argv.remove("--elapsed")
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
+
+
+class Blueprint:
+    def __init__(self):
+        self.write_if = [None, None]
+        self.move_if = [None, None]
+        self.state_if = [None, None]
 
 
 blueprints = {}

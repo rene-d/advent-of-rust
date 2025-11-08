@@ -93,11 +93,11 @@ class Computer:
                         args.append("???")
 
                     elif modes[i] == POSITION_MODE:
-                        args.append(f"[{memory[ip+1+i]}]")
+                        args.append(f"[{memory[ip + 1 + i]}]")
                     elif modes[i] == IMMEDIATE_MODE:
-                        args.append(f"{memory[ip+1+i]}")
+                        args.append(f"{memory[ip + 1 + i]}")
                     elif modes[i] == RELATIVE_MODE:
-                        args.append(f"(rel {memory[ip+1+i]})")
+                        args.append(f"(rel {memory[ip + 1 + i]})")
                     else:
                         raise ValueError
 

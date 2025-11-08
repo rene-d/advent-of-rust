@@ -3,9 +3,15 @@
 # Day 10: Syntax Scoring
 # https://adventofcode.com/2021/day/10
 
+import atexit
 import sys
+import time
 
 data = open("input.txt" if len(sys.argv) == 1 else sys.argv[1]).read().splitlines()
+if "--elapsed" in sys.argv:
+    sys.argv.remove("--elapsed")
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
 
 
 def check(line):

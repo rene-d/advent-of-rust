@@ -2,6 +2,8 @@
 # [Day 10: Pipe Maze](https://adventofcode.com/2023/day/10)
 
 import argparse
+import atexit
+import time
 from collections import deque
 from pathlib import Path
 
@@ -17,6 +19,12 @@ parser.add_argument("-v", "--verbose", action="store_true")
 parser.add_argument("filename", type=Path, nargs="?", default="input.txt")
 args = parser.parse_args()
 data = args.filename.read_text().strip()
+if args.elapsed:
+    start_time_ns = time.time_ns()
+    atexit.register(lambda: print(f"elapsed: {(time.time_ns() - start_time_ns) / 1_000_000}ms"))
+
+
+# parse input
 lines = data.splitlines()
 
 _grid = [[c for c in line] for line in lines]
