@@ -26,8 +26,9 @@ sensors = list()
 beacons = set()
 d_max = 0
 
+pattern = re.compile(r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)")
 for line in lines:
-    m = re.match(r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)", line)
+    m = pattern.match(line)
     if m:
         sx, sy, bx, by = map(int, m.groups())
         d = manhattan((sx, sy), (bx, by))
@@ -46,7 +47,9 @@ for sx, sy, d in sensors:
     for x in range(sx - d, sx + d + 1):
         if sy - (d - abs(sx - x)) <= y <= sy + (d - abs(sx - x)):
             if (x, y) not in beacons:
-                bad_pos.add((x, y))
+                # bad_pos.add((x, y)) # terribly slow with Python 3.14.0
+                bad_pos.add(x * 4_294_967_296 + y)
+                # bad_pos.add(f"{x} {y}")  # almost identical to the integer key
 
 print(len(bad_pos))
 

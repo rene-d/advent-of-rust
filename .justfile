@@ -29,6 +29,9 @@ run-all *ARGS:
     tmux kill-window -t aoc:0
     tmux list-windows -t aoc
 
+python *ARGS:
+    ./scripts/runall.py -l py3.14 -l py3.13 -l py3.12 -l py3.11 {{ ARGS }}
+
 # GitHub
 
 gh-fmt:
