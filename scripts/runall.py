@@ -40,22 +40,26 @@ TERMINAL_COLS = 96
 LANGUAGES = {
     "Rust": "src/year{year}/day{day}/day{day}.rs",
     "Python": "src/year{year}/day{day}/day{day}.py",
-    "C": "src/year{year}/build/day{day}_c",
-    "C++": "src/year{year}/build/day{day}_cpp",
+    "C": "target/others/year{year}/day{day}_c",
+    "C++": "target/others/year{year}/day{day}_cpp",
     "Lua": "src/year{year}/day{day}/day{day}.lua",
     "JavaScript": "src/year{year}/day{day}/day{day}.js",
     "Ruby": "src/year{year}/day{day}/day{day}.rb",
     "Perl": "src/year{year}/day{day}/day{day}.pl",
     "Bash": "src/year{year}/day{day}/day{day}.sh",
-    "Java": "src/year{year}/build/day{day}.class",
-    "Go": "src/year{year}/build/day{day}_go",
-    "C#": "src/year{year}/build/day{day}_cs.exe",
-    "Swift": "src/year{year}/build/day{day}_swift",
+    "Java": "target/others/year{year}/day{day}.class",
+    "Go": "target/others/year{year}/day{day}_go",
+    "C#": "target/others/year{year}/day{day}_cs.exe",
+    "Swift": "target/others/year{year}/day{day}_swift",
 }
 
 INTERPRETERS = {
     "Python": {
-        "Python": (".venv/python/bin/python3", "/venv/python/bin/python3", "~/.venv/bin/python3"),
+        "Python": (
+            ".venv/python/bin/python3",
+            "/venv/python/bin/python3",
+            # "~/.venv/bin/python3",
+        ),
         "PyPy": ".venv/pypy3.10/bin/python3",
         "Py3.10": ".venv/py3.10/bin/python3",
         "Py3.11": ".venv/py3.11/bin/python3",
@@ -260,10 +264,10 @@ def make(year: int, source: Path, dest: Path, language: str):
     if not source.is_file():
         return
 
-    build = Path(str(year)) / "build"
-    build.mkdir(parents=True, exist_ok=True)
+    build_dir = Path(f"target/others/year{year}")
+    build_dir.mkdir(parents=True, exist_ok=True)
 
-    output = build / dest
+    output = build_dir / dest
 
     if output.is_file() and output.stat().st_mtime_ns >= source.stat().st_mtime_ns:
         return
@@ -275,7 +279,7 @@ def make(year: int, source: Path, dest: Path, language: str):
         cmd = "c++ -std=c++23"
         cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
     elif language == "Java":
-        cmdline = f"javac -d {build} {source}"
+        cmdline = f"javac -d {build_dir} {source}"
     elif language == "Go":
         cmdline = f"go build -o {output} {source}"
     elif language == "C#":
@@ -320,38 +324,40 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str]):
                     )
 
         for day in range(1, 26):
+            src = Path(f"src/year{year}/day{day}/day{day}")
+
             if not filter_lang or "c" in filter_lang:
-                src = Path(str(year)) / f"day{day}" / f"day{day}.c"
+                src = src.with_suffix(".c")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
                     make(year, src, f"day{day}_c", "C")
 
             if not filter_lang or "c++" in filter_lang:
-                src = Path(str(year)) / f"day{day}" / f"day{day}.cpp"
+                src = src.with_suffix(".cpp")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
                     make(year, src, f"day{day}_cpp", "C++")
 
             if not filter_lang or "java" in filter_lang:
-                src = Path(str(year)) / f"day{day}" / f"day{day}.java"
+                src = src.with_suffix(".java")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
                     make(year, src, f"day{day}.class", "Java")
 
             if not filter_lang or "go" in filter_lang:
-                src = Path(str(year)) / f"day{day}" / f"day{day}.go"
+                src = src.with_suffix(".go")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
                     make(year, src, f"day{day}_go", "Go")
 
             if not filter_lang or "c#" in filter_lang:
-                src = Path(str(year)) / f"day{day}" / f"day{day}.cs"
+                src = src.with_suffix(".cs")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
                     make(year, src, f"day{day}_cs.exe", "C#")
 
             if not filter_lang or "swift" in filter_lang:
-                src = Path(str(year)) / f"day{day}" / f"day{day}.swift"
+                src = src.with_suffix(".swift")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
                     make(year, src, f"day{day}_swift", "Swift")
@@ -637,7 +643,6 @@ def consistency(filter_year, filter_day):
                     year, day, lang = k
                     user = inputs[hash]
                     cmd = f"./scripts/runall.py -u {user:<22} -l {lang:<8} {year} {day:<2} -r"
-                    # comment = f"{RESET}  # t={YELLOW}{elapsed:7.3f}{RESET} µ={GREEN}{µ:7.3f}{RESET} d={YELLOW}{deviation:4.1f}{RESET} σ"
                     comment = f"  # t={elapsed:7.3f} µ={µ:7.3f} d={deviation:4.1f} σ"
                     cmds.append(((year, day, user), cmd + comment))
 
