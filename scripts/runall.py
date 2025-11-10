@@ -65,7 +65,9 @@ INTERPRETERS = {
         "Py3.11": ".venv/py3.11/bin/python3",
         "Py3.12": ".venv/py3.12/bin/python3",
         "Py3.13": ".venv/py3.13/bin/python3",
+        "Py3.13t": ".venv/py3.13t/bin/python3",
         "Py3.14": ".venv/py3.14/bin/python3",
+        "Py3.14t": ".venv/py3.14t/bin/python3",
     },
     "JavaScript": {
         "NodeJS": "node",

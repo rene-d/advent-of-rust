@@ -6,7 +6,7 @@
 
 <img src="./scripts/assets/christmas_ferris_2015_2024.png" alt="Christmas Ferris" width="164" />
 
-*Complete* solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) and other languages 🎄✨.
+*Complete* solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) 3.10+ and other languages 🎄✨.
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
@@ -47,12 +47,12 @@ Calendar | Solutions | Stars | Rust | Python | 🎁
 [Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](src/year2024/README.md) |  50⭐ |  25 |  10 |   3
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](src/year2023/README.md) |  50⭐ |  25 |  11 |   2
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](src/year2022/README.md) |  50⭐ |  25 |  18 |   1
-[Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](src/year2021/README.md) |  50⭐ |  25 |  12 |    
-[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](src/year2020/README.md) |  50⭐ |  25 |  23 |    
+[Advent of Code 2021](https://adventofcode.com/2021) | [Solutions](src/year2021/README.md) |  50⭐ |  25 |  12 |
+[Advent of Code 2020](https://adventofcode.com/2020) | [Solutions](src/year2020/README.md) |  50⭐ |  25 |  23 |
 [Advent of Code 2019](https://adventofcode.com/2019) | [Solutions](src/year2019/README.md) |  50⭐ |  25 |  23 |   2
 [Advent of Code 2018](https://adventofcode.com/2018) | [Solutions](src/year2018/README.md) |  50⭐ |  25 |   4 |   1
-[Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](src/year2017/README.md) |  50⭐ |  25 |  17 |    
-[Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](src/year2016/README.md) |  50⭐ |  25 |   0 |    
+[Advent of Code 2017](https://adventofcode.com/2017) | [Solutions](src/year2017/README.md) |  50⭐ |  25 |  17 |
+[Advent of Code 2016](https://adventofcode.com/2016) | [Solutions](src/year2016/README.md) |  50⭐ |  25 |   0 |
 [Advent of Code 2015](https://adventofcode.com/2015) | [Solutions](src/year2015/README.md) |  50⭐ |  25 |   5 |   1
 
 ## Bonus 🎁
