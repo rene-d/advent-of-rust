@@ -1,6 +1,5 @@
 //! [Day 24: Arithmetic Logic Unit](https://adventofcode.com/2021/day/24)
 
-use rand::Rng;
 use regex::Regex;
 use std::fmt;
 
@@ -121,6 +120,7 @@ fn load_program(data: &[String]) -> Vec<Instruction> {
     program
 }
 
+#[cfg(test)]
 fn run_program(program: &[Instruction], input: &[i64], z: i64, verbose: bool) -> i64 {
     let mut registers: [i64; 4] = [0, 0, 0, z];
     let mut input_ptr = 0;
@@ -198,6 +198,7 @@ pub fn solve(data: &str) -> (i64, i64) {
         boxes[nbox] = (div, n1, n2);
 
         // verify that the box is correct
+        #[cfg(test)]
         for w in 1..10 {
             for z in 0..260 {
                 assert_eq!(
@@ -209,23 +210,28 @@ pub fn solve(data: &str) -> (i64, i64) {
     }
 
     // verify the boxes vs. the assembly-like program
-    for _ in 0..10 {
-        let z_init: i64 = rand::rng().random_range(0..1_000_000_000);
-        let program = load_program(&data);
-        let digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5];
-        let z_program = run_program(&program, &digits, z_init, false);
+    #[cfg(test)]
+    {
+        use rand::Rng;
 
-        let mut z_boxes = z_init;
-        for nbox in 0..14 {
-            z_boxes = run_box(
-                digits[nbox],
-                z_boxes,
-                boxes[nbox].0,
-                boxes[nbox].1,
-                boxes[nbox].2,
-            );
+        for _ in 0..10 {
+            let z_init: i64 = rand::thread_rng().gen_range(0..1_000_000_000);
+            let program = load_program(&data);
+            let digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5];
+            let z_program = run_program(&program, &digits, z_init, false);
+
+            let mut z_boxes = z_init;
+            for nbox in 0..14 {
+                z_boxes = run_box(
+                    digits[nbox],
+                    z_boxes,
+                    boxes[nbox].0,
+                    boxes[nbox].1,
+                    boxes[nbox].2,
+                );
+            }
+            assert_eq!(z_program, z_boxes);
         }
-        assert_eq!(z_program, z_boxes);
     }
 
     // brute force a 14-digit input takes too much time

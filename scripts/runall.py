@@ -169,7 +169,7 @@ def run(
         if f.is_file():
             cmd.append(f)
         else:
-            cmd.append("target/release/one")
+            cmd.append("target/release/aor")
             cmd.append("-r")
 
             alt = re.match(r"day\d+_(\w+)$", prog.stem)

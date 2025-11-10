@@ -1,6 +1,6 @@
+use aor::{solutions, Solution};
 use colored::Colorize;
 use itertools::Itertools;
-use one::{solutions, Solution};
 use std::error::Error;
 use std::os::unix::ffi::OsStrExt;
 use std::path::{Path, PathBuf};
@@ -68,7 +68,7 @@ fn run_day_single(args: &aoc::Args) {
 
     let _ = args.run_data(sol.solve, &data);
 
-    // let _ = one::rundb::update_db(sol.year, sol.day, &data, elapsed);
+    // let _ = aor::rundb::update_db(sol.year, sol.day, &data, elapsed);
 }
 
 fn list_solutions() {
@@ -277,7 +277,7 @@ fn run_day(sol: &Solution, input_txt: bool) -> Option<(Duration, bool, bool)> {
             println!("{}", format!("  Elapsed : {micros:#?}").italic());
             println!();
 
-            // let _ = one::rundb::update_db(sol.year, sol.day, &data, elapsed);
+            // let _ = aor::rundb::update_db(sol.year, sol.day, &data, elapsed);
 
             return Some((elapsed, success, failed));
         }

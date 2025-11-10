@@ -338,7 +338,7 @@ class AocSession:
             else:
                 # run the program to solve the puzzle
                 cmd = [p.as_posix()]
-                if p.stem == "one":
+                if p.stem == "aor":
                     cmd.append("-r")
                     cmd.append(f"{year}:{day}")
                 cmd.append(self.get_input(year, day).as_posix())
@@ -381,7 +381,7 @@ class AocSession:
 
         (
             run(f"src/year{year}/day{day}/target/release/day{day}", "Rust")
-            or run("target/release/one", "Rust")
+            or run("target/release/aor", "Rust")
             or run(f"src/year{year}/day{day}/day{day}.py", "Python")
         )
 
