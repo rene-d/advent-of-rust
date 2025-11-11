@@ -595,7 +595,7 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
     return languages
 
 
-def consistency(filter_year, filter_day):
+def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
     import numpy as np
     import tabulate
 
@@ -610,6 +610,10 @@ def consistency(filter_year, filter_day):
                 continue
             if filter_day and int(day) not in filter_day:
                 continue
+        if filter_lang and lang not in filter_lang:
+            continue
+        if "_" in Path(prog).stem:
+            continue  # ignore alternate solution
         elapsed_times[int(year), int(day), lang].append((round(elapsed / 1e9, 3), hash))
     cursor.close()
 
@@ -627,16 +631,22 @@ def consistency(filter_year, filter_day):
 
         # coefficient of variation
         µ, σ = a.mean(), a.std()
+        if µ == 0:
+            continue
         cv = σ / µ
-        cv = round(cv * 100, 1)
 
         # quartile coefficient of dispersion
         q1 = np.percentile(a, 25)
         q3 = np.percentile(a, 75)
+        if q3 + q1 == 0:
+            continue
         qcd = (q3 - q1) / (q3 + q1)
+
+        cv = round(cv * 100, 1)
         qcd = round(qcd * 100, 1)
 
         if µ > 3 and (cv > 15 or qcd > 10):
+            a.sort()
             rows.append((" ".join(map(str, k)), µ, σ, cv, qcd, a))
 
             for elapsed, hash in v:
@@ -644,22 +654,22 @@ def consistency(filter_year, filter_day):
                 if deviation > 1.5:
                     year, day, lang = k
                     user = inputs[hash]
-                    cmd = f"./scripts/runall.py -u {user:<22} -l {lang:<8} {year} {day:<2} -r"
+                    cmd = f"./scripts/runall.py -u {user:<35} -l {lang:<8} {year} {day:<2} -r"
                     comment = f"  # t={elapsed:7.3f} µ={µ:7.3f} d={deviation:4.1f} σ"
                     cmds.append(((year, day, user), cmd + comment))
 
-    print(tabulate.tabulate(rows, headers=("solution", "µ", "σ", "CV", "qcd", "values"), tablefmt="fancy_grid"))
+    print(tabulate.tabulate(rows, headers=("solution", "µ", "σ", "CV %", "qcd %", "values"), tablefmt="fancy_grid"))
 
-    cmds = sorted(cmds)
-
-    previous_key = None
-    flip_color = 0
-    for key, cmd in cmds:
-        if key != previous_key:
-            flip_color = 1 - flip_color
-            previous_key = key
-        color = [BLUE, CYAN][flip_color]
-        print(f"{color}{cmd}{RESET}")
+    if cmds:
+        print()
+        previous_key = None
+        flip_color = 0
+        for key, cmd in sorted(cmds):
+            if key != previous_key:
+                flip_color = 1 - flip_color
+                previous_key = key
+            color = [YELLOW, MAGENTA][flip_color]
+            print(f"{color}{cmd}{RESET}")
 
 
 def main():
@@ -742,13 +752,13 @@ def main():
         filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
         filter_day = set(args.n)
 
-        # actions
-        if args.consistency:
-            return consistency(filter_year, filter_day)
-
-        # prepare the language filtering
+        # prepare the filtering by language
         filter_lang = set(map(str.casefold, args.language or ()))
         languages = get_languages(filter_lang)
+
+        # actions
+        if args.consistency:
+            return consistency(filter_year, filter_day, filter_lang)
 
         # set the exclude list
         args.exclude = args.exclude or []

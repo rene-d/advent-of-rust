@@ -36,9 +36,7 @@ class Stats:
 
 
 class Timings:
-
     def __init__(self, db: sqlite3.Connection):
-
         self.user_inputs = defaultdict(set)
         for key_input, hash in db.execute("select key,crc32 from inputs"):
             year, day, user = key_input.split(":")
@@ -60,7 +58,6 @@ class Timings:
                 day_sols[hash] = min(elapsed, other_elapsed)
 
     def get_stats(self, user: str, lang: str, tablefmt: str) -> Stats:
-
         stats = Stats(
             headers=["day"] + [i for i in range(YEAR_BEGIN, YEAR_END + 1)],
             data=[[i] + [None] * (YEAR_END - YEAR_BEGIN + 1) for i in range(1, 26)],
@@ -68,7 +65,6 @@ class Timings:
         )
 
         for (year, day), languages in self.solutions.items():
-
             total_elapsed = 0
             min_elapsed = float("inf")
             max_elapsed = 0
@@ -83,7 +79,6 @@ class Timings:
                     nb_elapsed += 1
 
             if nb_elapsed != 0:
-
                 elapsed = total_elapsed / nb_elapsed
 
                 if user == "min":
@@ -107,7 +102,6 @@ class Timings:
         return stats
 
     def print_stats(self, user: str, lang: str, tablefmt: str = "rounded_outline"):
-
         stats = self.get_stats(user, lang, tablefmt)
 
         print(tabulate.tabulate(stats.data, stats.headers, tablefmt, floatfmt=".3f"))
@@ -141,7 +135,6 @@ class Timings:
 
 
 def main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--user", help="User ID")
     parser.add_argument("-l", "--lang", default="Rust", help="Language")
@@ -178,7 +171,20 @@ def main():
 
             current_user = 0
 
-            languages = ("Rust", "Python", "Py3.11", "Py3.12", "Py3.13", "Py3.14", "C", "C++", "Go")
+            languages = (
+                "Rust",
+                # "Python",
+                "Py3.10",
+                "Py3.11",
+                "Py3.12",
+                "Py3.13",
+                "Py3.13t",
+                "Py3.14",
+                "Py3.14t",
+                "C",
+                "C++",
+                "Go",
+            )
             current_language = 0
 
             done = False
