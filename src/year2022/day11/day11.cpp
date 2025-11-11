@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <cassert>
+#include <cstdint>
 #include <algorithm>
 
 struct Operation

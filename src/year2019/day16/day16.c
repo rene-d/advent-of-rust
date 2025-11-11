@@ -1,6 +1,8 @@
 // cc -o day16 -Wall -O2 day16.c
 // https://adventofcode.com/2019/day/16
 
+#pragma GCC diagnostic ignored "-Wunused-result"
+
 #include <stdio.h> // well... is it really necessary ?
 #include <stdlib.h>
 #include <string.h>
