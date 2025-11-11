@@ -1,14 +1,50 @@
 #!/usr/bin/env python3
 
 import json
+import time
+import typing as t
 from datetime import datetime, timedelta
+from functools import lru_cache
 from pathlib import Path
 
 import click
 import requests
 import tabulate
 
-current_year = datetime.now().year
+
+@lru_cache(maxsize=None)
+def aoc_available_puzzles(
+    year: int | None = None, seconds: float | None = None
+) -> t.Union[dict[int, list[int]], list[int]]:
+    """
+    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
+    """
+
+    if year is not None:
+        years = aoc_available_puzzles(seconds=seconds)
+        return years.get(year, [])
+
+    now = time.gmtime(seconds)
+
+    # available years
+    first_year = 2015
+    if now.tm_mon <= 11 or (now.tm_mday == 1 and now.tm_hour < 5):
+        last_year = now.tm_year - 1
+    else:
+        last_year = now.tm_year
+
+    puzzles = dict()
+    for year in range(first_year, last_year + 1):
+        # available puzzles in year
+        if year == now.tm_year:
+            last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
+        else:
+            last_day = 25
+        last_day = min(last_day, 25 if year <= 2024 else 12)
+
+        puzzles[year] = list(range(1, last_day + 1))
+
+    return puzzles
 
 
 def fmt_opening(d: timedelta) -> str:
@@ -120,7 +156,13 @@ def cookie():
 
 
 @click.command()
-@click.option("-y", "--year", type=click.IntRange(2015, current_year), default=current_year, help="Year")
+@click.option(
+    "-y",
+    "--year",
+    type=click.IntRange(min(aoc_available_puzzles()), max(aoc_available_puzzles())),
+    default=max(aoc_available_puzzles()),
+    help="Year",
+)
 @click.option("-r", "--refresh", is_flag=True, help="Refresh the leaderboard")
 @click.option("-d", "--date", "show_date", is_flag=True, help="Show the date")
 @click.argument("leaderboard", type=str)

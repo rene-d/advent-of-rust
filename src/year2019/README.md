@@ -9,7 +9,7 @@
 
 Puzzle                                                                           | Stars | Languages
 -------------------------------------------------------------------------------- | ----- | -----------
-[Day 1: The Tyranny of the Rocket Equation](https://adventofcode.com/2019/day/1) | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day1/day1.rs) [![Python](../../scripts/assets/python.png)](day1/day1.py)
+[Day 1: The Tyranny of the Rocket Equation](https://adventofcode.com/2019/day/1) | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day1/day1.rs) [![Python](../../scripts/assets/python.png)](day1/day1.py) [![C](../../scripts/assets/c.png)](day1/day1.c)
 [Day 2: 1202 Program Alarm](https://adventofcode.com/2019/day/2)                 | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day2/day2.rs) [![Python](../../scripts/assets/python.png)](day2/day2.py)
 [Day 3: Crossed Wires](https://adventofcode.com/2019/day/3)                      | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day3/day3.rs) [![Python](../../scripts/assets/python.png)](day3/day3.py)
 [Day 4: Secure Container](https://adventofcode.com/2019/day/4)                   | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day4/day4.rs) [![Python](../../scripts/assets/python.png)](day4/day4.py)

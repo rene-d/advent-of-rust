@@ -14,6 +14,7 @@ import time
 import typing as t
 from collections import defaultdict
 from datetime import datetime
+from functools import lru_cache
 from operator import itemgetter
 from pathlib import Path
 
@@ -35,6 +36,41 @@ CR = "\r"
 TRANSIENT = f"{CLEAR_EOL}{CR}"
 
 TERMINAL_COLS = 96
+
+
+@lru_cache(maxsize=None)
+def aoc_available_puzzles(
+    year: int | None = None, seconds: float | None = None
+) -> t.Union[dict[int, list[int]], list[int]]:
+    """
+    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
+    """
+
+    if year is not None:
+        years = aoc_available_puzzles(seconds=seconds)
+        return years.get(year, [])
+
+    now = time.gmtime(seconds)
+
+    # available years
+    first_year = 2015
+    if now.tm_mon <= 11 or (now.tm_mday == 1 and now.tm_hour < 5):
+        last_year = now.tm_year - 1
+    else:
+        last_year = now.tm_year
+
+    puzzles = dict()
+    for year in range(first_year, last_year + 1):
+        # available puzzles in year
+        if year == now.tm_year:
+            last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
+        else:
+            last_day = 25
+        last_day = min(last_day, 25 if year <= 2024 else 12)
+
+        puzzles[year] = list(range(1, last_day + 1))
+
+    return puzzles
 
 
 LANGUAGES = {
@@ -262,7 +298,7 @@ def run(
     return result
 
 
-def make(year: int, source: Path, dest: Path, language: str):
+def make(year: int, source: Path, dest: Path, language: str, disable_language: t.Callable):
     if not source.is_file():
         return
 
@@ -294,29 +330,33 @@ def make(year: int, source: Path, dest: Path, language: str):
     print(f"{CR}{CLEAR_EOL}{cmdline}", end="")
     try:
         subprocess.check_call(cmdline, shell=True)
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
         print(f"{CR}{CLEAR_EOL}{RED}FAIL {year} {dest} {language}", end="")
+        if e.returncode == 127:  # not found
+            disable_language(language)
 
 
-def build_all(filter_year: int, filter_lang: t.Iterable[str]):
-    for year in range(2015, 2025):
+def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
+    def disable_language(lang: str):
+        for k in languages:
+            if k.casefold() == lang.casefold():
+                del languages[k]
+                break
+
+    def is_available(lang: str):
+        if not filter_lang or lang in filter_lang:
+            for k in languages:
+                if lang == k.casefold():
+                    return True
+        return False
+
+    for year in aoc_available_puzzles():
         if filter_year != 0 and year != filter_year:
             continue
 
-        # year = Path(str(year))
-        # if not year.is_dir():
-        #     continue
-
-        if not filter_lang or "rust" in filter_lang:
-            m = Path(str(year)) / "Cargo.toml"
-            if m.is_file():
-                env_copy = os.environ.copy()
-                # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
-                print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
-                subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy)
-
-            else:
-                m = Path(__file__).parent.parent / "Cargo.toml"
+        if is_available("rust"):
+            try:
+                m = Path(str(year)) / "Cargo.toml"
                 if m.is_file():
                     env_copy = os.environ.copy()
                     # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
@@ -325,44 +365,61 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str]):
                         ["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy
                     )
 
+                else:
+                    m = Path(__file__).parent.parent / "Cargo.toml"
+                    if m.is_file():
+                        env_copy = os.environ.copy()
+                        # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
+                        print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
+                        subprocess.check_call(
+                            ["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy
+                        )
+
+            except FileNotFoundError:
+                print(
+                    f"{RED}Rust and Cargo are requited. Install them with:{RESET}"
+                    f"{YELLOW}curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh{RESET}"
+                )
+                disable_language("rust")
+
         for day in range(1, 26):
             src = Path(f"src/year{year}/day{day}/day{day}")
 
-            if not filter_lang or "c" in filter_lang:
+            if is_available("c"):
                 src = src.with_suffix(".c")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_c", "C")
+                    make(year, src, f"day{day}_c", "C", disable_language)
 
-            if not filter_lang or "c++" in filter_lang:
+            if is_available("c++"):
                 src = src.with_suffix(".cpp")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_cpp", "C++")
+                    make(year, src, f"day{day}_cpp", "C++", disable_language)
 
-            if not filter_lang or "java" in filter_lang:
+            if is_available("java"):
                 src = src.with_suffix(".java")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}.class", "Java")
+                    make(year, src, f"day{day}.class", "Java", disable_language)
 
-            if not filter_lang or "go" in filter_lang:
+            if is_available("go"):
                 src = src.with_suffix(".go")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_go", "Go")
+                    make(year, src, f"day{day}_go", "Go", disable_language)
 
-            if not filter_lang or "c#" in filter_lang:
+            if is_available("c#"):
                 src = src.with_suffix(".cs")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_cs.exe", "C#")
+                    make(year, src, f"day{day}_cs.exe", "C#", disable_language)
 
-            if not filter_lang or "swift" in filter_lang:
+            if is_available("swift"):
                 src = src.with_suffix(".swift")
                 if src.is_file():
                     print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_swift", "Swift")
+                    make(year, src, f"day{day}_swift", "Swift", disable_language)
 
 
 def load_data(filter_year, filter_user, filter_yearday, with_answers):
@@ -596,10 +653,14 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
 
 
 def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
-    import numpy as np
-    import tabulate
+    try:
+        import numpy as np
+        import tabulate
+    except ImportError:
+        print("This option requires the « tabulate » and « numpy » modules.")
+        exit(1)
 
-    db = get_cache()["db"]  # sqlite3.connect("data/cache.db")
+    db = get_cache()["db"]
 
     elapsed_times = defaultdict(list)
     cursor = db.execute("select key,elapsed from solutions where status!='error'")
@@ -779,7 +840,7 @@ def main():
 
         # build the solutions if needed
         if not args.no_build:
-            build_all(filter_year, filter_lang)
+            build_all(filter_year, filter_lang, languages)
             print(end=f"{CR}{CLEAR_EOL}")
 
         # load inputs and answers
@@ -789,11 +850,11 @@ def main():
             script.unlink()
 
         # here we go!
-        for year in range(2015, 2025):
+        for year in aoc_available_puzzles():
             if filter_year != 0 and year != filter_year:
                 continue
 
-            for day in range(1, 26):
+            for day in aoc_available_puzzles(year):
                 if filter_day and day not in filter_day:
                     continue
 

@@ -2,19 +2,59 @@
 
 import argparse
 import sqlite3
+import time
+import typing as t
 from collections import defaultdict
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
-import tabulate
-from curtsies import Input
+try:
+    import tabulate
+    from curtsies import Input
+except ImportError:
+    print("This script requires the « tabulate » and « curtsies » modules.")
+    exit(1)
 
-YEAR_BEGIN = 2015
-YEAR_END = 2024
 
 T1 = 0.5
 T2 = 2
 T3 = 5
+
+
+@lru_cache(maxsize=None)
+def aoc_available_puzzles(
+    year: int | None = None, seconds: float | None = None
+) -> t.Union[dict[int, list[int]], list[int]]:
+    """
+    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
+    """
+
+    if year is not None:
+        years = aoc_available_puzzles(seconds=seconds)
+        return years.get(year, [])
+
+    now = time.gmtime(seconds)
+
+    # available years
+    first_year = 2015
+    if now.tm_mon <= 11 or (now.tm_mday == 1 and now.tm_hour < 5):
+        last_year = now.tm_year - 1
+    else:
+        last_year = now.tm_year
+
+    puzzles = dict()
+    for year in range(first_year, last_year + 1):
+        # available puzzles in year
+        if year == now.tm_year:
+            last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
+        else:
+            last_day = 25
+        last_day = min(last_day, 25 if year <= 2024 else 12)
+
+        puzzles[year] = list(range(1, last_day + 1))
+
+    return puzzles
 
 
 def fmt_elapsed(elapsed: float, tablefmt) -> str:
@@ -37,6 +77,9 @@ class Stats:
 
 class Timings:
     def __init__(self, db: sqlite3.Connection):
+        self.year_begin = min(aoc_available_puzzles())
+        self.year_end = max(aoc_available_puzzles())
+
         self.user_inputs = defaultdict(set)
         for key_input, hash in db.execute("select key,crc32 from inputs"):
             year, day, user = key_input.split(":")
@@ -59,8 +102,8 @@ class Timings:
 
     def get_stats(self, user: str, lang: str, tablefmt: str) -> Stats:
         stats = Stats(
-            headers=["day"] + [i for i in range(YEAR_BEGIN, YEAR_END + 1)],
-            data=[[i] + [None] * (YEAR_END - YEAR_BEGIN + 1) for i in range(1, 26)],
+            headers=["day"] + [i for i in range(self.year_begin, self.year_end + 1)],
+            data=[[i] + [None] * (self.year_end - self.year_begin + 1) for i in range(1, 26)],
             solutions={},
         )
 
@@ -97,7 +140,7 @@ class Timings:
                 else:
                     s = fmt_elapsed(elapsed, tablefmt)
 
-                stats.data[day - 1][year - YEAR_BEGIN + 1] = s
+                stats.data[day - 1][year - self.year_begin + 1] = s
 
         return stats
 
@@ -106,13 +149,16 @@ class Timings:
 
         print(tabulate.tabulate(stats.data, stats.headers, tablefmt, floatfmt=".3f"))
 
-        # Python doesn't like closures. I do.
-        timing = lambda a, b: sum(1 for _ in filter(lambda x: a <= x < b, stats.solutions.values()))
-        ids = lambda a, b: " ".join(f"{y}:{d:<2}" for (y, d), v in sorted(stats.solutions.items()) if a <= v < b)
+        # Don't care of E731... lambda are elegant.
+        timing = lambda a, b: sum(1 for _ in filter(lambda x: a <= x < b, stats.solutions.values()))  # noqa
+        ids = lambda a, b: " ".join(
+            f"{y}:{d:<2}" for (y, d), v in sorted(stats.solutions.items()) if a <= v < b
+        )  # noqa
+
         inf = float("inf")
         print()
         print(f"Solutions in \033[95m{lang.capitalize():<7}\033[0m : {len(stats.solutions):3}")
-        print(f"Number missing       : {25 * (YEAR_END - YEAR_BEGIN + 1) - len(stats.solutions):3}")
+        print(f"Number missing       : {25 * (self.year_end - self.year_begin + 1) - len(stats.solutions):3}")
         print(f"Fast        (< {T1:3.1g}s) : \033[32m{timing(0, T1):3}\033[0m")
         print(f"Quite fast  (< {T2:3.1g}s) : \033[34m{timing(T1, T2):3}\033[0m")
         print(f"Fast enough (< {T3:3.1g}s) : \033[33m{timing(T2, T3):3}\033[0m   [ {ids(T2, T3)} ]")

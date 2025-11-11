@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if ! command -v uv >/dev/null ; then
+    echo "This script requires « uv ». You can install it with:"
+    echo "curl -LsSf https://astral.sh/uv/install.sh | sh"
+    exit
+fi
+
 scripts_dir=$(realpath $(dirname $0))
 
 versions=(

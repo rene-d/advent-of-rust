@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
+import time
+import typing as t
 from collections import Counter
+from functools import lru_cache
 from pathlib import Path
 
 import tabulate
@@ -21,6 +24,41 @@ BLINK = "\033[6m"
 CLEAR_EOL = "\033[0K"
 
 
+@lru_cache(maxsize=None)
+def aoc_available_puzzles(
+    year: int | None = None, seconds: float | None = None
+) -> t.Union[dict[int, list[int]], list[int]]:
+    """
+    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
+    """
+
+    if year is not None:
+        years = aoc_available_puzzles(seconds=seconds)
+        return years.get(year, [])
+
+    now = time.gmtime(seconds)
+
+    # available years
+    first_year = 2015
+    if now.tm_mon <= 11 or (now.tm_mday == 1 and now.tm_hour < 5):
+        last_year = now.tm_year - 1
+    else:
+        last_year = now.tm_year
+
+    puzzles = dict()
+    for year in range(first_year, last_year + 1):
+        # available puzzles in year
+        if year == now.tm_year:
+            last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
+        else:
+            last_day = 25
+        last_day = min(last_day, 25 if year <= 2024 else 12)
+
+        puzzles[year] = list(range(1, last_day + 1))
+
+    return puzzles
+
+
 def transpose(m):
     rows = range(len(m))
     cols = range(len(m[0]))
@@ -35,15 +73,15 @@ def transpose(m):
 
 datadir = Path(__file__).parent.parent / "data"
 
-t = []
-for year in range(2015, 2025):
+data = []
+for year in aoc_available_puzzles():
     values = []
 
     min_inputs = float("inf")
     max_inputs = 0
     nb_inputs = 0
 
-    for day in range(1, 26):
+    for day in aoc_available_puzzles(year):
         inputs = Counter()
 
         for f in datadir.glob("*"):
@@ -76,20 +114,20 @@ for year in range(2015, 2025):
     row.append(f"{GREEN}{min_inputs:2}{RESET} → {MAGENTA}{max_inputs:2}{RESET}")
     row.append(f"{YELLOW}{nb_inputs:2}{RESET}")
 
-    t.append(row)
+    data.append(row)
 
 
-# print(tabulate.tabulate(t, headers=["Year"] + [day for day in range(1, 26)], tablefmt="rounded_outline"))
+# print(tabulate.tabulate(data, headers=["Year"] + [day for day in range(1, 26)], tablefmt="rounded_outline"))
 
-t.insert(0, ["year"] + list(range(1, 26)) + [f"{GREEN}↓{MAGENTA}↑{RESET} ≠", f"{YELLOW}max{RESET}"])
+data.insert(0, ["year"] + list(range(1, 26)) + [f"{GREEN}↓{MAGENTA} ↑{RESET} ≠", f"{YELLOW}max{RESET}"])
 
 
-t = transpose(t)
-t.pop(0)
+data = transpose(data)
+data.pop(0)
 print(
     tabulate.tabulate(
-        t,
-        headers=["Day"] + [year for year in range(2015, 2025)],
+        data,
+        headers=["Day"] + [year for year in aoc_available_puzzles()],
         stralign="right",
         tablefmt="rounded_outline",
     )

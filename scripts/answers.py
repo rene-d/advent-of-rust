@@ -11,9 +11,45 @@ import typing as t
 import zlib
 from collections import defaultdict
 from datetime import UTC, datetime
+from functools import lru_cache
 from pathlib import Path
 
 import requests
+
+
+@lru_cache(maxsize=None)
+def aoc_available_puzzles(
+    year: int | None = None, seconds: float | None = None
+) -> t.Union[dict[int, list[int]], list[int]]:
+    """
+    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
+    """
+
+    if year is not None:
+        years = aoc_available_puzzles(seconds=seconds)
+        return years.get(year, [])
+
+    now = time.gmtime(seconds)
+
+    # available years
+    first_year = 2015
+    if now.tm_mon <= 11 or (now.tm_mday == 1 and now.tm_hour < 5):
+        last_year = now.tm_year - 1
+    else:
+        last_year = now.tm_year
+
+    puzzles = dict()
+    for year in range(first_year, last_year + 1):
+        # available puzzles in year
+        if year == now.tm_year:
+            last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
+        else:
+            last_day = 25
+        last_day = min(last_day, 25 if year <= 2024 else 12)
+
+        puzzles[year] = list(range(1, last_day + 1))
+
+    return puzzles
 
 
 class AocSession:
@@ -21,7 +57,6 @@ class AocSession:
     rootdir = Path(__file__).parent.parent
 
     def __init__(self, cookie_session, force_update=False, dry_run=False) -> None:
-
         self.stars = {}
         (self.rootdir / "data").mkdir(exist_ok=True, parents=True)
         self.force_update = force_update
@@ -65,7 +100,6 @@ class AocSession:
         self.prefix = f"\033[1;36m[{name:<20} {self.user_id:<6}]\033[0m "
 
     def year_dir(self, year: int) -> Path:
-
         return self.rootdir / "src" / f"year{year}"
 
     def get_cookie_sessions() -> t.List[str]:
@@ -119,19 +153,13 @@ class AocSession:
         return True
 
     def iter_all(func, b=None):
-
         def wrapper(self, year=None, day=None, *args, **kwargs):
-
             if year is None:
-                now = datetime.now(UTC)
-                last_year = now.year
-                if AocSession.is_available(last_year, 1):
-                    last_year += 1
-                for year in range(2015, last_year):
+                for year in aoc_available_puzzles():
                     wrapper(self, year, day)
             elif day is None:
                 # iterate over every days
-                for day in range(1, 26):
+                for day in aoc_available_puzzles(year):
                     wrapper(self, year, day)
             elif day == 0:
                 # special case to iterate only on years
@@ -393,7 +421,7 @@ class AocSession:
     def print_stars_year(self, year=None):
         @AocSession.iter_all
         def iterate(self, year, day):
-            nb_stars = sum(self.get_stars(year, day) for day in range(1, 26))
+            nb_stars = sum(self.get_stars(year, day) for day in aoc_available_puzzles(year))
             print(f"{self.prefix} Stars for {year}: {nb_stars:2}⭐")
 
         iterate(self, year, 0)
@@ -471,7 +499,6 @@ def get_languages(sols, readme_dir: Path, rootdir: Path):
         ("SQLite", ".sql", "sqlite"),
         ("Linux Kernel", ".kernel", "kernel"),
     ):
-
         for sol in sols:
             if sol.suffix == suffix:
                 files.append(f"[![{lang}]({path_to_home}/scripts/assets/{icon}.png)]({sol.relative_to(readme_dir)})")
@@ -491,10 +518,9 @@ def make_readme(args):
 
     @AocSession.iter_all
     def readme(self, year, _day):
-
         puzzles = []
         now = datetime.now(UTC)
-        for day in range(1, 26):
+        for day in aoc_available_puzzles(year):
             available_date = datetime(year, 12, day, 5, 0, 0, 0, tzinfo=UTC)
             if available_date > now:
                 continue
@@ -563,7 +589,7 @@ def make_readme_main(args):
     @AocSession.iter_all
     def parse(self, year, _day):
         now = datetime.now(UTC)
-        for day in range(1, 26):
+        for day in aoc_available_puzzles(year):
             available_date = datetime(year, 12, day, 5, 0, 0, 0, tzinfo=UTC)
             if available_date > now:
                 continue
@@ -601,7 +627,7 @@ def make_readme_main(args):
     total_rust = sum(rust.values())
     total_python = sum(python.values())
     total_stars = sum(all_stars.values())
-    current_calendar = 2024  # max(all_stars.keys())
+    current_calendar = max(aoc_available_puzzles())
 
     rows = []
     for year in sorted(all_stars.keys(), reverse=True):
@@ -620,7 +646,6 @@ def make_readme_main(args):
     md = []
     skip = False
     for line in readme.read_text().splitlines():
-
         if skip:
             if line.startswith("##"):
                 skip = False

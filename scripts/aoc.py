@@ -4,11 +4,14 @@
 
 import os
 import subprocess
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-import click
+try:
+    import click
+except ImportError:
+    print("This script requires the « click » module.")
+    exit(1)
 
 
 class AliasedGroup(click.Group):
@@ -26,7 +29,6 @@ class AliasedGroup(click.Group):
         return AliasedClass
 
     def get_command(self, ctx, cmd_name):
-
         # Step one: bulitin commands as normal
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
@@ -65,7 +67,6 @@ class AocProject:
     aoc_root: Path
 
     def pass_thru(self, tool: str, args: list, cwd=None):
-
         if not Path(os.getcwd()).is_relative_to(self.aoc_root):
             if Path(__file__).is_symlink():
                 cwd = Path(__file__).resolve().parent.parent
@@ -199,21 +200,10 @@ def aoc_clippy(ctx: click.Context):
     """
     Run the Rust clippy checker.
     """
-    cwd = Path(os.getcwd())
-
-    if cwd == ctx.obj.aoc_root:
-        for year in sorted(cwd.glob("*")):
-            if year.name.isdigit() and int(year.name) >= 2015:
-                print("--------------------------------")
-                print(f"| Year {year.name}")
-                print("--------------------------------")
-                sys.stdout.flush()
-                ctx.obj.pass_thru("lint_rust.sh", [], cwd=year)
-    else:
-
-        if not (cwd / "Cargo.toml").is_file():
-            raise click.ClickException("need a Cargo.toml file")
-        ctx.obj.pass_thru("lint_rust.sh", [])
+    cwd = ctx.obj.aoc_root
+    if not (cwd / "Cargo.toml").is_file():
+        raise click.ClickException("need the Cargo.toml file")
+    ctx.obj.pass_thru("lint_rust.sh", [])
 
 
 @aoc.command(name="test")
@@ -222,21 +212,10 @@ def aoc_test(ctx: click.Context):
     """
     Run cargo test.
     """
-    cwd = Path(os.getcwd())
-
-    if cwd == ctx.obj.aoc_root:
-        for year in sorted(cwd.glob("*")):
-            if year.name.isdigit() and int(year.name) >= 2015:
-                print("--------------------------------")
-                print(f"| Year {year.name}")
-                print("--------------------------------")
-                sys.stdout.flush()
-                subprocess.call(["cargo", "test", "--", "--test-threads", "4"], cwd=year)
-    else:
-
-        if not (cwd / "Cargo.toml").is_file():
-            raise click.ClickException("need a Cargo.toml file")
-        subprocess.call(["cargo", "test", "--", "--test-threads", "4"])
+    cwd = ctx.obj.aoc_root
+    if not (cwd / "Cargo.toml").is_file():
+        raise click.ClickException("need the Cargo.toml file")
+    subprocess.call(["cargo", "test", "--", "--test-threads", "4"])
 
 
 @aoc.command(name="answers", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
@@ -288,75 +267,52 @@ def aoc_quality(ctx: click.Context, strict: bool):
     Run lints, tests, solutions for Rust solution.
     """
 
-    cwd = Path(os.getcwd())
+    os.chdir(ctx.obj.aoc_root)
 
-    dirs = []
+    try:
+        print("cargo fmt")
+        subprocess.check_output(["cargo", "fmt"])
 
-    if cwd == ctx.obj.aoc_root:
-        for year in sorted(cwd.glob("*")):
-            if year.name.isdigit() and int(year.name) >= 2015:
-                dirs.append(year)
-    elif Path("Cargo.toml").is_file():
-        dirs.append(".")
-    else:
-        raise click.ClickException("need a Cargo.toml file or root directory")
+        print("cargo clippy")
+        if strict:
+            subprocess.check_output(
+                ["cargo", "clippy", "-q", "--", "-Fclippy::all", "-Fclippy::pedantic", "-Fclippy::nursery"]
+            )
+        else:
+            subprocess.check_output(
+                ["cargo", "clippy", "-q", "--", "-Dclippy::all", "-Dclippy::pedantic", "-Fclippy::nursery"]
+            )
 
-    for d in dirs:
+        print("cargo build")
+        subprocess.check_output(["cargo", "build", "--release", "--quiet"])
 
-        if d != ".":
-            sys.stdout.write("\033[1;31m")
-            print("--------------------------------")
-            print(f"| Year {d.name}")
-            print("--------------------------------")
-            sys.stdout.write("\033[0m")
-            sys.stdout.flush()
+    except subprocess.CalledProcessError:
+        pass
 
-        os.chdir(d)
+    try:
+        print("cargo test")
+        subprocess.check_output(["cargo", "test", "--quiet", "--release", "--", "--test-threads", "4"])
 
-        try:
-            print("cargo fmt")
-            subprocess.check_output(["cargo", "fmt"])
+    except subprocess.CalledProcessError:
+        pass
 
-            print("cargo clippy")
-            if strict:
-                subprocess.check_output(
-                    ["cargo", "clippy", "-q", "--", "-Fclippy::all", "-Fclippy::pedantic", "-Fclippy::nursery"]
-                )
-            else:
-                subprocess.check_output(
-                    ["cargo", "clippy", "-q", "--", "-Dclippy::all", "-Dclippy::pedantic", "-Fclippy::nursery"]
-                )
+        # print("answers")
+        # output = subprocess.check_output([ctx.obj.scripts_dir / "answers.py"])
+        # for line in output.decode().splitlines():
+        #     if " ok " not in line and " unknown " not in line: print(line)
 
-            print("cargo build")
-            subprocess.check_output(["cargo", "build", "--release", "--quiet"])
+    try:
+        print("run all")
+        env = os.environ.copy()
+        env["CLICOLOR_FORCE"] = "1"
+        output = subprocess.check_output([ctx.obj.scripts_dir / "runall.py", "--me", "-l", "rust"], env=env)
+        print(output.decode())
+        # for line in output.decode().splitlines():
+        #     if " ok " not in line and " unknown " not in line:
+        #         print(line)
 
-        except subprocess.CalledProcessError:
-            pass
-
-        try:
-            print("cargo test")
-            subprocess.check_output(["cargo", "test", "--quiet", "--release", "--", "--test-threads", "4"])
-
-        except subprocess.CalledProcessError:
-            pass
-
-            # print("answers")
-            # output = subprocess.check_output([ctx.obj.scripts_dir / "answers.py"])
-            # for line in output.decode().splitlines():
-            #     if " ok " not in line and " unknown " not in line: print(line)
-
-        try:
-            print("run all")
-            env = os.environ.copy()
-            env["CLICOLOR_FORCE"] = "1"
-            output = subprocess.check_output([ctx.obj.scripts_dir / "runall.py", "--me", "-l", "rust"], env=env)
-            print(output.decode())
-            # for line in output.decode().splitlines():
-            #     if " ok " not in line and " unknown " not in line:
-            #         print(line)
-
-        except subprocess.CalledProcessError:
-            pass
+    except subprocess.CalledProcessError:
+        pass
 
 
 @aoc.command(name="timings", context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
