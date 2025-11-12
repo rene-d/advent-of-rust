@@ -1,0 +1,45 @@
+FROM debian:stable AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y bash vim curl wget sudo sqlite3 vim \
+                       build-essential cmake gdb python3 python3-venv python3-numpy python3-tabulate python3-click \
+                       clang llvm z3 libsqlite3-dev
+
+# Rust
+ENV CARGO_HOME=/usr/local/cargo
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV PATH="/usr/local/cargo/bin:$PATH"
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    rustup component add rust-src
+
+# Python
+ENV PATH="/root/.local/bin:$PATH"
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    uv python install 3.11 3.12 3.13 3.14
+
+# Golang
+RUN apt-get install -y -qq golang
+
+# Lua
+RUN apt-get install -y -qq lua5.4
+
+# Ruby
+RUN apt-get install -y -qq ruby
+
+# C#
+RUN apt-get install -y -qq mono-mcs
+
+# Swift
+RUN apt-get install -y -qq swiftlang
+
+# JavaScript
+RUN curl -fsSL https://bun.sh/install | bash && \
+    apt-get install -y -qq nodejs
+
+# Java
+RUN apt-get install -y -qq default-jdk
+
+WORKDIR /aoc

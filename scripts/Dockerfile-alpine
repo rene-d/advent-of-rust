@@ -1,0 +1,10 @@
+FROM rust:alpine AS builder
+
+RUN apk update && \
+    apk add vim curl vim && \
+    apk add py3-numpy py3-tabulate py3-click && \
+    apk add clang llvm clang-dev sqlite-dev z3-dev
+
+ENV RUSTFLAGS='-C target-feature=-crt-static'
+
+WORKDIR /aoc

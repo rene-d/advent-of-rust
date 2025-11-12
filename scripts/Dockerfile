@@ -1,60 +1,53 @@
-FROM debian
 
+# docker build -t aor -f scripts/Dockerfile .
+# docker run --rm -t --init -v ./data:/data aor
+
+# docker build -t aoc --target aoc -f scripts/Dockerfile .
+# docker run --rm -ti -v ./data:/data aoc
+
+
+FROM rust AS toolchain
+
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y vim curl wget sudo sqlite3 vim && \
-    apt-get install -y build-essential cmake gdb python3-full python3-numpy python3-tabulate python3-click && \
-    apt-get install -y clang llvm && \
-    # dependency for some puzzles
-    apt-get install -y z3 && \
-    # required to build shapely and numpy, if needed
-    apt-get install -y libgeos-dev gfortran libopenblas-dev liblapack-dev
+    apt-get install -y bash vim curl wget sudo sqlite3 vim \
+                    clang
 
-# Rust
-ENV CARGO_HOME=/usr/local/cargo
-ENV RUSTUP_HOME=/usr/local/rustup
-ENV PATH="/usr/local/cargo/bin:$PATH"
+WORKDIR /aoc
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    rustup component add rust-src && \
-    chmod -R 777 /usr/local/cargo
 
-# Python 3.12
-COPY allpython.sh /
-RUN /allpython.sh 3.12.12
+FROM toolchain AS builder
 
-COPY requirements.txt /
-RUN /opt/python/Python-3.12.12/bin/python3.12 -mvenv /venv/python && \
-    /venv/python/bin/pip install -r /requirements.txt
+COPY . .
+RUN cargo build --release --target-dir /build
+RUN apt-get install -y patchelf
+RUN ./scripts/from_scratch.py /build/release/aor /scratch
 
-# Golang
-RUN apt-get install -y -qq golang
 
-# Lua
-RUN apt-get install -y -qq lua5.4
 
-# Ruby
-RUN apt-get install -y -qq ruby
+FROM debian AS aoc
 
-# C#
-RUN apt-get install -y -qq mono-mcs
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y bash vim curl wget sudo sqlite3 vim \
+                       python3 python3-venv python3-numpy python3-tabulate python3-click python3-curtsies
 
-# Swift
-# RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq swiftlang
+ENV PATH="/root/.local/bin:$PATH"
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    uv python install 3.11 3.12 3.13 3.14
 
-# JavaScript
-RUN curl -fsSL https://bun.sh/install | bash
+WORKDIR /aoc
+COPY src ./src
+COPY scripts ./scripts
+RUN ./scripts/all_python.sh
+RUN ./scripts/aoc.py install
+RUN ln -sf /data ./data
+COPY --from=builder /scratch ./target/release
 
-# Java
-RUN apt-get install -y -qq default-jdk
 
-# User environment
-ARG HOST_U=1027
-ARG HOST_G=100
-ARG HOST_UN=user
-RUN useradd --create-home --no-user-group -g $HOST_G -u $HOST_U $HOST_UN
-RUN echo "$HOST_UN ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-RUN echo 'export SHELL=/bin/bash' >> /etc/bash.bashrc
-RUN echo 'alias ll="ls -l --color"' >> /etc/bash.bashrc
+FROM scratch
 
-RUN echo '[ -f /venv/python/bin/activate ] && source /venv/python/bin/activate' >> /etc/bash.bashrc
+COPY --from=builder /scratch/ /
+ENTRYPOINT ["/aor"]

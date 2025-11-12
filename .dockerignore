@@ -1,0 +1,8 @@
+data/
+target/
+.vscode/
+.github/
+.githooks/
+.mypy_cache/
+.DS_Store
+run.log

@@ -109,6 +109,9 @@ INTERPRETERS = {
         "NodeJS": "node",
         "BunJS": "bun",
     },
+    "Lua": {"Lua": "lua5.4"},
+    "Ruby": {"Ruby": "ruby"},
+    "Perl": {"Perl": "perl"},
 }
 
 
@@ -340,6 +343,7 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
     def disable_language(lang: str):
         for k in languages:
             if k.casefold() == lang.casefold():
+                logging.debug(f"disabling {lang} because error")
                 del languages[k]
                 break
 
@@ -350,37 +354,25 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
                     return True
         return False
 
+    if is_available("rust"):
+        try:
+            m = Path(__file__).parent.parent / "Cargo.toml"
+            if m.is_file():
+                env_copy = os.environ.copy()
+                # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
+                print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
+                subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy)
+
+        except FileNotFoundError:
+            print(
+                f"{RED}Rust and Cargo are requited. Install them with:{RESET}"
+                f" {YELLOW}curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh{RESET}"
+            )
+            disable_language("rust")
+
     for year in aoc_available_puzzles():
         if filter_year != 0 and year != filter_year:
             continue
-
-        if is_available("rust"):
-            try:
-                m = Path(str(year)) / "Cargo.toml"
-                if m.is_file():
-                    env_copy = os.environ.copy()
-                    # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
-                    print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
-                    subprocess.check_call(
-                        ["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy
-                    )
-
-                else:
-                    m = Path(__file__).parent.parent / "Cargo.toml"
-                    if m.is_file():
-                        env_copy = os.environ.copy()
-                        # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
-                        print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
-                        subprocess.check_call(
-                            ["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy
-                        )
-
-            except FileNotFoundError:
-                print(
-                    f"{RED}Rust and Cargo are requited. Install them with:{RESET}"
-                    f"{YELLOW}curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh{RESET}"
-                )
-                disable_language("rust")
 
         for day in range(1, 26):
             src = Path(f"src/year{year}/day{day}/day{day}")
@@ -428,7 +420,7 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
 
     all_inputs = list(sorted(Path("data").rglob("*.in")))
 
-    me_user = all_inputs[0].parent.parent.name
+    me_user = all_inputs[0].parent.parent.name if len(all_inputs) > 0 else None
 
     for input in all_inputs:
         if input.name.startswith("._"):
@@ -850,12 +842,18 @@ def main():
             script.unlink()
 
         # here we go!
+        prev_shown_year = 0
+
         for year in aoc_available_puzzles():
             if filter_year != 0 and year != filter_year:
                 continue
 
+            nb_samples = 0
             for day in aoc_available_puzzles(year):
                 if filter_day and day not in filter_day:
+                    continue
+
+                if (year, day) not in inputs:
                     continue
 
                 day_solutions = list(Path(f"src/year{year}").glob(f"day{day}"))
@@ -864,6 +862,16 @@ def main():
                     day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
 
                 for mday in day_solutions:
+                    if prev_shown_year != year:
+                        if prev_shown_year != 0:
+                            print(
+                                "=========================="  # prefix
+                                " ==========================="  # language, status
+                                " =================================================="  # answers
+                                " =================================="  # input path
+                            )
+                        prev_shown_year = year
+
                     mday = mday.name.removeprefix("day")
 
                     elapsed, nb_samples = run_day(
@@ -871,7 +879,7 @@ def main():
                         day,
                         mday,
                         inputs[year, day],
-                        answers[year, day],
+                        answers.get((year, day)),
                         languages,
                         problems,
                         args.refresh,
@@ -890,14 +898,6 @@ def main():
 
                         for lang, e in elapsed.items():
                             stats_elapsed[year, day, mday, lang] = (e, nb_samples)
-
-            if filter_year == 0:
-                print(
-                    "=========================="  # prefix
-                    " ==========================="  # language, status
-                    " ========================================"  # answers
-                    " =================================="  # input path
-                )
 
     except KeyboardInterrupt:
         pass

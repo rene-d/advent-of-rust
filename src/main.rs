@@ -115,6 +115,11 @@ fn run_day_directory() -> Result<bool, Box<dyn Error>> {
     // the name of the current directory
     let path = std::env::current_dir()?;
 
+    if path.file_name().is_none() {
+        // root dir has no file_name
+        return Ok(false);
+    }
+
     let day = path.file_name().unwrap().to_str().unwrap();
 
     if let Some(day) = day.strip_prefix("day") {

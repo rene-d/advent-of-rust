@@ -78,7 +78,7 @@ impl Args {
 /// Show command-line usage.
 fn usage() {
     let name = std::env::current_exe()
-        .unwrap()
+        .unwrap_or("<program>".into())
         .file_name()
         .unwrap()
         .to_os_string();
