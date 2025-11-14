@@ -33,8 +33,17 @@ RUN dnf install -y nodejs
 # Java
 RUN dnf install -y java-latest-openjdk-devel || true
 
+# Python and virtualenvs
+ENV PATH="/root/.local/bin:$PATH"
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
 # User environment
 ENV Z3_SYS_Z3_HEADER=/usr/include/z3/z3.h
 
-
 WORKDIR /aoc
+
+RUN . /etc/os-release && \
+    echo "export AOC_TARGET_DIR=target/${ID}-${VERSION_ID}" >> /root/.bashrc && \
+    echo "export CARGO_TARGET_DIR=target/${ID}-${VERSION_ID}/$(rustc --version | cut -f2 -d' ')-$(rustc --print host-tuple)" >> /root/.bashrc
+
+ENTRYPOINT ["/bin/bash"]

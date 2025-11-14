@@ -1,10 +1,20 @@
 FROM rust:alpine AS builder
 
 RUN apk update && \
-    apk add vim curl vim && \
-    apk add py3-numpy py3-tabulate py3-click && \
-    apk add clang llvm clang-dev sqlite-dev z3-dev
+    apk add --no-cache bash vim curl vim && \
+    apk add --no-cache py3-numpy py3-tabulate py3-click && \
+    apk add --no-cache clang llvm clang-dev sqlite-dev z3-dev
 
 ENV RUSTFLAGS='-C target-feature=-crt-static'
 
+ENV PATH="/root/.local/bin:$PATH"
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    uv python install 3.11 3.14
+
 WORKDIR /aoc
+
+RUN . /etc/os-release && \
+    echo "export AOC_TARGET_DIR=target/${ID}-${VERSION_ID}" >> /root/.bashrc && \
+    echo "export CARGO_TARGET_DIR=target/${ID}-${VERSION_ID}/$(rustc --version | cut -f2 -d' ')-$(rustc --print host-tuple)" >> /root/.bashrc
+
+ENTRYPOINT ["/bin/bash"]
