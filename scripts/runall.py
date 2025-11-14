@@ -73,37 +73,38 @@ def aoc_available_puzzles(
     return puzzles
 
 
+AOC_TARGET_DIR = os.environ.get("AOC_TARGET_DIR", "target")
+
 LANGUAGES = {
     "Rust": "src/year{year}/day{day}/day{day}.rs",
     "Python": "src/year{year}/day{day}/day{day}.py",
-    "C": "target/others/year{year}/day{day}_c",
-    "C++": "target/others/year{year}/day{day}_cpp",
+    "C": "{AOC_TARGET_DIR}/build/year{year}/day{day}_c",
+    "C++": "{AOC_TARGET_DIR}/build/year{year}/day{day}_cpp",
     "Lua": "src/year{year}/day{day}/day{day}.lua",
     "JavaScript": "src/year{year}/day{day}/day{day}.js",
     "Ruby": "src/year{year}/day{day}/day{day}.rb",
     "Perl": "src/year{year}/day{day}/day{day}.pl",
     "Bash": "src/year{year}/day{day}/day{day}.sh",
-    "Java": "target/others/year{year}/day{day}.class",
-    "Go": "target/others/year{year}/day{day}_go",
-    "C#": "target/others/year{year}/day{day}_cs.exe",
-    "Swift": "target/others/year{year}/day{day}_swift",
+    "Java": "{AOC_TARGET_DIR}/build/year{year}/day{day}.class",
+    "Go": "{AOC_TARGET_DIR}/build/year{year}/day{day}_go",
+    "C#": "{AOC_TARGET_DIR}/build/year{year}/day{day}_cs.exe",
+    "Swift": "{AOC_TARGET_DIR}/build/year{year}/day{day}_swift",
 }
 
 INTERPRETERS = {
     "Python": {
         "Python": (
-            ".venv/python/bin/python3",
+            "{AOC_TARGET_DIR}/venv/python/bin/python3",
             "/venv/python/bin/python3",
-            # "~/.venv/bin/python3",
         ),
-        "PyPy": ".venv/pypy3.10/bin/python3",
-        "Py3.10": ".venv/py3.10/bin/python3",
-        "Py3.11": ".venv/py3.11/bin/python3",
-        "Py3.12": ".venv/py3.12/bin/python3",
-        "Py3.13": ".venv/py3.13/bin/python3",
-        "Py3.13t": ".venv/py3.13t/bin/python3",
-        "Py3.14": ".venv/py3.14/bin/python3",
-        "Py3.14t": ".venv/py3.14t/bin/python3",
+        "PyPy": "{AOC_TARGET_DIR}/venv/pypy3.10/bin/python3",
+        "Py3.10": "{AOC_TARGET_DIR}/venv/py3.10/bin/python3",
+        "Py3.11": "{AOC_TARGET_DIR}/venv/py3.11/bin/python3",
+        "Py3.12": "{AOC_TARGET_DIR}/venv/py3.12/bin/python3",
+        "Py3.13": "{AOC_TARGET_DIR}/venv/py3.13/bin/python3",
+        "Py3.13t": "{AOC_TARGET_DIR}/venv/py3.13t/bin/python3",
+        "Py3.14": "{AOC_TARGET_DIR}/venv/py3.14/bin/python3",
+        "Py3.14t": "{AOC_TARGET_DIR}/venv/py3.14t/bin/python3",
     },
     "JavaScript": {
         "NodeJS": "node",
@@ -117,9 +118,17 @@ INTERPRETERS = {
 
 def get_cache(cache_file: Path = None):
     """Retrieve the cache instance from memory or load it from disk."""
+
     cache = globals().get("_cache")
     if cache is None:
-        cache_file = cache_file or Path(__file__).parent.parent / "data" / "cache.db"
+        if cache_file is None:
+            if "AOC_TARGET_DIR" in os.environ:
+                cache_file = Path(os.environ["AOC_TARGET_DIR"]) / "cache.db"
+
+        if cache_file is None:
+            cache_file = Path("data") / "cache.db"
+
+        logging.debug(f"cache: {cache_file.resolve()}")
 
         cache_db = sqlite3.connect(cache_file)
 
@@ -209,12 +218,13 @@ def run(
 
     if lang == "Rust":
         cmd = []
+        target = os.environ.get("CARGO_TARGET_DIR", "target")
 
-        f = Path(f"{prog.parent}/{prog.stem}/target/release/{prog.stem}")
+        f = Path(f"{prog.parent}/{prog.stem}/{target}/release/{prog.stem}")
         if f.is_file():
             cmd.append(f)
         else:
-            cmd.append("target/release/aor")
+            cmd.append(f"{target}/release/aor")
             cmd.append("-r")
 
             alt = re.match(r"day\d+_(\w+)$", prog.stem)
@@ -293,7 +303,11 @@ def run(
 
     result = {"elapsed": elapsed, "status": status, "answers": answers}
 
-    with Path("run.log").open("at") as f:
+    run_log = Path("run.log")
+    if "AOC_TARGET_DIR" in os.environ:
+        run_log = Path(os.environ["AOC_TARGET_DIR"]) / run_log
+
+    with run_log.open("at") as f:
         line = f"{datetime.now()} {lang} {cmd} {elapsed / 1e9} {elapsed_measurement} {status} '{answers}'"
         line = line.replace(Path(__file__).parent.parent.as_posix() + "/", "")
         print(line, file=f)
@@ -305,7 +319,7 @@ def make(year: int, source: Path, dest: Path, language: str, disable_language: t
     if not source.is_file():
         return
 
-    build_dir = Path(f"target/others/year{year}")
+    build_dir = Path(f"{AOC_TARGET_DIR}/build/year{year}")
     build_dir.mkdir(parents=True, exist_ok=True)
 
     output = build_dir / dest
@@ -505,7 +519,7 @@ def run_day(
         results = set()
 
         for lang, (pattern, interpreter) in languages.items():
-            prog = Path(pattern.format(year=year, day=mday))
+            prog = Path(pattern.format(year=year, day=mday, AOC_TARGET_DIR=AOC_TARGET_DIR))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
             if not prog.is_file():
@@ -536,6 +550,9 @@ def run_day(
 
             if (e["status"] == "unknown" and day_answers.get(crc)) or e["status"] in ("error", "failed"):
                 script = Path(f"resolve_{e['status']}.sh")
+                if "AOC_TARGET_DIR" in os.environ:
+                    script = Path(os.environ["AOC_TARGET_DIR"]) / script
+
                 if not globals().get(script):
                     with script.open("wt") as f:
                         print("#!/bin/sh", file=f)
@@ -603,6 +620,11 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
 
                 def lookup(interpreter: str) -> str:
                     """Resolve an interpreter."""
+
+                    if "{" in interpreter:
+                        # interpreter = interpreter.format_map(globals())
+                        interpreter = interpreter.format(AOC_TARGET_DIR=AOC_TARGET_DIR)
+
                     if "/" not in interpreter and "\\" not in interpreter:
                         interpreter = shutil.which(interpreter)
                         if not interpreter:

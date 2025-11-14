@@ -18,10 +18,7 @@ __pycache__/
 input.txt
 answer.txt
 
-/build/
-build/
-
-.venv
+.venv/
 
 resolve_error.sh
 resolve_unknown.sh

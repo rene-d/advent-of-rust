@@ -20,7 +20,14 @@ versions=(
 )
 
 for v in ${versions[*]}; do
+    venv=${AOC_TARGET_DIR:-target}/venv/py$v
     uv python install $v
-    uv venv -p $v --managed-python --clear .venv/py$v
-    VIRTUAL_ENV=.venv/py$v uv pip install -r $scripts_dir/requirements.txt
+    uv venv -p $v --managed-python --clear $venv
+    VIRTUAL_ENV=$venv uv pip install -r $scripts_dir/requirements.txt
 done
+
+if command -v /usr/bin/python3 >/dev/null ; then
+    venv=${AOC_TARGET_DIR:-target}/venv/python
+    uv venv -p /usr/bin/python3 --clear $venv
+    VIRTUAL_ENV=$venv uv pip install -r $scripts_dir/requirements.txt
+fi
