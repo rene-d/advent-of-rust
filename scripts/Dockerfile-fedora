@@ -36,5 +36,7 @@ RUN dnf install -y java-latest-openjdk-devel || true
 # User environment
 ENV Z3_SYS_Z3_HEADER=/usr/include/z3/z3.h
 
-
 WORKDIR /aoc
+
+RUN echo "export CARGO_TARGET_DIR=target/$(rustc --version | cut -f2 -d' ')-$(rustc --print host-tuple)" >> /root/.bashrc
+ENTRYPOINT ["/bin/bash"]

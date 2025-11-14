@@ -47,7 +47,7 @@ RUN ln -sf /data ./data
 COPY --from=builder /scratch ./target/release
 
 
-FROM scratch
+FROM scratch AS aor
 
 COPY --from=builder /scratch/ /
 ENTRYPOINT ["/aor"]

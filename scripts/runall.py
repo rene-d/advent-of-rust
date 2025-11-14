@@ -209,12 +209,13 @@ def run(
 
     if lang == "Rust":
         cmd = []
+        target = os.environ.get("CARGO_TARGET_DIR", "target")
 
-        f = Path(f"{prog.parent}/{prog.stem}/target/release/{prog.stem}")
+        f = Path(f"{prog.parent}/{prog.stem}/{target}/release/{prog.stem}")
         if f.is_file():
             cmd.append(f)
         else:
-            cmd.append("target/release/aor")
+            cmd.append(f"{target}/release/aor")
             cmd.append("-r")
 
             alt = re.match(r"day\d+_(\w+)$", prog.stem)
