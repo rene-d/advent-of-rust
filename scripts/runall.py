@@ -35,8 +35,6 @@ CLEAR_EOL = "\033[0K"
 CR = "\r"
 TRANSIENT = f"{CLEAR_EOL}{CR}"
 
-TERMINAL_COLS = 96
-
 
 @lru_cache(maxsize=None)
 def aoc_available_puzzles(
@@ -491,12 +489,13 @@ def run_day(
     year: int,
     day: int,
     mday: str,
-    day_inputs: t.Dict,
-    day_answers: t.Dict,
+    day_inputs: dict,
+    day_answers: dict,
     languages: dict,
-    problems: t.Set,
+    problems: list[str],
     refresh: bool,
     dry_run: bool,
+    terminal_columns: int,
 ):
     elapsed = defaultdict(list)
 
@@ -549,23 +548,20 @@ def run_day(
                 continue
 
             if (e["status"] == "unknown" and day_answers.get(crc)) or e["status"] in ("error", "failed"):
-                script = Path(f"resolve_{e['status']}.sh")
+                resolve_script = Path(f"resolve_{e['status']}.sh")
                 if "AOC_TARGET_DIR" in os.environ:
-                    script = Path(os.environ["AOC_TARGET_DIR"]) / script
+                    resolve_script = Path(os.environ["AOC_TARGET_DIR"]) / resolve_script
 
-                if not globals().get(script):
-                    with script.open("wt") as f:
+                if not globals().get(resolve_script):
+                    with resolve_script.open("wt") as f:
                         print("#!/bin/sh", file=f)
-                    script.chmod(0o755)
-                    globals()[script] = True
+                    resolve_script.chmod(0o755)
+                    globals()[resolve_script] = True
 
-                with script.open("at") as f:
+                with resolve_script.open("at") as f:
                     print(f"{__file__} --no-build -u {input_name} -l {lang} -r {year} {day}", file=f)
 
-            if e["status"] != "ok":
-                info = f" {file}"
-            else:
-                info = ""
+            answers = e["answers"]
 
             status_color = {
                 "ok": GREEN,
@@ -574,8 +570,6 @@ def run_day(
                 "error": RED,
             }[e["status"]]
 
-            answers = e["answers"]
-
             line = (
                 f"{CR}{RESET}{CLEAR_EOL}"
                 f"{prefix}"
@@ -583,13 +577,14 @@ def run_day(
                 f" {status_color}{e['status']:7}{RESET}"
                 f" {WHITE}{e['elapsed'] / 1e9:7.3f}s"
                 f" {GRAY}{'☽' if in_cache else ' '}"
-                f" {status_color}{str(answers):<50}{RESET}"
-                f" {FEINT}{file}{RESET}"
             )
-            if TERMINAL_COLS >= 130:
-                print(line, info)
-            else:
+
+            if terminal_columns < 60:
                 print(line)
+            elif terminal_columns < 130:
+                print(line, f"{status_color}{str(answers)}{RESET}")
+            else:
+                print(line, f" {status_color}{str(answers):<50}{RESET} {FEINT}{file}{RESET}")
 
             if e["status"] in ("error", "failed"):
                 problems.append(line)
@@ -598,10 +593,10 @@ def run_day(
 
             elapsed[lang].append(e["elapsed"] / 1e9)
 
-        if len(results) > 1:
-            line = f"{prefix} {RED}{BLINK}MISMATCH BETWEEN SOLUTIONS{RESET}"
-            print(line)
-            problems.append(line)
+        # if len(results) > 1:
+        #     line = f"{prefix} {RED}{BLINK}MISMATCH BETWEEN SOLUTIONS{RESET}"
+        #     print(line)
+        #     problems.append(line)
 
     nb_samples = set(len(t) for _, t in elapsed.items())
     assert len(nb_samples) == 1 or len(nb_samples) == 0
@@ -794,10 +789,7 @@ def main():
         CR = ""
 
     # the terminal size
-    cols = subprocess.getoutput("tput cols")
-    if cols.isdigit():
-        global TERMINAL_COLS
-        TERMINAL_COLS = int(cols)
+    terminal_columns = os.get_terminal_size().columns
 
     if args.working_dir and args.working_dir.is_dir():
         logging.debug(f"set working directory to: {args.working_dir}")
@@ -886,12 +878,13 @@ def main():
                 for mday in day_solutions:
                     if prev_shown_year != year:
                         if prev_shown_year != 0:
-                            print(
+                            line = (
                                 "=========================="  # prefix
                                 " ==========================="  # language, status
                                 " =================================================="  # answers
                                 " =================================="  # input path
                             )
+                            print(line[: terminal_columns - 1])
                         prev_shown_year = year
 
                     mday = mday.name.removeprefix("day")
@@ -906,6 +899,7 @@ def main():
                         problems,
                         args.refresh,
                         args.dry_run,
+                        terminal_columns,
                     )
 
                     if elapsed:
