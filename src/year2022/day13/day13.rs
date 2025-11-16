@@ -2,7 +2,7 @@
 
 use nom::{
     branch::alt, bytes::complete::tag, character::complete::i32, combinator::map,
-    multi::separated_list0, sequence::delimited, IResult,
+    multi::separated_list0, sequence::delimited, IResult, Parser,
 };
 use std::cmp::Ordering;
 
@@ -25,7 +25,8 @@ impl Packet {
                 ),
                 Self::Array,
             ),
-        ))(input)
+        ))
+        .parse(input)
     }
 
     fn cmp(&self, other: &Self) -> Ordering {

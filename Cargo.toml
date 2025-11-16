@@ -31,7 +31,7 @@ strum = { version = "*", features = ["strum_macros", "derive"] }
 strum_macros = "*"
 text_io = "*"
 z3 = "*"
-nom = "7"
+nom = "8"
 num = "*"
 num-traits = "*"
 itertools = "*"

@@ -301,9 +301,7 @@ def run(
 
     result = {"elapsed": elapsed, "status": status, "answers": answers}
 
-    run_log = Path("run.log")
-    if "AOC_TARGET_DIR" in os.environ:
-        run_log = Path(os.environ["AOC_TARGET_DIR"]) / run_log
+    run_log = Path(AOC_TARGET_DIR) / "run.log"
 
     with run_log.open("at") as f:
         line = f"{datetime.now()} {lang} {cmd} {elapsed / 1e9} {elapsed_measurement} {status} '{answers}'"
@@ -548,9 +546,7 @@ def run_day(
                 continue
 
             if (e["status"] == "unknown" and day_answers.get(crc)) or e["status"] in ("error", "failed"):
-                resolve_script = Path(f"resolve_{e['status']}.sh")
-                if "AOC_TARGET_DIR" in os.environ:
-                    resolve_script = Path(os.environ["AOC_TARGET_DIR"]) / resolve_script
+                resolve_script = Path(AOC_TARGET_DIR) / f"resolve_{e['status']}.sh"
 
                 if not globals().get(resolve_script):
                     with resolve_script.open("wt") as f:
@@ -852,7 +848,7 @@ def main():
         # load inputs and answers
         inputs, answers = load_data(filter_year, args.filter_user, args.exclude, args.verified)
 
-        for script in Path(".").glob("resolve_*.sh"):
+        for script in Path(AOC_TARGET_DIR).glob("resolve_*.sh"):
             script.unlink()
 
         # here we go!
@@ -1019,6 +1015,11 @@ def main():
             print("LIST OF PROBLEMS:")
             for problem in problems:
                 print(problem)
+
+        for i, f in enumerate(Path(AOC_TARGET_DIR).glob("resolve_*.sh")):
+            if i == 0:
+                print("\nFix errors then run:")
+            print(f"  {RED}{f}{RESET}")
 
 
 if __name__ == "__main__":

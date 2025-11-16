@@ -1,6 +1,6 @@
 //! [Day 17: Reservoir Research](https://adventofcode.com/2018/day/17)
 
-use nom::{bytes::complete::tag, character::complete::digit1, combinator::map_res, IResult};
+use nom::{bytes::complete::tag, character::complete::u32 as parse_u32, IResult};
 use rustc_hash::FxHashMap;
 
 const CLAY: u8 = 1;
@@ -41,21 +41,21 @@ impl Point {
 
 fn x_yy(input: &str) -> IResult<&str, (u32, u32, u32)> {
     let (input, _) = tag("x=")(input)?;
-    let (input, x) = map_res(digit1, |s: &str| s.parse::<u32>())(input)?;
+    let (input, x) = parse_u32(input)?;
     let (input, _) = tag(", y=")(input)?;
-    let (input, y1) = map_res(digit1, |s: &str| s.parse::<u32>())(input)?;
+    let (input, y1) = parse_u32(input)?;
     let (input, _) = tag("..")(input)?;
-    let (input, y2) = map_res(digit1, |s: &str| s.parse::<u32>())(input)?;
+    let (input, y2) = parse_u32(input)?;
     Ok((input, (x, y1, y2)))
 }
 
 fn y_xx(input: &str) -> IResult<&str, (u32, u32, u32)> {
     let (input, _) = tag("y=")(input)?;
-    let (input, x) = map_res(digit1, |s: &str| s.parse::<u32>())(input)?;
+    let (input, x) = parse_u32(input)?;
     let (input, _) = tag(", x=")(input)?;
-    let (input, y1) = map_res(digit1, |s: &str| s.parse::<u32>())(input)?;
+    let (input, y1) = parse_u32(input)?;
     let (input, _) = tag("..")(input)?;
-    let (input, y2) = map_res(digit1, |s: &str| s.parse::<u32>())(input)?;
+    let (input, y2) = parse_u32(input)?;
     Ok((input, (x, y1, y2)))
 }
 

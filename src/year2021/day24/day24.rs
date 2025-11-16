@@ -215,7 +215,7 @@ pub fn solve(data: &str) -> (i64, i64) {
         use rand::Rng;
 
         for _ in 0..10 {
-            let z_init: i64 = rand::thread_rng().gen_range(0..1_000_000_000);
+            let z_init: i64 = rand::rng().random_range(0..1_000_000_000);
             let program = load_program(&data);
             let digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5];
             let z_program = run_program(&program, &digits, z_init, false);
