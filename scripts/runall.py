@@ -494,6 +494,7 @@ def run_day(
     refresh: bool,
     dry_run: bool,
     terminal_columns: int,
+    wait: float,
 ):
     elapsed = defaultdict(list)
 
@@ -541,6 +542,10 @@ def run_day(
 
                 if e:
                     update_cache(key, prog, "solutions", e)
+
+                if wait is not None:
+                    print(f"{CR}{CLEAR_EOL}waiting {wait:g}s...", end="")
+                    time.sleep(wait)
 
             if not e:
                 continue
@@ -760,6 +765,7 @@ def main():
     parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("--no-build", action="store_true", help="do not build")
+    parser.add_argument("-w", "--wait", type=float, help="Wait seconds between each solution")
 
     parser.add_argument("-C", "--comparison", action="store_true", help="Show languages commparison")
 
@@ -896,6 +902,7 @@ def main():
                         args.refresh,
                         args.dry_run,
                         terminal_columns,
+                        args.wait,
                     )
 
                     if elapsed:
