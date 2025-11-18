@@ -24,7 +24,7 @@ Puzzle                                                                          
 [Day 13: Knights of the Dinner Table](https://adventofcode.com/2015/day/13)          | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day13/day13.rs) [![Python](../../scripts/assets/python.png)](day13/day13.py)
 [Day 14: Reindeer Olympics](https://adventofcode.com/2015/day/14)                    | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day14/day14.rs)
 [Day 15: Science for Hungry People](https://adventofcode.com/2015/day/15)            | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day15/day15.rs)
-[Day 16: Aunt Sue](https://adventofcode.com/2015/day/16)                             | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day16/day16.rs) [![Python](../../scripts/assets/python.png)](day16/day16.py)
+[Day 16: Aunt Sue](https://adventofcode.com/2015/day/16)                             | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day16/day16.rs) [![Python](../../scripts/assets/python.png)](day16/day16.py) [![Go](../../scripts/assets/go.png)](day16/day16.go)
 [Day 17: No Such Thing as Too Much](https://adventofcode.com/2015/day/17)            | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day17/day17.rs)
 [Day 18: Like a GIF For Your Yard](https://adventofcode.com/2015/day/18)             | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day18/day18.rs) [🎁](day18/README.md)
 [Day 19: Medicine for Rudolph](https://adventofcode.com/2015/day/19)                 | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day19/day19.rs)

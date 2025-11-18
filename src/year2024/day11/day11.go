@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // transform applies a the transformation of a stone according to the process of the puzzle statement.
@@ -70,20 +71,36 @@ func solve(data []byte, numBlinks int) int {
 	return totalStones
 }
 
-// main is the entry point of the program.
 func main() {
 	filename := "input.txt"
-	if len(os.Args) >= 2 {
-		filename = os.Args[1]
+	elapsed := false
+
+	for i := 1; i < len(os.Args); i++ {
+		arg := os.Args[i]
+		if arg == "--elapsed" {
+			elapsed = true
+		} else if !strings.HasPrefix(arg, "-") {
+			filename = arg
+		}
 	}
+
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// part 1
-	fmt.Println(solve(data, 25))
+	if elapsed {
+		start := time.Now()
+		result1, result2 := solve(data, 25), solve(data, 75)
+		duration := time.Since(start)
 
-	// part 2
-	fmt.Println(solve(data, 75))
+		fmt.Println(result1)
+		fmt.Println(result2)
+		fmt.Printf("elapsed: %f ms\n", duration.Seconds()*1000.0)
+	} else {
+		result1, result2 := solve(data, 25), solve(data, 75)
+
+		fmt.Println(result1)
+		fmt.Println(result2)
+	}
 }
