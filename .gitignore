@@ -23,3 +23,8 @@ answer.txt
 resolve_error.sh
 resolve_unknown.sh
 .run.db
+
+src/year*/day*/Cargo.toml
+src/year*/day*/Cargo.lock
+src/year*/day*/target/
+crates/**/Cargo.lock

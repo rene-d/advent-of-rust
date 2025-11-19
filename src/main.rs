@@ -58,7 +58,10 @@ fn run_day_single(args: &aoc::Args) {
     let sols = solutions(year, day, &alt);
 
     if sols.len() != 1 {
-        println!("-r requires exactly one solution ({} found with year={year:?} day={day:?} alt={alt:?})", sols.len());
+        println!(
+            "-r requires exactly one solution ({} found with year={year:?} day={day:?} alt={alt:?})",
+            sols.len()
+        );
         std::process::exit(1);
     }
 
@@ -227,7 +230,9 @@ fn run_all(args: &aoc::Args) {
 
     if puzzles > 1 {
         println!();
-        println!("Elapsed: {total_elapsed:#?} for {puzzles} puzzle(s) - success: {success}, failed: {failed}");
+        println!(
+            "Elapsed: {total_elapsed:#?} for {puzzles} puzzle(s) - success: {success}, failed: {failed}"
+        );
     }
 }
 

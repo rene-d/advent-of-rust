@@ -1,6 +1,5 @@
 //! [Day 13: Claw Contraption](https://adventofcode.com/2024/day/13)
 
-use regex::Regex;
 type F = fraction::GenericFraction<i64>;
 
 struct ClawMachine {
@@ -14,12 +13,23 @@ struct ClawMachine {
 
 impl ClawMachine {
     fn parse(s: &str) -> Self {
-        let re = Regex::new(r"\d+").unwrap();
+        let mut values = Vec::new();
+        let mut chars = s.chars().peekable();
 
-        let values = re
-            .find_iter(s)
-            .map(|m| m.as_str().parse::<i64>().unwrap())
-            .collect::<Vec<_>>();
+        // find positive integers into chars
+        while let Some(ch) = chars.next() {
+            if let Some(mut num) = ch.to_digit(10).map(i64::from) {
+                while let Some(next_ch) = chars.peek().copied() {
+                    if let Some(digit) = next_ch.to_digit(10) {
+                        num = num * 10 + i64::from(digit);
+                        chars.next();
+                    } else {
+                        break;
+                    }
+                }
+                values.push(num);
+            }
+        }
 
         Self {
             a_x: F::from(values[0]),
