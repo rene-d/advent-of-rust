@@ -4,6 +4,7 @@
 
 import os
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -11,7 +12,37 @@ try:
     import click
 except ImportError:
     print("This script requires the « click » module.")
-    exit(1)
+
+    if "VIRTUAL_ENV" in os.environ:
+        print("VirtualEnv detected: try to install from PyPi...")
+        if os.system(f"{sys.executable} -mpip install click") != 0:
+            sys.exit(1)
+    elif sys.platform == "linux":
+        distro = "unknown"
+        r = Path("/etc/os-release")
+        if r.is_file():
+            for line in r.read_text("utf-8").splitlines():
+                if line.startswith("ID="):
+                    distro = line[3:].strip().strip('"').strip("'")
+                    break
+        if distro == "debian" or distro == "ubuntu":
+            print("Debian/Ubuntu detected: try to install packages...")
+            if os.system("sudo apt-get install -y python3-click") != 0:
+                sys.exit(1)
+        elif distro == "alpine":
+            print("Alpine detected: try to install packages...")
+            if os.system("sudo apk add --no-cache py3-click") != 0:
+                sys.exit(1)
+        elif distro == "fedora":
+            print("Fedora detected: try to install packages...")
+            if os.system("sudo dnf install -y python3-click") != 0:
+                sys.exit(1)
+        else:
+            sys.exit(0)
+    else:
+        sys.exit(1)
+
+    import click
 
 
 class AliasedGroup(click.Group):
@@ -61,6 +92,15 @@ class AliasedGroup(click.Group):
         return cmd.name, cmd, args
 
 
+def get_cli_path():
+    if os.getuid() == 0:
+        # probably into a container
+        cli = Path("/usr/local/bin/aoc")
+    else:
+        cli = Path("~/.local/bin/aoc")
+    return cli
+
+
 @dataclass
 class AocProject:
     scripts_dir: Path
@@ -80,15 +120,8 @@ class AocProject:
 
 
 @click.group(
-    invoke_without_command=False,
-    cls=AliasedGroup.aliases(
-        {
-            "r": "run",
-            "p": "private-leaderboard",
-            "i": "inputs",
-            "in": "inputs",
-        }
-    ),
+    invoke_without_command=True,
+    cls=AliasedGroup.aliases({"r": "run", "p": "private-leaderboard", "i": "inputs", "in": "inputs"}),
 )
 @click.pass_context
 def aoc(ctx: click.Context):
@@ -103,6 +136,12 @@ def aoc(ctx: click.Context):
     if ctx.invoked_subcommand:
         return
 
+    if not get_cli_path().expanduser().is_file():
+        ctx.invoke(aoc_install)
+    else:
+        click.echo(ctx.get_help())
+        ctx.exit()
+
 
 @aoc.command(name="install")
 @click.pass_context
@@ -115,20 +154,13 @@ def aoc_install(ctx: click.Context):
     if f.is_symlink():
         raise click.ClickException("Launch command with the real file, not the symlink.")
 
-    if os.getuid() == 0:
-        # probably into a container
-        cli = Path("/usr/local/bin/aoc").expanduser()
-        cli.unlink(True)
-        cli.parent.mkdir(parents=True, exist_ok=True)
-        cli.symlink_to(f)
-        click.echo("Command aoc has been installed in /usr/local/bin .")
-
-    else:
-        cli = Path("~/.local/bin/aoc").expanduser()
-        cli.unlink(True)
-        cli.parent.mkdir(parents=True, exist_ok=True)
-        cli.symlink_to(f)
-        click.echo("Command aoc has been installed in ~/.local/bin .")
+    cli_path = get_cli_path()
+    cli = cli_path.expanduser()
+    if cli.exists():
+        cli.unlink()
+    cli.parent.mkdir(parents=True, exist_ok=True)
+    cli.symlink_to(f)
+    click.echo(f"Command aoc has been installed in {cli_path} .")
 
 
 @aoc.command(name="private-leaderboard")

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import sqlite3
+import sys
 import time
 import typing as t
 from collections import defaultdict
@@ -10,11 +12,46 @@ from functools import lru_cache
 from pathlib import Path
 
 try:
+    import curtsies
     import tabulate
-    from curtsies import Input
 except ImportError:
     print("This script requires the « tabulate » and « curtsies » modules.")
-    exit(1)
+
+    if "VIRTUAL_ENV" in os.environ:
+        print("VirtualEnv detected: try to install from PyPi...")
+        if os.system(f"{sys.executable} -mpip install tabulate curtsies") != 0:
+            sys.exit(1)
+    elif sys.platform == "linux":
+        distro = "unknown"
+        r = Path("/etc/os-release")
+        if r.is_file():
+            for line in r.read_text(encoding="utf-8").splitlines():
+                if line.startswith("ID="):
+                    distro = line[3:].strip().strip('"').strip("'")
+                    break
+        if distro == "debian" or distro == "ubuntu":
+            print("Debian/Ubuntu detected: try to install packages...")
+            if os.system("sudo apt-get install -y python3-tabulate python3-curtsies") != 0:
+                sys.exit(1)
+        elif distro == "alpine":
+            print("Alpine detected: try to install packages...")
+            if os.system("sudo apk add --no-cache py3-tabulate") != 0:
+                sys.exit(1)
+        elif distro == "fedora":
+            print("Fedora detected: try to install packages...")
+            if os.system("sudo dnf install -y python3-tabulate python3-curtsies") != 0:
+                sys.exit(1)
+        else:
+            sys.exit(0)
+    else:
+        sys.exit(1)
+
+    import tabulate
+
+    try:
+        import curtsies
+    except ImportError:
+        curtsies = None
 
 
 T1 = 0.5
@@ -57,7 +94,8 @@ def aoc_available_puzzles(
     return puzzles
 
 
-def fmt_elapsed(elapsed: float, tablefmt) -> str:
+def fmt_elapsed(elapsed: float, _tablefmt) -> str:
+    """Format elapsed time with color-coded ANSI escape sequences based on duration thresholds."""
     if elapsed < T1:
         return f"\033[32m{elapsed:.3f}\033[0m"
     elif elapsed < T2:
@@ -70,37 +108,52 @@ def fmt_elapsed(elapsed: float, tablefmt) -> str:
 
 @dataclass
 class Stats:
+    """Container for timing statistics data including headers, table data, and solution timings."""
+
     headers: list
     data: dict
     solutions: dict
 
 
 class Timings:
+    """Manages and analyzes execution timing statistics for Advent of Code solutions."""
+
     def __init__(self, db: sqlite3.Connection):
         self.year_begin = min(aoc_available_puzzles())
         self.year_end = max(aoc_available_puzzles())
 
         self.user_inputs = defaultdict(set)
-        for key_input, hash in db.execute("select key,crc32 from inputs"):
+        for key_input, crc32 in db.execute("select key,crc32 from inputs"):
             year, day, user = key_input.split(":")
             year = int(year)
             day = int(day)
-            self.user_inputs[hash].add(user)
+            self.user_inputs[crc32].add(user)
 
         self.solutions = defaultdict(lambda: defaultdict(dict))
         for key_solution, elapsed, status in db.execute("select key,elapsed,status from solutions"):
             if status == "ok":
-                year, day, hash, binary, language = key_solution.split(":")
+                year, day, crc32, _binary, language = key_solution.split(":")
                 year = int(year)
                 day = int(day)
                 elapsed /= 1_000_000_000
 
                 # manage multiple solutions in different dayXX_xxx directories
                 day_sols = self.solutions[year, day][language]
-                other_elapsed = day_sols.get(hash, float("inf"))
-                day_sols[hash] = min(elapsed, other_elapsed)
+                other_elapsed = day_sols.get(crc32, float("inf"))
+                day_sols[crc32] = min(elapsed, other_elapsed)
 
     def get_stats(self, user: str, lang: str, tablefmt: str) -> Stats:
+        """
+        Compute and return execution timing statistics for a given user and language.
+
+        Args:
+            user: User identifier or aggregation mode ('mean', 'min', 'max', 'minmax')
+            lang: Programming language identifier
+            tablefmt: Table format for output formatting
+
+        Returns:
+            Stats object containing headers, data, and solutions timing information.
+        """
         stats = Stats(
             headers=["day"] + [i for i in range(self.year_begin, self.year_end + 1)],
             data=[[i] + [None] * (self.year_end - self.year_begin + 1) for i in range(1, 26)],
@@ -112,12 +165,12 @@ class Timings:
             min_elapsed = float("inf")
             max_elapsed = 0
             nb_elapsed = 0
-            for hash, elapsed in languages[lang].items():
+            for key_hash, elapsed in languages[lang].items():
                 if min_elapsed > elapsed:
                     min_elapsed = elapsed
                 if max_elapsed < elapsed:
                     max_elapsed = elapsed
-                if user in ("mean", "min", "max", "minmax") or user in self.user_inputs[hash]:
+                if user in ("mean", "min", "max", "minmax") or user in self.user_inputs[key_hash]:
                     total_elapsed += elapsed
                     nb_elapsed += 1
 
@@ -145,15 +198,16 @@ class Timings:
         return stats
 
     def print_stats(self, user: str, lang: str, tablefmt: str = "rounded_outline"):
+        """Print timing statistics in a formatted table with performance breakdown."""
         stats = self.get_stats(user, lang, tablefmt)
 
         print(tabulate.tabulate(stats.data, stats.headers, tablefmt, floatfmt=".3f"))
 
-        # Don't care of E731... lambda are elegant.
-        timing = lambda a, b: sum(1 for _ in filter(lambda x: a <= x < b, stats.solutions.values()))  # noqa
-        ids = lambda a, b: " ".join(
-            f"{y}:{d:<2}" for (y, d), v in sorted(stats.solutions.items()) if a <= v < b
-        )  # noqa
+        def timing(a, b):
+            return sum(1 for _ in filter(lambda x: a <= x < b, stats.solutions.values()))
+
+        def ids(a, b):
+            return " ".join(f"{y}:{d:<2}" for (y, d), v in sorted(stats.solutions.items()) if a <= v < b)
 
         inf = float("inf")
         print()
@@ -181,6 +235,7 @@ class Timings:
 
 
 def main():
+    """Main entry point for the timings script. Parses command-line arguments and displays timing statistics."""
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--user", help="User ID")
     parser.add_argument("-l", "--lang", default="Rust", help="Language")
@@ -205,6 +260,9 @@ def main():
     try:
         if not args.browse:
             timings.print_stats(args.user, args.lang)
+
+        elif curtsies is None:
+            print("Install the « curtsies » module.")
 
         else:
             sql = "select distinct key from inputs order by key"
@@ -246,7 +304,7 @@ def main():
                 print()
                 print("← → : switch user     ↓ ↑ : switch language")
 
-                with Input(keynames="curses") as input_generator:
+                with curtsies.Input(keynames="curses") as input_generator:
                     for e in input_generator:
                         if e in ("q", "Q", "x", "X", "\033"):
                             done = True
