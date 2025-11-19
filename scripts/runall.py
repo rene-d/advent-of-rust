@@ -87,6 +87,7 @@ LANGUAGES = {
     "Go": "{AOC_TARGET_DIR}/build/year{year}/day{day}_go",
     "C#": "{AOC_TARGET_DIR}/build/year{year}/day{day}_cs.exe",
     "Swift": "{AOC_TARGET_DIR}/build/year{year}/day{day}_swift",
+    "Tcl": "src/year{year}/day{day}/day{day}.tcl",
 }
 
 INTERPRETERS = {
@@ -111,6 +112,7 @@ INTERPRETERS = {
     "Lua": {"Lua": "lua5.4"},
     "Ruby": {"Ruby": "ruby"},
     "Perl": {"Perl": "perl"},
+    "Tcl": {"Tcl": "tclsh"},
 }
 
 

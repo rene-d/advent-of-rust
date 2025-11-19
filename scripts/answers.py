@@ -610,10 +610,13 @@ def make_readme_main(args):
     bonus = defaultdict(list)
 
     for year, day, stars, title, sols in puzzles:
-        if any(f.suffix == ".rs" for f in sols):
+
+        if any(f.suffix == ".rs" and f.parent.name == f.stem for f in sols):
             rust[year] += 1
-        if any(f.suffix == ".py" for f in sols):
+
+        if any(f.suffix == ".py" and f.parent.name == f.stem for f in sols):
             python[year] += 1
+
         all_stars[year] += stars
 
         if sols:
