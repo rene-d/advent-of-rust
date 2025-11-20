@@ -1,9 +1,9 @@
 // [Day 18: RAM Run](https://adventofcode.com/2024/day/18)
 
-#include <vector>
+#include <cstdio>
 #include <deque>
 #include <tuple>
-#include <cstdio>
+#include <vector>
 
 #define MEM_SIZE 71
 
@@ -42,33 +42,28 @@ static unsigned find_path(const std::vector<byte_t> &memory)
 
     queue.push_back(std::make_tuple(start_pos, 0));
 
-    while (queue.empty() == false)
-    {
+    while (queue.empty() == false) {
         point_t pos;
         int steps;
 
         std::tie(pos, steps) = queue.front();
         queue.pop_front();
 
-        if (pos == end_pos)
-        {
+        if (pos == end_pos) {
             return steps;
         }
 
         seen[pos.y * MEM_SIZE + pos.x] = true;
 
-        for (const auto &dir : directions)
-        {
+        for (const auto &dir : directions) {
             const int x = pos.x + dir.x;
             const int y = pos.y + dir.y;
 
-            if (x < 0 || x >= MEM_SIZE || y < 0 || y >= MEM_SIZE)
-            {
+            if (x < 0 || x >= MEM_SIZE || y < 0 || y >= MEM_SIZE) {
                 continue;
             }
 
-            if (!seen[y * MEM_SIZE + x] && memory[y * MEM_SIZE + x] == byte_t::SAFE)
-            {
+            if (!seen[y * MEM_SIZE + x] && memory[y * MEM_SIZE + x] == byte_t::SAFE) {
                 queue.push_back(std::make_tuple(point_t{x, y}, steps + 1));
                 seen[y * MEM_SIZE + x] = true;
             }
@@ -83,13 +78,11 @@ static void part1(const positions_t &byte_positions)
     std::vector<byte_t> memory(MEM_SIZE * MEM_SIZE, byte_t::SAFE);
 
     int count = 0;
-    for (const auto &pos : byte_positions)
-    {
+    for (const auto &pos : byte_positions) {
         memory[pos.y * MEM_SIZE + pos.x] = byte_t::CORRUPTED;
 
         count++;
-        if (count == 1024)
-        {
+        if (count == 1024) {
             break;
         }
     }
@@ -101,8 +94,7 @@ static void part2(const positions_t &byte_positions)
 {
     std::vector<byte_t> memory(MEM_SIZE * MEM_SIZE, byte_t::SAFE);
 
-    for (const auto &pos : byte_positions)
-    {
+    for (const auto &pos : byte_positions) {
         memory[pos.y * MEM_SIZE + pos.x] = byte_t::CORRUPTED;
 
         if (memory[0] == byte_t::CORRUPTED                          // start position
@@ -122,10 +114,8 @@ static positions_t read_input(const char *filename)
     positions_t byte_positions;
 
     f = fopen(filename, "r");
-    if (f != NULL)
-    {
-        while (fscanf(f, "%d,%d\n", &x, &y) == 2)
-        {
+    if (f != NULL) {
+        while (fscanf(f, "%d,%d\n", &x, &y) == 2) {
             byte_positions.push_back(point_t{x, y});
         }
         fclose(f);
@@ -138,8 +128,7 @@ int main(int argc, char *argv[])
 {
     const char *filename = "input.txt";
 
-    if (argc > 1 && argv[1] != NULL)
-    {
+    if (argc > 1 && argv[1] != NULL) {
         filename = argv[1];
     }
 

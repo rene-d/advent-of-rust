@@ -1,13 +1,13 @@
 // c++ -Wall -Wextra -Werror -std=c++23 -O2 -o day1 day1.cpp
 
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <ranges>
-#include <map>
 #include <algorithm>
+#include <fstream>
 #include <inttypes.h>
+#include <iostream>
+#include <map>
+#include <ranges>
+#include <sstream>
+#include <vector>
 
 static void read_data(const char *filename, std::vector<int> &left, std::vector<int> &right)
 {
@@ -16,18 +16,15 @@ static void read_data(const char *filename, std::vector<int> &left, std::vector<
 
     f.open(filename);
 
-    if (!f.is_open())
-    {
+    if (!f.is_open()) {
         throw std::logic_error("bad filename");
     }
 
-    while (!f.eof())
-    {
+    while (!f.eof()) {
         int a, b;
         f >> a >> b;
 
-        if (!f.fail())
-        {
+        if (!f.fail()) {
             left.push_back(a);
             right.push_back(b);
         }
@@ -60,14 +57,12 @@ int main(int argc, char *argv[])
     // part 2
 
     std::map<int, int> counter;
-    for (auto b : right)
-    {
+    for (auto b : right) {
         counter[b] += 1;
     }
 
     int part2 = 0;
-    for (auto a : left)
-    {
+    for (auto a : left) {
         part2 += a * counter[a];
     }
     std::cout << part2 << std::endl;

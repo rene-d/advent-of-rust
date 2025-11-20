@@ -1,13 +1,13 @@
-#include <vector>
-#include <iostream>
-#include <list>
-#include <fstream>
-#include <sstream>
-#include <stdexcept>
-#include <cstring>
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
-#include <algorithm>
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <sstream>
+#include <stdexcept>
+#include <vector>
 
 struct Operation
 {
@@ -17,8 +17,7 @@ struct Operation
     uint64_t calc(uint64_t n) const
     {
         // WARNING no overflow checks in C++
-        switch (this->opcode)
-        {
+        switch (this->opcode) {
         case '^':
             return n * n;
         case '+':
@@ -46,19 +45,15 @@ void solve(const std::vector<Monkey> &monkeys_orig, int rounds)
     std::vector<Monkey> monkeys = monkeys_orig;
 
     uint64_t modulus = 1;
-    for (const auto &monkey : monkeys)
-    {
+    for (const auto &monkey : monkeys) {
         modulus *= monkey.divisible_by;
     }
 
-    for (int round = 0; round < rounds; ++round)
-    {
-        for (auto &monkey : monkeys)
-        {
+    for (int round = 0; round < rounds; ++round) {
+        for (auto &monkey : monkeys) {
             // Nota: this loop can run forever if if_true/if_false refers the current monkey and C++ allows it.
             // In Rust it's not possible because of the borrowing that forces to copy the items vector
-            while (!monkey.items.empty())
-            {
+            while (!monkey.items.empty()) {
                 monkey.inspections += 1;
 
                 uint64_t item = monkey.items.front();
@@ -66,21 +61,15 @@ void solve(const std::vector<Monkey> &monkeys_orig, int rounds)
 
                 uint64_t worry_level = monkey.operation.calc(item);
 
-                if (rounds == 20)
-                {
+                if (rounds == 20) {
                     worry_level = worry_level / 3;
-                }
-                else
-                {
+                } else {
                     worry_level = worry_level % modulus;
                 }
 
-                if (worry_level % monkey.divisible_by == 0)
-                {
+                if (worry_level % monkey.divisible_by == 0) {
                     monkeys[monkey.if_true].items.push_back(worry_level);
-                }
-                else
-                {
+                } else {
                     monkeys[monkey.if_false].items.push_back(worry_level);
                 }
             }
@@ -88,8 +77,7 @@ void solve(const std::vector<Monkey> &monkeys_orig, int rounds)
     }
 
     std::sort(monkeys.begin(), monkeys.end(),
-              [](const Monkey &a, const Monkey &b) -> bool
-              {
+              [](const Monkey &a, const Monkey &b) -> bool {
                   return a.inspections > b.inspections;
               });
     uint64_t monkey_business_level = (uint64_t)monkeys[0].inspections * (uint64_t)monkeys[1].inspections;
@@ -104,13 +92,11 @@ void read_data(const char *filename, std::vector<Monkey> &monkeys)
 
     f.open(filename);
 
-    if (!f.is_open())
-    {
+    if (!f.is_open()) {
         throw std::logic_error("bad filename");
     }
 
-    while (true)
-    {
+    while (true) {
         Monkey monkey{
             .items = std::list<uint64_t>(),
             .operation = Operation{.opcode = 0, .param = 0},
@@ -129,8 +115,7 @@ void read_data(const char *filename, std::vector<Monkey> &monkeys)
         line = line.substr(strlen("  Starting items: "));
         std::string item;
         std::stringstream ss(line);
-        while (std::getline(ss, item, ','))
-        {
+        while (std::getline(ss, item, ',')) {
             monkey.items.push_back(std::stoul(item));
         }
 
@@ -138,22 +123,15 @@ void read_data(const char *filename, std::vector<Monkey> &monkeys)
         std::getline(f, line);
         assert(line.find("  Operation: new = ") == 0);
         line = line.substr(strlen("  Operation: new = "));
-        if (line == "old * old")
-        {
+        if (line == "old * old") {
             monkey.operation.opcode = '^';
-        }
-        else if (line.find("old + ") == 0)
-        {
+        } else if (line.find("old + ") == 0) {
             monkey.operation.opcode = '+';
             monkey.operation.param = std::stoul(line.substr(strlen("old + ")));
-        }
-        else if (line.find("old * ") == 0)
-        {
+        } else if (line.find("old * ") == 0) {
             monkey.operation.opcode = '*';
             monkey.operation.param = std::stoul(line.substr(strlen("old * ")));
-        }
-        else
-        {
+        } else {
             throw std::logic_error("unknown operation");
         }
 

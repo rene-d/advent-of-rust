@@ -1,8 +1,8 @@
+#include <asm/uaccess.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
-#include <linux/seq_file.h>
 #include <linux/sched.h>
-#include <asm/uaccess.h>
+#include <linux/seq_file.h>
 #include <linux/slab.h>
 #include <linux/sort.h>
 
@@ -26,8 +26,7 @@ static int next_int(const struct input_data *input_data, size_t *offset)
         (*offset)++;
 
     // read int
-    while (*offset < input_data->size && isdigit(input_data->input[*offset]))
-    {
+    while (*offset < input_data->size && isdigit(input_data->input[*offset])) {
         i = i * 10 + input_data->input[*offset] - '0';
         (*offset)++;
     }
@@ -53,8 +52,7 @@ static void solve(const struct input_data *input_data)
     size_t n;
 
     max_lines = 1; // 1 more if \n misses the last line
-    for (size_t i = 0; i < input_data->size; ++i)
-    {
+    for (size_t i = 0; i < input_data->size; ++i) {
         if (input_data->input[i] == '\n')
             max_lines += 1;
     }
@@ -64,8 +62,7 @@ static void solve(const struct input_data *input_data)
 
     n = 0;
     size_t offset = 0;
-    while (n < max_lines && offset < input_data->size)
-    {
+    while (n < max_lines && offset < input_data->size) {
         left[n] = next_int(input_data, &offset);
         right[n] = next_int(input_data, &offset);
 
@@ -77,20 +74,16 @@ static void solve(const struct input_data *input_data)
 
     // part 1
     result_part1 = 0;
-    for (size_t i = 0; i < n; ++i)
-    {
+    for (size_t i = 0; i < n; ++i) {
         result_part1 += int_abs(left[i] - right[i]);
     }
 
     // part 2
     result_part2 = 0;
-    for (size_t i = 0; i < n; ++i)
-    {
+    for (size_t i = 0; i < n; ++i) {
         int a = left[i];
-        for (size_t j = 0; j < n; ++j)
-        {
-            if (right[j] == a)
-            {
+        for (size_t j = 0; j < n; ++j) {
+            if (right[j] == a) {
                 result_part2 += a;
             }
         }
@@ -102,17 +95,13 @@ static void solve(const struct input_data *input_data)
 
 static int result_proc_show(struct seq_file *m, void *v)
 {
-    if (m->private == NULL)
-    {
+    if (m->private == NULL) {
         return 0;
     }
 
-    if (strcmp("part1", (const char *)m->private) == 0)
-    {
+    if (strcmp("part1", (const char *)m->private) == 0) {
         seq_printf(m, "%d\n", result_part1);
-    }
-    else if (strcmp("part2", (const char *)m->private) == 0)
-    {
+    } else if (strcmp("part2", (const char *)m->private) == 0) {
         seq_printf(m, "%d\n", result_part2);
     }
 
@@ -121,8 +110,7 @@ static int result_proc_show(struct seq_file *m, void *v)
 
 static int result_proc_open(struct inode *inode, struct file *file)
 {
-    if (file == NULL || file->f_path.dentry == NULL)
-    {
+    if (file == NULL || file->f_path.dentry == NULL) {
         return -1;
     }
 
@@ -161,8 +149,7 @@ static int input_release_proc(struct inode *inode, struct file *file)
 
     solve(input_data);
 
-    if (input_data != NULL)
-    {
+    if (input_data != NULL) {
         kfree(input_data->input);
         kfree(input_data);
     }
@@ -171,8 +158,7 @@ static int input_release_proc(struct inode *inode, struct file *file)
 
 static ssize_t input_write_proc(struct file *file, const char *buff, size_t len, loff_t *off)
 {
-    if (access_ok(buff, len) == 0)
-    {
+    if (access_ok(buff, len) == 0) {
         pr_err("Read input error.\n");
         return 0;
     }
@@ -184,8 +170,7 @@ static ssize_t input_write_proc(struct file *file, const char *buff, size_t len,
 
     unsigned int n = copy_from_user(input_data->input, buff, len);
 
-    if (n != 0)
-    {
+    if (n != 0) {
         pr_err("Read input error. ret=%u\n", n);
     }
 
@@ -202,8 +187,7 @@ static int __init aoc_2024_init(void)
 {
     parent = proc_mkdir("aoc", NULL);
 
-    if (parent == NULL)
-    {
+    if (parent == NULL) {
         pr_info("Cannot create aoc filesystem");
         return -1;
     }
@@ -217,8 +201,7 @@ static int __init aoc_2024_init(void)
 
 static void __exit aoc_2024_exit(void)
 {
-    if (parent != NULL)
-    {
+    if (parent != NULL) {
         remove_proc_entry("input", parent);
         remove_proc_entry("part1", parent);
         remove_proc_entry("part2", parent);

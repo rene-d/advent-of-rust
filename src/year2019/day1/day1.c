@@ -1,5 +1,5 @@
 // [Day 1: The Tyranny of the Rocket Equation](https://adventofcode.com/2019/day/1)
-// cc -o day1 -Wall -O2 day1.c
+// cc -std=c11 -o day1 -Wall -O2 day1.c
 
 #include <stdio.h>
 
@@ -8,13 +8,11 @@ int main(int argc, char *argv[])
     FILE *f = fopen((argc >= 2) ? argv[1] : "input.txt", "r");
 
     int mass, part1 = 0, part2 = 0;
-    while (fscanf(f, "%d", &mass) == 1)
-    {
+    while (fscanf(f, "%d", &mass) == 1) {
         part1 += mass / 3 - 2;
 
         int fuel = mass;
-        while ((fuel = fuel / 3 - 2) > 0)
-        {
+        while ((fuel = fuel / 3 - 2) > 0) {
             part2 += fuel;
         }
     }

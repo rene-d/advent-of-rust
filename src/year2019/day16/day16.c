@@ -1,12 +1,12 @@
-// cc -o day16 -Wall -O2 day16.c
+// cc -std=c11 -o day16 -Wall -O2 day16.c
 // https://adventofcode.com/2019/day/16
 
 #pragma GCC diagnostic ignored "-Wunused-result"
 
+#include <inttypes.h>
 #include <stdio.h> // well... is it really necessary ?
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
 
 int main(int argc, char *argv[])
 {
@@ -45,14 +45,12 @@ int main(int argc, char *argv[])
     memcpy(p, data, size);        // no check
     for (int k = 0; k < 100; k++) // ++i or i++ ? I should decide !
     {
-        for (int n = 0; n < size; n++)
-        {
+        for (int n = 0; n < size; n++) {
             int s = 0;
-            for (int i = 0; i < size; ++i)
-            {
+            for (int i = 0; i < size; ++i) {
                 s += pattern[((i + 1) / (n + 1)) % 4] * p[i]; // mix between int and int8_t
-            }                                                 // and only a SAST could verify there is no overflow here
-            t[n] = abs(s) % 10;                               // other silent cast int to int8_t, even it is legitimate
+            } // and only a SAST could verify there is no overflow here
+            t[n] = abs(s) % 10; // other silent cast int to int8_t, even it is legitimate
         }
         memcpy(p, t, size);
     }
@@ -72,8 +70,7 @@ int main(int argc, char *argv[])
     // printf("%d\n", n);
     p = malloc(n); // check, element type, cast ?
     t = malloc(n);
-    for (int i = 0; i < n; ++i)
-    {                                     // accolade or not accolade for a only one statement ?
+    for (int i = 0; i < n; ++i) {         // accolade or not accolade for a only one statement ?
         p[i] = data[(i + offset) % size]; // I should remember that data is at most size byte wide
     }
     for (int k = 0; k < 100; ++k) // naming this variable is useless

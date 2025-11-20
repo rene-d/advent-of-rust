@@ -1,9 +1,11 @@
-// cc -o day1 -Wall -O2 day1.c
+// cc -std=c11 -o day1 -Wall -O2 day1.c
 
+#define _XOPEN_SOURCE 600
+
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
 #include <time.h>
 
 static int int_cmp(const void *a, const void *b)
@@ -24,8 +26,7 @@ int main(int argc, char *argv[])
     struct timespec ts_start, ts_end;
 
     f = fopen((argc >= 2) ? argv[1] : "input.txt", "r");
-    if (f == NULL)
-    {
+    if (f == NULL) {
         perror("fopen");
         exit(1);
     }
@@ -45,21 +46,18 @@ int main(int argc, char *argv[])
 
     const char *p = data;
     int consumed = 0;
-    while (p < (data + data_size) && sscanf(p, "%d %d%n", &a, &b, &consumed) == 2)
-    {
+    while (p < (data + data_size) && sscanf(p, "%d %d%n", &a, &b, &consumed) == 2) {
         if (consumed <= 0)
             break;
         p += consumed;
 
-        if (b >= 100000)
-        {
+        if (b >= 100000) {
             fprintf(stderr, "Error: b value %d exceeds right_count size\n", b);
             exit(1);
         }
         right_count[b] += 1;
 
-        if (n >= size)
-        {
+        if (n >= size) {
             size += 128;
             left = (int *)realloc(left, size * sizeof(int));
             right = (int *)realloc(right, size * sizeof(int));
@@ -74,15 +72,13 @@ int main(int argc, char *argv[])
 
     // part 1
     int part1 = 0;
-    for (size_t i = 0; i < n; ++i)
-    {
+    for (size_t i = 0; i < n; ++i) {
         part1 += abs(left[i] - right[i]);
     }
 
     // part 2
     int part2 = 0;
-    for (size_t i = 0; i < n; ++i)
-    {
+    for (size_t i = 0; i < n; ++i) {
         int a = left[i];
         part2 += right_count[a] * a;
     }
@@ -100,10 +96,8 @@ int main(int argc, char *argv[])
     printf("%d\n", part1);
     printf("%d\n", part2);
 
-    for (int i = 2; i < argc; ++i)
-    {
-        if (strcmp(argv[i], "--elapsed") == 0)
-        {
+    for (int i = 2; i < argc; ++i) {
+        if (strcmp(argv[i], "--elapsed") == 0) {
             double elapsed = (ts_end.tv_sec - ts_start.tv_sec) + (ts_end.tv_nsec - ts_start.tv_nsec) / 1e9;
             printf("elapsed: %.6f ms\n", elapsed * 1000.);
             break;
