@@ -1,11 +1,11 @@
-FROM debian:stable AS builder
+FROM debian
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y bash vim curl wget sudo sqlite3 vim \
-                       build-essential cmake gdb python3 python3-venv python3-numpy python3-tabulate python3-click \
-                       clang llvm z3 libsqlite3-dev
+    apt-get install -y bash vim curl wget sudo sqlite3 \
+                       build-essential python3 python3-venv  python3-click python3-tabulate python3-numpy python3-curtsies \
+                       clang libz3-dev libsqlite3-dev
 
 # Rust
 ENV CARGO_HOME=/usr/local/cargo
@@ -45,7 +45,7 @@ RUN apt-get install -y -qq default-jdk
 WORKDIR /aoc
 
 RUN . /etc/os-release && \
-    echo "export AOC_TARGET_DIR=target/${ID}-${VERSION_ID}" >> /root/.bashrc && \
-    echo "export CARGO_TARGET_DIR=target/${ID}-${VERSION_ID}/$(rustc --version | cut -f2 -d' ')-$(rustc --print host-tuple)" >> /root/.bashrc
+    echo "export AOC_TARGET_DIR=target/${ID}-${VERSION_ID}" >> /etc/bash.bashrc && \
+    echo "export CARGO_TARGET_DIR=target/${ID}-${VERSION_ID}/$(rustc --version | cut -f2 -d' ')-$(rustc --print host-tuple)" >> /etc/bash.bashrc
 
-ENTRYPOINT ["/bin/bash"]
+CMD ["/bin/bash"]
