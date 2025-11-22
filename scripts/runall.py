@@ -28,6 +28,7 @@ CYAN = "\033[96m"
 WHITE = "\033[97m"
 YELLOW = "\033[93m"
 RESET = "\033[0m"
+BOLD = "\033[1m"
 FEINT = "\033[2m"
 ITALIC = "\033[3m"
 BLINK = "\033[6m"
@@ -38,7 +39,7 @@ TRANSIENT = f"{CLEAR_EOL}{CR}"
 
 @lru_cache(maxsize=None)
 def aoc_available_puzzles(
-    year: int | None = None, seconds: float | None = None
+    year: t.Optional[int] = None, seconds: t.Optional[float] = None
 ) -> t.Union[dict[int, list[int]], list[int]]:
     """
     Returns a dict of available puzzles by year or the list of available puzzles for the given year.
@@ -71,7 +72,16 @@ def aoc_available_puzzles(
     return puzzles
 
 
-AOC_TARGET_DIR = os.environ.get("AOC_TARGET_DIR", "target")
+class Env:
+    """
+    Variables that can be overridden by environment variables.
+    """
+
+    AOC_TARGET_DIR = os.environ.get("AOC_TARGET_DIR", "target")
+    CARGO_TARGET_DIR = os.environ.get("CARGO_TARGET_DIR", "target")
+    CC = os.environ.get("CC", "cc")
+    CXX = os.environ.get("CXX", "c++")
+
 
 LANGUAGES = {
     "Rust": "src/year{year}/day{day}/day{day}.rs",
@@ -82,7 +92,7 @@ LANGUAGES = {
     "JavaScript": "src/year{year}/day{day}/day{day}.js",
     "Ruby": "src/year{year}/day{day}/day{day}.rb",
     "Perl": "src/year{year}/day{day}/day{day}.pl",
-    "Bash": "src/year{year}/day{day}/day{day}.sh",
+    "Bash": "src/year{year}/day{day}/day{day}.bash",
     "Java": "{AOC_TARGET_DIR}/build/year{year}/day{day}.class",
     "Go": "{AOC_TARGET_DIR}/build/year{year}/day{day}_go",
     "C#": "{AOC_TARGET_DIR}/build/year{year}/day{day}_cs.exe",
@@ -113,7 +123,99 @@ INTERPRETERS = {
     "Ruby": {"Ruby": "ruby"},
     "Perl": {"Perl": "perl"},
     "Tcl": {"Tcl": "tclsh"},
+    "Bash": {"Bash": "bash"},
 }
+
+LANGUAGES_VERSIONS = {
+    "Rust": "rustc --version",
+    "Go": "go version",
+    "C": "{CC} --version",
+    "C++": "{CXX} --version",
+    "Swift": "swiftc -version",
+    "Java": "javac -version",
+    "C#": "mcs --version",
+    "Python": "{interpreter} -VV",
+    "Ruby": "{interpreter} --version",
+    "Lua": "{interpreter} -v",
+    "JavaScript": {
+        "NodeJS": "{interpreter} -v",
+        "BunJS": "{interpreter} --version",
+    },
+    "Perl": "{interpreter} -v",
+    "Tcl": "echo 'puts [info patchlevel]' | {interpreter}",
+    "Bash": "{interpreter} --version",
+}
+
+
+def get_language_version(puzzle_lang: str) -> str:
+    for language, variants in INTERPRETERS.items():
+        # language = Python
+        # variants = Py3.11, Py3.12, ...
+        for variant, interpreters in variants.items():
+            if variant == puzzle_lang:
+                # language should be in the "show version" dict
+                if language not in LANGUAGES_VERSIONS:
+                    continue
+
+                # interpreter could be a string or an iterable of strings
+                if isinstance(interpreters, str):
+                    interpreters = (interpreters,)
+
+                # get the first available interpreter
+                for interpreter in interpreters:
+                    interpreter = interpreter.format(**vars(Env))
+                    interpreter = shutil.which(interpreter)
+                    if interpreter and os.path.isfile(interpreter):
+                        break
+                else:
+                    return ""
+
+                cmd = LANGUAGES_VERSIONS[language]
+                if isinstance(cmd, dict):
+                    for v, cmd_v in cmd.items():
+                        if v == variant:
+                            cmd = cmd_v
+                            break
+                    else:
+                        # variant has no "show version" command
+                        return ""
+
+                cmd = cmd.format(interpreter=interpreter)
+                cmd = cmd.format(**vars(Env))
+                try:
+                    lang_version = (
+                        subprocess.check_output(
+                            cmd,
+                            shell=True,
+                            stderr=subprocess.DEVNULL,
+                        )
+                        .decode()
+                        .strip()
+                        .splitlines()[0]
+                    )
+                    return lang_version
+                except Exception:
+                    return ""
+
+    if puzzle_lang in LANGUAGES_VERSIONS:
+        cmd = LANGUAGES_VERSIONS[puzzle_lang]
+        cmd = cmd.format(**vars(Env))
+        try:
+            lang_version = (
+                subprocess.check_output(
+                    cmd,
+                    shell=True,
+                    stderr=subprocess.DEVNULL,
+                )
+                .decode()
+                .strip()
+                .splitlines()[0]
+            )
+            return lang_version
+        except Exception:
+            return ""
+
+    return ""
 
 
 def get_cache(cache_file: Path = None):
@@ -135,6 +237,7 @@ def get_cache(cache_file: Path = None):
         cache_db.executescript(
             "create table if not exists solutions ("
             " key text primary key not null,"
+            " updated date,"
             " mtime_ns int,"
             " elapsed float,"
             " status text,"
@@ -146,6 +249,11 @@ def get_cache(cache_file: Path = None):
             " crc32 text"
             ");"
         )
+        try:
+            cache_db.executescript("alter table solutions add updated date;")
+        except sqlite3.OperationalError:
+            pass
+
         cache = {"db": cache_db, "modified": False}
         globals()["_cache"] = cache
 
@@ -159,7 +267,7 @@ def shorten_key(key: str) -> str:
     return key
 
 
-def check_cache(key, file_timestamp: Path, table: str, columns: t.Iterable[str], no_age_check=False):
+def check_cache(key: str, file_timestamp: Path, table: str, columns: t.Iterable[str], no_age_check=False):
     cache = get_cache()
     key = str(key)
     db = cache["db"]
@@ -182,18 +290,25 @@ def check_cache(key, file_timestamp: Path, table: str, columns: t.Iterable[str],
         print(f"{FEINT}{ITALIC}missing cache for {shorten_key(key)}{RESET}", end=TRANSIENT)
 
 
+def prune_cache(key: str, table: str):
+    cache = get_cache()
+    key = str(key)
+    db = cache["db"]
+    db.execute(f"delete from `{table}` where key=?", (key,))
+
+
 def update_cache(key, timestamp: Path, table: str, row: t.Dict[str, t.Union[str, int]]) -> None:
     cache = get_cache()
     db = cache["db"]
 
-    sql = f"insert or replace into `{table}` (key,mtime_ns"
-    values = [str(key), timestamp.stat().st_mtime_ns]
+    sql = f"insert or replace into `{table}` (key,updated,mtime_ns"
+    values = [str(key), datetime.now().isoformat(), timestamp.stat().st_mtime_ns]
 
     for k, v in row.items():
         sql += f",`{k}`"
         values.append(v)
 
-    sql += ") values (?,?"
+    sql += ") values (?,?,?"
     sql += ",?" * len(row)
     sql += ")"
 
@@ -211,6 +326,7 @@ def run(
     nb_expected: int,
     year: int,
     day: int,
+    quiet: bool,
 ) -> t.Dict[str, t.Any]:
     """
     TODO
@@ -218,7 +334,7 @@ def run(
 
     if lang == "Rust":
         cmd = []
-        target = os.environ.get("CARGO_TARGET_DIR", "target")
+        target = Env.CARGO_TARGET_DIR
 
         f = Path(f"{prog.parent}/{prog.stem}/{target}/release/{prog.stem}")
         if f.is_file():
@@ -248,12 +364,14 @@ def run(
     cmd.append(file.absolute().as_posix())
     cmd.append("--elapsed")
 
-    env = os.environ
+    env = os.environ.copy()
     env["NO_COLOR"] = "1"
     cmdline = " ".join(map(str, cmd))
     cmdline = cmdline.replace(Path(__file__).parent.parent.as_posix() + "/", "")
     cmdline = cmdline.replace(Path.home().as_posix(), "~")
-    print(f"{FEINT}{cmdline}{RESET}", end=TRANSIENT)
+
+    if not quiet:
+        print(f"{FEINT}{cmdline}{RESET}", end=TRANSIENT)
 
     elapsed_measurement = "process"
     start = time.time_ns()
@@ -281,7 +399,7 @@ def run(
                     elif elapsed2.endswith("s"):
                         elapsed = int(10**9 * float(elapsed2.removesuffix("s")))
                     else:
-                        print(elapsed, elapsed2, "unknown suffix")
+                        print(elapsed, elapsed2, "unknown time suffix")
                         exit()
 
                     elapsed_measurement = "internal"
@@ -303,7 +421,7 @@ def run(
 
     result = {"elapsed": elapsed, "status": status, "answers": answers}
 
-    run_log = Path(AOC_TARGET_DIR) / "run.log"
+    run_log = Path(Env.AOC_TARGET_DIR) / "run.log"
 
     with run_log.open("at") as f:
         line = f"{datetime.now()} {lang} {cmd} {elapsed / 1e9} {elapsed_measurement} {status} '{answers}'"
@@ -317,7 +435,7 @@ def make(year: int, source: Path, dest: Path, language: str, disable_language: t
     if not source.is_file():
         return
 
-    build_dir = Path(f"{AOC_TARGET_DIR}/build/year{year}")
+    build_dir = Path(f"{Env.AOC_TARGET_DIR}/build/year{year}")
     build_dir.mkdir(parents=True, exist_ok=True)
 
     output = build_dir / dest
@@ -326,10 +444,10 @@ def make(year: int, source: Path, dest: Path, language: str, disable_language: t
         return
 
     if language == "C":
-        cmd = "cc -std=c11"
+        cmd = "{CC} -std=c11".format(CC=Env.CC)
         cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
     elif language == "C++":
-        cmd = "c++ -std=c++23"
+        cmd = "{CXX} -std=c++23".format(CXX=Env.CXX)
         cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
     elif language == "Java":
         cmdline = f"javac -d {build_dir} {source}"
@@ -494,9 +612,11 @@ def run_day(
     languages: dict,
     problems: list[str],
     refresh: bool,
+    prune: bool,
     dry_run: bool,
     terminal_columns: int,
     wait: float,
+    quiet: bool,
 ):
     elapsed = defaultdict(list)
 
@@ -519,7 +639,7 @@ def run_day(
         results = set()
 
         for lang, (pattern, interpreter) in languages.items():
-            prog = Path(pattern.format(year=year, day=mday, AOC_TARGET_DIR=AOC_TARGET_DIR))
+            prog = Path(pattern.format(year=year, day=mday, AOC_TARGET_DIR=Env.AOC_TARGET_DIR))
             key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
 
             if not prog.is_file():
@@ -528,6 +648,10 @@ def run_day(
                     prog = prog.with_stem(prog.stem[: prog.stem.find("_")])
 
             if not prog.is_file():
+                continue
+
+            if prune:
+                prune_cache(key, "solutions")
                 continue
 
             if refresh:
@@ -540,20 +664,21 @@ def run_day(
             if not in_cache and not dry_run:
                 nb_expected = 1 if day == 25 else 2
 
-                e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected, year, day)
+                e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected, year, day, quiet)
 
                 if e:
                     update_cache(key, prog, "solutions", e)
 
                 if wait is not None:
-                    print(f"{CR}{CLEAR_EOL}waiting {wait:g}s...", end="")
+                    if not quiet:
+                        print(f"{CR}{CLEAR_EOL}waiting {wait:g}s...", end="")
                     time.sleep(wait)
 
             if not e:
                 continue
 
             if (e["status"] == "unknown" and day_answers.get(crc)) or e["status"] in ("error", "failed"):
-                resolve_script = Path(AOC_TARGET_DIR) / f"resolve_{e['status']}.sh"
+                resolve_script = Path(Env.AOC_TARGET_DIR) / f"resolve_{e['status']}.sh"
 
                 if not globals().get(resolve_script):
                     with resolve_script.open("wt") as f:
@@ -582,7 +707,9 @@ def run_day(
                 f" {GRAY}{'☽' if in_cache else ' '}"
             )
 
-            if terminal_columns < 60:
+            if quiet:
+                pass
+            elif terminal_columns < 60:
                 print(line)
             elif terminal_columns < 130:
                 print(line, f"{status_color}{str(answers)}{RESET}")
@@ -621,7 +748,7 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
 
                     if "{" in interpreter:
                         # interpreter = interpreter.format_map(globals())
-                        interpreter = interpreter.format(AOC_TARGET_DIR=AOC_TARGET_DIR)
+                        interpreter = interpreter.format(AOC_TARGET_DIR=Env.AOC_TARGET_DIR)
 
                     if "/" not in interpreter and "\\" not in interpreter:
                         interpreter = shutil.which(interpreter)
@@ -749,6 +876,7 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=28))
 
     parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
+    parser.add_argument("-q", "--quiet", action="store_true", help="quiet")
     parser.add_argument("--cache", type=Path, help="cache database")
     parser.add_argument("--working-dir", type=Path, help=argparse.SUPPRESS)
 
@@ -767,6 +895,7 @@ def main():
     parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
     parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
     parser.add_argument("--no-build", action="store_true", help="do not build")
+    parser.add_argument("--prune", action="store_true", help="prune timings BEFORE run")
     parser.add_argument("-w", "--wait", type=float, help="Wait seconds between each solution")
 
     parser.add_argument("-C", "--comparison", action="store_true", help="Show languages commparison")
@@ -856,7 +985,7 @@ def main():
         # load inputs and answers
         inputs, answers = load_data(filter_year, args.filter_user, args.exclude, args.verified)
 
-        for script in Path(AOC_TARGET_DIR).glob("resolve_*.sh"):
+        for script in Path(Env.AOC_TARGET_DIR).glob("resolve_*.sh"):
             script.unlink()
 
         # here we go!
@@ -880,7 +1009,7 @@ def main():
                     day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
 
                 for mday in day_solutions:
-                    if prev_shown_year != year:
+                    if not args.quiet and prev_shown_year != year:
                         if prev_shown_year != 0:
                             line = (
                                 "=========================="  # prefix
@@ -902,23 +1031,29 @@ def main():
                         languages,
                         problems,
                         args.refresh,
+                        args.prune,
                         args.dry_run,
                         terminal_columns,
                         args.wait,
+                        args.quiet,
                     )
 
                     if elapsed:
-                        if nb_samples > 1:
-                            print(
-                                f"{CR}{CLEAR_EOL}--> ",
-                                " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())),
-                                f"{FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}",
-                            )
-                        else:
-                            print(end=f"{CR}{CLEAR_EOL}")
+                        if not args.quiet:
+                            if nb_samples > 1:
+                                print(
+                                    f"{CR}{CLEAR_EOL}--> ",
+                                    " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())),
+                                    f"{FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}",
+                                )
+                            else:
+                                print(end=f"{CR}{CLEAR_EOL}")
 
                         for lang, e in elapsed.items():
                             stats_elapsed[year, day, mday, lang] = (e, nb_samples)
+
+        if args.prune:
+            get_cache()["db"].commit()
 
     except KeyboardInterrupt:
         pass
@@ -942,25 +1077,27 @@ def main():
                 t = sum(t)
 
                 average = t / n
-                if average < 0.001:
+                if average <= 0.002:
                     average = f"{average:10.6f} s"
                 else:
-                    average = f"{average:7.3f} s"
+                    average = f"{average:7.3f} s   "
 
-                lines.append(
-                    (
-                        t,
-                        f"{YELLOW}{lang:<10}{RESET}"
-                        f" : {GREEN}{t:9.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n > 1 else ' '},"
-                        f" average: {GREEN}{average}{RESET}",
-                    )
+                stats = (
+                    f"{YELLOW}{lang:<10}{RESET}"
+                    f" : {GREEN}{t:9.3f}s{RESET} for {WHITE}{n:3}{RESET} puzzle{'s' if n > 1 else ' '},"
+                    f" average: {GREEN}{average}{RESET}"
                 )
+                ver = get_language_version(lang)
+                if ver:
+                    stats += f" ∞ {ITALIC}{ver}{RESET}"
+
+                lines.append((t, stats))
                 total_time += t
                 nb_solutions += n
 
-            print()
-            print("ELAPSED TIME:")
-            print("\n".join(map(itemgetter(1), sorted(lines))))
+            print(f"{CR}{CLEAR_EOL}")
+            print(f"{BOLD}ELAPSED TIME:{RESET}")
+            print("\n".join(map(itemgetter(1), sorted(lines, key=itemgetter(1)))))
             print(
                 "total     "
                 f" : {GREEN}{total_time:9.3f}s{RESET}"
@@ -1009,11 +1146,11 @@ def main():
                                 f"{YELLOW}{lang1:<7}{RESET}"
                                 f" vs. {YELLOW}{lang2:<7}{RESET}:"
                                 f" {GREEN}{t1 / n:7.3f}s{RESET} vs. {GREEN}{t2 / n:7.3f}s{RESET}"
-                                f" (x {faster:4.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n > 1 else ''}",
+                                f" (x {faster:5.1f} faster) on {WHITE}{n:3}{RESET} puzzle{'s' if n > 1 else ''}",
                             )
                         )
                 print()
-                print("LANGUAGES COMPARISON:")
+                print(f"{BOLD}LANGUAGES COMPARISON:{RESET}")
                 print("\n".join(map(itemgetter(2), sorted(lines))))
 
             elif len(languages) > 1:
@@ -1025,7 +1162,7 @@ def main():
             for problem in problems:
                 print(problem)
 
-        for i, f in enumerate(Path(AOC_TARGET_DIR).glob("resolve_*.sh")):
+        for i, f in enumerate(Path(Env.AOC_TARGET_DIR).glob("resolve_*.sh")):
             if i == 0:
                 print("\nFix errors then run:")
             print(f"  {RED}{f}{RESET}")

@@ -242,7 +242,15 @@ def main():
     parser.add_argument("-b", "--browse", action="store_true", help="Browse all users/languages")
     args = parser.parse_args()
 
-    db = sqlite3.connect(Path(__file__).parent.parent / "data" / "cache.db")
+    if "AOC_TARGET_DIR" in os.environ:
+        cache_file = Path(os.environ["AOC_TARGET_DIR"]) / "cache.db"
+    else:
+        cache_file = Path(__file__).parent.parent / "data" / "cache.db"
+    if not cache_file.is_file():
+        print(f"Database {cache_file} does not exist.")
+        exit(1)
+
+    db = sqlite3.connect(cache_file)
 
     timings = Timings(db)
 
@@ -282,9 +290,10 @@ def main():
                 "Py3.11",
                 "Py3.12",
                 "Py3.13",
-                "Py3.13t",
+                # "Py3.13t",
                 "Py3.14",
-                "Py3.14t",
+                # "Py3.14t",
+                "Python",
                 "C",
                 "C++",
                 "Go",

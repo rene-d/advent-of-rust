@@ -61,7 +61,17 @@ class AocSession:
         (self.rootdir / "data").mkdir(exist_ok=True, parents=True)
         self.force_update = force_update
         self.dry_run = dry_run
-        self.db = sqlite3.connect(self.rootdir / "data" / "cache.db")
+
+        if "AOC_TARGET_DIR" in os.environ:
+            cache_file = Path(os.environ["AOC_TARGET_DIR"]) / "cache.db"
+        else:
+            cache_file = self.rootdir / "data" / "cache.db"
+        if not cache_file.is_file():
+            print(f"Database {cache_file} does not exist.")
+            exit(1)
+
+        self.db = sqlite3.connect(cache_file)
+
         self.always_submit = False
 
         self.db.executescript(
@@ -610,7 +620,6 @@ def make_readme_main(args):
     bonus = defaultdict(list)
 
     for year, day, stars, title, sols in puzzles:
-
         if any(f.suffix == ".rs" and f.parent.name == f.stem for f in sols):
             rust[year] += 1
 

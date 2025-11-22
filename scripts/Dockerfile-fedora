@@ -36,7 +36,8 @@ RUN dnf install -y java-latest-openjdk-devel || true
 
 # Python and virtualenvs
 ENV PATH="/root/.local/bin:$PATH"
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    uv python install 3.11 3.12 3.13 3.14
 
 # User environment
 ENV Z3_SYS_Z3_HEADER=/usr/include/z3/z3.h
