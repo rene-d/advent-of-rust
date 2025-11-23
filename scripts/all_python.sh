@@ -23,6 +23,8 @@ function inst_bin()
     elif [[ $($1 -c "import sys;print(sys.hexversion>=0x30A0000)" 2>/dev/null) != "True" ]] ; then
         echo "$($1 -V) is too old."
     else
+        echo "binary: $(command -v $1)"
+        echo "version: $($1 -VV)"
         venv=${AOC_TARGET_DIR:-target}/venv/python
         uv venv -p $1 --clear $venv
         VIRTUAL_ENV=$venv uv pip install -r $scripts_dir/requirements.txt
@@ -34,6 +36,8 @@ function inst_py()
     local version=$1
     if [[ $version == system ]] ; then
         inst_bin /usr/bin/python3
+    elif [[ $version == default ]] || [[ $version == env ]] ; then
+        inst_bin python3
     elif [[ ! $version =~ 3\..* ]] ; then
         inst_bin $version
     else
