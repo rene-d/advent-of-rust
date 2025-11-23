@@ -13,6 +13,7 @@ import sys
 import time
 import typing as t
 from collections import defaultdict
+from dataclasses import dataclass
 from datetime import datetime
 from functools import lru_cache
 from operator import itemgetter
@@ -79,6 +80,7 @@ class Env:
 
     AOC_TARGET_DIR = os.environ.get("AOC_TARGET_DIR", "target")
     CARGO_TARGET_DIR = os.environ.get("CARGO_TARGET_DIR", "target")
+    AOC_VERBOSE = bool(os.environ.get("AOC_VERBOSE", False))
     CC = os.environ.get("CC", "cc")
     CXX = os.environ.get("CXX", "c++")
 
@@ -148,6 +150,10 @@ LANGUAGES_VERSIONS = {
 
 
 def get_language_version(puzzle_lang: str) -> str:
+    """
+    Return a human-readable version string for the given puzzle language/variant.
+    """
+
     for language, variants in INTERPRETERS.items():
         # language = Python
         # variants = Py3.11, Py3.12, ...
@@ -218,8 +224,61 @@ def get_language_version(puzzle_lang: str) -> str:
     return ""
 
 
+def print_log(line: str = None, end: str = None):
+    if Env.AOC_VERBOSE:
+        if line:
+            line = line.replace(CLEAR_EOL, "").replace(CR, "")
+            logging.debug(line)
+    else:
+        print(line, end=end)
+
+
+class CacheKey:
+    def __str__(self):
+        string = ":".join(str(v) for k, v in vars(self).items() if not k.startswith("_"))
+        string = re.sub(r":([a-f\d]{9}[a-f\d]+):", lambda m: f":{m[1][:8]}…:", string)
+        return string
+
+    def __iter__(self):
+        for k, v in vars(self).items():
+            if not k.startswith("_"):
+                yield k, v
+
+    def _sql(self):
+        columns = list()
+        values = list()
+        for k, v in vars(self).items():
+            if not k.startswith("_"):
+                columns.append(k)
+                values.append(v)
+        return columns, values
+
+    def _select(self):
+        columns, values = self._sql()
+        sql = " and ".join(f"`{column}`=?" for column in columns)
+        return sql, values
+
+
+@dataclass
+class InputKey(CacheKey):
+    year: int
+    day: int
+    user: str
+
+
+@dataclass
+class SolutionKey(CacheKey):
+    year: int
+    day: int
+    crc: str
+    prog: str
+    lang: str
+
+
 def get_cache(cache_file: Path = None):
-    """Retrieve the cache instance from memory or load it from disk."""
+    """
+    Retrieve the cache instance from memory or load it from disk.
+    """
 
     cache = globals().get("_cache")
     if cache is None:
@@ -234,25 +293,50 @@ def get_cache(cache_file: Path = None):
 
         cache_db = sqlite3.connect(cache_file)
 
-        cache_db.executescript(
-            "create table if not exists solutions ("
-            " key text primary key not null,"
-            " updated date,"
-            " mtime_ns int,"
-            " elapsed float,"
-            " status text,"
-            " answers text"
-            ");"
-            "create table if not exists inputs ("
-            " key text primary key not null,"
-            " mtime_ns int,"
-            " crc32 text"
-            ");"
-        )
-        try:
-            cache_db.executescript("alter table solutions add updated date;")
-        except sqlite3.OperationalError:
-            pass
+        cache_db.executescript("create table if not exists runday_version (version integer)")
+
+        runday_version = cache_db.execute("select version from runday_version").fetchone()
+        if runday_version is None or runday_version[0] < 1:
+            logging.info("create database tables")
+            cache_db.executescript(
+                # database version
+                "delete from runday_version;"
+                "insert into runday_version values (1);"
+                # table solutions
+                "drop index if exists ix_solutions;"
+                "drop table if exists solutions;"
+                "create table if not exists solutions ("
+                " year integer not null,"  # key
+                " day integer not null,"  # key
+                " crc text not null,"  # key
+                " prog text not null,"  # key
+                " lang text not null,"  # key
+                " updated date,"
+                " mtime_ns integer,"
+                " elapsed float,"
+                " status text,"
+                " answers text"
+                ");"
+                "create unique index ix_solutions on solutions (year,day,crc,prog,lang);"
+                # table inputs
+                "drop index if exists ix_inputs;"
+                "drop table if exists inputs;"
+                "create table if not exists inputs ("
+                " year integer not null,"  # key
+                " day integer not null,"  # key
+                " user text not null,"  # key
+                " updated date,"
+                " mtime_ns integer,"
+                " crc text"
+                ");"
+                "create unique index ix_inputs on inputs (year,day,user);"
+                # view
+                "drop view if exists user_solutions;"
+                "create view user_solutions as"
+                " select i.user,s.year,s.day,s.lang,s.elapsed,s.updated,s.prog,s.mtime_ns"
+                " from solutions s,inputs i"
+                " where s.crc=i.crc and s.year=i.year and s.day=i.day;"
+            )
 
         cache = {"db": cache_db, "modified": False}
         globals()["_cache"] = cache
@@ -262,17 +346,13 @@ def get_cache(cache_file: Path = None):
     return cache
 
 
-def shorten_key(key: str) -> str:
-    key = re.sub(r":([a-f\d]{9}[a-f\d]+):", lambda m: f":{m[1][:8]}…:", key)
-    return key
-
-
-def check_cache(key: str, file_timestamp: Path, table: str, columns: t.Iterable[str], no_age_check=False):
+def check_cache(key: CacheKey, file_timestamp: Path, table: str, columns: t.Iterable[str], no_age_check=False):
     cache = get_cache()
-    key = str(key)
     db = cache["db"]
     db.row_factory = sqlite3.Row
-    cursor = db.execute(f"select * from `{table}` where key=?", (key,))
+
+    where, key_values = key._select()
+    cursor = db.execute(f"select * from `{table}` where {where}", key_values)
     row = cursor.fetchone()
     if row:
         timestamp = file_timestamp.stat().st_mtime_ns
@@ -284,37 +364,215 @@ def check_cache(key: str, file_timestamp: Path, table: str, columns: t.Iterable[
             # delta = timedelta(seconds=seconds)
             # print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end=f"{CR}")
 
-            print(f"{FEINT}{ITALIC}entry {shorten_key(key)} is out of date{RESET}", end=TRANSIENT)
+            print_log(f"{FEINT}{ITALIC}entry {key} is out of date{RESET}", end=TRANSIENT)
 
     else:
-        print(f"{FEINT}{ITALIC}missing cache for {shorten_key(key)}{RESET}", end=TRANSIENT)
+        print_log(f"{FEINT}{ITALIC}missing cache for {key}{RESET}", end=TRANSIENT)
 
 
-def prune_cache(key: str, table: str):
-    cache = get_cache()
-    key = str(key)
-    db = cache["db"]
-    db.execute(f"delete from `{table}` where key=?", (key,))
-
-
-def update_cache(key, timestamp: Path, table: str, row: t.Dict[str, t.Union[str, int]]) -> None:
+def prune_cache(key: CacheKey, table: str) -> None:
     cache = get_cache()
     db = cache["db"]
+    where, key_values = key._select()
+    db.execute(f"delete from `{table}` where {where}", key_values)
 
-    sql = f"insert or replace into `{table}` (key,updated,mtime_ns"
-    values = [str(key), datetime.now().isoformat(), timestamp.stat().st_mtime_ns]
+
+def update_cache(key: CacheKey, timestamp: Path, table: str, row: t.Dict[str, t.Union[str, int]]) -> None:
+    cache = get_cache()
+    db = cache["db"]
+
+    sql = f"insert or replace into `{table}` (updated,mtime_ns"
+    placeholders = ""
+    values = [datetime.now().isoformat(), timestamp.stat().st_mtime_ns]
+
+    for column, value in key:
+        sql += f",`{column}`"
+        placeholders += ",?"
+        values.append(value)
 
     for k, v in row.items():
         sql += f",`{k}`"
         values.append(v)
 
-    sql += ") values (?,?,?"
-    sql += ",?" * len(row)
+    sql += ") values (?,?"  # placeholders for updated,mtime_ns
+    sql += placeholders  # placeholders for the key columns
+    sql += ",?" * len(row)  # placeholders the values
     sql += ")"
 
     db.execute(sql, values)
 
     db.commit()
+
+
+def make(year: int, source: Path, dest: Path, language: str, disable_language: t.Callable):
+    if not source.is_file():
+        return
+
+    build_dir = Path(f"{Env.AOC_TARGET_DIR}/build/year{year}")
+    build_dir.mkdir(parents=True, exist_ok=True)
+
+    output = build_dir / dest
+
+    if output.is_file() and output.stat().st_mtime_ns >= source.stat().st_mtime_ns:
+        return
+
+    if language == "C":
+        cmd = "{CC} -std=c11".format(CC=Env.CC)
+        cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
+    elif language == "C++":
+        cmd = "{CXX} -std=c++23".format(CXX=Env.CXX)
+        cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
+    elif language == "Java":
+        cmdline = f"javac -d {build_dir} {source}"
+    elif language == "Go":
+        cmdline = f"go build -o {output} {source}"
+    elif language == "C#":
+        cmdline = f"mcs -out:{output} {source}"
+    elif language == "Swift":
+        cmdline = f"swiftc -o {output} {source}"
+    else:
+        raise ValueError(language)
+
+    print_log(f"{CR}{CLEAR_EOL}{cmdline}", end="")
+    try:
+        subprocess.check_call(cmdline, shell=True)
+    except subprocess.CalledProcessError as e:
+        print_log(f"{CR}{CLEAR_EOL}{RED}FAIL {year} {dest} {language}", end="")
+        if e.returncode == 127:  # not found
+            disable_language(language)
+
+
+def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
+    def disable_language(lang: str):
+        for k in languages:
+            if k.casefold() == lang.casefold():
+                logging.debug(f"disabling {lang} because error")
+                del languages[k]
+                break
+
+    def is_available(lang: str):
+        if not filter_lang or lang in filter_lang:
+            for k in languages:
+                if lang == k.casefold():
+                    return True
+        return False
+
+    if is_available("rust"):
+        try:
+            m = Path(__file__).parent.parent / "Cargo.toml"
+            if m.is_file():
+                env_copy = os.environ.copy()
+                # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
+                print_log(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
+                subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy)
+
+        except FileNotFoundError:
+            print_log(
+                f"{RED}Rust and Cargo are requited. Install them with:{RESET}"
+                f" {YELLOW}curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh{RESET}"
+            )
+            disable_language("rust")
+
+    for year in aoc_available_puzzles():
+        if filter_year != 0 and year != filter_year:
+            continue
+
+        for day in range(1, 26):
+            src = Path(f"src/year{year}/day{day}/day{day}")
+
+            if is_available("c"):
+                src = src.with_suffix(".c")
+                if src.is_file():
+                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}_c", "C", disable_language)
+
+            if is_available("c++"):
+                src = src.with_suffix(".cpp")
+                if src.is_file():
+                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}_cpp", "C++", disable_language)
+
+            if is_available("java"):
+                src = src.with_suffix(".java")
+                if src.is_file():
+                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}.class", "Java", disable_language)
+
+            if is_available("go"):
+                src = src.with_suffix(".go")
+                if src.is_file():
+                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}_go", "Go", disable_language)
+
+            if is_available("c#"):
+                src = src.with_suffix(".cs")
+                if src.is_file():
+                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}_cs.exe", "C#", disable_language)
+
+            if is_available("swift"):
+                src = src.with_suffix(".swift")
+                if src.is_file():
+                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                    make(year, src, f"day{day}_swift", "Swift", disable_language)
+
+
+def load_data(filter_year, filter_user, filter_yearday, with_answers):
+    inputs = defaultdict(dict)
+    answers = defaultdict(dict)
+
+    all_inputs = list(sorted(Path("data").rglob("*.in")))
+
+    me_user = all_inputs[0].parent.parent.name if len(all_inputs) > 0 else None
+
+    for input in all_inputs:
+        if input.name.startswith("._"):
+            continue
+
+        assert len(input.parts) == 4
+
+        user = input.parent.parent.name
+
+        if filter_user == "me":
+            if user != me_user:
+                continue
+        elif filter_user == "mine":
+            if not user.isdigit():
+                continue
+        elif filter_user and user != filter_user and not user[user.find("-") :].startswith(f"-{filter_user}"):
+            continue
+
+        year = int(input.parent.name)
+        day = int(input.stem)
+
+        if filter_year != 0 and year != filter_year:
+            continue
+
+        if filter_yearday and f"{year}:{day}" in filter_yearday:
+            continue
+
+        answer = input.with_suffix(".ok")
+        if not answer.is_file():
+            answer = None
+
+        if not answer and with_answers:
+            continue
+
+        key = InputKey(year, day, user)
+
+        e = check_cache(key, input, "inputs", ("crc",))
+        if e:
+            crc = e["crc"]
+        else:
+            crc = hashlib.sha256(input.read_bytes().strip()).hexdigest()
+
+            update_cache(key, input, "inputs", {"crc": crc})
+
+        if crc not in inputs[year, day]:
+            inputs[year, day][crc] = input
+            answers[year, day][crc] = answer
+
+    return inputs, answers
 
 
 def run(
@@ -370,8 +628,8 @@ def run(
     cmdline = cmdline.replace(Path(__file__).parent.parent.as_posix() + "/", "")
     cmdline = cmdline.replace(Path.home().as_posix(), "~")
 
-    if not quiet:
-        print(f"{FEINT}{cmdline}{RESET}", end=TRANSIENT)
+    if not quiet or Env.AOC_VERBOSE:
+        print_log(f"{FEINT}{cmdline}{RESET}", end=TRANSIENT)
 
     elapsed_measurement = "process"
     start = time.time_ns()
@@ -399,7 +657,7 @@ def run(
                     elif elapsed2.endswith("s"):
                         elapsed = int(10**9 * float(elapsed2.removesuffix("s")))
                     else:
-                        print(elapsed, elapsed2, "unknown time suffix")
+                        logging.fatal("unknown time suffix %s %s", elapsed, elapsed2)
                         exit()
 
                     elapsed_measurement = "internal"
@@ -429,178 +687,6 @@ def run(
         print(line, file=f)
 
     return result
-
-
-def make(year: int, source: Path, dest: Path, language: str, disable_language: t.Callable):
-    if not source.is_file():
-        return
-
-    build_dir = Path(f"{Env.AOC_TARGET_DIR}/build/year{year}")
-    build_dir.mkdir(parents=True, exist_ok=True)
-
-    output = build_dir / dest
-
-    if output.is_file() and output.stat().st_mtime_ns >= source.stat().st_mtime_ns:
-        return
-
-    if language == "C":
-        cmd = "{CC} -std=c11".format(CC=Env.CC)
-        cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
-    elif language == "C++":
-        cmd = "{CXX} -std=c++23".format(CXX=Env.CXX)
-        cmdline = f"{cmd} -o {output} -Wall -Wextra -Werror -O3 -DSTANDALONE -I{source.parent} {source}"
-    elif language == "Java":
-        cmdline = f"javac -d {build_dir} {source}"
-    elif language == "Go":
-        cmdline = f"go build -o {output} {source}"
-    elif language == "C#":
-        cmdline = f"mcs -out:{output} {source}"
-    elif language == "Swift":
-        cmdline = f"swiftc -o {output} {source}"
-    else:
-        raise ValueError(language)
-
-    print(f"{CR}{CLEAR_EOL}{cmdline}", end="")
-    try:
-        subprocess.check_call(cmdline, shell=True)
-    except subprocess.CalledProcessError as e:
-        print(f"{CR}{CLEAR_EOL}{RED}FAIL {year} {dest} {language}", end="")
-        if e.returncode == 127:  # not found
-            disable_language(language)
-
-
-def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
-    def disable_language(lang: str):
-        for k in languages:
-            if k.casefold() == lang.casefold():
-                logging.debug(f"disabling {lang} because error")
-                del languages[k]
-                break
-
-    def is_available(lang: str):
-        if not filter_lang or lang in filter_lang:
-            for k in languages:
-                if lang == k.casefold():
-                    return True
-        return False
-
-    if is_available("rust"):
-        try:
-            m = Path(__file__).parent.parent / "Cargo.toml"
-            if m.is_file():
-                env_copy = os.environ.copy()
-                # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
-                print(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
-                subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy)
-
-        except FileNotFoundError:
-            print(
-                f"{RED}Rust and Cargo are requited. Install them with:{RESET}"
-                f" {YELLOW}curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh{RESET}"
-            )
-            disable_language("rust")
-
-    for year in aoc_available_puzzles():
-        if filter_year != 0 and year != filter_year:
-            continue
-
-        for day in range(1, 26):
-            src = Path(f"src/year{year}/day{day}/day{day}")
-
-            if is_available("c"):
-                src = src.with_suffix(".c")
-                if src.is_file():
-                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_c", "C", disable_language)
-
-            if is_available("c++"):
-                src = src.with_suffix(".cpp")
-                if src.is_file():
-                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_cpp", "C++", disable_language)
-
-            if is_available("java"):
-                src = src.with_suffix(".java")
-                if src.is_file():
-                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}.class", "Java", disable_language)
-
-            if is_available("go"):
-                src = src.with_suffix(".go")
-                if src.is_file():
-                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_go", "Go", disable_language)
-
-            if is_available("c#"):
-                src = src.with_suffix(".cs")
-                if src.is_file():
-                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_cs.exe", "C#", disable_language)
-
-            if is_available("swift"):
-                src = src.with_suffix(".swift")
-                if src.is_file():
-                    print(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_swift", "Swift", disable_language)
-
-
-def load_data(filter_year, filter_user, filter_yearday, with_answers):
-    inputs = defaultdict(dict)
-    answers = defaultdict(dict)
-
-    all_inputs = list(sorted(Path("data").rglob("*.in")))
-
-    me_user = all_inputs[0].parent.parent.name if len(all_inputs) > 0 else None
-
-    for input in all_inputs:
-        if input.name.startswith("._"):
-            continue
-
-        assert len(input.parts) == 4
-
-        user = input.parent.parent.name
-
-        if filter_user == "me":
-            if user != me_user:
-                continue
-        elif filter_user == "mine":
-            if not user.isdigit():
-                continue
-        elif filter_user and user != filter_user and not user[user.find("-") :].startswith(f"-{filter_user}"):
-            continue
-
-        year = int(input.parent.name)
-        day = int(input.stem)
-
-        if filter_year != 0 and year != filter_year:
-            continue
-
-        if filter_yearday and f"{year}:{day}" in filter_yearday:
-            continue
-
-        answer = input.with_suffix(".ok")
-        if not answer.is_file():
-            answer = None
-
-        if not answer and with_answers:
-            continue
-
-        key = f"{year}:{day}:{user}"
-
-        e = check_cache(key, input, "inputs", ("crc32",))
-        if e:
-            crc = e["crc32"]
-        else:
-            # crc = hex(crc32(f.read_bytes().strip()) & 0xFFFFFFFF)
-            crc = hashlib.sha256(input.read_bytes().strip()).hexdigest()
-
-            update_cache(key, input, "inputs", {"crc32": crc})
-
-        if crc not in inputs[year, day]:
-            inputs[year, day][crc] = input
-            answers[year, day][crc] = answer
-
-    return inputs, answers
 
 
 def run_day(
@@ -640,7 +726,7 @@ def run_day(
 
         for lang, (pattern, interpreter) in languages.items():
             prog = Path(pattern.format(year=year, day=mday, AOC_TARGET_DIR=Env.AOC_TARGET_DIR))
-            key = ":".join(map(str, (year, day, crc, prog, lang.lower())))
+            key = SolutionKey(year, day, crc, str(prog), lang.lower())
 
             if not prog.is_file():
                 # special case for day13_alt/day13.py
@@ -671,7 +757,7 @@ def run_day(
 
                 if wait is not None:
                     if not quiet:
-                        print(f"{CR}{CLEAR_EOL}waiting {wait:g}s...", end="")
+                        print_log(f"{CR}{CLEAR_EOL}waiting {wait:g}s...", end="")
                     time.sleep(wait)
 
             if not e:
@@ -802,9 +888,8 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
     db = get_cache()["db"]
 
     elapsed_times = defaultdict(list)
-    cursor = db.execute("select key,elapsed from solutions where status!='error'")
-    for key, elapsed in cursor:
-        year, day, hash, prog, lang = key.split(":")
+    cursor = db.execute("select year,day,crc,prog,lang,elapsed from solutions where status!='error'")
+    for year, day, crc, prog, lang, elapsed in cursor:
         if filter_year:
             if filter_year != int(year):
                 continue
@@ -814,14 +899,13 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
             continue
         if "_" in Path(prog).stem:
             continue  # ignore alternate solution
-        elapsed_times[int(year), int(day), lang].append((round(elapsed / 1e9, 3), hash))
+        elapsed_times[year, day, lang].append((round(elapsed / 1e9, 3), crc))
     cursor.close()
 
     inputs = dict()
-    for hash, key in db.execute("select crc32,key from inputs"):
-        _, _, user = key.split(":")
-        if hash not in inputs or user.isdigit():
-            inputs[hash] = user
+    for user, crc in db.execute("select user,crc from inputs"):
+        if crc not in inputs or user.isdigit():
+            inputs[crc] = user
 
     rows = list()
     cmds = list()
@@ -849,11 +933,11 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
             a.sort()
             rows.append((" ".join(map(str, k)), µ, σ, cv, qcd, a))
 
-            for elapsed, hash in v:
+            for elapsed, crc in v:
                 deviation = (elapsed - µ) / σ
                 if deviation > 1.5:
                     year, day, lang = k
-                    user = inputs[hash]
+                    user = inputs[crc]
                     cmd = f"./scripts/runall.py -u {user:<35} -l {lang:<8} {year} {day:<2} -r"
                     comment = f"  # t={elapsed:7.3f} µ={µ:7.3f} d={deviation:4.1f} σ"
                     cmds.append(((year, day, user), cmd + comment))
@@ -905,6 +989,7 @@ def main():
     args = parser.parse_args()
 
     if args.verbose:
+        Env.AOC_VERBOSE = True
         logging.basicConfig(format="\033[2m%(asctime)s - %(levelname)s - %(message)s\033[0m", level=logging.DEBUG)
     else:
         logging.basicConfig(format="\033[2m%(asctime)s - %(levelname)s - %(message)s\033[0m", level=logging.INFO)
@@ -980,7 +1065,7 @@ def main():
         # build the solutions if needed
         if not args.no_build:
             build_all(filter_year, filter_lang, languages)
-            print(end=f"{CR}{CLEAR_EOL}")
+            print_log(end=f"{CR}{CLEAR_EOL}")
 
         # load inputs and answers
         inputs, answers = load_data(filter_year, args.filter_user, args.exclude, args.verified)
@@ -990,12 +1075,12 @@ def main():
 
         # here we go!
         prev_shown_year = 0
+        shown_in_year = 0
 
         for year in aoc_available_puzzles():
             if filter_year != 0 and year != filter_year:
                 continue
 
-            nb_samples = 0
             for day in aoc_available_puzzles(year):
                 if filter_day and day not in filter_day:
                     continue
@@ -1009,16 +1094,16 @@ def main():
                     day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
 
                 for mday in day_solutions:
-                    if not args.quiet and prev_shown_year != year:
+                    if not args.quiet and prev_shown_year != year and shown_in_year > 0:
                         if prev_shown_year != 0:
                             line = (
                                 "=========================="  # prefix
-                                " ==========================="  # language, status
+                                " ============================"  # language, status
                                 " =================================================="  # answers
                                 " =================================="  # input path
                             )
                             print(line[: terminal_columns - 1])
-                        prev_shown_year = year
+                            shown_in_year = 0
 
                     mday = mday.name.removeprefix("day")
 
@@ -1039,12 +1124,15 @@ def main():
                     )
 
                     if elapsed:
+                        shown_in_year += 1
+                        prev_shown_year = year
+
                         if not args.quiet:
                             if nb_samples > 1:
                                 print(
-                                    f"{CR}{CLEAR_EOL}--> ",
-                                    " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items())),
-                                    f"{FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}",
+                                    f"{CR}{CLEAR_EOL}--> "
+                                    + " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items()))
+                                    + f" {FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}"
                                 )
                             else:
                                 print(end=f"{CR}{CLEAR_EOL}")

@@ -83,7 +83,7 @@ impl Puzzle {
                 .iter()
                 .find_map(|(from, to)| Self::replacements(&molecule, to, from).next());
             if next.is_none() {
-                eprintln!("not found... steps so far: {steps}");
+                // eprintln!("not found... steps so far: {steps}");
                 return formulae;
             }
             let next = next.unwrap();

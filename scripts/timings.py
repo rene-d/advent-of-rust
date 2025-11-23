@@ -123,24 +123,20 @@ class Timings:
         self.year_end = max(aoc_available_puzzles())
 
         self.user_inputs = defaultdict(set)
-        for key_input, crc32 in db.execute("select key,crc32 from inputs"):
-            year, day, user = key_input.split(":")
-            year = int(year)
-            day = int(day)
-            self.user_inputs[crc32].add(user)
+        for user, _year, _day, crc in db.execute("select user,year,day,crc from inputs"):
+            self.user_inputs[crc].add(user)
 
         self.solutions = defaultdict(lambda: defaultdict(dict))
-        for key_solution, elapsed, status in db.execute("select key,elapsed,status from solutions"):
+        for year, day, crc, _prog, lang, elapsed, status in db.execute(
+            "select year,day,crc,prog,lang,elapsed,status from solutions"
+        ):
             if status == "ok":
-                year, day, crc32, _binary, language = key_solution.split(":")
-                year = int(year)
-                day = int(day)
                 elapsed /= 1_000_000_000
 
                 # manage multiple solutions in different dayXX_xxx directories
-                day_sols = self.solutions[year, day][language]
-                other_elapsed = day_sols.get(crc32, float("inf"))
-                day_sols[crc32] = min(elapsed, other_elapsed)
+                day_sols = self.solutions[year, day][lang]
+                other_elapsed = day_sols.get(crc, float("inf"))
+                day_sols[crc] = min(elapsed, other_elapsed)
 
     def get_stats(self, user: str, lang: str, tablefmt: str) -> Stats:
         """
@@ -255,9 +251,9 @@ def main():
     timings = Timings(db)
 
     if not args.user:
-        row = db.execute("select key from inputs order by key limit 1").fetchone()
+        row = db.execute("select user from inputs order by user limit 1").fetchone()
         if row:
-            args.user = row[0].split(":")[2]
+            args.user = row[0]
 
     if not args.user:
         parser.error("missing user")
@@ -273,8 +269,8 @@ def main():
             print("Install the « curtsies » module.")
 
         else:
-            sql = "select distinct key from inputs order by key"
-            users = list(sorted(set(map(lambda row: row[0].split(":")[2], db.execute(sql)))))
+            sql = "select distinct user from inputs order by user"
+            users = list(sorted(set(map(lambda row: row[0], db.execute(sql)))))
 
             users.insert(0, "max")
             users.insert(0, "min")
