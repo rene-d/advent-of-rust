@@ -44,8 +44,8 @@ geo = "*"
 geo-types = "*"
 bytecount = "*"
 divisors = "*"
-rusqlite = "0.37.0"
 sha2 = "0.10.8"
+# rusqlite = "0.37.0"
 
 [lints.clippy]
 pedantic = "forbid"
