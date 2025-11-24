@@ -244,7 +244,7 @@ class CacheKey:
             if not k.startswith("_"):
                 yield k, v
 
-    def _sql(self):
+    def _columns_values(self):
         columns = list()
         values = list()
         for k, v in vars(self).items():
@@ -253,8 +253,11 @@ class CacheKey:
                 values.append(v)
         return columns, values
 
+    def _values(self):
+        return list(v for k, v in vars(self).items() if not k.startswith("_"))
+
     def _select(self):
-        columns, values = self._sql()
+        columns, values = self._columns_values()
         sql = " and ".join(f"`{column}`=?" for column in columns)
         return sql, values
 
@@ -346,24 +349,30 @@ def get_cache(cache_file: Path = None):
     return cache
 
 
-def check_cache(key: CacheKey, file_timestamp: Path, table: str, columns: t.Iterable[str], no_age_check=False):
+def check_cache(
+    key: CacheKey, timestamp_file: Path, table: str, columns: t.Iterable[str], no_age_check=False, having=None
+):
     cache = get_cache()
     db = cache["db"]
     db.row_factory = sqlite3.Row
 
-    where, key_values = key._select()
-    cursor = db.execute(f"select * from `{table}` where {where}", key_values)
+    key_columns, key_values = key._columns_values()
+    where = " and ".join(f"`{column}`=?" for column in key_columns)
+    sql = f"select * from `{table}` where {where}"
+
+    if having:
+        sql += " group by " + ",".join(f"`{column}`" for column in key_columns)
+        sql += " having " + having
+
+    cursor = db.execute(sql, key_values)
+
     row = cursor.fetchone()
     if row:
-        timestamp = file_timestamp.stat().st_mtime_ns
+        timestamp = timestamp_file.stat().st_mtime_ns
         if row["mtime_ns"] == timestamp or no_age_check:
             return dict((column, row[column]) for column in columns)
 
         else:
-            # seconds = round((timestamp - e["timestamp"]) / 1000000000)
-            # delta = timedelta(seconds=seconds)
-            # print(f"{FEINT}{ITALIC}entry {key} is out of date for {delta}{RESET}", end=f"{CR}")
-
             print_log(f"{FEINT}{ITALIC}entry {key} is out of date{RESET}", end=TRANSIENT)
 
     else:
@@ -704,11 +713,12 @@ def run_day(
     wait: float,
     quiet: bool,
 ):
-    elapsed = defaultdict(list)
+    elapsed_by_lang = defaultdict(list)
 
     day_suffix = mday.removeprefix(str(day))
     name_max_len = 16 - len(day_suffix)
 
+    # for puzzle inputs
     for crc, file in sorted(day_inputs.items(), key=itemgetter(1)):
         input_name = file.parent.parent.name
         input_name = input_name.removeprefix("tmp-")[:16]
@@ -722,43 +732,56 @@ def run_day(
         else:
             prefix = f"{CYAN}{prefix}{RESET}"
 
-        results = set()
+        # set to check if all answers are identical
+        # answers_set = set()
 
+        # for all available languages
         for lang, (pattern, interpreter) in languages.items():
             prog = Path(pattern.format(year=year, day=mday, AOC_TARGET_DIR=Env.AOC_TARGET_DIR))
-            key = SolutionKey(year, day, crc, str(prog), lang.lower())
-
-            if not prog.is_file():
-                # special case for day13_alt/day13.py
-                if "_" in prog.stem and prog.stem == prog.parent.name:
-                    prog = prog.with_stem(prog.stem[: prog.stem.find("_")])
-
             if not prog.is_file():
                 continue
+
+            key = SolutionKey(year, day, crc, str(prog), lang.lower())
 
             if prune:
                 prune_cache(key, "solutions")
                 continue
 
-            if refresh:
-                e = None
-                in_cache = False
-            else:
-                e = check_cache(key, prog, "solutions", ("elapsed", "status", "answers"), dry_run)
-                in_cache = e is not None
+            e = check_cache(key, prog, "solutions", ("elapsed", "status", "answers"), no_age_check=dry_run)
+            in_cache = e is not None
 
-            if not in_cache and not dry_run:
+            timing_status = "☽" if in_cache else " "
+
+            if (not in_cache and not dry_run) or refresh:
                 nb_expected = 1 if day == 25 else 2
+
+                cached_e = e
 
                 e = run(prog, lang, interpreter, file, day_answers.get(crc), nb_expected, year, day, quiet)
 
                 if e:
-                    update_cache(key, prog, "solutions", e)
+                    timing = e["elapsed"]
+
+                    # if a valid solution exists in the database
+                    if cached_e and cached_e["status"] in ("ok", "unknown"):
+                        # if the solution is valid and faster than the cached one, update it
+                        if e["status"] in ("ok", "unknown") and cached_e["elapsed"] > timing:
+                            update_cache(key, prog, "solutions", e)
+                            timing_status = "☀️"
+                        else:
+                            # otyherwire, the timing for the solution is the cached one
+                            timing = cached_e["elapsed"]
+                    else:
+                        # no cached solution or invalid solution in the cache
+                        update_cache(key, prog, "solutions", e)
 
                 if wait is not None:
                     if not quiet:
                         print_log(f"{CR}{CLEAR_EOL}waiting {wait:g}s...", end="")
                     time.sleep(wait)
+
+            else:
+                timing = e["elapsed"]
 
             if not e:
                 continue
@@ -790,7 +813,7 @@ def run_day(
                 f" {YELLOW}{lang:<7}{RESET}:"
                 f" {status_color}{e['status']:7}{RESET}"
                 f" {WHITE}{e['elapsed'] / 1e9:7.3f}s"
-                f" {GRAY}{'☽' if in_cache else ' '}"
+                f" {GRAY}{timing_status}"
             )
 
             if quiet:
@@ -805,20 +828,23 @@ def run_day(
             if e["status"] in ("error", "failed"):
                 problems.append(line)
 
-            results.add(answers)
+            # answers_set.add(answers)
 
-            elapsed[lang].append(e["elapsed"] / 1e9)
+            elapsed_by_lang[lang].append(timing / 1e9)
 
-        # if len(results) > 1:
+        # if len(answers_set) > 1:
         #     line = f"{prefix} {RED}{BLINK}MISMATCH BETWEEN SOLUTIONS{RESET}"
         #     print(line)
         #     problems.append(line)
 
-    nb_samples = set(len(t) for _, t in elapsed.items())
-    assert len(nb_samples) == 1 or len(nb_samples) == 0
-    nb_samples = 0 if len(nb_samples) == 0 else nb_samples.pop()
+    samples_set = set(len(i) for i in elapsed_by_lang.values())
+    if not dry_run:
+        # if not dry run, all languages should have the same puzzle input count
+        # if dry run, some languages may have not be run
+        assert len(samples_set) == 1 or len(samples_set) == 0
+    nb_samples = 0 if len(samples_set) == 0 else max(samples_set)
 
-    return dict((lang, sum(t) / len(t)) for lang, t in elapsed.items()), nb_samples
+    return dict((lang, sum(t) / len(t)) for lang, t in elapsed_by_lang.items()), nb_samples
 
 
 def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Union[str, None]]]:
@@ -1145,9 +1171,6 @@ def main():
 
     except KeyboardInterrupt:
         pass
-
-    # except Exception as e:
-    #     print(f"{RED}ERROR {e}{RESET}")
 
     finally:
         if stats_elapsed:
