@@ -48,10 +48,16 @@ int main(int argc, char *argv[])
     // part 1
 
     int part1 = 0;
+#if __cplusplus >= 202302L
     for (auto [a, b] : std::views::zip(left, right)) // C++23
     {
         part1 += abs(a - b);
     }
+#else
+    for (auto a = left.begin(), b = right.begin(); a != left.end() && b != right.end(); ++a, ++b) {
+        part1 += abs(*a - *b);
+    }
+#endif
     std::cout << part1 << std::endl;
 
     // part 2
