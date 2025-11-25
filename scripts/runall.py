@@ -780,7 +780,7 @@ def run_day(
                         print_log(f"{CR}{CLEAR_EOL}waiting {wait:g}s...", end="")
                     time.sleep(wait)
 
-            else:
+            elif e is not None:
                 timing = e["elapsed"]
 
             if not e:
