@@ -127,10 +127,11 @@ class Timings:
             self.user_inputs[crc].add(user)
 
         self.solutions = defaultdict(lambda: defaultdict(dict))
-        for year, day, crc, _prog, lang, elapsed, status in db.execute(
+        for year, day, crc, prog, lang, elapsed, status in db.execute(
             "select year,day,crc,prog,lang,elapsed,status from solutions"
         ):
-            if status == "ok":
+            # if answers are ok and not an alternative solution
+            if status == "ok" and "_" not in prog:
                 elapsed /= 1_000_000_000
 
                 # manage multiple solutions in different dayXX_xxx directories
@@ -138,6 +139,11 @@ class Timings:
                 other_elapsed = day_sols.get(crc, float("inf"))
                 day_sols[crc] = min(elapsed, other_elapsed)
 
+    def get_languages(self) -> set[str]:
+        """Extract and return a set of all unique programming languages from the solutions."""
+        return set(lang for sol in self.solutions.values() for lang in sol)
+
+    @lru_cache(maxsize=None)
     def get_stats(self, user: str, lang: str, tablefmt: str) -> Stats:
         """
         Compute and return execution timing statistics for a given user and language.
@@ -281,23 +287,22 @@ def main():
 
             languages = (
                 "Rust",
-                # "Python",
+                "Python",
                 "Py3.10",
                 "Py3.11",
                 "Py3.12",
                 "Py3.13",
-                # "Py3.13t",
+                "Py3.13t",
                 "Py3.14",
-                # "Py3.14t",
-                "Python",
-                "C",
-                "C++",
+                "Py3.14t",
                 "Go",
             )
+
+            available_languages = timings.get_languages()
+            languages = list(filter(lambda lang: lang.lower() in available_languages, languages))
+
             current_language = 0
-
             done = False
-
             while not done:
                 print(end="\033[H\033[2J")
 
@@ -307,7 +312,8 @@ def main():
                 timings.print_stats(users[current_user], languages[current_language].casefold())
 
                 print()
-                print("← → : switch user     ↓ ↑ : switch language")
+                print("\033[7m ← → : switch user     ↓ ↑ : switch language \033[0m", end="\033[?25l")
+                sys.stdout.flush()
 
                 with curtsies.Input(keynames="curses") as input_generator:
                     for e in input_generator:
@@ -332,6 +338,9 @@ def main():
 
     except KeyboardInterrupt:
         pass
+
+    finally:
+        print("\033[?25h")
 
     db.close()
 
