@@ -5,6 +5,7 @@ import hashlib
 import itertools
 import logging
 import os
+import random
 import re
 import shutil
 import sqlite3
@@ -298,15 +299,19 @@ def get_cache(cache_file: Path = None):
 
         cache_db.executescript("create table if not exists runday_version (version integer)")
 
+        DB_VERSION = 2
+
         runday_version = cache_db.execute("select version from runday_version").fetchone()
-        if runday_version is None or runday_version[0] < 1:
-            logging.info("create database tables")
+        if runday_version is None or runday_version[0] < DB_VERSION:
+            logging.info("create database tables v{DB_VERSION}")
+
+            # database version
+            cache_db.execute("delete from runday_version")
+            cache_db.execute("insert into runday_version values (?)", (DB_VERSION,))
+
+            # table solutions
             cache_db.executescript(
-                # database version
-                "delete from runday_version;"
-                "insert into runday_version values (1);"
-                # table solutions
-                "drop index if exists ix_solutions;"
+                "drop index if exists solutions_idx;"
                 "drop table if exists solutions;"
                 "create table if not exists solutions ("
                 " year integer not null,"  # key
@@ -314,31 +319,39 @@ def get_cache(cache_file: Path = None):
                 " crc text not null,"  # key
                 " prog text not null,"  # key
                 " lang text not null,"  # key
-                " updated date,"
-                " mtime_ns integer,"
+                " updated date,"  # cache control
+                " mtime_ns integer,"  # cache control
+                " sha256 text,"  # cache control
                 " elapsed float,"
                 " status text,"
                 " answers text"
                 ");"
-                "create unique index ix_solutions on solutions (year,day,crc,prog,lang);"
-                # table inputs
-                "drop index if exists ix_inputs;"
+                "create unique index solutions_idx on solutions (year,day,crc,prog,lang);"
+            )
+
+            # table inputs
+            cache_db.executescript(
+                "drop index if exists inputs_idx;"
                 "drop table if exists inputs;"
                 "create table if not exists inputs ("
                 " year integer not null,"  # key
                 " day integer not null,"  # key
                 " user text not null,"  # key
-                " updated date,"
-                " mtime_ns integer,"
+                " updated date,"  # cache control
+                " mtime_ns integer,"  # cache control
+                " sha256 text,"  # cache control
                 " crc text"
                 ");"
-                "create unique index ix_inputs on inputs (year,day,user);"
-                # view
+                "create unique index inputs_idx on inputs (year,day,user);"
+            )
+
+            # view
+            cache_db.executescript(
                 "drop view if exists user_solutions;"
                 "create view user_solutions as"
                 " select i.user,s.year,s.day,s.lang,s.elapsed,s.updated,s.prog,s.mtime_ns"
                 " from solutions s,inputs i"
-                " where s.crc=i.crc and s.year=i.year and s.day=i.day;"
+                " where s.crc=i.crc and s.year=i.year and s.day=i.day and (s.status='ok' or s.status='unknown');"
             )
 
         cache = {"db": cache_db, "modified": False}
@@ -350,7 +363,12 @@ def get_cache(cache_file: Path = None):
 
 
 def check_cache(
-    key: CacheKey, timestamp_file: Path, table: str, columns: t.Iterable[str], no_age_check=False, having=None
+    key: CacheKey,
+    timestamp_file: Path,
+    table: str,
+    columns: t.Iterable[str],
+    no_age_check=False,
+    having=None,
 ):
     cache = get_cache()
     db = cache["db"]
@@ -369,8 +387,15 @@ def check_cache(
     row = cursor.fetchone()
     if row:
         timestamp = timestamp_file.stat().st_mtime_ns
+
         if row["mtime_ns"] == timestamp or no_age_check:
             return dict((column, row[column]) for column in columns)
+
+        # mtime changed: verify sha256 if enabled
+        if row["sha256"] is not None:
+            sha256 = hashlib.sha256(Path(timestamp_file).read_bytes()).hexdigest()
+            if row["sha256"] == sha256:
+                return dict((column, row[column]) for column in columns)
 
         else:
             print_log(f"{FEINT}{ITALIC}entry {key} is out of date{RESET}", end=TRANSIENT)
@@ -386,14 +411,26 @@ def prune_cache(key: CacheKey, table: str) -> None:
     db.execute(f"delete from `{table}` where {where}", key_values)
 
 
-def update_cache(key: CacheKey, timestamp: Path, table: str, row: t.Dict[str, t.Union[str, int]]) -> None:
+def update_cache(
+    key: CacheKey,
+    timestamp_file: Path,
+    table: str,
+    row: t.Dict[str, t.Union[str, int]],
+    use_sha256: bool = False,
+) -> None:
     cache = get_cache()
     db = cache["db"]
 
-    sql = f"insert or replace into `{table}` (updated,mtime_ns"
-    placeholders = ""
-    values = [datetime.now().isoformat(), timestamp.stat().st_mtime_ns]
+    mtime_ns = timestamp_file.stat().st_mtime_ns
+    if use_sha256:
+        sha256 = hashlib.sha256(Path(timestamp_file).read_bytes()).hexdigest()
+    else:
+        sha256 = None
 
+    sql = f"insert or replace into `{table}` (updated,mtime_ns,sha256"
+    values = [datetime.now().isoformat(), mtime_ns, sha256]
+
+    placeholders = ""
     for column, value in key:
         sql += f",`{column}`"
         placeholders += ",?"
@@ -403,7 +440,7 @@ def update_cache(key: CacheKey, timestamp: Path, table: str, row: t.Dict[str, t.
         sql += f",`{k}`"
         values.append(v)
 
-    sql += ") values (?,?"  # placeholders for updated,mtime_ns
+    sql += ") values (?,?,?"  # placeholders for updated,mtime_ns,sha256
     sql += placeholders  # placeholders for the key columns
     sql += ",?" * len(row)  # placeholders the values
     sql += ")"
@@ -766,14 +803,14 @@ def run_day(
                     if cached_e and cached_e["status"] in ("ok", "unknown"):
                         # if the solution is valid and faster than the cached one, update it
                         if e["status"] in ("ok", "unknown") and cached_e["elapsed"] > timing:
-                            update_cache(key, prog, "solutions", e)
+                            update_cache(key, prog, "solutions", e, use_sha256=True)
                             timing_status = "☀️"
                         else:
-                            # otyherwire, the timing for the solution is the cached one
+                            # otherwise, the timing for the solution is the cached one
                             timing = cached_e["elapsed"]
                     else:
                         # no cached solution or invalid solution in the cache
-                        update_cache(key, prog, "solutions", e)
+                        update_cache(key, prog, "solutions", e, use_sha256=True)
 
                 if wait is not None:
                     if not quiet:
@@ -985,32 +1022,33 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
 def main():
     parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=28))
 
-    parser.add_argument("-v", "--verbose", action="store_true", help="verbose")
-    parser.add_argument("-q", "--quiet", action="store_true", help="quiet")
-    parser.add_argument("--cache", type=Path, help="cache database")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Be more verbose")
+    parser.add_argument("-q", "--quiet", action="store_true", help="Be more quiet")
+    parser.add_argument("--cache", type=Path, help="Cache database")
     parser.add_argument("--working-dir", type=Path, help=argparse.SUPPRESS)
 
     # parser.add_argument("--venv", type=Path, help="create and install virtual environment")
     # parser.add_argument("--reqs", action="store_true", help="install requirements into virtual environments")
-    parser.add_argument("-c", "--consistency", action="store_true", help="verify duration consistency")
+    parser.add_argument("-c", "--consistency", action="store_true", help="Verify duration consistency")
 
-    parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="filter by user id")
-    parser.add_argument("--me", action="store_true", help="only first user id")
-    parser.add_argument("-l", "--language", type=str, action="append", metavar="LANG", help="filter by language")
-    parser.add_argument("-x", "--exclude", type=str, action="append", metavar="Y:D", help="exclude day")
-    parser.add_argument("--verified", action="store_true", help="only inputs with solution")
-    parser.add_argument("--no-slow", action="store_true", help="exclude slow solutions")
-    parser.add_argument("--alt", action="store_true", help="run alternarive solutions too")
+    parser.add_argument("-u", "--user", dest="filter_user", metavar="USER", type=str, help="Filter by user id")
+    parser.add_argument("--me", action="store_true", help="Only first user id")
+    parser.add_argument("-l", "--language", type=str, action="append", metavar="LANG", help="Filter by language")
+    parser.add_argument("-x", "--exclude", type=str, action="append", metavar="Y:D", help="Exclude day")
+    parser.add_argument("--verified", action="store_true", help="Only inputs with solution")
+    parser.add_argument("--no-slow", action="store_true", help="Exclude slow solutions")
+    parser.add_argument("--alt", action="store_true", help="Run alternarive solutions too")
 
-    parser.add_argument("-r", "--refresh", action="store_true", help="relaunch solutions")
-    parser.add_argument("-n", "--dry-run", action="store_true", help="do not run")
-    parser.add_argument("--no-build", action="store_true", help="do not build")
-    parser.add_argument("--prune", action="store_true", help="prune timings BEFORE run")
+    parser.add_argument("-r", "--refresh", action="store_true", help="Relaunch solutions")
+    parser.add_argument("-n", "--dry-run", action="store_true", help="Do not run")
+    parser.add_argument("--no-build", action="store_true", help="Do not build")
+    parser.add_argument("--prune", action="store_true", help="Prune timings BEFORE run")
     parser.add_argument("-w", "--wait", type=float, help="Wait seconds between each solution")
+    parser.add_argument("-s", "--shuffle", action="store_true", help="Shuffle before running solutions")
 
     parser.add_argument("-C", "--comparison", action="store_true", help="Show languages commparison")
 
-    parser.add_argument("n", type=int, nargs="*", help="filter by year or year/day")
+    parser.add_argument("n", type=int, nargs="*", help="Filter by year or year/day")
 
     args = parser.parse_args()
 
@@ -1033,7 +1071,11 @@ def main():
         CR = ""
 
     # the terminal size
-    terminal_columns = os.get_terminal_size().columns
+    try:
+        terminal_columns = os.get_terminal_size().columns
+    except OSError:
+        terminal_columns = 132
+        pass
 
     if args.working_dir and args.working_dir.is_dir():
         logging.debug(f"set working directory to: {args.working_dir}")
@@ -1099,10 +1141,8 @@ def main():
         for script in Path(Env.AOC_TARGET_DIR).glob("resolve_*.sh"):
             script.unlink()
 
-        # here we go!
-        prev_shown_year = 0
-        shown_in_year = 0
-
+        # build the list of solutions to run
+        tasks = []
         for year in aoc_available_puzzles():
             if filter_year != 0 and year != filter_year:
                 continue
@@ -1120,51 +1160,61 @@ def main():
                     day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
 
                 for mday in day_solutions:
-                    if not args.quiet and prev_shown_year != year and shown_in_year > 0:
-                        if prev_shown_year != 0:
-                            line = (
-                                "=========================="  # prefix
-                                " ============================"  # language, status
-                                " =================================================="  # answers
-                                " =================================="  # input path
-                            )
-                            print(line[: terminal_columns - 1])
-                            shown_in_year = 0
-
                     mday = mday.name.removeprefix("day")
 
-                    elapsed, nb_samples = run_day(
-                        year,
-                        day,
-                        mday,
-                        inputs[year, day],
-                        answers.get((year, day)),
-                        languages,
-                        problems,
-                        args.refresh,
-                        args.prune,
-                        args.dry_run,
-                        terminal_columns,
-                        args.wait,
-                        args.quiet,
+                    tasks.append((year, day, mday))
+
+        if args.shuffle:
+            random.shuffle(tasks)
+
+        # here we go!
+        prev_shown_year = 0
+        shown_in_year = 0
+
+        for year, day, mday in tasks:
+            if not args.shuffle and not args.quiet and prev_shown_year != year and shown_in_year > 0:
+                if prev_shown_year != 0:
+                    line = (
+                        "=========================="  # prefix
+                        " ============================"  # language, status
+                        " =================================================="  # answers
+                        " =================================="  # input path
                     )
+                    print(line[: terminal_columns - 1])
+                    shown_in_year = 0
 
-                    if elapsed:
-                        shown_in_year += 1
-                        prev_shown_year = year
+            elapsed, nb_samples = run_day(
+                year,
+                day,
+                mday,
+                inputs[year, day],
+                answers.get((year, day)),
+                languages,
+                problems,
+                args.refresh,
+                args.prune,
+                args.dry_run,
+                terminal_columns,
+                args.wait,
+                args.quiet,
+            )
 
-                        if not args.quiet:
-                            if nb_samples > 1:
-                                print(
-                                    f"{CR}{CLEAR_EOL}--> "
-                                    + " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items()))
-                                    + f" {FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}"
-                                )
-                            else:
-                                print(end=f"{CR}{CLEAR_EOL}")
+            if elapsed:
+                shown_in_year += 1
+                prev_shown_year = year
 
-                        for lang, e in elapsed.items():
-                            stats_elapsed[year, day, mday, lang] = (e, nb_samples)
+                if not args.quiet:
+                    if nb_samples > 1:
+                        print(
+                            f"{CR}{CLEAR_EOL}--> "
+                            + " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items()))
+                            + f" {FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}"
+                        )
+                    else:
+                        print(end=f"{CR}{CLEAR_EOL}")
+
+                for lang, e in elapsed.items():
+                    stats_elapsed[year, day, mday, lang] = (e, nb_samples)
 
         if args.prune:
             get_cache()["db"].commit()

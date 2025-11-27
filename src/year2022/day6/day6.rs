@@ -1,7 +1,5 @@
 //! [Day 6: Tuning Trouble](https://adventofcode.com/2022/day/6)
 
-use rustc_hash::FxHashSet;
-
 struct Puzzle<'a> {
     /// Puzzle input
     data: &'a str,
@@ -27,18 +25,16 @@ impl<'a> Puzzle<'a> {
 
 /// find the position of the first marker of the given length
 fn find_marker(data: &str, length: usize) -> usize {
-    if data.len() >= length {
-        for i in 0..=(data.len() - length) {
-            let mut marker = FxHashSet::default();
-            for k in 0..length {
-                marker.insert(data.chars().nth(i + k));
-            }
-            if marker.len() == length {
-                return i + length;
-            }
-        }
-    }
-    0
+    (0..=data.len().saturating_sub(length))
+        .find(|&i| {
+            let window = &data[i..i + length];
+            let mut chars: Vec<char> = window.chars().collect();
+            chars.sort_unstable();
+            chars.dedup();
+            chars.len() == length
+        })
+        .map(|i| i + length)
+        .unwrap()
 }
 
 #[must_use]
