@@ -303,7 +303,7 @@ def get_cache(cache_file: Path = None):
 
         runday_version = cache_db.execute("select version from runday_version").fetchone()
         if runday_version is None or runday_version[0] < DB_VERSION:
-            logging.info("create database tables v{DB_VERSION}")
+            logging.info(f"create database tables v{DB_VERSION}")
 
             # database version
             cache_db.execute("delete from runday_version")
@@ -322,7 +322,7 @@ def get_cache(cache_file: Path = None):
                 " updated date,"  # cache control
                 " mtime_ns integer,"  # cache control
                 " sha256 text,"  # cache control
-                " elapsed float,"
+                " elapsed int,"  # elapsed time in nanoseconds
                 " status text,"
                 " answers text"
                 ");"
@@ -575,7 +575,11 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
         if input.name.startswith("._"):
             continue
 
-        assert len(input.parts) == 4
+        if len(input.parts) > 4:
+            # files must be
+            #   data/<user>/<year>/<day>.in
+            #   data/<user>/<year>/<day>.ok
+            continue
 
         user = input.parent.parent.name
 
@@ -630,7 +634,7 @@ def run(
     nb_expected: int,
     year: int,
     day: int,
-    quiet: bool,
+    quiet: int,
 ) -> t.Dict[str, t.Any]:
     """
     TODO
@@ -674,7 +678,7 @@ def run(
     cmdline = cmdline.replace(Path(__file__).parent.parent.as_posix() + "/", "")
     cmdline = cmdline.replace(Path.home().as_posix(), "~")
 
-    if not quiet or Env.AOC_VERBOSE:
+    if quiet == 0 or Env.AOC_VERBOSE:
         print_log(f"{FEINT}{cmdline}{RESET}", end=TRANSIENT)
 
     elapsed_measurement = "process"
@@ -695,13 +699,13 @@ def run(
                     elapsed2 = answers.pop(i).removeprefix("elapsed:")
 
                     if elapsed2.endswith("ns"):
-                        elapsed = int(elapsed2.removesuffix("ns"))
+                        elapsed = round(elapsed2.removesuffix("ns"))
                     elif elapsed2.endswith("µs"):
-                        elapsed = int(1000 * float(elapsed2.removesuffix("µs")))
+                        elapsed = round(1000 * float(elapsed2.removesuffix("µs")))
                     elif elapsed2.endswith("ms"):
-                        elapsed = int(10**6 * float(elapsed2.removesuffix("ms")))
+                        elapsed = round(10**6 * float(elapsed2.removesuffix("ms")))
                     elif elapsed2.endswith("s"):
-                        elapsed = int(10**9 * float(elapsed2.removesuffix("s")))
+                        elapsed = round(10**9 * float(elapsed2.removesuffix("s")))
                     else:
                         logging.fatal("unknown time suffix %s %s", elapsed, elapsed2)
                         exit()
@@ -748,9 +752,11 @@ def run_day(
     dry_run: bool,
     terminal_columns: int,
     wait: float,
-    quiet: bool,
+    quiet: int,
 ):
     elapsed_by_lang = defaultdict(list)
+    improved_timing = 0
+    improved_timing_gain = 0
 
     day_suffix = mday.removeprefix(str(day))
     name_max_len = 16 - len(day_suffix)
@@ -805,6 +811,8 @@ def run_day(
                         if e["status"] in ("ok", "unknown") and cached_e["elapsed"] > timing:
                             update_cache(key, prog, "solutions", e, use_sha256=True)
                             timing_status = "☀️"
+                            improved_timing += 1
+                            improved_timing_gain += cached_e["elapsed"] - timing
                         else:
                             # otherwise, the timing for the solution is the cached one
                             timing = cached_e["elapsed"]
@@ -813,7 +821,7 @@ def run_day(
                         update_cache(key, prog, "solutions", e, use_sha256=True)
 
                 if wait is not None:
-                    if not quiet:
+                    if quiet == 0:
                         print_log(f"{CR}{CLEAR_EOL}waiting {wait:g}s...", end="")
                     time.sleep(wait)
 
@@ -853,7 +861,7 @@ def run_day(
                 f" {GRAY}{timing_status}"
             )
 
-            if quiet:
+            if quiet > 0:
                 pass
             elif terminal_columns < 60:
                 print(line)
@@ -881,7 +889,12 @@ def run_day(
         assert len(samples_set) == 1 or len(samples_set) == 0
     nb_samples = 0 if len(samples_set) == 0 else max(samples_set)
 
-    return dict((lang, sum(t) / len(t)) for lang, t in elapsed_by_lang.items()), nb_samples
+    return (
+        dict((lang, sum(t) / len(t)) for lang, t in elapsed_by_lang.items()),
+        nb_samples,
+        improved_timing,
+        improved_timing_gain,
+    )
 
 
 def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Union[str, None]]]:
@@ -1019,11 +1032,146 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
             print(f"{color}{cmd}{RESET}")
 
 
+def get_task_list(filter_year: int, filter_day: set[int], inputs: dict, alt: bool):
+    """
+    TODO.
+    """
+    for year in aoc_available_puzzles():
+        if filter_year != 0 and year != filter_year:
+            continue
+
+        for day in aoc_available_puzzles(year):
+            if filter_day and day not in filter_day:
+                continue
+
+            if (year, day) not in inputs:
+                continue
+
+            day_solutions = list(Path(f"src/year{year}").glob(f"day{day}"))
+
+            if alt:
+                day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
+
+            for mday in day_solutions:
+                mday = mday.name.removeprefix("day")
+
+                yield (year, day, mday)
+
+
+def run_task(year, day, mday: str, inputs, answers, languages, problems, args, terminal_columns, stats_elapsed):
+    """
+    TODO.
+    """
+
+    without_improvement_count = 0
+
+    for loop in itertools.count(start=1):
+        if args.loop < 0:
+            print(f"(loop {loop})")
+
+        elapsed, nb_samples, improved_count, improved_gain = run_day(
+            year,
+            day,
+            mday,
+            inputs[year, day],
+            answers.get((year, day)),
+            languages,
+            problems,
+            args.refresh,
+            args.prune,
+            args.dry_run,
+            terminal_columns,
+            args.wait,
+            args.quiet,
+        )
+
+        if not elapsed or args.prune:
+            return
+
+        if args.quiet == 0:
+            if nb_samples > 1:
+                print(
+                    f"{CR}{CLEAR_EOL}--> "
+                    + " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items()))
+                    + f" {FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}"
+                )
+            else:
+                print(end=f"{CR}{CLEAR_EOL}")
+
+        nb_runs = len(elapsed) * nb_samples
+
+        for lang, e in elapsed.items():
+            stats_elapsed[year, day, mday, lang] = (e, nb_samples)
+
+        # do not repeat (many cases)
+        if args.loop == 0 or args.dry_run or not args.refresh:
+            return
+
+        if args.loop < 0:
+            # repeat the given number of times
+            if loop <= args.loop:
+                break
+        else:
+            # repeat the given number of times without any improvement
+            elapsed_overall = sum(e * nb_samples for e in elapsed.values())
+            elapsed_overall_str = (
+                f"{elapsed_overall:10.6f} s" if elapsed_overall <= 0.002 else f"{elapsed_overall:7.3f} s   "
+            )
+
+            SIGNIFICANT_GAIN = 10_000  # 10 µs
+
+            if improved_gain == 0:
+                gain_str = ""
+            elif improved_gain < SIGNIFICANT_GAIN:
+                gain_str = f"(insignificant gain {improved_gain / 1e3:g} µs)"
+            else:
+                gain_str = f"(gain: {improved_gain / 1e9:10.6f} s)"
+
+            if improved_count == 0:
+                # no gain at all
+                without_improvement_count += 1
+                if args.quiet < 2:
+                    print(
+                        f"{GREEN}[{year}-{day:2}] loop: {loop:2}"
+                        f" improved timings: {improved_count:3}/{nb_runs:3}"
+                        f" ( {without_improvement_count} of {args.loop})"
+                        f"  elapsed: {elapsed_overall_str} {gain_str}"
+                        f"{RESET}"
+                    )
+
+            elif abs(improved_gain) < SIGNIFICANT_GAIN:
+                # gain less than 1 µs
+                without_improvement_count += 1
+                if args.quiet < 2:
+                    print(
+                        f"{CYAN}[{year}-{day:2}] loop: {loop:2}"
+                        f" improved timings: {improved_count:3}/{nb_runs:3}"
+                        f" ( {without_improvement_count} of {args.loop})"
+                        f"  elapsed: {elapsed_overall_str} {gain_str}"
+                        f"{RESET}"
+                    )
+
+            else:
+                # start over: there is a significative gain in elapsed time
+                if args.quiet < 2:
+                    print(
+                        f"{RED}[{year}-{day:2}] loop: {loop:2}"
+                        f" improved timings: {improved_count:3}/{nb_runs:3}"
+                        " (restart)"
+                        f"  elapsed: {elapsed_overall_str} {gain_str}"
+                        f"{RESET}"
+                    )
+                without_improvement_count = 0
+
+            if without_improvement_count >= args.loop:
+                break
+
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=28))
 
     parser.add_argument("-v", "--verbose", action="store_true", help="Be more verbose")
-    parser.add_argument("-q", "--quiet", action="store_true", help="Be more quiet")
+    parser.add_argument("-q", "--quiet", action="count", default=0, help="Be more quiet")
     parser.add_argument("--cache", type=Path, help="Cache database")
     parser.add_argument("--working-dir", type=Path, help=argparse.SUPPRESS)
 
@@ -1045,6 +1193,9 @@ def main():
     parser.add_argument("--prune", action="store_true", help="Prune timings BEFORE run")
     parser.add_argument("-w", "--wait", type=float, help="Wait seconds between each solution")
     parser.add_argument("-s", "--shuffle", action="store_true", help="Shuffle before running solutions")
+    parser.add_argument(
+        "--loop", type=int, default=0, help="Repeat (positive: loops without improvement, negative: loops)"
+    )
 
     parser.add_argument("-C", "--comparison", action="store_true", help="Show languages commparison")
 
@@ -1142,37 +1293,21 @@ def main():
             script.unlink()
 
         # build the list of solutions to run
-        tasks = []
-        for year in aoc_available_puzzles():
-            if filter_year != 0 and year != filter_year:
-                continue
+        tasks = list(get_task_list(filter_year, filter_day, inputs, args.alt))
 
-            for day in aoc_available_puzzles(year):
-                if filter_day and day not in filter_day:
-                    continue
+        if len(tasks) == 0:
+            exit()
 
-                if (year, day) not in inputs:
-                    continue
-
-                day_solutions = list(Path(f"src/year{year}").glob(f"day{day}"))
-
-                if args.alt:
-                    day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
-
-                for mday in day_solutions:
-                    mday = mday.name.removeprefix("day")
-
-                    tasks.append((year, day, mday))
+        # here we go!
 
         if args.shuffle:
             random.shuffle(tasks)
 
-        # here we go!
         prev_shown_year = 0
         shown_in_year = 0
 
         for year, day, mday in tasks:
-            if not args.shuffle and not args.quiet and prev_shown_year != year and shown_in_year > 0:
+            if not args.shuffle and args.quiet == 0 and prev_shown_year != year and shown_in_year > 0:
                 if prev_shown_year != 0:
                     line = (
                         "=========================="  # prefix
@@ -1183,38 +1318,10 @@ def main():
                     print(line[: terminal_columns - 1])
                     shown_in_year = 0
 
-            elapsed, nb_samples = run_day(
-                year,
-                day,
-                mday,
-                inputs[year, day],
-                answers.get((year, day)),
-                languages,
-                problems,
-                args.refresh,
-                args.prune,
-                args.dry_run,
-                terminal_columns,
-                args.wait,
-                args.quiet,
-            )
+            run_task(year, day, mday, inputs, answers, languages, problems, args, terminal_columns, stats_elapsed)
 
-            if elapsed:
-                shown_in_year += 1
-                prev_shown_year = year
-
-                if not args.quiet:
-                    if nb_samples > 1:
-                        print(
-                            f"{CR}{CLEAR_EOL}--> "
-                            + " | ".join((f"{lang} : {t:.3f}s" for lang, t in elapsed.items()))
-                            + f" {FEINT}({nb_samples} input{'s' if nb_samples > 1 else ''}){RESET}"
-                        )
-                    else:
-                        print(end=f"{CR}{CLEAR_EOL}")
-
-                for lang, e in elapsed.items():
-                    stats_elapsed[year, day, mday, lang] = (e, nb_samples)
+            shown_in_year += 1
+            prev_shown_year = year
 
         if args.prune:
             get_cache()["db"].commit()
@@ -1223,7 +1330,7 @@ def main():
         pass
 
     finally:
-        if stats_elapsed:
+        if args.quiet < 2 and stats_elapsed:
             languages = sorted(set(map(itemgetter(3), stats_elapsed.keys())))
 
             nb_puzzles = len(set((y, d) for y, d, _, _ in stats_elapsed.keys()))
@@ -1317,17 +1424,21 @@ def main():
             elif len(languages) > 1:
                 print("Use option -C/--comparison to display duration comparison.")
 
-        if problems:
+        if args.quiet < 2 and problems:
             print()
             print("LIST OF PROBLEMS:")
             for problem in problems:
                 print(problem)
 
-        for i, f in enumerate(Path(Env.AOC_TARGET_DIR).glob("resolve_*.sh")):
-            if i == 0:
-                print("\nFix errors then run:")
-            print(f"  {RED}{f}{RESET}")
+        if args.quiet < 2:
+            for i, f in enumerate(Path(Env.AOC_TARGET_DIR).glob("resolve_*.sh")):
+                if i == 0:
+                    print("\nFix errors then run:")
+                print(f"  {RED}{f}{RESET}")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(1)

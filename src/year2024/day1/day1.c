@@ -32,9 +32,16 @@ int main(int argc, char *argv[])
     }
     fseek(f, 0, SEEK_END);
     data_size = ftell(f);
+    if (data_size < 0) {
+        perror("ftell");
+	exit(1);
+    }
     data = (char *)malloc(data_size + 1);
     fseek(f, 0, SEEK_SET);
-    fread(data, 1, data_size, f);
+    if (fread(data, 1, data_size, f) != (size_t) data_size) {
+        perror("fread");
+	exit(1);
+    }
     data[data_size] = '\0';
     fclose(f);
 
