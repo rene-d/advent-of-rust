@@ -59,6 +59,14 @@ def aoc_available_puzzles(
     return puzzles
 
 
+def aoc_puzzles_by_year(year: int) -> int:
+    if 2015 <= year <= 2024:
+        return 25
+    if year >= 2025:
+        return 12
+    return 0
+
+
 def transpose(m):
     rows = range(len(m))
     cols = range(len(m[0]))
@@ -81,7 +89,16 @@ for year in aoc_available_puzzles():
     max_inputs = 0
     nb_inputs = 0
 
-    for day in aoc_available_puzzles(year):
+    available_days = aoc_available_puzzles(year)
+
+    for day in range(1, 26):
+        if day > aoc_puzzles_by_year(year):
+            values.append((None, "-"))
+            continue
+        if day not in available_days:
+            values.append((None, "⏰"))
+            continue
+
         inputs = Counter()
 
         for f in datadir.glob("*"):
@@ -102,6 +119,10 @@ for year in aoc_available_puzzles():
 
     row = [f"{year}"]
     for a, b in values:
+        if a is None:
+            row.append(b)
+            continue
+
         if a == min_inputs == max_inputs:
             a = f"\033[34m{a}{RESET}"
         elif a == min_inputs:
