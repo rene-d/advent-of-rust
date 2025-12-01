@@ -43,12 +43,15 @@ def part2(ops):
     count_zero = 0
 
     for d, n in ops:
-        step = -1 if d == "L" else 1
-
-        for _ in range(n):
-            pos = (pos + step) % 100
-            if pos == 0:
-                count_zero += 1
+        if d == "R":
+            pos += n
+            count_zero += pos // 100
+            pos %= 100
+        else:
+            count_zero += n // 100
+            n %= 100
+            count_zero += 0 < pos <= n
+            pos = (pos - n) % 100
 
     return count_zero
 

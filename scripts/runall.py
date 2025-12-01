@@ -1167,6 +1167,32 @@ def run_task(year, day, mday: str, inputs, answers, languages, problems, args, t
                 break
 
 
+def set_auto_filter(args):
+    if len(args.n) != 0:
+        return
+
+    cwd = Path.cwd()
+
+    if len(cwd.parts) >= 2 and cwd.parts[-2] == "src":
+        year = cwd.parts[-1]
+        if year.startswith("year") and year[4:].isdigit():
+            args.n.append(int(year[4:]))
+
+    elif len(cwd.parts) >= 3 and cwd.parts[-3] == "src":
+        year = cwd.parts[-2]
+        day = cwd.parts[-1]
+
+        if year.startswith("year") and year[4:].isdigit() and day.startswith("day"):
+            day_alt = day[3:].split("_", maxsplit=1)
+
+            if day_alt[0].isdigit():
+                args.n.append(int(year[4:]))
+                args.n.append(int(day_alt[0]))
+
+                if len(day_alt) == 2:
+                    args.alt = True
+
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=28))
 
@@ -1239,16 +1265,8 @@ def main():
         problems = []
         stats_elapsed = dict()
 
-        # if in subdirectoy "<year>/day<day>" set the filter
-        if len(args.n) == 0:
-            cwd = Path.cwd()
-            if cwd.name.isdigit():
-                args.n.append(int(cwd.name))
-            elif cwd.name.startswith("day") and cwd.parent.name.isdigit():
-                day = cwd.name.removeprefix("day")
-                if "_" in day:
-                    day = day[: day.find("_")]
-                args.n.extend((int(cwd.parent.name), int(day)))
+        # if in subdirectoy "src/year<year>/day<day>" set the filter
+        set_auto_filter(args)
 
         os.chdir(Path(__file__).parent.parent)
 

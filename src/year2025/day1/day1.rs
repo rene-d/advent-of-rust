@@ -20,12 +20,18 @@ pub fn solve(data: &str) -> (i32, i32) {
             part1_count_zero += 1;
         }
 
-        // part two
-        for _ in 0..num {
-            part2_pos = (part2_pos + step).rem_euclid(100);
-            if part2_pos == 0 {
+        // part two (optimized)
+        if dir == 'R' {
+            part2_pos += num;
+            part2_count_zero += part2_pos / 100;
+            part2_pos = part2_pos.rem_euclid(100);
+        } else {
+            part2_count_zero += num / 100;
+            let num = num.rem_euclid(100);
+            if (1..=num).contains(&part2_pos) {
                 part2_count_zero += 1;
             }
+            part2_pos = (part2_pos - num).rem_euclid(100);
         }
     }
 
