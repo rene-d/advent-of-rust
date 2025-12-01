@@ -23,7 +23,6 @@ static void solve(const char *data)
 
         char dir = line[0];
         int num = atoi(line + 1);
-        int step;
 
         // compute part one
         switch (dir) {
@@ -39,15 +38,18 @@ static void solve(const char *data)
         // compute part two
         switch (dir) {
         case 'L':
-            step = -1;
+            part2_count_zero += ((100 - part2_pos) % 100 + num) / 100;
+            int r = (part2_pos - num) % 100;
+            if (r < 0) {
+                r += 100;
+            }
+            part2_pos = r;
             break;
         case 'R':
-            step = 1;
+            part2_pos += num;
+            part2_count_zero += part2_pos / 100;
+            part2_pos %= 100;
             break;
-        }
-        for (int i = 0; i < num; ++i) {
-            part2_pos = (part2_pos + 100 + step) % 100;
-            part2_count_zero += (part2_pos == 0);
         }
 
         line = end + 1;

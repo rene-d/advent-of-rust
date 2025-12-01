@@ -48,17 +48,20 @@ func part2(ops []Op) int {
 
 	for _, op := range ops {
 
-		step := 1 // 'R'
 		if op.dir == 'L' {
-			step = -1
+			countZero += ((100-pos)%100 + op.num) / 100
+
+			r := (pos - op.num) % 100
+			if r < 0 {
+				r += 100
+			}
+			pos = r
+		} else {
+			pos += op.num
+			countZero += pos / 100
+			pos %= 100
 		}
 
-		for i := 0; i < op.num; i++ {
-			pos = (pos + step + 100) % 100
-			if pos == 0 {
-				countZero++
-			}
-		}
 	}
 
 	return countZero

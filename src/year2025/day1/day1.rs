@@ -26,11 +26,7 @@ pub fn solve(data: &str) -> (i32, i32) {
             part2_count_zero += part2_pos / 100;
             part2_pos = part2_pos.rem_euclid(100);
         } else {
-            part2_count_zero += num / 100;
-            let num = num.rem_euclid(100);
-            if (1..=num).contains(&part2_pos) {
-                part2_count_zero += 1;
-            }
+            part2_count_zero += ((100 - part2_pos) % 100 + num) / 100;
             part2_pos = (part2_pos - num).rem_euclid(100);
         }
     }

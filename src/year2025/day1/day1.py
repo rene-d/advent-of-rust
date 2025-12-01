@@ -48,9 +48,7 @@ def part2(ops):
             count_zero += pos // 100
             pos %= 100
         else:
-            count_zero += n // 100
-            n %= 100
-            count_zero += 0 < pos <= n
+            count_zero += ((100 - pos) % 100 + n) // 100
             pos = (pos - n) % 100
 
     return count_zero
