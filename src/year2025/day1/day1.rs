@@ -1,31 +1,35 @@
-//!
+//! [Day 1: Secret Entrance](https://adventofcode.com/2025/day/1)
 
-struct Puzzle {
-    //
-}
-
-impl Puzzle {
-    /// Initialize from the puzzle input.
-    const fn new(data: &str) -> Self {
-        Self {}
-    }
-
-    /// Solve part one.
-    fn part1(&self) -> i32 {
-        0
-    }
-
-    /// Solve part two.
-    fn part2(&self) -> i32 {
-        0
-    }
-}
-
-/// # Panics
 #[must_use]
 pub fn solve(data: &str) -> (i32, i32) {
-    let puzzle = Puzzle::new(data);
-    (puzzle.part1(), puzzle.part2())
+    let mut part1_pos = 50;
+    let mut part1_count_zero = 0;
+
+    let mut part2_pos = 50;
+    let mut part2_count_zero = 0;
+
+    for line in data.lines() {
+        let dir = line.chars().next().unwrap();
+        let num = line[1..].parse::<i32>().unwrap();
+
+        let step = if dir == 'L' { -1 } else { 1 };
+
+        // part one
+        part1_pos = (part1_pos + step * num).rem_euclid(100);
+        if part1_pos == 0 {
+            part1_count_zero += 1;
+        }
+
+        // part two
+        for _ in 0..num {
+            part2_pos = (part2_pos + step).rem_euclid(100);
+            if part2_pos == 0 {
+                part2_count_zero += 1;
+            }
+        }
+    }
+
+    (part1_count_zero, part2_count_zero)
 }
 
 pub fn main() {
@@ -37,18 +41,12 @@ pub fn main() {
 mod test {
     use super::*;
 
-    // const TEST_INPUT: &str = include_str!("test.txt");
-    // const SAMPLE_*: &str = include_str!("sample_*.txt");
+    const TEST_INPUT: &str = include_str!("test.txt");
 
-    // #[test]
-    // fn part1() {
-    //     let puzzle = Puzzle::new(SAMPLE_1);
-    //     assert_eq!(puzzle.part1(), 0);
-    // }
-
-    // #[test]
-    // fn part2() {
-    //     let puzzle = Puzzle::new(TEST_INPUT);
-    //     assert_eq!(puzzle.part2(), 0);
-    // }
+    #[test]
+    fn parts() {
+        let (p1, p2) = solve(TEST_INPUT);
+        assert_eq!(p1, 3);
+        assert_eq!(p2, 6);
+    }
 }
