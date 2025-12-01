@@ -502,7 +502,7 @@ def get_languages(sols, readme_dir: Path, rootdir: Path):
         ("Perl", ".pl", "perl"),
         ("Lua", ".lua", "lua"),
         ("JS", ".js", "javascript"),
-        ("Bash", ".sh", "bash"),
+        ("Bash", ".bash", "bash"),
         ("Swift", ".swift", "swift"),
         ("Java", ".java", "java"),
         ("C#", ".cs", "csharp"),
