@@ -695,7 +695,7 @@ def make_readme_main(args):
             line = (
                 f"## {current_calendar} (current event)"
                 f" ([Calendar](https://adventofcode.com/{current_calendar}))"
-                f" ([Solutions]({session.year_dir(year).relative_to(session.rootdir)}/)) :"
+                f" ([Solutions]({session.year_dir(current_calendar).relative_to(session.rootdir)}/)) :"
                 f" {all_stars[current_calendar]}⭐"
             )
             md.append(line)
