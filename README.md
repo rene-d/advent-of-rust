@@ -1,8 +1,8 @@
 # [Advent of Code](https://adventofcode.com) in Rust 🦀
 
-![Stars: 504](https://img.shields.io/badge/Stars-504⭐-blue)
-![Rust: 252](https://img.shields.io/badge/Rust-252-cyan?logo=Rust)
-![Python: 124](https://img.shields.io/badge/Python-124-cyan?logo=Python)
+![Stars: 506](https://img.shields.io/badge/Stars-506⭐-blue)
+![Rust: 253](https://img.shields.io/badge/Rust-253-cyan?logo=Rust)
+![Python: 125](https://img.shields.io/badge/Python-125-cyan?logo=Python)
 
 <img src="./scripts/assets/christmas_ferris_2015_2024.png" alt="Christmas Ferris" width="164" />
 
@@ -10,18 +10,19 @@
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2025 (current event) ([Calendar](https://adventofcode.com/2025)) ([Solutions](src/year2025/)) : 4⭐
+## 2025 (current event) ([Calendar](https://adventofcode.com/2025)) ([Solutions](src/year2025/)) : 6⭐
 
 Puzzle                                                        | Stars | Languages
 ------------------------------------------------------------- | ----- | -----------
 [Day 1: Secret Entrance](https://adventofcode.com/2025/day/1) | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day1/day1.rs) [![Python](./scripts/assets/python.png)](src/year2025/day1/day1.py) [![C](./scripts/assets/c.png)](src/year2025/day1/day1.c) [![Go](./scripts/assets/go.png)](src/year2025/day1/day1.go)
 [Day 2: Gift Shop](https://adventofcode.com/2025/day/2)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day2/day2.rs) [![Python](./scripts/assets/python.png)](src/year2025/day2/day2.py) [![Go](./scripts/assets/go.png)](src/year2025/day2/day2.go)
+[Day 3: Lobby](https://adventofcode.com/2025/day/3)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day3/day3.rs) [![Python](./scripts/assets/python.png)](src/year2025/day3/day3.py) [![Go](./scripts/assets/go.png)](src/year2025/day3/day3.go)
 
 ## All years
 
 Calendar | Solutions | Stars | Rust | Python | 🎁
 -------- | --------- | ----- | ---- | ------ | --
-[Advent of Code 2025](https://adventofcode.com/2025) | [Solutions](src/year2025/README.md) |   4⭐ |   2 |   2 |    
+[Advent of Code 2025](https://adventofcode.com/2025) | [Solutions](src/year2025/README.md) |   6⭐ |   3 |   3 |    
 [Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](src/year2024/README.md) |  50⭐ |  25 |  11 |   3
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](src/year2023/README.md) |  50⭐ |  25 |  10 |   2
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](src/year2022/README.md) |  50⭐ |  25 |  18 |   1

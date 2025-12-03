@@ -127,5 +127,5 @@ make_year!(year2024
 );
 
 make_year!(year2025
-    day1,day2
+    day1,day2,day3
 );
