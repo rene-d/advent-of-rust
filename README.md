@@ -15,7 +15,7 @@ Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twit
 Puzzle                                                        | Stars | Languages
 ------------------------------------------------------------- | ----- | -----------
 [Day 1: Secret Entrance](https://adventofcode.com/2025/day/1) | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day1/day1.rs) [![Python](./scripts/assets/python.png)](src/year2025/day1/day1.py) [![C](./scripts/assets/c.png)](src/year2025/day1/day1.c) [![Go](./scripts/assets/go.png)](src/year2025/day1/day1.go)
-[Day 2: Gift Shop](https://adventofcode.com/2025/day/2)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day2/day2.rs) [![Python](./scripts/assets/python.png)](src/year2025/day2/day2.py)
+[Day 2: Gift Shop](https://adventofcode.com/2025/day/2)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day2/day2.rs) [![Python](./scripts/assets/python.png)](src/year2025/day2/day2.py) [![Go](./scripts/assets/go.png)](src/year2025/day2/day2.go)
 
 ## All years
 

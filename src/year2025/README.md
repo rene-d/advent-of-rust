@@ -10,4 +10,4 @@
 Puzzle                                                        | Stars | Languages
 ------------------------------------------------------------- | ----- | -----------
 [Day 1: Secret Entrance](https://adventofcode.com/2025/day/1) | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day1/day1.rs) [![Python](../../scripts/assets/python.png)](day1/day1.py) [![C](../../scripts/assets/c.png)](day1/day1.c) [![Go](../../scripts/assets/go.png)](day1/day1.go)
-[Day 2: Gift Shop](https://adventofcode.com/2025/day/2)       | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day2/day2.rs) [![Python](../../scripts/assets/python.png)](day2/day2.py)
+[Day 2: Gift Shop](https://adventofcode.com/2025/day/2)       | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day2/day2.rs) [![Python](../../scripts/assets/python.png)](day2/day2.py) [![Go](../../scripts/assets/go.png)](day2/day2.go)
