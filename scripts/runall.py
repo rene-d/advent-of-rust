@@ -816,6 +816,11 @@ def run_day(
                         else:
                             # otherwise, the timing for the solution is the cached one
                             timing = cached_e["elapsed"]
+
+                            if cached_e["status"] == "unknown" and e["status"] == "ok":
+                                # status has changed from "unknown" to "ok": update the database (but not the timing)
+                                e["elapsed"] = timing
+                                update_cache(key, prog, "solutions", e, use_sha256=True)
                     else:
                         # no cached solution or invalid solution in the cache
                         update_cache(key, prog, "solutions", e, use_sha256=True)
