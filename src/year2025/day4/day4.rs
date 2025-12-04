@@ -21,7 +21,7 @@ impl Puzzle {
     fn part1(&self) -> i32 {
         let mut accessible = 0;
 
-        for (pos, ch) in self.grid.iter() {
+        for (pos, ch) in &self.grid {
             if ch == &PAPER_ROLL {
                 let rolls = self
                     .grid
@@ -46,7 +46,7 @@ impl Puzzle {
         loop {
             let mut accessible = FxHashSet::default();
 
-            for (pos, ch) in grid.iter() {
+            for (pos, ch) in &grid {
                 if ch == &PAPER_ROLL {
                     let rolls = grid
                         .iter_neighbors(pos)

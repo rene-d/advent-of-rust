@@ -699,7 +699,7 @@ def run(
                     elapsed2 = answers.pop(i).removeprefix("elapsed:")
 
                     if elapsed2.endswith("ns"):
-                        elapsed = round(elapsed2.removesuffix("ns"))
+                        elapsed = round(float(elapsed2.removesuffix("ns")))
                     elif elapsed2.endswith("µs"):
                         elapsed = round(1000 * float(elapsed2.removesuffix("µs")))
                     elif elapsed2.endswith("ms"):
