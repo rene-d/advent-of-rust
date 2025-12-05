@@ -13,4 +13,4 @@ Puzzle                                                            | Stars | Lang
 [Day 2: Gift Shop](https://adventofcode.com/2025/day/2)           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day2/day2.rs) [![Python](../../scripts/assets/python.png)](day2/day2.py) [![Go](../../scripts/assets/go.png)](day2/day2.go)
 [Day 3: Lobby](https://adventofcode.com/2025/day/3)               | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day3/day3.rs) [![Python](../../scripts/assets/python.png)](day3/day3.py) [![Go](../../scripts/assets/go.png)](day3/day3.go)
 [Day 4: Printing Department](https://adventofcode.com/2025/day/4) | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day4/day4.rs) [![Python](../../scripts/assets/python.png)](day4/day4.py) [![Go](../../scripts/assets/go.png)](day4/day4.go)
-[Day 5: Cafeteria](https://adventofcode.com/2025/day/5)           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day5/day5.rs)
+[Day 5: Cafeteria](https://adventofcode.com/2025/day/5)           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day5/day5.rs) [![Go](../../scripts/assets/go.png)](day5/day5.go)
