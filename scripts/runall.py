@@ -7,6 +7,7 @@ import logging
 import os
 import random
 import re
+import shlex
 import shutil
 import sqlite3
 import subprocess
@@ -842,6 +843,7 @@ def run_day(
                 if not globals().get(resolve_script):
                     with resolve_script.open("wt") as f:
                         print("#!/bin/sh", file=f)
+                        print(f"cd {shlex.quote(Path(__file__).parent.parent.as_posix())}", file=f)
                     resolve_script.chmod(0o755)
                     globals()[resolve_script] = True
 
@@ -966,6 +968,24 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
         print("This option requires the « tabulate » and « numpy » modules.")
         exit(1)
 
+    def detect_outliers_iqr(data, k=1.5):
+        """Interquartile range."""
+        Q1 = np.percentile(data, 25)
+        Q3 = np.percentile(data, 75)
+        IQR = Q3 - Q1
+        lower = Q1 - k * IQR
+        upper = Q3 + k * IQR
+        return data[(data < lower) | (data > upper)]
+
+    def detect_outliers_mad(data, threshold=3.5):
+        """Median absolute deviation (above threshold only)."""
+        median = np.median(data)
+        mad = np.median(np.abs(data - median))
+        if mad == 0:
+            return np.array([])
+        modified_z = 0.6745 * (data - median) / mad
+        return data[np.abs(modified_z) > threshold]
+
     db = get_cache()["db"]
 
     elapsed_times = defaultdict(list)
@@ -991,50 +1011,83 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
     rows = list()
     cmds = list()
 
-    for k, v in sorted(elapsed_times.items()):
-        a = np.array(list(map(itemgetter(0), v)))
+    for key, values in sorted(elapsed_times.items()):
+        a = np.array(list(map(itemgetter(0), values)))
+
+        µ = a.mean()
+        if µ < 1:
+            continue
 
         # coefficient of variation
-        µ, σ = a.mean(), a.std()
-        if µ == 0:
-            continue
+        σ = a.std()
         cv = σ / µ
+
+        outliers3 = a[(a - µ) / σ > 1.5]
+        if len(outliers3) == 0:
+            continue
+
+        outliers = detect_outliers_mad(a)
+        if len(outliers) == 0:
+            continue
+
+        outliers2 = detect_outliers_iqr(a)
+        if len(outliers2) == 0:
+            continue
 
         # quartile coefficient of dispersion
         q1 = np.percentile(a, 25)
         q3 = np.percentile(a, 75)
         if q3 + q1 == 0:
-            continue
-        qcd = (q3 - q1) / (q3 + q1)
+            qcd = 0
+        else:
+            qcd = (q3 - q1) / (q3 + q1)
 
         cv = round(cv * 100, 1)
         qcd = round(qcd * 100, 1)
 
-        if µ > 3 and (cv > 15 or qcd > 10):
-            a.sort()
-            rows.append((" ".join(map(str, k)), µ, σ, cv, qcd, a))
+        # print("  a", a)
+        # print("mad", outliers)
+        # print("iqr", outliers2)
+        # print("dev", outliers3)
 
-            for elapsed, crc in v:
+        # if µ > 3 and (cv > 15 or qcd > 10):
+        # if deviation := (elapsed - µ) / σ  > 1.5:
+
+        a.sort()
+        rows.append((" ".join(map(str, key)), µ, σ, cv, qcd, a))
+
+        min_mad = min(outliers3)
+
+        for elapsed, crc in sorted(values):
+            if elapsed >= min_mad:
                 deviation = (elapsed - µ) / σ
-                if deviation > 1.5:
-                    year, day, lang = k
-                    user = inputs[crc]
-                    cmd = f"./scripts/runall.py -u {user:<35} -l {lang:<8} {year} {day:<2} -r"
-                    comment = f"  # t={elapsed:7.3f} µ={µ:7.3f} d={deviation:4.1f} σ"
-                    cmds.append(((year, day, user), cmd + comment))
+
+                year, day, lang = key
+                user = inputs[crc]
+                cmd = f"{__file__} -u {user:<35} -l {lang:<8} {year} {day:<2} -r"
+                comment = f"  # t={elapsed:7.3f} µ={µ:7.3f} d={deviation:4.1f} σ"
+                cmds.append(((year, day, user), cmd + comment))
 
     print(tabulate.tabulate(rows, headers=("solution", "µ", "σ", "CV %", "qcd %", "values"), tablefmt="fancy_grid"))
 
+    # if cmds:
+    #     print()
+    #     previous_key = None
+    #     flip_color = 0
+    #     for key, cmd in sorted(cmds):
+    #         if key != previous_key:
+    #             flip_color = 1 - flip_color
+    #             previous_key = key
+    #         color = [YELLOW, MAGENTA][flip_color]
+    #         print(f"{color}{cmd}{RESET}")
+
     if cmds:
-        print()
-        previous_key = None
-        flip_color = 0
-        for key, cmd in sorted(cmds):
-            if key != previous_key:
-                flip_color = 1 - flip_color
-                previous_key = key
-            color = [YELLOW, MAGENTA][flip_color]
-            print(f"{color}{cmd}{RESET}")
+        resolve_script = Path(Env.AOC_TARGET_DIR) / "resolve_outliers.sh"
+        with resolve_script.open("wt") as f:
+            print("#!/bin/sh", file=f)
+            for _, cmd in sorted(cmds):
+                print(cmd, file=f)
+        resolve_script.chmod(0o755)
 
 
 def get_task_list(filter_year: int, filter_day: set[int], inputs: dict, alt: bool):
@@ -1259,6 +1312,8 @@ def main():
         terminal_columns = 132
         pass
 
+    curdir = Path.cwd()
+
     if args.working_dir and args.working_dir.is_dir():
         logging.debug(f"set working directory to: {args.working_dir}")
         os.chdir(args.working_dir)
@@ -1456,8 +1511,9 @@ def main():
         if args.quiet < 2:
             for i, f in enumerate(Path(Env.AOC_TARGET_DIR).glob("resolve_*.sh")):
                 if i == 0:
-                    print("\nFix errors then run:")
-                print(f"  {RED}{f}{RESET}")
+                    print("\nFix problems then run:")
+
+                print(f"  {RED}{f.absolute().relative_to(curdir, walk_up=True)}{RESET}")
 
 
 if __name__ == "__main__":
