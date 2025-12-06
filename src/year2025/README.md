@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2025](https://img.shields.io/badge/Advent_of_Code-2025-8A2BE2)
-![Stars: 10](https://img.shields.io/badge/Stars-10⭐-blue)
-![Rust: 5](https://img.shields.io/badge/Rust-5-cyan?logo=Rust)
-![Python: 4](https://img.shields.io/badge/Python-4-cyan?logo=Python)
+![Stars: 12](https://img.shields.io/badge/Stars-12⭐-blue)
+![Rust: 6](https://img.shields.io/badge/Rust-6-cyan?logo=Rust)
+![Python: 5](https://img.shields.io/badge/Python-5-cyan?logo=Python)
 
-## 2025 ([Calendar](https://adventofcode.com/2025)) ([Solutions](./)) : 10⭐
+## 2025 ([Calendar](https://adventofcode.com/2025)) ([Solutions](./)) : 12⭐
 
 Puzzle                                                            | Stars | Languages
 ----------------------------------------------------------------- | ----- | -----------
@@ -14,3 +14,4 @@ Puzzle                                                            | Stars | Lang
 [Day 3: Lobby](https://adventofcode.com/2025/day/3)               | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day3/day3.rs) [![Python](../../scripts/assets/python.png)](day3/day3.py) [![Go](../../scripts/assets/go.png)](day3/day3.go)
 [Day 4: Printing Department](https://adventofcode.com/2025/day/4) | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day4/day4.rs) [![Python](../../scripts/assets/python.png)](day4/day4.py) [![Go](../../scripts/assets/go.png)](day4/day4.go)
 [Day 5: Cafeteria](https://adventofcode.com/2025/day/5)           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day5/day5.rs) [![Go](../../scripts/assets/go.png)](day5/day5.go)
+[Day 6: Trash Compactor](https://adventofcode.com/2025/day/6)     | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day6/day6.rs) [![Python](../../scripts/assets/python.png)](day6/day6.py)
