@@ -12,6 +12,7 @@ parser.add_argument("-y", "--year", type=int, help="Filter by year")
 parser.add_argument("-d", "--day", type=int, help="Filter by day")
 parser.add_argument("-u", "--user", type=str, help="Filter by user")
 parser.add_argument("--me", action="store_true", help="Filter by user")
+parser.add_argument("--only", choices=("best", "worst"), help="Only show best or worst if two languages")
 parser.add_argument("languages", nargs="*")
 args = parser.parse_args()
 
@@ -25,6 +26,7 @@ if args.me:
         if d.is_dir() and d.name.isdigit():
             args.user = d.name
             break
+
 
 db = sqlite3.connect(data_dir / "cache.db")
 
@@ -69,6 +71,7 @@ if len(languages) == 0:
 for lang in languages:
     timings.append(fetch(lang))
 
+
 keys = set(timings[0].keys())
 for t in timings[1:]:
     keys.intersection_update(t.keys())
@@ -76,6 +79,29 @@ for t in timings[1:]:
 if len(keys) == 0:
     print("aucune solution commune")
     exit()
+
+
+if args.only is not None and len(languages) == 2:
+    # args.verbose = True
+
+    ignore = set()
+
+    if args.only == "best":
+        for key in keys:
+            t0 = timings[0][key]
+            t1 = timings[1][key]
+            if t0 > t1:
+                ignore.add(key)
+
+    elif args.only == "worst":
+        for key in keys:
+            t0 = timings[0][key]
+            t1 = timings[1][key]
+            if t0 < t1:
+                ignore.add(key)
+
+    keys.difference_update(ignore)
+
 
 for t in timings:
     elapsed.append(sum(map(lambda v: t[v], keys)))
@@ -99,6 +125,7 @@ if args.verbose:
         if len(languages) == 2:
             t0 = timings[0][key]
             t1 = timings[1][key]
+
             row.extend((t0 / 1e9, t1 / 1e9, t1 / t0))
         else:
             for t in timings:
@@ -115,8 +142,22 @@ for lang, e in zip(languages, elapsed):
     print(f"{lang:8}  : {e / 1e9:.5f} s")
 
 for i in range(0, len(languages) - 1):
+    if cmp[i] > 1:
+        average_str = "faster"
+    elif cmp[i] < 1:
+        average_str = "slower"
+    else:
+        average_str = "equal "
+
+    if elapsed[i + 1] > elapsed[i]:
+        overall_str = "faster"
+    elif elapsed[i + 1] < elapsed[i]:
+        overall_str = "slower"
+    else:
+        overall_str = "equal "
+
     print(
         f"{languages[i]:8} vs. {languages[i + 1]:8} "
-        f" average : {cmp[i] * 100:.1f} %"
-        f" - overall : {(elapsed[i + 1] / elapsed[i]) * 100:.1f} %"
+        f" average : {cmp[i] * 100:.1f} % ({languages[i]:8} is {average_str})"
+        f" - overall : {(elapsed[i + 1] / elapsed[i]) * 100:.1f} % ({languages[i]:8} is {overall_str})"
     )
