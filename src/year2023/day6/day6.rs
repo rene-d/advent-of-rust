@@ -25,18 +25,39 @@ impl Puzzle {
         }
     }
 
+    // fn win(t: u64, d: u64) -> u64 {
+    //     // nota: see below for the elegant math solution 🤓
+    //     let mut win = 0;
+    //     for hold in 1..t {
+    //         let speed = hold;
+    //         let remaining = t - hold;
+    //         let travelled = speed * remaining;
+    //         if travelled > d {
+    //             win += 1;
+    //         }
+    //     }
+    //     win
+    // }
+
     fn win(t: u64, d: u64) -> u64 {
-        // nota: see Python version for an elegant math solution 🤓
-        let mut win = 0;
-        for hold in 1..t {
-            let speed = hold;
-            let remaining = t - hold;
-            let travelled = speed * remaining;
-            if travelled > d {
-                win += 1;
-            }
+        // solve hold * (t - hold) > d
+        // e.g find (a,b) such that a < hold < b
+
+        let t = u128::from(t); // use u128 to avoid overflow
+        let d = u128::from(d);
+
+        let sqrt_disc = (t * t - 4 * d).isqrt(); // Δ = t² - 4 d
+        let mut a = (t - sqrt_disc) / 2; //  ⌊ (t - √Δ) / 2 ⌋
+        let mut b = (t + sqrt_disc).div_ceil(2); // ⌈ (t + √Δ) / 2 ⌉
+
+        if a * (t - a) > d {
+            a -= 1;
         }
-        win
+        if b * (t - b) > d {
+            b += 1;
+        }
+
+        u64::try_from(b - a - 1).unwrap()
     }
 
     /// Solve part one.
