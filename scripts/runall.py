@@ -1167,7 +1167,7 @@ def run_task(year, day, mday: str, inputs, answers, languages, problems, args, t
 
         if args.loop < 0:
             # repeat the given number of times
-            if loop <= args.loop:
+            if loop >= -args.loop:
                 break
         else:
             # repeat the given number of times without any improvement
@@ -1278,7 +1278,7 @@ def main():
     parser.add_argument("-w", "--wait", type=float, help="Wait seconds between each solution")
     parser.add_argument("-s", "--shuffle", action="store_true", help="Shuffle before running solutions")
     parser.add_argument(
-        "--loop", type=int, default=0, help="Repeat (positive: loops without improvement, negative: loops)"
+        "-L", "--loop", type=int, default=0, help="Repeat (positive: loops without improvement, negative: loops)"
     )
 
     parser.add_argument("-C", "--comparison", action="store_true", help="Show languages commparison")
@@ -1377,6 +1377,9 @@ def main():
             exit()
 
         # here we go!
+
+        if args.loop:
+            args.refresh = True
 
         if args.shuffle:
             random.shuffle(tasks)
