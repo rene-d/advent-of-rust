@@ -218,12 +218,12 @@ impl<T> GridU<T> {
         ]
         .iter()
         .filter_map(move |&(dx, dy)| {
-            if let Some(x) = x.checked_add_signed(dx) {
-                if let Some(y) = y.checked_add_signed(dy) {
-                    if x < self.width && y < self.height {
-                        return Some((x, y));
-                    }
-                }
+            if let Some(x) = x.checked_add_signed(dx)
+                && let Some(y) = y.checked_add_signed(dy)
+                && x < self.width
+                && y < self.height
+            {
+                return Some((x, y));
             }
 
             None

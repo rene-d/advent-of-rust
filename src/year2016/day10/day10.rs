@@ -148,12 +148,11 @@ pub fn solve(data: &str) -> (u32, u32) {
             }
         }
 
-        if let Some(part1) = found_first {
-            if let Some(part2) = found_output {
+        if let Some(part1) = found_first
+            && let Some(part2) = found_output {
                 // the both parts of the puzzle have been completed
                 break 'main_loop (part1, part2);
             }
-        }
     }
 }
 

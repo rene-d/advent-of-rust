@@ -162,7 +162,7 @@ impl Puzzle {
 
         equivalent
             .iter()
-            .filter(|(&i, _)| self.fields[i].name.starts_with(field_name))
+            .filter(|&(i, _)| self.fields[*i].name.starts_with(field_name))
             .fold(1, |acc, (_, &j)| acc * u64::from(self.your_tickets[j]))
     }
 

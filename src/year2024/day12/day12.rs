@@ -34,13 +34,12 @@ pub fn solve(data: &str) -> (u32, u32) {
             area += 1;
 
             for (d, neigh) in grid.iter_directions_all(c) {
-                if let Some(neigh) = neigh {
-                    if grid[neigh] == plant {
+                if let Some(neigh) = neigh
+                    && grid[neigh] == plant {
                         // bfs to compute area of current plant
                         queue.push_back(neigh);
                         continue;
                     }
-                }
 
                 // fence: increase perimter
                 perimeter += 1;

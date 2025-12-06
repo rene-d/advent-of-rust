@@ -113,13 +113,12 @@ impl Puzzle {
             let mut next_waiting = Vec::new();
 
             for gate in &waiting_gates {
-                if let Some(&a) = wires.get(&gate.a) {
-                    if let Some(&b) = wires.get(&gate.b) {
+                if let Some(&a) = wires.get(&gate.a)
+                    && let Some(&b) = wires.get(&gate.b) {
                         let r = gate.op.eval(a, b);
                         *wires.entry(gate.r.clone()).or_default() = r;
                         continue;
                     }
-                }
 
                 next_waiting.push(*gate);
             }
@@ -129,7 +128,7 @@ impl Puzzle {
 
         wires
             .iter()
-            .filter(|(r, &v)| r.starts_with('z') && v == 1)
+            .filter(|&(r, v)| r.starts_with('z') && v == &1)
             .fold(0_u64, |acc, (r, _)| {
                 acc | (1 << r[1..].parse::<u64>().unwrap())
             })

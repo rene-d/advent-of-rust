@@ -151,20 +151,18 @@ impl Group {
         //  - effective power
         //  - initiative
 
-        let target = others
+        others
             .iter()
             .enumerate()
-            .filter(|(_, &other)| other.is_alive() && self.attack_damage(other) != 0)
-            .max_by_key(|(_, &other)| {
+            .filter(|&(_, other)| other.is_alive() && self.attack_damage(other) != 0)
+            .max_by_key(|&(_, other)| {
                 (
                     self.attack_damage(other),
                     other.effective_power(),
                     other.initiative,
                 )
             })
-            .map(|(i, _)| i);
-
-        target
+            .map(|(i, _)| i)
     }
 }
 

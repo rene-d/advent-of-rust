@@ -1,4 +1,4 @@
-use aor::{solutions, Solution};
+use aor::{Solution, solutions};
 use colored::Colorize;
 use itertools::Itertools;
 use std::error::Error;
@@ -256,41 +256,41 @@ fn run_day(sol: &Solution, input_txt: bool) -> Option<(Duration, bool, bool)> {
         );
     }
 
-    if path_input.is_file() {
-        if let Ok(data) = std::fs::read_to_string(&path_input) {
-            // run the solution
-            let instant = Instant::now();
-            let (part1, part2) = (sol.solve)(&data);
-            let elapsed = instant.elapsed();
+    if path_input.is_file()
+        && let Ok(data) = std::fs::read_to_string(&path_input)
+    {
+        // run the solution
+        let instant = Instant::now();
+        let (part1, part2) = (sol.solve)(&data);
+        let elapsed = instant.elapsed();
 
-            let mut success = false;
-            let mut failed = false;
+        let mut success = false;
+        let mut failed = false;
 
-            let micros = Duration::new(elapsed.as_secs(), elapsed.subsec_micros() * 1000);
+        let micros = Duration::new(elapsed.as_secs(), elapsed.subsec_micros() * 1000);
 
-            if let Ok(ok) = std::fs::read_to_string(path_answer) {
-                let (ok1, ok2) = ok.trim_ascii().split_once('\n').unwrap_or((&ok, ""));
+        if let Ok(ok) = std::fs::read_to_string(path_answer) {
+            let (ok1, ok2) = ok.trim_ascii().split_once('\n').unwrap_or((&ok, ""));
 
-                print_part_result(1, &part1, ok1, sol.day);
-                print_part_result(2, &part2, ok2, sol.day);
+            print_part_result(1, &part1, ok1, sol.day);
+            print_part_result(2, &part2, ok2, sol.day);
 
-                if ok1.trim_ascii() == part1 && ok2.trim_ascii() == part2 {
-                    success = true;
-                } else {
-                    failed = true;
-                }
+            if ok1.trim_ascii() == part1 && ok2.trim_ascii() == part2 {
+                success = true;
             } else {
-                print_part_result(1, &part1, "", sol.day);
-                print_part_result(2, &part2, "", sol.day);
+                failed = true;
             }
-
-            println!("{}", format!("  Elapsed : {micros:#?}").italic());
-            println!();
-
-            // let _ = aor::rundb::update_db(sol.year, sol.day, &data, elapsed);
-
-            return Some((elapsed, success, failed));
+        } else {
+            print_part_result(1, &part1, "", sol.day);
+            print_part_result(2, &part2, "", sol.day);
         }
+
+        println!("{}", format!("  Elapsed : {micros:#?}").italic());
+        println!();
+
+        // let _ = aor::rundb::update_db(sol.year, sol.day, &data, elapsed);
+
+        return Some((elapsed, success, failed));
     }
 
     println!("  missing file: {}", path_input.to_str().unwrap().red());

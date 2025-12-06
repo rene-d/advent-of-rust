@@ -103,11 +103,10 @@ impl<'a> PathCompressor<'a> {
                     }
                     self.functions[i] = "";
                 }
-            } else if let Some(zz) = path.strip_prefix(needle) {
-                if !self.compress(zz) {
+            } else if let Some(zz) = path.strip_prefix(needle)
+                && !self.compress(zz) {
                     return false;
                 }
-            }
 
             self.routines.pop();
         }

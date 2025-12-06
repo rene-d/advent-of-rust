@@ -89,7 +89,7 @@ fn is_real_room(name: &str, checksum: &str) -> bool {
     let mut freqs = freqs.iter().map(|(c, n)| (-n, c)).collect::<Vec<_>>();
     freqs.sort_unstable();
 
-    let check = freqs.iter().take(5).map(|(_, &c)| c).collect::<String>();
+    let check = freqs.iter().take(5).map(|&(_, c)| c).collect::<String>();
 
     check == checksum
 }

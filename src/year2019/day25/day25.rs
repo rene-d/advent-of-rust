@@ -34,13 +34,11 @@ fn parse(output: &str) -> (&str, Vec<&str>, Vec<&str>) {
     let mut room = "";
 
     for line in output.lines() {
-        if let Some(s) = line.strip_prefix("== ") {
-            if let Some(s) = s.strip_suffix(" ==") {
-                if room.is_empty() {
+        if let Some(s) = line.strip_prefix("== ")
+            && let Some(s) = s.strip_suffix(" ==")
+                && room.is_empty() {
                     room = s;
                 }
-            }
-        }
 
         if let Some(s) = line.strip_prefix("- ") {
             match s {

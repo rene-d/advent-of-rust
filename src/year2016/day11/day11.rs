@@ -50,7 +50,7 @@ impl State {
 
     fn is_valid(&self) -> bool {
         for (generator, chip) in self.generators().iter().zip(self.microchips().iter()) {
-            if chip != generator && self.generators().iter().any(|gen| gen == chip) {
+            if chip != generator && self.generators().iter().any(|generator| generator == chip) {
                 return false;
             }
         }

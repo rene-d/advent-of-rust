@@ -9,7 +9,7 @@ type Grid = aoc::Grid<char>;
 
 fn score(grid: &Grid) -> i32 {
     grid.iter_cells()
-        .filter(|(_, &c)| c == 'O' || c == '[')
+        .filter(|(_, c)| **c == 'O' || **c == '[')
         .map(|(xy, _)| 100 * xy.y + xy.x)
         .sum()
 }

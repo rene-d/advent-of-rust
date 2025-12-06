@@ -45,35 +45,31 @@ impl Puzzle {
         for (&pos, &&c) in &letters {
             let right = pos + Coord::RIGHT;
             let right2 = pos + Coord::RIGHT * 2;
-            if let Some(&&right_c) = letters.get(&right) {
-                if maze.contains(&right2) {
+            if let Some(&&right_c) = letters.get(&right)
+                && maze.contains(&right2) {
                     portals_pos.insert(right2, [c, right_c]);
                 }
-            }
 
             let left = pos + Coord::LEFT;
             let left2 = pos + Coord::LEFT * 2;
-            if let Some(&&left_c) = letters.get(&left) {
-                if maze.contains(&left2) {
+            if let Some(&&left_c) = letters.get(&left)
+                && maze.contains(&left2) {
                     portals_pos.insert(left2, [left_c, c]);
                 }
-            }
 
             let up = pos + Coord::UP;
             let up2 = pos + Coord::UP * 2;
-            if let Some(&&up_c) = letters.get(&up) {
-                if maze.contains(&up2) {
+            if let Some(&&up_c) = letters.get(&up)
+                && maze.contains(&up2) {
                     portals_pos.insert(up2, [up_c, c]);
                 }
-            }
 
             let down = pos + Coord::DOWN;
             let down2 = pos + Coord::DOWN * 2;
-            if let Some(&&down_c) = letters.get(&down) {
-                if maze.contains(&down2) {
+            if let Some(&&down_c) = letters.get(&down)
+                && maze.contains(&down2) {
                     portals_pos.insert(down2, [c, down_c]);
                 }
-            }
         }
 
         // map name/list of coords
@@ -125,11 +121,10 @@ impl Puzzle {
                 }
             }
 
-            if let Some(&t) = teleports.get(&xy) {
-                if seen.insert(t) {
+            if let Some(&t) = teleports.get(&xy)
+                && seen.insert(t) {
                     queue.push_back((t, n + 1));
                 }
-            }
         }
 
         0
@@ -183,21 +178,18 @@ impl Puzzle {
                 }
             }
 
-            if let Some(p) = inner_portals.get(&xy) {
-                if **p != portal {
+            if let Some(p) = inner_portals.get(&xy)
+                && **p != portal {
                     let t = outer_portals_inv[p];
                     queue.push_back((*t, n + 1, level + 1, **p));
                 }
-            }
 
-            if level > 0 {
-                if let Some(p) = outer_portals.get(&xy) {
-                    if **p != portal {
+            if level > 0
+                && let Some(p) = outer_portals.get(&xy)
+                    && **p != portal {
                         let t = inner_portals_inv[p];
                         queue.push_back((*t, n + 1, level - 1, **p));
                     }
-                }
-            }
         }
 
         0

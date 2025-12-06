@@ -263,10 +263,10 @@ impl Puzzle {
         let rough = lochness
             .monster_map
             .iter()
-            .filter(|(_, &c)| c == b'#')
+            .filter(|&(_, c)| c == &b'#')
             .count();
 
-        let monster_length = nessie.iter().filter(|(_, &c)| c == b'#').count();
+        let monster_length = nessie.iter().filter(|(_, c)| **c == b'#').count();
 
         rough - found * monster_length
     }

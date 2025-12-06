@@ -147,12 +147,11 @@ pub fn solve(data: &str) -> (usize, u64) {
         if end == 0 {
             heights.push(cave.height() - 1);
             let key = cave.make_key(jets.len());
-            if n > 2000 {
-                if let Some(&prev) = keys.get(&key) {
+            if n > 2000
+                && let Some(&prev) = keys.get(&key) {
                     start = prev;
                     end = n;
                 }
-            }
             keys.insert(key, n);
         }
 

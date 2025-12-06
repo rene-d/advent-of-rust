@@ -47,14 +47,13 @@ impl ClawMachine {
         solver.assert((&a * self.a_y + &b * self.b_y).eq(p_y));
 
         // find a solution
-        if solver.check() == z3::SatResult::Sat {
-            if let Some(model) = solver.get_model() {
+        if solver.check() == z3::SatResult::Sat
+            && let Some(model) = solver.get_model() {
                 let a_value = model.eval(&a, true).unwrap().as_u64().unwrap();
                 let b_value = model.eval(&b, true).unwrap().as_u64().unwrap();
 
                 return 3 * (a_value) + (b_value);
             }
-        }
 
         0
     }

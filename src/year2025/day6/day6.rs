@@ -63,11 +63,10 @@ impl<'a> Puzzle<'a> {
             for i in p..end {
                 let mut vnum = 0;
                 for row in &self.rows {
-                    if let Some(ch) = row.chars().nth(i) {
-                        // TODO edition 2024
-                        if ch != ' ' {
-                            vnum = vnum * 10 + u64::from(ch.to_digit(10).unwrap());
-                        }
+                    if let Some(ch) = row.chars().nth(i)
+                        && ch != ' '
+                    {
+                        vnum = vnum * 10 + u64::from(ch.to_digit(10).unwrap());
                     }
                 }
                 nums.push(vnum);

@@ -2,7 +2,7 @@
 
 #[must_use]
 pub fn c_solve(elves: u32, points: u32) -> u32 {
-    extern "C" {
+    unsafe extern "C" {
         fn c_solve(elves: u32, points: u32) -> u32;
     }
 

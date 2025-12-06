@@ -91,8 +91,8 @@ impl Snailfish {
 
     fn split(&mut self) -> bool {
         for i in (0..MAX_SIZE).step_by(2) {
-            if let Some(num) = self.v[i] {
-                if num >= 10 {
+            if let Some(num) = self.v[i]
+                && num >= 10 {
                     self.v[i] = Some(num / 2);
 
                     let mut k = 1;
@@ -111,7 +111,6 @@ impl Snailfish {
                     }
                     panic!("Unable to find slot for split");
                 }
-            }
         }
         false
     }

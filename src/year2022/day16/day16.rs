@@ -138,14 +138,14 @@ impl Puzzle {
             return 0;
         }
 
-        let mut best = 0;
-
-        if (opened & (1u128 << valve)) == 0 {
-            if let Some(flow) = self.flow_rates.get(&valve) {
-                best = (time_left - 1) * flow
-                    + self.max_flow(valve, opened | (1u128 << valve), time_left - 1, seen);
-            }
-        }
+        let mut best = if (opened & (1u128 << valve)) == 0
+            && let Some(flow) = self.flow_rates.get(&valve)
+        {
+            (time_left - 1) * flow
+                + self.max_flow(valve, opened | (1u128 << valve), time_left - 1, seen)
+        } else {
+            0
+        };
 
         best = best.max(
             self.tunnels[&valve]

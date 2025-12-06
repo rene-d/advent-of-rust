@@ -147,12 +147,11 @@ fn load_scanners(data: &str) -> Vec<Vec<Point>> {
     let mut beacons: Vec<Point> = Vec::new();
 
     for line in data.lines() {
-        if let Ok(_id) = scan_fmt!(&line, "--- scanner {} ---", i32) {
-            if !beacons.is_empty() {
+        if let Ok(_id) = scan_fmt!(&line, "--- scanner {} ---", i32)
+            && !beacons.is_empty() {
                 scanners.push(beacons);
                 beacons = Vec::new();
             }
-        }
 
         if let Ok((x, y, z)) = scan_fmt!(&line, "{},{},{}", i32, i32, i32) {
             let p = Point { x, y, z };
