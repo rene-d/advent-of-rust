@@ -20,13 +20,13 @@ Puzzle                                                            | Stars | Lang
 [Day 4: Printing Department](https://adventofcode.com/2025/day/4) | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day4/day4.rs) [![Python](./scripts/assets/python.png)](src/year2025/day4/day4.py) [![Go](./scripts/assets/go.png)](src/year2025/day4/day4.go)
 [Day 5: Cafeteria](https://adventofcode.com/2025/day/5)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day5/day5.rs) [![Go](./scripts/assets/go.png)](src/year2025/day5/day5.go)
 [Day 6: Trash Compactor](https://adventofcode.com/2025/day/6)     | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day6/day6.rs) [![Rust](./scripts/assets/rust.png)](src/year2025/day6/day6_declarative.rs) [![Python](./scripts/assets/python.png)](src/year2025/day6/day6.py)
-[Day 7: Laboratories](https://adventofcode.com/2025/day/7)        | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day7/day7.rs) [![Go](./scripts/assets/go.png)](src/year2025/day7/day7.go)
+[Day 7: Laboratories](https://adventofcode.com/2025/day/7)        | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day7/day7.rs) [![Go](./scripts/assets/go.png)](src/year2025/day7/day7.go) [🎁](src/year2025/day7/README.md)
 
 ## All years
 
 Calendar | Solutions | Stars | Rust | Python | 🎁
 -------- | --------- | ----- | ---- | ------ | --
-[Advent of Code 2025](https://adventofcode.com/2025) | [Solutions](src/year2025/README.md) |  14⭐ |   7 |   5 |    
+[Advent of Code 2025](https://adventofcode.com/2025) | [Solutions](src/year2025/README.md) |  14⭐ |   7 |   5 |   1
 [Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](src/year2024/README.md) |  50⭐ |  25 |  11 |   3
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](src/year2023/README.md) |  50⭐ |  25 |  10 |   2
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](src/year2022/README.md) |  50⭐ |  25 |  18 |   1
@@ -42,6 +42,7 @@ Calendar | Solutions | Stars | Rust | Python | 🎁
 
 Year | Count | Days
 ---- | ----- | --------------------
+2025 |     1 | [7](src/year2025/day7/README.md)
 2024 |     3 | [14](src/year2024/day14/README.md) [15](src/year2024/day15/README.md) [16](src/year2024/day16/README.md)
 2023 |     2 | [10](src/year2023/day10/README.md) [14](src/year2023/day14/README.md)
 2022 |     1 | [17](src/year2022/day17/README.md)

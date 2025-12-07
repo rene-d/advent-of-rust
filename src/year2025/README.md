@@ -15,4 +15,4 @@ Puzzle                                                            | Stars | Lang
 [Day 4: Printing Department](https://adventofcode.com/2025/day/4) | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day4/day4.rs) [![Python](../../scripts/assets/python.png)](day4/day4.py) [![Go](../../scripts/assets/go.png)](day4/day4.go)
 [Day 5: Cafeteria](https://adventofcode.com/2025/day/5)           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day5/day5.rs) [![Go](../../scripts/assets/go.png)](day5/day5.go)
 [Day 6: Trash Compactor](https://adventofcode.com/2025/day/6)     | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day6/day6.rs) [![Rust](../../scripts/assets/rust.png)](day6/day6_declarative.rs) [![Python](../../scripts/assets/python.png)](day6/day6.py)
-[Day 7: Laboratories](https://adventofcode.com/2025/day/7)        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day7/day7.rs) [![Go](../../scripts/assets/go.png)](day7/day7.go)
+[Day 7: Laboratories](https://adventofcode.com/2025/day/7)        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day7/day7.rs) [![Go](../../scripts/assets/go.png)](day7/day7.go) [🎁](day7/README.md)
