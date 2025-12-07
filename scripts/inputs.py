@@ -158,8 +158,11 @@ print(
 # SQL request to find out how many unique inputs each user has
 sql = """
 WITH uniques AS (
-    SELECT MIN(user) AS user FROM inputs GROUP BY year,day,crc HAVING COUNT(crc)=1
+    SELECT MIN(user) AS user
+    FROM inputs
+    WHERE user REGEXP '^[0-9]+$'
+    GROUP BY year,day,crc HAVING COUNT(crc)=1
 )
 SELECT user,COUNT(*)
-FROM uniques WHERE user REGEXP '^[0-9]+$' GROUP BY user;
+FROM uniques GROUP BY user;
 """

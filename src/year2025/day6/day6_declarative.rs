@@ -5,7 +5,7 @@
 pub fn solve(data: &str) -> (u64, u64) {
     // parse input data
     let mut rows = vec![];
-    let mut operators: &[u8] = &[];
+    let mut operators = "".as_bytes();
 
     for line in data.lines() {
         if line.contains('+') || line.contains('*') {
@@ -26,42 +26,44 @@ pub fn solve(data: &str) -> (u64, u64) {
             end += 1;
         }
         if end != operators.len() {
-            end -= 1; // columns are whitespace separated: remove the delimiter
+            end -= 1;
         }
 
         // compute part 1
-        let mut htotal = u64::from(op == &b'*');
+        let mut htotal = u64::from(op != &b'+');
         for row in &rows {
-            // number read horizontally
-            let hnum = row
-                .iter()
-                .skip(pos)
-                .take(end - pos)
-                .filter(|ch| ch != &&b' ')
-                .fold(0, |acc, ch| acc * 10 + u64::from(ch - b'0'));
+            let mut hnum = 0;
+
+            for i in pos..end {
+                let ch = row[i];
+                if ch != b' ' {
+                    hnum = hnum * 10 + u64::from(ch - b'0');
+                }
+            }
 
             if op == &b'+' {
                 htotal += hnum;
             } else {
                 htotal *= hnum;
-            }
+            };
         }
         part1 += htotal;
 
         // compute part 2
-        let mut vtotal = u64::from(op == &b'*');
+        let mut vtotal = u64::from(op != &b'+');
         for i in pos..end {
-            // number read vertically
-            let vnum = rows
-                .iter()
-                .filter(|row| row[i] != b' ')
-                .fold(0, |acc, row| acc * 10 + u64::from(row[i] - b'0'));
-
+            let mut vnum = 0;
+            for row in &rows {
+                let ch = row[i];
+                if ch != b' ' {
+                    vnum = vnum * 10 + u64::from(ch - b'0');
+                }
+            }
             if op == &b'+' {
                 vtotal += vnum;
             } else {
                 vtotal *= vnum;
-            }
+            };
         }
         part2 += vtotal;
     }
