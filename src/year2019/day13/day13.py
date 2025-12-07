@@ -36,13 +36,14 @@ class ArcadeCabinet:
 
         self.flag_auto = True
         self.flag_show = False
+        self.score_limit = 0
 
         self.colorize = str.maketrans(
             {
-                "W": "\033[93m" "█" "\033[0m",
-                "x": "\033[92m" "☁︎" "\033[0m",
-                "o": "\033[91m" "✿" "\033[0m",
-                "=": "\033[96m" "▄" "\033[0m",
+                "W": "\033[93m█\033[0m",
+                "x": "\033[92mx\033[0m",  # "x": "\033[92m☁︎\033[0m",
+                "o": "\033[91mo\033[0m",  # "o": "\033[91m✿\033[0m",
+                "=": "\033[96m▄\033[0m",
             }
         )
 
@@ -101,6 +102,10 @@ class ArcadeCabinet:
                 self.show()
                 time.sleep(0.01)
 
+                # to limit the screencast
+                if self.score_limit and self.score >= self.score_limit:
+                    return
+
             self.computer.input.append(self.joystick())
 
     def joystick(self):
@@ -122,9 +127,9 @@ class ArcadeCabinet:
 
 
 def main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("--limit", type=int)
     parser.add_argument("--elapsed", action="store_true")
     parser.add_argument("-p", "--play", action="store_true", help="play the game")
     parser.add_argument("input", nargs="?", default="input.txt")
@@ -140,12 +145,16 @@ def main():
 
     if args.verbose:
         game.flag_show = True
+        game.score_limit = args.limit
     if args.play:
         game.flag_show = True
         game.flag_auto = False
 
-    print(game.part1())
-    print(game.part2())
+    try:
+        print(game.part1())
+        print(game.part2())
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == "__main__":
