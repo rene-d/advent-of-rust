@@ -73,6 +73,8 @@ def fmt_part(part, opening, show_date):
 
 
 def show(data, show_date):
+    num_days = data.get("num_days", 25)
+
     members = []
     days = 0
     for id, member in data["members"].items():
@@ -85,17 +87,26 @@ def show(data, show_date):
 
     members = sorted(members, reverse=True)
 
-    if show_date:
-        ranges = (
-            range(1, 9),
-            range(9, 17),
-            range(17, 26),
-        )
+    if num_days == 12:
+        if show_date:
+            ranges = (
+                range(1, 7),
+                range(7, 13),
+            )
+        else:
+            ranges = (range(1, 13),)
     else:
-        ranges = (
-            range(1, 13),
-            range(13, 26),
-        )
+        if show_date:
+            ranges = (
+                range(1, 9),
+                range(9, 17),
+                range(17, 26),
+            )
+        else:
+            ranges = (
+                range(1, 13),
+                range(13, 26),
+            )
 
     for day_range in ranges:
         t = []
