@@ -24,7 +24,7 @@ impl NodeId {
             let digit = b'a' + (key % 26) as u8;
             node.push(digit as char);
             key /= 26;
-            if key == 0 {
+            if key == 1 {
                 break;
             }
         }
@@ -35,10 +35,12 @@ impl NodeId {
 impl From<&str> for NodeId {
     fn from(value: &str) -> Self {
         Self(
+            // add 1 as unit digit to manage id with 0 as unit
+            // without this trick as_string() will fail to add the last digit (0)
             value
                 .bytes()
                 .rev()
-                .fold(0, |acc, d| acc * 26 + u64::from(d - b'a')),
+                .fold(1, |acc, d| acc * 26 + u64::from(d - b'a')),
         )
     }
 }
