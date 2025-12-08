@@ -2,6 +2,7 @@ mod args;
 mod coord;
 mod counter;
 mod direction;
+mod dsu;
 mod grid;
 mod gridu;
 pub mod hexslice;
@@ -22,6 +23,8 @@ pub type Grid<T> = grid::Grid<T>;
 pub type GridU<T> = gridu::GridU<T>;
 pub type Square<T> = square::Square<T>;
 pub type Counter<T> = counter::Counter<T>;
+
+pub type UnionFind = dsu::UnionFind;
 
 pub struct Christmas(());
 
