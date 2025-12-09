@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import time
 import typing as t
 from collections import Counter
@@ -79,6 +80,11 @@ def transpose(m):
     return t
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--ok", action="store_true", help="Only inputs with solution")
+args = parser.parse_args()
+
+
 datadir = Path(__file__).parent.parent / "data"
 
 data = []
@@ -106,6 +112,10 @@ for year in aoc_available_puzzles():
             #     continue
             if f.is_dir():
                 f = f / f"{year}" / f"{day}.in"
+
+                if args.ok and not f.with_suffix(".ok").is_file():
+                    continue
+
                 if f.is_file():
                     inputs.update([f.read_text().strip()])
 

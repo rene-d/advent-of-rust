@@ -269,12 +269,14 @@ def aoc_readme(ctx: click.Context):
 
 
 @aoc.command(name="inputs")
+@click.option("--ok", is_flag=True, help="Only inputs with solution")
 @click.pass_context
-def aoc_inputs(ctx: click.Context):
+def aoc_inputs(ctx: click.Context, ok: bool):
     """
     Show the number of available inputs.
     """
-    ctx.obj.pass_thru("inputs.py", [])
+    opts = ["--ok"] if ok else []
+    ctx.obj.pass_thru("inputs.py", opts)
 
 
 @aoc.command(name="scores")
