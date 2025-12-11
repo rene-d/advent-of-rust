@@ -12,7 +12,7 @@ struct Cube {
     y2: i64,
     z1: i64,
     z2: i64,
-    holes: Vec<Cube>,
+    holes: Vec<Self>,
 }
 
 impl Cube {

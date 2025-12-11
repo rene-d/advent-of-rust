@@ -10,7 +10,7 @@ use std::cmp::Ordering;
 #[derive(Debug, Clone)]
 enum Packet {
     Integer(i32),
-    Array(Vec<Packet>),
+    Array(Vec<Self>),
 }
 
 impl Packet {
