@@ -1,11 +1,11 @@
 # Advent of Code in Rust 🦀
 
 ![AoC2025](https://img.shields.io/badge/Advent_of_Code-2025-8A2BE2)
-![Stars: 18](https://img.shields.io/badge/Stars-18⭐-blue)
-![Rust: 11](https://img.shields.io/badge/Rust-11-cyan?logo=Rust)
+![Stars: 22](https://img.shields.io/badge/Stars-22⭐-blue)
+![Rust: 13](https://img.shields.io/badge/Rust-13-cyan?logo=Rust)
 ![Python: 6](https://img.shields.io/badge/Python-6-cyan?logo=Python)
 
-## 2025 ([Calendar](https://adventofcode.com/2025)) ([Solutions](./)) : 18⭐
+## 2025 ([Calendar](https://adventofcode.com/2025)) ([Solutions](./)) : 22⭐
 
 Puzzle                                                            | Stars | Languages
 ----------------------------------------------------------------- | ----- | -----------
@@ -18,3 +18,5 @@ Puzzle                                                            | Stars | Lang
 [Day 7: Laboratories](https://adventofcode.com/2025/day/7)        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day7/day7.rs) [![Go](../../scripts/assets/go.png)](day7/day7.go) [🎁](day7/README.md)
 [Day 8: Playground](https://adventofcode.com/2025/day/8)          | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day8/day8.rs)
 [Day 9: Movie Theater](https://adventofcode.com/2025/day/9)       | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day9/day9.rs) [![Rust](../../scripts/assets/rust.png)](day9/day9_geo.rs) [![Python](../../scripts/assets/python.png)](day9/day9_img.py) [🎁](day9/README.md)
+[Day 10: Factory](https://adventofcode.com/2025/day/10)           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day10/day10.rs)
+[Day 11: Reactor](https://adventofcode.com/2025/day/11)           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day11/day11.rs)
