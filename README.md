@@ -1,7 +1,7 @@
 # [Advent of Code](https://adventofcode.com) in Rust 🦀
 
-![Stars: 522](https://img.shields.io/badge/Stars-522⭐-blue)
-![Rust: 261](https://img.shields.io/badge/Rust-261-cyan?logo=Rust)
+![Stars: 524](https://img.shields.io/badge/Stars-524⭐-blue)
+![Rust: 262](https://img.shields.io/badge/Rust-262-cyan?logo=Rust)
 ![Python: 127](https://img.shields.io/badge/Python-127-cyan?logo=Python)
 
 <img src="./scripts/assets/christmas_ferris_2015_2024.png" alt="Christmas Ferris" width="164" />
@@ -10,27 +10,28 @@
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2025 (current event) ([Calendar](https://adventofcode.com/2025)) ([Solutions](src/year2025/)) : 22⭐
+## 2025 (current event) ([Calendar](https://adventofcode.com/2025)) ([Solutions](src/year2025/)) : 24⭐
 
-Puzzle                                                            | Stars | Languages
------------------------------------------------------------------ | ----- | -----------
-[Day 1: Secret Entrance](https://adventofcode.com/2025/day/1)     | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day1/day1.rs) [![Python](./scripts/assets/python.png)](src/year2025/day1/day1.py) [![C](./scripts/assets/c.png)](src/year2025/day1/day1.c) [![Go](./scripts/assets/go.png)](src/year2025/day1/day1.go)
-[Day 2: Gift Shop](https://adventofcode.com/2025/day/2)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day2/day2.rs) [![Python](./scripts/assets/python.png)](src/year2025/day2/day2.py) [![Go](./scripts/assets/go.png)](src/year2025/day2/day2.go)
-[Day 3: Lobby](https://adventofcode.com/2025/day/3)               | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day3/day3.rs) [![Python](./scripts/assets/python.png)](src/year2025/day3/day3.py) [![Go](./scripts/assets/go.png)](src/year2025/day3/day3.go)
-[Day 4: Printing Department](https://adventofcode.com/2025/day/4) | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day4/day4.rs) [![Python](./scripts/assets/python.png)](src/year2025/day4/day4.py) [![Go](./scripts/assets/go.png)](src/year2025/day4/day4.go)
-[Day 5: Cafeteria](https://adventofcode.com/2025/day/5)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day5/day5.rs) [![Go](./scripts/assets/go.png)](src/year2025/day5/day5.go)
-[Day 6: Trash Compactor](https://adventofcode.com/2025/day/6)     | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day6/day6.rs) [![Rust](./scripts/assets/rust.png)](src/year2025/day6/day6_declarative.rs) [![Python](./scripts/assets/python.png)](src/year2025/day6/day6.py)
-[Day 7: Laboratories](https://adventofcode.com/2025/day/7)        | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day7/day7.rs) [![Go](./scripts/assets/go.png)](src/year2025/day7/day7.go) [🎁](src/year2025/day7/README.md)
-[Day 8: Playground](https://adventofcode.com/2025/day/8)          | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day8/day8.rs)
-[Day 9: Movie Theater](https://adventofcode.com/2025/day/9)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day9/day9.rs) [![Rust](./scripts/assets/rust.png)](src/year2025/day9/day9_geo.rs) [![Python](./scripts/assets/python.png)](src/year2025/day9/day9_img.py) [🎁](src/year2025/day9/README.md)
-[Day 10: Factory](https://adventofcode.com/2025/day/10)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day10/day10.rs)
-[Day 11: Reactor](https://adventofcode.com/2025/day/11)           | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day11/day11.rs)
+Puzzle                                                              | Stars | Languages
+------------------------------------------------------------------- | ----- | -----------
+[Day 1: Secret Entrance](https://adventofcode.com/2025/day/1)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day1/day1.rs) [![Python](./scripts/assets/python.png)](src/year2025/day1/day1.py) [![C](./scripts/assets/c.png)](src/year2025/day1/day1.c) [![Go](./scripts/assets/go.png)](src/year2025/day1/day1.go)
+[Day 2: Gift Shop](https://adventofcode.com/2025/day/2)             | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day2/day2.rs) [![Python](./scripts/assets/python.png)](src/year2025/day2/day2.py) [![Go](./scripts/assets/go.png)](src/year2025/day2/day2.go)
+[Day 3: Lobby](https://adventofcode.com/2025/day/3)                 | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day3/day3.rs) [![Python](./scripts/assets/python.png)](src/year2025/day3/day3.py) [![Go](./scripts/assets/go.png)](src/year2025/day3/day3.go)
+[Day 4: Printing Department](https://adventofcode.com/2025/day/4)   | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day4/day4.rs) [![Python](./scripts/assets/python.png)](src/year2025/day4/day4.py) [![Go](./scripts/assets/go.png)](src/year2025/day4/day4.go)
+[Day 5: Cafeteria](https://adventofcode.com/2025/day/5)             | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day5/day5.rs) [![Go](./scripts/assets/go.png)](src/year2025/day5/day5.go)
+[Day 6: Trash Compactor](https://adventofcode.com/2025/day/6)       | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day6/day6.rs) [![Rust](./scripts/assets/rust.png)](src/year2025/day6/day6_declarative.rs) [![Python](./scripts/assets/python.png)](src/year2025/day6/day6.py)
+[Day 7: Laboratories](https://adventofcode.com/2025/day/7)          | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day7/day7.rs) [![Go](./scripts/assets/go.png)](src/year2025/day7/day7.go) [🎁](src/year2025/day7/README.md)
+[Day 8: Playground](https://adventofcode.com/2025/day/8)            | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day8/day8.rs)
+[Day 9: Movie Theater](https://adventofcode.com/2025/day/9)         | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day9/day9.rs) [![Rust](./scripts/assets/rust.png)](src/year2025/day9/day9_geo.rs) [![Python](./scripts/assets/python.png)](src/year2025/day9/day9_img.py) [🎁](src/year2025/day9/README.md)
+[Day 10: Factory](https://adventofcode.com/2025/day/10)             | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day10/day10.rs)
+[Day 11: Reactor](https://adventofcode.com/2025/day/11)             | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day11/day11.rs)
+[Day 12: Christmas Tree Farm](https://adventofcode.com/2025/day/12) | ⭐⭐  | [![Rust](./scripts/assets/rust.png)](src/year2025/day12/day12.rs)
 
 ## All years
 
 Calendar | Solutions | Stars | Rust | Python | 🎁
 -------- | --------- | ----- | ---- | ------ | --
-[Advent of Code 2025](https://adventofcode.com/2025) | [Solutions](src/year2025/README.md) |  22⭐ |  11 |   5 |   2
+[Advent of Code 2025](https://adventofcode.com/2025) | [Solutions](src/year2025/README.md) |  24⭐ |  12 |   5 |   2
 [Advent of Code 2024](https://adventofcode.com/2024) | [Solutions](src/year2024/README.md) |  50⭐ |  25 |  11 |   3
 [Advent of Code 2023](https://adventofcode.com/2023) | [Solutions](src/year2023/README.md) |  50⭐ |  25 |  10 |   2
 [Advent of Code 2022](https://adventofcode.com/2022) | [Solutions](src/year2022/README.md) |  50⭐ |  25 |  18 |   1

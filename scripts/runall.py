@@ -75,6 +75,21 @@ def aoc_available_puzzles(
     return puzzles
 
 
+def aoc_nb_answers(year: int, day: int) -> int:
+    if year < 2025:
+        if day == 25:
+            return 1
+        if 1 <= day <= 24:
+            return 2
+        return 0
+    else:
+        if day == 12:
+            return 1
+        if 1 <= day <= 11:
+            return 2
+        return 0
+
+
 class Env:
     """
     Variables that can be overridden by environment variables.
@@ -797,7 +812,7 @@ def run_day(
             timing_status = "☽" if in_cache else " "
 
             if (not in_cache and not dry_run) or refresh:
-                nb_expected = 1 if day == 25 else 2
+                nb_expected = aoc_nb_answers(year, day)
 
                 cached_e = e
 
