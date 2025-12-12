@@ -1,5 +1,7 @@
 //! [Day 6: Chronal Coordinates](https://adventofcode.com/2018/day/6)
 
+use rayon::prelude::*;
+
 const N: usize = 512;
 
 struct Puzzle {
@@ -99,25 +101,25 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self, limit: i32) -> u32 {
-        let mut result = 0;
+        (-limit..(limit + 400))
+            .par_bridge()
+            .map(|y| {
+                (-limit..(limit + 400))
+                    .map(|x| {
+                        let mut d = 0;
 
-        for y in -limit..(limit + 400) {
-            for x in -limit..(limit + 400) {
-                let mut d = 0;
+                        for &(px, py) in &self.points {
+                            d += (x - px).abs() + (y - py).abs();
+                            if d >= limit {
+                                break;
+                            }
+                        }
 
-                for &(px, py) in &self.points {
-                    d += (x - px).abs() + (y - py).abs();
-                    if d >= limit {
-                        break;
-                    }
-                }
-
-                if d < limit {
-                    result += 1;
-                }
-            }
-        }
-        result
+                        u32::from(d < limit)
+                    })
+                    .sum::<u32>()
+            })
+            .sum()
     }
 }
 

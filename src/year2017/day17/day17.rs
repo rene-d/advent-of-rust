@@ -25,19 +25,21 @@ impl Puzzle {
     }
 
     /// Solve part two.
-    fn part2(&self) -> usize {
-        let mut buflen = 1;
+    const fn part2(&self) -> usize {
+        let step = self.step + 1;
+        let mut buflen: usize = 1;
         let mut pos = 0;
         let mut result = 0;
 
-        for i in 1..50_000_000 {
-            pos = (pos + self.step) % buflen + 1;
-            buflen += 1;
-            if pos == 1 {
-                result = i;
+        while buflen <= 50_000_000 {
+            if pos == 0 {
+                result = buflen;
             }
-        }
 
+            let skip = (buflen - pos).div_ceil(step);
+            buflen += skip;
+            pos = (pos + skip * step) % buflen;
+        }
         result
     }
 }

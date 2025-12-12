@@ -1,5 +1,7 @@
 //! [Day 7: Bridge Repair](https://adventofcode.com/2024/day/7)
 
+use rayon::prelude::*;
+
 struct Equation {
     test_value: u64,
     values: Vec<u64>,
@@ -107,7 +109,7 @@ impl Puzzle {
     /// Solve part one.
     fn part1(&self) -> u64 {
         self.equations
-            .iter()
+            .par_iter()
             .filter(|e| Self::check_two_operators(e))
             .map(|x| x.test_value)
             .sum()
@@ -116,7 +118,7 @@ impl Puzzle {
     /// Solve part two.
     fn part2(&self) -> u64 {
         self.equations
-            .iter()
+            .par_iter()
             .filter(|e| Self::check_three_operators(e))
             .map(|x| x.test_value)
             .sum()

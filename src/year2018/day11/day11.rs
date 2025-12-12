@@ -1,5 +1,7 @@
 //! [Day 11: Chronal Charge](https://adventofcode.com/2018/day/11)
 
+use rayon::prelude::*;
+
 struct Puzzle {
     serial_number: i32,
 }
@@ -47,19 +49,16 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> String {
-        let mut max = (0, 0, 0, 0);
+        let max = (3..300)
+            .par_bridge()
+            .map(|size| {
+                let (x, y, p) = self.square_power(size);
 
-        for size in 3..300 {
-            let (x, y, p) = self.square_power(size);
-
-            if p < 0 {
-                break;
-            }
-
-            if p > max.0 {
-                max = (p, x, y, size);
-            }
-        }
+                if p < 0 { None } else { Some((p, x, y, size)) }
+            })
+            .while_some()
+            .max()
+            .unwrap();
 
         format!("{},{},{}", max.1, max.2, max.3)
     }

@@ -1,6 +1,7 @@
 //! [Day 19: Monster Messages](https://adventofcode.com/2020/day/19)
 
 use rustc_hash::FxHashMap;
+use rayon::prelude::*;
 
 enum Rule {
     Ch(char),
@@ -112,7 +113,7 @@ impl Rules {
 
     fn solve(&self, messages: &[String]) -> usize {
         messages
-            .iter()
+            .par_iter()
             .filter(|message| self.matches(0, message))
             .count()
     }
