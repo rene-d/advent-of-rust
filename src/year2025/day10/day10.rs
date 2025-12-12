@@ -1,6 +1,69 @@
 //! [Day 10: Factory](https://adventofcode.com/2025/day/10)
 
+use good_lp::{Expression, Solution, SolverModel, default_solver, variable, variables};
+use rayon::prelude::*;
 use z3::ast::Int;
+
+// this is only to make clippy happy... cf. https://stackoverflow.com/a/74629224
+const F64_BITS: u64 = 64;
+const F64_EXPONENT_BITS: u64 = 11;
+const F64_EXPONENT_MAX: u64 = (1 << F64_EXPONENT_BITS) - 1;
+const F64_EXPONENT_BIAS: u64 = 1023;
+const F64_FRACTION_BITS: u64 = 52;
+
+pub fn f64_to_u64(f: f64) -> Option<u64> {
+    let bits = f.to_bits();
+    let sign = bits & (1 << (F64_EXPONENT_BITS + F64_FRACTION_BITS)) != 0;
+    let exponent = (bits >> F64_FRACTION_BITS) & ((1 << F64_EXPONENT_BITS) - 1);
+    let fraction = bits & ((1 << F64_FRACTION_BITS) - 1);
+
+    match (sign, exponent, fraction) {
+        (_, 0, 0) => {
+            debug_assert!(f == 0.0);
+            Some(0)
+        }
+        (true, _, _) => {
+            debug_assert!(f < 0.0);
+            None
+        }
+        (_, F64_EXPONENT_MAX, 0) => {
+            debug_assert!(f.is_infinite());
+            None
+        }
+        (_, F64_EXPONENT_MAX, _) => {
+            debug_assert!(f.is_nan());
+            None
+        }
+        (_, 0, _) => {
+            debug_assert!(f.is_subnormal());
+            None
+        }
+        _ => {
+            if exponent < F64_EXPONENT_BIAS {
+                debug_assert!(f < 1.0);
+                None
+            } else {
+                let mantissa = fraction | (1 << F64_FRACTION_BITS);
+                let left_shift =
+                    exponent.cast_signed() - (F64_EXPONENT_BIAS + F64_FRACTION_BITS).cast_signed();
+                if left_shift < 0 {
+                    let right_shift = (-left_shift).cast_unsigned();
+                    if mantissa & (1 << (right_shift - 1)) != 0 {
+                        debug_assert!(f.fract() != 0.0);
+                        None
+                    } else {
+                        Some(mantissa >> right_shift)
+                    }
+                } else if left_shift > (F64_BITS - F64_FRACTION_BITS - 1).cast_signed() {
+                    debug_assert!(f > 2.0f64.powi(63));
+                    None
+                } else {
+                    Some(mantissa << left_shift)
+                }
+            }
+        }
+    }
+}
 
 struct Machine {
     lights: u32,
@@ -33,8 +96,51 @@ impl Machine {
             .min()
     }
 
-    /// Return the fewest button presses required to correctly configure the joltage level counters .
-    fn optimize(&self) -> u64 {
+    /// Return the fewest button presses required to correctly configure the joltage level counters.
+    /// Use Integer Linear Programming solver.
+    fn optimize_lp(&self) -> u64 {
+        let n = self.wirings.len();
+
+        // 1) Create the container for problem variables
+        let mut vars = variables!();
+
+        // 2) Create `n` integer variables and collect them
+        let presses: Vec<_> = (0..n)
+            .map(|_| vars.add(variable().integer().min(0)))
+            .collect();
+
+        //  3) Build the objective: minimize sum(w_i)
+        let objective: Expression = presses.iter().sum();
+
+        // 4) Create the problem with that objective
+        let mut problem = vars.minimise(objective).using(default_solver);
+
+        // 5) Add the equations.
+        for (i, &target) in self.joltages.iter().enumerate() {
+            let mut lhs = Expression::from(0);
+
+            for (j, w) in self.wirings.iter().enumerate() {
+                if w & (1 << i) != 0 {
+                    lhs += presses[j];
+                }
+            }
+
+            problem = problem.with(lhs.eq(target));
+        }
+
+        // 6) Solve with the default solver
+        // 7) Extract integer values (solution.value returns f64)
+        problem.solve().map_or(0, |solution| {
+            presses
+                .iter()
+                .map(|&v| f64_to_u64(solution.value(v).round()).unwrap())
+                .sum()
+        })
+    }
+
+    /// Return the fewest button presses required to correctly configure the joltage level counters.
+    /// Use Z3 solver (complicates parallelism).
+    fn optimize_z3(&self) -> u64 {
         let solver = z3::Optimize::new();
 
         let vars: Vec<_> = (0..self.wirings.len())
@@ -63,10 +169,12 @@ impl Machine {
 
         let sum_vars = z3::ast::Int::add(&vars.iter().collect::<Vec<_>>());
         solver.minimize(&sum_vars);
+        solver.minimize(&sum_vars); // Sometimes, the solver fails to find the optimal solution on the first attempt.
 
         match solver.check(&[]) {
             z3::SatResult::Sat => {
                 let model = solver.get_model().unwrap();
+
                 vars.iter()
                     .filter_map(|v| {
                         let val = model.get_const_interp(v).unwrap();
@@ -142,12 +250,17 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> usize {
-        self.machines.iter().filter_map(Machine::score).sum()
+        self.machines.par_iter().filter_map(Machine::score).sum()
     }
 
     /// Solve part two.
-    fn part2(&self) -> u64 {
-        self.machines.iter().map(Machine::optimize).sum()
+    fn part2_lp(&self) -> u64 {
+        self.machines.par_iter().map(Machine::optimize_lp).sum()
+    }
+
+    /// Solve part two too.
+    fn part2_z3(&self) -> u64 {
+        self.machines.par_iter().map(Machine::optimize_z3).sum()
     }
 }
 
@@ -155,12 +268,23 @@ impl Puzzle {
 #[must_use]
 pub fn solve(data: &str) -> (usize, u64) {
     let puzzle = Puzzle::new(data);
-    (puzzle.part1(), puzzle.part2())
+    (puzzle.part1(), puzzle.part2_lp())
+}
+/// # Panics
+#[must_use]
+pub fn solve_z3(data: &str) -> (usize, u64) {
+    let puzzle = Puzzle::new(data);
+    (puzzle.part1(), puzzle.part2_z3())
 }
 
 pub fn main() {
     let args = aoc::parse_args();
-    args.run(solve);
+
+    if args.has_option("--z3") {
+        args.run(solve_z3);
+    } else {
+        args.run(solve);
+    }
 }
 
 #[cfg(test)]
@@ -178,6 +302,6 @@ mod test {
     #[test]
     fn part2() {
         let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part2(), 33);
+        assert_eq!(puzzle.part2_lp(), 33);
     }
 }
