@@ -16,18 +16,14 @@ from pathlib import Path
 
 import requests
 
+# ---------
+
 
 @lru_cache(maxsize=None)
-def aoc_available_puzzles(
-    year: int | None = None, seconds: float | None = None
-) -> t.Union[dict[int, list[int]], list[int]]:
+def aoc_available_puzzles_dict(seconds: float | None = None) -> dict[int, list[int]]:
     """
-    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
+    Returns a dict of available puzzles by year.
     """
-
-    if year is not None:
-        years = aoc_available_puzzles(seconds=seconds)
-        return years.get(year, [])
 
     now = time.gmtime(seconds)
 
@@ -45,11 +41,61 @@ def aoc_available_puzzles(
             last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
         else:
             last_day = 25
-        last_day = min(last_day, 25 if year <= 2024 else 12)
+        last_day = min(last_day, aoc_puzzles_by_year(year))
 
         puzzles[year] = list(range(1, last_day + 1))
 
     return puzzles
+
+
+def aoc_puzzles_by_year(year: int) -> int:
+    """
+    Returns the maximum number of puzzles for the given year.
+    """
+    if 2015 <= year <= 2024:
+        return 25
+    if year >= 2025:
+        return 12
+    return 0
+
+
+def aoc_nb_answers(year: int, day: int) -> int:
+    """
+    Returns the number of answers.
+    """
+    if 1 <= day < aoc_puzzles_by_year(year):
+        return 2
+    elif day == aoc_puzzles_by_year(year):
+        return 1
+    else:
+        return 0
+
+
+def aoc_available_years():
+    """
+    Generator over all available years.
+    """
+    for year in aoc_available_puzzles_dict():
+        yield year
+
+
+def aoc_available_days(year: int):
+    """
+    Generator over all available days for the given year.
+    """
+    for year in aoc_available_puzzles_dict().get(year, []):
+        yield year
+
+
+def aoc_available_puzzles(filter_year: int = 0):
+    for year, days in aoc_available_puzzles_dict().items():
+        if filter_year is not None and filter_year != 0 and filter_year != year:
+            continue
+        for day in days:
+            yield year, day
+
+
+# ---------
 
 
 class AocSession:
@@ -165,11 +211,11 @@ class AocSession:
     def iter_all(func, b=None):
         def wrapper(self, year=None, day=None, *args, **kwargs):
             if year is None:
-                for year in aoc_available_puzzles():
+                for year in aoc_available_years():
                     wrapper(self, year, day)
             elif day is None:
                 # iterate over every days
-                for day in aoc_available_puzzles(year):
+                for day in aoc_available_days(year):
                     wrapper(self, year, day)
             elif day == 0:
                 # special case to iterate only on years
@@ -431,7 +477,7 @@ class AocSession:
     def print_stars_year(self, year=None):
         @AocSession.iter_all
         def iterate(self, year, day):
-            nb_stars = sum(self.get_stars(year, day) for day in aoc_available_puzzles(year))
+            nb_stars = sum(self.get_stars(year, day) for day in aoc_available_days(year))
             print(f"{self.prefix} Stars for {year}: {nb_stars:2}⭐")
 
         iterate(self, year, 0)
@@ -530,7 +576,7 @@ def make_readme(args):
     def readme(self, year, _day):
         puzzles = []
         now = datetime.now(UTC)
-        for day in aoc_available_puzzles(year):
+        for day in aoc_available_days(year):
             available_date = datetime(year, 12, day, 5, 0, 0, 0, tzinfo=UTC)
             if available_date > now:
                 continue
@@ -599,7 +645,7 @@ def make_readme_main(args):
     @AocSession.iter_all
     def parse(self, year, _day):
         now = datetime.now(UTC)
-        for day in aoc_available_puzzles(year):
+        for day in aoc_available_days(year):
             available_date = datetime(year, 12, day, 5, 0, 0, 0, tzinfo=UTC)
             if available_date > now:
                 continue
@@ -639,7 +685,7 @@ def make_readme_main(args):
     total_rust = sum(rust.values())
     total_python = sum(python.values())
     total_stars = sum(all_stars.values())
-    current_calendar = max(aoc_available_puzzles())
+    current_calendar = max(aoc_available_years())
 
     rows = []
     for year in sorted(all_stars.keys(), reverse=True):

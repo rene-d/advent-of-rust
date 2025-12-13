@@ -2,7 +2,6 @@
 
 import json
 import time
-import typing as t
 from datetime import datetime, timedelta
 from functools import lru_cache
 from pathlib import Path
@@ -11,18 +10,14 @@ import click
 import requests
 import tabulate
 
+# ---------
+
 
 @lru_cache(maxsize=None)
-def aoc_available_puzzles(
-    year: int | None = None, seconds: float | None = None
-) -> t.Union[dict[int, list[int]], list[int]]:
+def aoc_available_puzzles_dict(seconds: float | None = None) -> dict[int, list[int]]:
     """
-    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
+    Returns a dict of available puzzles by year.
     """
-
-    if year is not None:
-        years = aoc_available_puzzles(seconds=seconds)
-        return years.get(year, [])
 
     now = time.gmtime(seconds)
 
@@ -40,11 +35,61 @@ def aoc_available_puzzles(
             last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
         else:
             last_day = 25
-        last_day = min(last_day, 25 if year <= 2024 else 12)
+        last_day = min(last_day, aoc_puzzles_by_year(year))
 
         puzzles[year] = list(range(1, last_day + 1))
 
     return puzzles
+
+
+def aoc_puzzles_by_year(year: int) -> int:
+    """
+    Returns the maximum number of puzzles for the given year.
+    """
+    if 2015 <= year <= 2024:
+        return 25
+    if year >= 2025:
+        return 12
+    return 0
+
+
+def aoc_nb_answers(year: int, day: int) -> int:
+    """
+    Returns the number of answers.
+    """
+    if 1 <= day < aoc_puzzles_by_year(year):
+        return 2
+    elif day == aoc_puzzles_by_year(year):
+        return 1
+    else:
+        return 0
+
+
+def aoc_available_years():
+    """
+    Generator over all available years.
+    """
+    for year in aoc_available_puzzles_dict():
+        yield year
+
+
+def aoc_available_days(year: int):
+    """
+    Generator over all available days for the given year.
+    """
+    for year in aoc_available_puzzles_dict().get(year, []):
+        yield year
+
+
+def aoc_available_puzzles(filter_year: int = 0):
+    for year, days in aoc_available_puzzles_dict().items():
+        if filter_year is not None and filter_year != 0 and filter_year != year:
+            continue
+        for day in days:
+            yield year, day
+
+
+# ---------
 
 
 def fmt_opening(d: timedelta) -> str:
@@ -170,8 +215,8 @@ def cookie():
 @click.option(
     "-y",
     "--year",
-    type=click.IntRange(min(aoc_available_puzzles()), max(aoc_available_puzzles())),
-    default=max(aoc_available_puzzles()),
+    type=click.IntRange(min(aoc_available_years()), max(aoc_available_years())),
+    default=max(aoc_available_years()),
     help="Year",
 )
 @click.option("-r", "--refresh", is_flag=True, help="Refresh the leaderboard")

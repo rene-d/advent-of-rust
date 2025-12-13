@@ -5,7 +5,6 @@ import os
 import sqlite3
 import sys
 import time
-import typing as t
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import lru_cache
@@ -59,17 +58,14 @@ T2 = 2
 T3 = 5
 
 
-@lru_cache(maxsize=None)
-def aoc_available_puzzles(
-    year: int | None = None, seconds: float | None = None
-) -> t.Union[dict[int, list[int]], list[int]]:
-    """
-    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
-    """
+# ---------
 
-    if year is not None:
-        years = aoc_available_puzzles(seconds=seconds)
-        return years.get(year, [])
+
+@lru_cache(maxsize=None)
+def aoc_available_puzzles_dict(seconds: float | None = None) -> dict[int, list[int]]:
+    """
+    Returns a dict of available puzzles by year.
+    """
 
     now = time.gmtime(seconds)
 
@@ -87,11 +83,61 @@ def aoc_available_puzzles(
             last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
         else:
             last_day = 25
-        last_day = min(last_day, 25 if year <= 2024 else 12)
+        last_day = min(last_day, aoc_puzzles_by_year(year))
 
         puzzles[year] = list(range(1, last_day + 1))
 
     return puzzles
+
+
+def aoc_puzzles_by_year(year: int) -> int:
+    """
+    Returns the maximum number of puzzles for the given year.
+    """
+    if 2015 <= year <= 2024:
+        return 25
+    if year >= 2025:
+        return 12
+    return 0
+
+
+def aoc_nb_answers(year: int, day: int) -> int:
+    """
+    Returns the number of answers.
+    """
+    if 1 <= day < aoc_puzzles_by_year(year):
+        return 2
+    elif day == aoc_puzzles_by_year(year):
+        return 1
+    else:
+        return 0
+
+
+def aoc_available_years():
+    """
+    Generator over all available years.
+    """
+    for year in aoc_available_puzzles_dict():
+        yield year
+
+
+def aoc_available_days(year: int):
+    """
+    Generator over all available days for the given year.
+    """
+    for year in aoc_available_puzzles_dict().get(year, []):
+        yield year
+
+
+def aoc_available_puzzles(filter_year: int = 0):
+    for year, days in aoc_available_puzzles_dict().items():
+        if filter_year is not None and filter_year != 0 and filter_year != year:
+            continue
+        for day in days:
+            yield year, day
+
+
+# ---------
 
 
 def fmt_elapsed(elapsed: float, _tablefmt) -> str:
@@ -119,8 +165,8 @@ class Timings:
     """Manages and analyzes execution timing statistics for Advent of Code solutions."""
 
     def __init__(self, db: sqlite3.Connection):
-        self.year_begin = min(aoc_available_puzzles())
-        self.year_end = max(aoc_available_puzzles())
+        self.year_begin = min(aoc_available_years())
+        self.year_end = max(aoc_available_years())
 
         self.user_inputs = defaultdict(set)
         for user, _year, _day, crc in db.execute("select user,year,day,crc from inputs"):

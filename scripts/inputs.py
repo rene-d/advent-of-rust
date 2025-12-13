@@ -2,7 +2,6 @@
 
 import argparse
 import time
-import typing as t
 from collections import Counter
 from functools import lru_cache
 from pathlib import Path
@@ -25,17 +24,14 @@ BLINK = "\033[6m"
 CLEAR_EOL = "\033[0K"
 
 
-@lru_cache(maxsize=None)
-def aoc_available_puzzles(
-    year: int | None = None, seconds: float | None = None
-) -> t.Union[dict[int, list[int]], list[int]]:
-    """
-    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
-    """
+# ---------
 
-    if year is not None:
-        years = aoc_available_puzzles(seconds=seconds)
-        return years.get(year, [])
+
+@lru_cache(maxsize=None)
+def aoc_available_puzzles_dict(seconds: float | None = None) -> dict[int, list[int]]:
+    """
+    Returns a dict of available puzzles by year.
+    """
 
     now = time.gmtime(seconds)
 
@@ -53,7 +49,7 @@ def aoc_available_puzzles(
             last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
         else:
             last_day = 25
-        last_day = min(last_day, 25 if year <= 2024 else 12)
+        last_day = min(last_day, aoc_puzzles_by_year(year))
 
         puzzles[year] = list(range(1, last_day + 1))
 
@@ -61,11 +57,53 @@ def aoc_available_puzzles(
 
 
 def aoc_puzzles_by_year(year: int) -> int:
+    """
+    Returns the maximum number of puzzles for the given year.
+    """
     if 2015 <= year <= 2024:
         return 25
     if year >= 2025:
         return 12
     return 0
+
+
+def aoc_nb_answers(year: int, day: int) -> int:
+    """
+    Returns the number of answers.
+    """
+    if 1 <= day < aoc_puzzles_by_year(year):
+        return 2
+    elif day == aoc_puzzles_by_year(year):
+        return 1
+    else:
+        return 0
+
+
+def aoc_available_years():
+    """
+    Generator over all available years.
+    """
+    for year in aoc_available_puzzles_dict():
+        yield year
+
+
+def aoc_available_days(year: int):
+    """
+    Generator over all available days for the given year.
+    """
+    for year in aoc_available_puzzles_dict().get(year, []):
+        yield year
+
+
+def aoc_available_puzzles(filter_year: int = 0):
+    for year, days in aoc_available_puzzles_dict().items():
+        if filter_year is not None and filter_year != 0 and filter_year != year:
+            continue
+        for day in days:
+            yield year, day
+
+
+# ---------
 
 
 def transpose(m):
@@ -88,14 +126,14 @@ args = parser.parse_args()
 datadir = Path(__file__).parent.parent / "data"
 
 data = []
-for year in aoc_available_puzzles():
+for year in aoc_available_years():
     values = []
 
     min_inputs = float("inf")
     max_inputs = 0
     nb_inputs = 0
 
-    available_days = aoc_available_puzzles(year)
+    available_days = aoc_available_days(year)
 
     for day in range(1, 26):
         if day > aoc_puzzles_by_year(year):
@@ -158,7 +196,7 @@ data.pop(0)
 print(
     tabulate.tabulate(
         data,
-        headers=["Day"] + [year for year in aoc_available_puzzles()],
+        headers=["Day"] + [year for year in aoc_available_years()],
         stralign="right",
         tablefmt="rounded_outline",
     )

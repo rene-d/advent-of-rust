@@ -40,17 +40,14 @@ CR = "\r"
 TRANSIENT = f"{CLEAR_EOL}{CR}"
 
 
-@lru_cache(maxsize=None)
-def aoc_available_puzzles(
-    year: t.Optional[int] = None, seconds: t.Optional[float] = None
-) -> t.Union[dict[int, list[int]], list[int]]:
-    """
-    Returns a dict of available puzzles by year or the list of available puzzles for the given year.
-    """
+# ---------
 
-    if year is not None:
-        years = aoc_available_puzzles(seconds=seconds)
-        return years.get(year, [])
+
+@lru_cache(maxsize=None)
+def aoc_available_puzzles_dict(seconds: float | None = None) -> dict[int, list[int]]:
+    """
+    Returns a dict of available puzzles by year.
+    """
 
     now = time.gmtime(seconds)
 
@@ -68,26 +65,61 @@ def aoc_available_puzzles(
             last_day = now.tm_mday - 1 if now.tm_hour < 5 else now.tm_mday
         else:
             last_day = 25
-        last_day = min(last_day, 25 if year <= 2024 else 12)
+        last_day = min(last_day, aoc_puzzles_by_year(year))
 
         puzzles[year] = list(range(1, last_day + 1))
 
     return puzzles
 
 
+def aoc_puzzles_by_year(year: int) -> int:
+    """
+    Returns the maximum number of puzzles for the given year.
+    """
+    if 2015 <= year <= 2024:
+        return 25
+    if year >= 2025:
+        return 12
+    return 0
+
+
 def aoc_nb_answers(year: int, day: int) -> int:
-    if year < 2025:
-        if day == 25:
-            return 1
-        if 1 <= day <= 24:
-            return 2
-        return 0
+    """
+    Returns the number of answers.
+    """
+    if 1 <= day < aoc_puzzles_by_year(year):
+        return 2
+    elif day == aoc_puzzles_by_year(year):
+        return 1
     else:
-        if day == 12:
-            return 1
-        if 1 <= day <= 11:
-            return 2
         return 0
+
+
+def aoc_available_years():
+    """
+    Generator over all available years.
+    """
+    for year in aoc_available_puzzles_dict():
+        yield year
+
+
+def aoc_available_days(year: int):
+    """
+    Generator over all available days for the given year.
+    """
+    for year in aoc_available_puzzles_dict().get(year, []):
+        yield year
+
+
+def aoc_available_puzzles(filter_year: int = 0):
+    for year, days in aoc_available_puzzles_dict().items():
+        if filter_year is not None and filter_year != 0 and filter_year != year:
+            continue
+        for day in days:
+            yield year, day
+
+
+# ---------
 
 
 class Env:
@@ -535,48 +567,44 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
             )
             disable_language("rust")
 
-    for year in aoc_available_puzzles():
-        if filter_year != 0 and year != filter_year:
-            continue
+    for year, day in aoc_available_puzzles(filter_year):
+        src = Path(f"src/year{year}/day{day}/day{day}")
 
-        for day in range(1, 26):
-            src = Path(f"src/year{year}/day{day}/day{day}")
+        if is_available("c"):
+            src = src.with_suffix(".c")
+            if src.is_file():
+                print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                make(year, src, f"day{day}_c", "C", disable_language)
 
-            if is_available("c"):
-                src = src.with_suffix(".c")
-                if src.is_file():
-                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_c", "C", disable_language)
+        if is_available("c++"):
+            src = src.with_suffix(".cpp")
+            if src.is_file():
+                print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                make(year, src, f"day{day}_cpp", "C++", disable_language)
 
-            if is_available("c++"):
-                src = src.with_suffix(".cpp")
-                if src.is_file():
-                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_cpp", "C++", disable_language)
+        if is_available("java"):
+            src = src.with_suffix(".java")
+            if src.is_file():
+                print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                make(year, src, f"day{day}.class", "Java", disable_language)
 
-            if is_available("java"):
-                src = src.with_suffix(".java")
-                if src.is_file():
-                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}.class", "Java", disable_language)
+        if is_available("go"):
+            src = src.with_suffix(".go")
+            if src.is_file():
+                print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                make(year, src, f"day{day}_go", "Go", disable_language)
 
-            if is_available("go"):
-                src = src.with_suffix(".go")
-                if src.is_file():
-                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_go", "Go", disable_language)
+        if is_available("c#"):
+            src = src.with_suffix(".cs")
+            if src.is_file():
+                print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                make(year, src, f"day{day}_cs.exe", "C#", disable_language)
 
-            if is_available("c#"):
-                src = src.with_suffix(".cs")
-                if src.is_file():
-                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_cs.exe", "C#", disable_language)
-
-            if is_available("swift"):
-                src = src.with_suffix(".swift")
-                if src.is_file():
-                    print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
-                    make(year, src, f"day{day}_swift", "Swift", disable_language)
+        if is_available("swift"):
+            src = src.with_suffix(".swift")
+            if src.is_file():
+                print_log(f"{FEINT}{ITALIC}compile {src}{RESET}", end=TRANSIENT)
+                make(year, src, f"day{day}_swift", "Swift", disable_language)
 
 
 def load_data(filter_year, filter_user, filter_yearday, with_answers):
@@ -1109,26 +1137,22 @@ def get_task_list(filter_year: int, filter_day: set[int], inputs: dict, alt: boo
     """
     TODO.
     """
-    for year in aoc_available_puzzles():
-        if filter_year != 0 and year != filter_year:
+    for year, day in aoc_available_puzzles(filter_year):
+        if filter_day and day not in filter_day:
             continue
 
-        for day in aoc_available_puzzles(year):
-            if filter_day and day not in filter_day:
-                continue
+        if (year, day) not in inputs:
+            continue
 
-            if (year, day) not in inputs:
-                continue
+        day_solutions = list(Path(f"src/year{year}").glob(f"day{day}"))
 
-            day_solutions = list(Path(f"src/year{year}").glob(f"day{day}"))
+        if alt:
+            day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
 
-            if alt:
-                day_solutions += Path(f"src/year{year}").glob(f"day{day}_*")
+        for mday in day_solutions:
+            mday = mday.name.removeprefix("day")
 
-            for mday in day_solutions:
-                mday = mday.name.removeprefix("day")
-
-                yield (year, day, mday)
+            yield (year, day, mday)
 
 
 def run_task(year, day, mday: str, inputs, answers, languages, problems, args, terminal_columns, stats_elapsed):
