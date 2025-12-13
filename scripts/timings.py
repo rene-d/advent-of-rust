@@ -165,15 +165,21 @@ class Timings:
     """Manages and analyzes execution timing statistics for Advent of Code solutions."""
 
     def __init__(self, db: sqlite3.Connection):
+        self.db = db
+        self._last_load = 0
+        self.load()
+
+    def load(self):
+        self._last_load += 1  # to refresh the lru_cache
         self.year_begin = min(aoc_available_years())
         self.year_end = max(aoc_available_years())
 
         self.user_inputs = defaultdict(set)
-        for user, _year, _day, crc in db.execute("select user,year,day,crc from inputs"):
+        for user, _year, _day, crc in self.db.execute("select user,year,day,crc from inputs"):
             self.user_inputs[crc].add(user)
 
         self.solutions = defaultdict(lambda: defaultdict(dict))
-        for year, day, crc, prog, lang, elapsed, status in db.execute(
+        for year, day, crc, prog, lang, elapsed, status in self.db.execute(
             "select year,day,crc,prog,lang,elapsed,status from solutions"
         ):
             # if answers are ok and not an alternative solution
@@ -190,7 +196,7 @@ class Timings:
         return set(lang for sol in self.solutions.values() for lang in sol)
 
     @lru_cache(maxsize=None)
-    def get_stats(self, user: str, lang: str, tablefmt: str) -> Stats:
+    def get_stats(self, user: str, lang: str, tablefmt: str, _last_load: int) -> Stats:
         """
         Compute and return execution timing statistics for a given user and language.
 
@@ -247,7 +253,7 @@ class Timings:
 
     def print_stats(self, user: str, lang: str, tablefmt: str = "rounded_outline"):
         """Print timing statistics in a formatted table with performance breakdown."""
-        stats = self.get_stats(user, lang, tablefmt)
+        stats = self.get_stats(user, lang, tablefmt, self._last_load)
 
         print(tabulate.tabulate(stats.data, stats.headers, tablefmt, floatfmt=".3f"))
 
@@ -334,11 +340,11 @@ def main():
             languages = (
                 "Rust",
                 "Python",
-                "Py3.10",
+                # "Py3.10",
                 "Py3.11",
-                "Py3.12",
-                "Py3.13",
-                "Py3.13t",
+                # "Py3.12",
+                # "Py3.13",
+                # "Py3.13t",
                 "Py3.14",
                 "Py3.14t",
                 "Go",
@@ -377,6 +383,10 @@ def main():
                         elif e == "KEY_DOWN":
                             if current_language < len(languages) - 1:
                                 current_language = (current_language + 1) % len(languages)
+
+                        elif e in ("r", "R", " "):
+                            print("reload")
+                            timings.load()
                         else:
                             print(f"unknown event: {repr(e)}")
                             continue
