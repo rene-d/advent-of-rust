@@ -48,6 +48,11 @@ FILES=($(git diff --cached --name-only --diff-filter=ACMR))
 rundir=$PWD
 
 for file in ${FILES[*]} ; do
+
+	if [[ $file =~ vendor/.* ]] ; then
+		continue
+	fi
+
 	# Python
 	if [[ $file =~ .+\.py ]] || [[ $file =~ .+\.ipynb ]]; then
 		isort -l120 --profile black $file
