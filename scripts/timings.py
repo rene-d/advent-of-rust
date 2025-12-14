@@ -125,8 +125,8 @@ def aoc_available_days(year: int):
     """
     Generator over all available days for the given year.
     """
-    for year in aoc_available_puzzles_dict().get(year, []):
-        yield year
+    for day in aoc_available_puzzles_dict().get(year, []):
+        yield day
 
 
 def aoc_available_puzzles(filter_year: int = 0):
@@ -164,9 +164,10 @@ class Stats:
 class Timings:
     """Manages and analyzes execution timing statistics for Advent of Code solutions."""
 
-    def __init__(self, db: sqlite3.Connection):
+    def __init__(self, db: sqlite3.Connection, unverified: bool):
         self.db = db
         self._last_load = 0
+        self.filter_status = ("ok", "unknown") if unverified else ("ok",)
         self.load()
 
     def load(self):
@@ -183,7 +184,7 @@ class Timings:
             "select year,day,crc,prog,lang,elapsed,status from solutions"
         ):
             # if answers are ok and not an alternative solution
-            if status == "ok" and "_" not in prog:
+            if status in self.filter_status and ("_" not in prog or Path(prog).suffix == ""):
                 elapsed /= 1_000_000_000
 
                 # manage multiple solutions in different dayXX_xxx directories
@@ -292,6 +293,7 @@ def main():
     """Main entry point for the timings script. Parses command-line arguments and displays timing statistics."""
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--user", help="User ID")
+    parser.add_argument("-a", "--all", action="store_true", help="Show unverified solutions too")
     parser.add_argument("-l", "--lang", default="Rust", help="Language")
     parser.add_argument("-b", "--browse", action="store_true", help="Browse all users/languages")
     args = parser.parse_args()
@@ -306,7 +308,7 @@ def main():
 
     db = sqlite3.connect(cache_file)
 
-    timings = Timings(db)
+    timings = Timings(db, args.all)
 
     if not args.user:
         row = db.execute("select user from inputs order by user limit 1").fetchone()
@@ -348,6 +350,7 @@ def main():
                 "Py3.14",
                 "Py3.14t",
                 "Go",
+                "C",
             )
 
             available_languages = timings.get_languages()

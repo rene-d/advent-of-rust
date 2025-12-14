@@ -38,7 +38,7 @@ function inst_py()
         inst_bin /usr/bin/python3
     elif [[ $version == default ]] || [[ $version == env ]] ; then
         inst_bin python3
-    elif [[ ! $version =~ 3\..* ]] ; then
+    elif [[ ! $version =~ 3\..* ]] || [[ -f $version ]] ; then
         inst_bin $version
     else
         local venv=${AOC_TARGET_DIR:-target}/venv/py$version

@@ -91,8 +91,8 @@ def aoc_available_days(year: int):
     """
     Generator over all available days for the given year.
     """
-    for year in aoc_available_puzzles_dict().get(year, []):
-        yield year
+    for day in aoc_available_puzzles_dict().get(year, []):
+        yield day
 
 
 def aoc_available_puzzles(filter_year: int = 0):

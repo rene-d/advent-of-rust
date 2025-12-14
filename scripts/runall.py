@@ -95,7 +95,7 @@ def aoc_nb_answers(year: int, day: int) -> int:
         return 0
 
 
-def aoc_available_years():
+def aoc_available_years() -> t.Generator[int]:
     """
     Generator over all available years.
     """
@@ -103,15 +103,15 @@ def aoc_available_years():
         yield year
 
 
-def aoc_available_days(year: int):
+def aoc_available_days(year: int) -> t.Generator[int]:
     """
     Generator over all available days for the given year.
     """
-    for year in aoc_available_puzzles_dict().get(year, []):
-        yield year
+    for day in aoc_available_puzzles_dict().get(year, []):
+        yield day
 
 
-def aoc_available_puzzles(filter_year: int = 0):
+def aoc_available_puzzles(filter_year: int = 0) -> t.Generator[tuple[int, int]]:
     for year, days in aoc_available_puzzles_dict().items():
         if filter_year is not None and filter_year != 0 and filter_year != year:
             continue
@@ -276,7 +276,14 @@ def get_language_version(puzzle_lang: str) -> str:
 def print_log(line: str = None, end: str = None):
     if Env.AOC_VERBOSE:
         if line:
-            line = line.replace(CLEAR_EOL, "").replace(CR, "")
+            line = (
+                line.replace(CLEAR_EOL, "")
+                .replace(CR, "")
+                .replace(RESET, "")
+                .replace(ITALIC, "")
+                .replace(FEINT, "")
+                .replace(TRANSIENT, "")
+            )
             logging.debug(line)
     else:
         print(line, end=end)
@@ -536,7 +543,7 @@ def make(year: int, source: Path, dest: Path, language: str, disable_language: t
             disable_language(language)
 
 
-def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
+def build_all(filter_yearday: set[tuple[int, int]], filter_lang: t.Iterable[str], languages: dict):
     def disable_language(lang: str):
         for k in languages:
             if k.casefold() == lang.casefold():
@@ -567,7 +574,11 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
             )
             disable_language("rust")
 
-    for year, day in aoc_available_puzzles(filter_year):
+    puzzles = set(aoc_available_puzzles())
+    if filter_yearday:
+        puzzles.intersection_update(filter_yearday)
+
+    for year, day in puzzles:
         src = Path(f"src/year{year}/day{day}/day{day}")
 
         if is_available("c"):
@@ -607,9 +618,13 @@ def build_all(filter_year: int, filter_lang: t.Iterable[str], languages: dict):
                 make(year, src, f"day{day}_swift", "Swift", disable_language)
 
 
-def load_data(filter_year, filter_user, filter_yearday, with_answers):
+def load_data(filter_yearday: set[tuple[int, int]], filter_user: str, exclude: list[str], with_answers: bool):
     inputs = defaultdict(dict)
     answers = defaultdict(dict)
+
+    puzzles = set(aoc_available_puzzles())
+    if filter_yearday:
+        puzzles.intersection_update(filter_yearday)
 
     all_inputs = list(sorted(Path("data").rglob("*.in")))
 
@@ -639,10 +654,10 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
         year = int(input.parent.name)
         day = int(input.stem)
 
-        if filter_year != 0 and year != filter_year:
+        if (year, day) not in puzzles:
             continue
 
-        if filter_yearday and f"{year}:{day}" in filter_yearday:
+        if exclude and f"{year}:{day}" in exclude:
             continue
 
         answer = input.with_suffix(".ok")
@@ -666,7 +681,37 @@ def load_data(filter_year, filter_user, filter_yearday, with_answers):
             inputs[year, day][crc] = input
             answers[year, day][crc] = answer
 
+    # sanitization -> not a good idea 😬
+    # all_crc = set(w for v in inputs.values() for w in v.keys())
+    # db = get_cache()["db"]
+    # for row in db.execute("select crc,user,year,day from inputs"):
+    #     if row[0] not in all_crc:
+    #         print(dict(row))
+    #         db.execute("delete from inputs where crc=?", (row[0],))
+    # db.execute("delete from solutions where crc not in (select crc from inputs)")
+    # db.execute("select crc from solutions group by crc having count(distinct status) > 1")
+    # db.commit()
+
     return inputs, answers
+
+
+def parse_duration_ns(s: str) -> int:
+    """
+    Parse a string and returns the duration in nanoseconds.
+    """
+    if s.endswith("ns"):
+        elapsed = round(float(s.removesuffix("ns")))
+    elif s.endswith("µs"):
+        elapsed = round(1000 * float(s.removesuffix("µs")))
+    elif s.endswith("ms"):
+        elapsed = round(10**6 * float(s.removesuffix("ms")))
+    elif s.endswith("s"):
+        elapsed = round(10**9 * float(s.removesuffix("s")))
+    else:
+        logging.fatal("unknown time suffix: %s", s)
+        exit()
+
+    return elapsed
 
 
 def run(
@@ -723,7 +768,7 @@ def run(
     cmdline = cmdline.replace(Path.home().as_posix(), "~")
 
     if quiet == 0 or Env.AOC_VERBOSE:
-        print_log(f"{FEINT}{cmdline}{RESET}", end=TRANSIENT)
+        print_log(f"run: {FEINT}{cmdline}{RESET}", end=TRANSIENT)
 
     elapsed_measurement = "process"
     start = time.time_ns()
@@ -742,17 +787,7 @@ def run(
                 if answers[i].startswith("elapsed:"):
                     elapsed2 = answers.pop(i).removeprefix("elapsed:")
 
-                    if elapsed2.endswith("ns"):
-                        elapsed = round(float(elapsed2.removesuffix("ns")))
-                    elif elapsed2.endswith("µs"):
-                        elapsed = round(1000 * float(elapsed2.removesuffix("µs")))
-                    elif elapsed2.endswith("ms"):
-                        elapsed = round(10**6 * float(elapsed2.removesuffix("ms")))
-                    elif elapsed2.endswith("s"):
-                        elapsed = round(10**9 * float(elapsed2.removesuffix("s")))
-                    else:
-                        logging.fatal("unknown time suffix %s %s", elapsed, elapsed2)
-                        exit()
+                    elapsed = parse_duration_ns(elapsed2)
 
                     elapsed_measurement = "internal"
 
@@ -810,7 +845,7 @@ def run_day(
         input_name = file.parent.parent.name
         input_name = input_name.removeprefix("tmp-")[:16]
         input_name = input_name.removeprefix("ok-")[:17]
-        input_name = input_name.removeprefix("other-")[:14]
+        input_name = input_name.removeprefix("unknown-")[:14]
 
         prefix = f"[{year}-{day:02d}{day_suffix}] {input_name[:name_max_len]:<{name_max_len}}"
 
@@ -1003,7 +1038,7 @@ def get_languages(filter_lang: t.Iterable[str]) -> t.Dict[str, t.Tuple[str, t.Un
     return languages
 
 
-def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
+def consistency(filter_yearday: set[tuple[int, int]], filter_lang: set[str]):
     try:
         import numpy as np
         import tabulate
@@ -1034,11 +1069,8 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
     elapsed_times = defaultdict(list)
     cursor = db.execute("select year,day,crc,prog,lang,elapsed from solutions where status!='error'")
     for year, day, crc, prog, lang, elapsed in cursor:
-        if filter_year:
-            if filter_year != int(year):
-                continue
-            if filter_day and int(day) not in filter_day:
-                continue
+        if filter_yearday and (int(year), int(day)) not in filter_yearday:
+            continue
         if filter_lang and lang not in filter_lang:
             continue
         if "_" in Path(prog).stem:
@@ -1133,14 +1165,16 @@ def consistency(filter_year: int, filter_day: set[int], filter_lang: set[str]):
         resolve_script.chmod(0o755)
 
 
-def get_task_list(filter_year: int, filter_day: set[int], inputs: dict, alt: bool):
+def get_task_list(filter_yearday: set[tuple[int, int]], inputs: dict, alt: bool):
     """
     TODO.
     """
-    for year, day in aoc_available_puzzles(filter_year):
-        if filter_day and day not in filter_day:
-            continue
 
+    puzzles = set(aoc_available_puzzles())
+    if filter_yearday:
+        puzzles.intersection_update(filter_yearday)
+
+    for year, day in sorted(puzzles):
         if (year, day) not in inputs:
             continue
 
@@ -1155,7 +1189,19 @@ def get_task_list(filter_year: int, filter_day: set[int], inputs: dict, alt: boo
             yield (year, day, mday)
 
 
-def run_task(year, day, mday: str, inputs, answers, languages, problems, args, terminal_columns, stats_elapsed):
+def run_task(
+    year: int,
+    day: int,
+    mday: str,
+    inputs,
+    answers,
+    languages,
+    problems,
+    args: argparse.Namespace,
+    terminal_columns,
+    stats_elapsed,
+    significant_gain_ns: int,
+):
     """
     TODO.
     """
@@ -1165,6 +1211,10 @@ def run_task(year, day, mday: str, inputs, answers, languages, problems, args, t
     for loop in itertools.count(start=1):
         if args.loop < 0:
             print(f"(loop {loop})")
+
+        # hard limit of number of loops
+        if args.max_loops > 0 and loop > args.max_loops:
+            break
 
         elapsed, nb_samples, improved_count, improved_gain = run_day(
             year,
@@ -1215,11 +1265,9 @@ def run_task(year, day, mday: str, inputs, answers, languages, problems, args, t
                 f"{elapsed_overall:10.6f} s" if elapsed_overall <= 0.002 else f"{elapsed_overall:7.3f} s   "
             )
 
-            SIGNIFICANT_GAIN = 10_000  # 10 µs
-
             if improved_gain == 0:
                 gain_str = ""
-            elif improved_gain < SIGNIFICANT_GAIN:
+            elif improved_gain < significant_gain_ns:
                 gain_str = f"(insignificant gain {improved_gain / 1e3:g} µs)"
             else:
                 gain_str = f"(gain: {improved_gain / 1e9:10.6f} s)"
@@ -1236,7 +1284,7 @@ def run_task(year, day, mday: str, inputs, answers, languages, problems, args, t
                         f"{RESET}"
                     )
 
-            elif abs(improved_gain) < SIGNIFICANT_GAIN:
+            elif abs(improved_gain) < significant_gain_ns:
                 # gain less than 1 µs
                 without_improvement_count += 1
                 if args.quiet < 2:
@@ -1264,30 +1312,104 @@ def run_task(year, day, mday: str, inputs, answers, languages, problems, args, t
                 break
 
 
-def set_auto_filter(args):
-    if len(args.n) != 0:
-        return
+def set_auto_filter(args) -> set[tuple[int, int]]:
+    filter_yearday = set()
 
-    cwd = Path.cwd()
+    # if no filter on the command line, try to set an automatic one
+    if len(args.n) == 0:
+        cwd = Path.cwd()
 
-    if len(cwd.parts) >= 2 and cwd.parts[-2] == "src":
-        year = cwd.parts[-1]
-        if year.startswith("year") and year[4:].isdigit():
-            args.n.append(int(year[4:]))
+        if len(cwd.parts) >= 2 and cwd.parts[-2] == "src":
+            year = cwd.parts[-1]
+            if year.startswith("year") and year[4:].isdigit():
+                # args_n.append(int(year[4:]))
 
-    elif len(cwd.parts) >= 3 and cwd.parts[-3] == "src":
-        year = cwd.parts[-2]
-        day = cwd.parts[-1]
+                year_i = int(year[4:])
+                filter_yearday.update((year_i, day) for day in aoc_available_puzzles(year_i))
 
-        if year.startswith("year") and year[4:].isdigit() and day.startswith("day"):
-            day_alt = day[3:].split("_", maxsplit=1)
+        elif len(cwd.parts) >= 3 and cwd.parts[-3] == "src":
+            year = cwd.parts[-2]
+            day = cwd.parts[-1]
 
-            if day_alt[0].isdigit():
-                args.n.append(int(year[4:]))
-                args.n.append(int(day_alt[0]))
+            if year.startswith("year") and year[4:].isdigit() and day.startswith("day"):
+                day_alt = day[3:].split("_", maxsplit=1)
 
-                if len(day_alt) == 2:
-                    args.alt = True
+                if day_alt[0].isdigit():
+                    year_i = int(year[4:])
+                    day_i = int(day_alt[0])
+                    filter_yearday.add((year_i, day_i))
+
+                    if len(day_alt) == 2:
+                        args.alt = True
+
+    else:
+        # parse arguments with this grammar:
+        #   [ year [ day | range ]* ]*
+        i = 0
+        while i < len(args.n):
+            s = args.n[i]
+            i += 1
+
+            if s == "y":
+                s = max(aoc_available_years())
+            elif not s.isdigit():
+                logging.error(f"bad year in filter: {s}")
+                exit(1)
+
+            year_i = int(s)
+            current_i = i
+
+            while i < len(args.n):
+                s = args.n[i]
+                if s == "y" or s.isdigit() and int(s) >= 2015:
+                    # we encounter a year: skip day analysis
+                    break
+                i += 1
+
+                if s.isdigit():
+                    if int(s) not in aoc_available_days(year_i):
+                        logging.error(f"bad day in filter: {s}")
+                        exit(1)
+                    filter_yearday.add((year_i, int(s)))
+                    continue
+
+                m = re.match(r"^\-(\d+)$", s)
+                if m:
+                    f = set((year_i, day) for day in range(1, 1 + int(m[1])))
+                    if len(f) == 0:
+                        logging.error(f"bad day in filter: {s}")
+                        exit(1)
+                    filter_yearday.update(f)
+                    continue
+
+                m = re.match(r"^(\d+)\-$", s)
+                if m:
+                    f = set((year_i, day) for day in range(int(m[1]), 1 + max(aoc_available_days(year_i))))
+                    if len(f) == 0:
+                        logging.error(f"bad day in filter: {s}")
+                        exit(1)
+                    filter_yearday.update(f)
+                    continue
+
+                m = re.match(r"^(\d+)\-(\d+)$", s)
+                if m:
+                    f = set((year_i, day) for day in range(int(m[1]), 1 + int(m[2])))
+                    if len(f) == 0:
+                        logging.error(f"bad day in filter: {s}")
+                        exit(1)
+                    filter_yearday.update(f)
+                    continue
+
+                logging.error(f"bad day in filter: {s}")
+                exit(1)
+
+            if current_i == i:
+                # no day has been added: add all days of the year
+                filter_yearday.update(aoc_available_puzzles(year_i))
+
+    logging.debug(f"filter {sorted(filter_yearday)}")
+
+    return filter_yearday
 
 
 def main():
@@ -1316,13 +1438,13 @@ def main():
     parser.add_argument("--prune", action="store_true", help="Prune timings BEFORE run")
     parser.add_argument("-w", "--wait", type=float, help="Wait seconds between each solution")
     parser.add_argument("-s", "--shuffle", action="store_true", help="Shuffle before running solutions")
-    parser.add_argument(
-        "-L", "--loop", type=int, default=0, help="Repeat (positive: loops without improvement, negative: loops)"
-    )
+    parser.add_argument("-L", "--loop", type=int, default=0, help="Repeat (+ ⇔ loops w/o improvement, - ⇔ loops)")
+    parser.add_argument("--min-gain", type=str, metavar="DURATION", help="Mininum improvement gain")
+    parser.add_argument("--max-loops", type=int, default=0, metavar="LOOPS", help="Maximum iterations")
 
     parser.add_argument("-C", "--comparison", action="store_true", help="Show languages commparison")
 
-    parser.add_argument("n", type=int, nargs="*", help="Filter by year or year/day")
+    parser.add_argument("n", type=str, nargs="*", help="Filter [year [day|range]*]*")
 
     args = parser.parse_args()
 
@@ -1361,17 +1483,18 @@ def main():
         if args.me:
             args.filter_user = "me"
 
+        significant_gain_ns = 10_000  # 10µs
+        if args.min_gain:
+            significant_gain_ns = parse_duration_ns(args.min_gain)
+
         problems = []
         stats_elapsed = dict()
 
-        # if in subdirectoy "src/year<year>/day<day>" set the filter
-        set_auto_filter(args)
+        # if filters in arguments, return them
+        # else if in subdirectoy "src/year<year>/day<day>" set the filter
+        filter_yearday = set_auto_filter(args)
 
         os.chdir(Path(__file__).parent.parent)
-
-        # prepare the filtering by date
-        filter_year = 0 if len(args.n) == 0 else int(args.n.pop(0))
-        filter_day = set(args.n)
 
         # prepare the filtering by language
         filter_lang = set(map(str.casefold, args.language or ()))
@@ -1379,7 +1502,7 @@ def main():
 
         # actions
         if args.consistency:
-            return consistency(filter_year, filter_day, filter_lang)
+            return consistency(filter_yearday, filter_lang)
 
         # set the exclude list
         args.exclude = args.exclude or []
@@ -1400,18 +1523,24 @@ def main():
 
         # build the solutions if needed
         if not args.no_build:
-            build_all(filter_year, filter_lang, languages)
+            build_all(filter_yearday, filter_lang, languages)
             print_log(end=f"{CR}{CLEAR_EOL}")
 
         # load inputs and answers
-        inputs, answers = load_data(filter_year, args.filter_user, args.exclude, args.verified)
+        inputs, answers = load_data(filter_yearday, args.filter_user, args.exclude, args.verified)
+
+        logging.debug("puzzles with inputs: %d", len(inputs.keys()))
+        logging.debug("puzzles with answers: %d", len(answers.keys()))
+        logging.debug("inputs: %d", sum(len(v) for v in inputs.values()))
+        logging.debug("answers: %d", sum(p is not None for v in answers.values() for p in v.values()))
 
         for script in Path(Env.AOC_TARGET_DIR).glob("resolve_*.sh"):
             script.unlink()
 
         # build the list of solutions to run
-        tasks = list(get_task_list(filter_year, filter_day, inputs, args.alt))
+        tasks = list(get_task_list(filter_yearday, inputs, args.alt))
 
+        logging.debug("tasks: %d", len(tasks))
         if len(tasks) == 0:
             exit()
 
@@ -1438,7 +1567,19 @@ def main():
                     print(line[: terminal_columns - 1])
                     shown_in_year = 0
 
-            run_task(year, day, mday, inputs, answers, languages, problems, args, terminal_columns, stats_elapsed)
+            run_task(
+                year,
+                day,
+                mday,
+                inputs,
+                answers,
+                languages,
+                problems,
+                args,
+                terminal_columns,
+                stats_elapsed,
+                significant_gain_ns,
+            )
 
             shown_in_year += 1
             prev_shown_year = year
