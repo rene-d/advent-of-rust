@@ -149,6 +149,24 @@ create_rust()
 {
     has_feature rust || return 0
 
+    if [ ! -f Cargo.toml ]; then
+        cat <<EOF >Cargo.toml
+[package]
+name = "day$day"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aoc = { path = "../../../crates/aoc" }
+rustc-hash = "*"
+itertools = "*"
+
+[[bin]]
+name = "day$day"
+path = "day$day.rs"
+EOF
+    fi
+
     if [ -f day$day.rs ]; then
         printf "\033[31mRust program already exists.\033[0m\n"
         return
@@ -224,23 +242,6 @@ EOF
 
     printf "\033[32mRust program template created.\033[0m\n"
 
-    if [ ! -f Cargo.toml ]; then
-        cat <<EOF >Cargo.toml
-[package]
-name = "day$day"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-aoc = { path = "../../../crates/aoc" }
-rustc-hash = "*"
-itertools = "*"
-
-[[bin]]
-name = "day$day"
-path = "day$day.rs"
-EOF
-    fi
 }
 
 

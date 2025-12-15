@@ -51,13 +51,13 @@ pub fn solve(data: &str) -> (usize, usize) {
 
     let mut default_pixel = PIXEL_OFF; // default is off
 
-    display(&grid);
+    //display(&grid);
 
     let mut part1 = 0;
 
     for step in 1..=50 {
         default_pixel = enhance(&mut grid, &decoder, default_pixel);
-        display(&grid);
+        // display(&grid);
 
         if step == 2 {
             part1 = count_lit(&grid);
@@ -67,36 +67,36 @@ pub fn solve(data: &str) -> (usize, usize) {
     (part1, count_lit(&grid))
 }
 
-fn display(grid: &Grid) {
-    let extense = range(grid);
+// fn display(grid: &Grid) {
+//     let extense = range(grid);
 
-    if grid.len() > 10 {
-        return;
-    }
+//     if grid.len() > 10 {
+//         return;
+//     }
 
-    println!(
-        "{} x {}  - {:?}  ",
-        extense.2 - extense.0 + 1,
-        extense.3 - extense.1 + 1,
-        extense
-    );
-    println!("lit pixels: {}", count_lit(grid));
+//     println!(
+//         "{} x {}  - {:?}  ",
+//         extense.2 - extense.0 + 1,
+//         extense.3 - extense.1 + 1,
+//         extense
+//     );
+//     println!("lit pixels: {}", count_lit(grid));
 
-    for line in grid.iter().take(extense.3 + 1).skip(extense.1) {
-        for val in line.iter().take(extense.2 + 1).skip(extense.0) {
-            print!(
-                "{}",
-                match *val {
-                    PIXEL_OFF => '.',
-                    PIXEL_ON => '#',
-                    _ => panic!("unknown pixel"),
-                }
-            );
-        }
-        println!();
-    }
-    println!();
-}
+//     for line in grid.iter().take(extense.3 + 1).skip(extense.1) {
+//         for val in line.iter().take(extense.2 + 1).skip(extense.0) {
+//             print!(
+//                 "{}",
+//                 match *val {
+//                     PIXEL_OFF => '.',
+//                     PIXEL_ON => '#',
+//                     _ => panic!("unknown pixel"),
+//                 }
+//             );
+//         }
+//         println!();
+//     }
+//     println!();
+// }
 
 fn count_lit(grid: &Grid) -> usize {
     let mut lit = 0;

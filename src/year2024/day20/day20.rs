@@ -2,6 +2,7 @@
 
 use rustc_hash::FxHashMap;
 use std::collections::BinaryHeap;
+use rayon::prelude::*;
 
 use aoc::Coord;
 
@@ -80,30 +81,33 @@ impl Puzzle {
     }
 
     fn solve(&self, max_cheats: i32, min_gain: i32) -> u32 {
-        let mut nb = 0;
-
         // to count the cheats, we wiil iterate over all track positions that are
         // at a Manhattan distance less than the asked one (2 or 20 depending on the part)
 
-        for cheat_start in &self.track {
-            for &cheat_end in &self.track {
-                let cheat_dist = cheat_start.manhattan_distance(cheat_end);
+        self.track
+            .par_iter()
+            .map(|cheat_start| {
+                let mut nb = 0;
+                for &cheat_end in &self.track {
+                    let cheat_dist = cheat_start.manhattan_distance(cheat_end);
 
-                if cheat_dist <= max_cheats {
-                    // so the distance (or the time in picoseconds) is the sum of the distance
-                    // from the start to the cheat start, the cheat length and the distance from
-                    // the cheat end to the end of the track
+                    if cheat_dist <= max_cheats {
+                        // so the distance (or the time in picoseconds) is the sum of the distance
+                        // from the start to the cheat start, the cheat length and the distance from
+                        // the cheat end to the end of the track
 
-                    let time = self.from_start[cheat_start] + cheat_dist + self.to_end[&cheat_end];
+                        let time =
+                            self.from_start[cheat_start] + cheat_dist + self.to_end[&cheat_end];
 
-                    // if the gain is sufficient, we count it
-                    if time + min_gain <= self.boring {
-                        nb += 1;
+                        // if the gain is sufficient, we count it
+                        if time + min_gain <= self.boring {
+                            nb += 1;
+                        }
                     }
                 }
-            }
-        }
-        nb
+                nb
+            })
+            .sum()
     }
 
     /// Solve part one.

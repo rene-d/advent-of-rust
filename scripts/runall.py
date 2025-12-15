@@ -286,7 +286,10 @@ def print_log(line: str = None, end: str = None):
             )
             logging.debug(line)
     else:
-        print(line, end=end)
+        if line is None:
+            print(end=end)
+        else:
+            print(line, end=end)
 
 
 class CacheKey:

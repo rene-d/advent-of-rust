@@ -8,6 +8,8 @@ fn score(recipes: &str) -> String {
 
     let mut scores = [3u8, 7u8].to_vec();
 
+    scores.reserve(iterations + 10);
+
     for _ in 0.. {
         let n = scores[elf_one] + scores[elf_two];
 
@@ -59,6 +61,8 @@ fn appear(recipes: &str) -> usize {
 
     let mut scores = [3u8, 7u8].to_vec();
 
+    scores.reserve(32_000_000);
+
     for _ in 0.. {
         let n = scores[elf_one] + scores[elf_two];
 
@@ -69,10 +73,11 @@ fn appear(recipes: &str) -> usize {
             scores.push(n);
         }
 
-        elf_one = (elf_one + 1 + (scores[elf_one] as usize)) % scores.len();
-        elf_two = (elf_two + 1 + (scores[elf_two] as usize)) % scores.len();
-
         let length = scores.len();
+
+        elf_one = (elf_one + 1 + (scores[elf_one] as usize)) % length;
+        elf_two = (elf_two + 1 + (scores[elf_two] as usize)) % length;
+
         if length >= width && scores[(length - width)..] == score[..] {
             return length - width;
         }

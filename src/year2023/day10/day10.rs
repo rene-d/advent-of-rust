@@ -4,6 +4,7 @@ use geo::Contains;
 use geo::Polygon;
 use geo_types::{Coord, LineString};
 
+use rayon::prelude::*;
 use rustc_hash::FxHashSet;
 use std::collections::VecDeque;
 
@@ -115,15 +116,13 @@ impl Puzzle {
 
         let polygon = Polygon::new(line_string, vec![]);
 
-        let mut n = 0;
-        for (x, y) in iproduct!(0..self.sx, 0..self.sy) {
-            let p = Coord { x, y };
-            if polygon.contains(&p) {
-                n += 1;
-            }
-        }
-
-        n
+        iproduct!(0..self.sx, 0..self.sy)
+            .par_bridge()
+            .map(|(x, y)| {
+                let p = Coord { x, y };
+                u32::from(polygon.contains(&p))
+            })
+            .sum()
     }
 }
 
