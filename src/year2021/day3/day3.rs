@@ -7,91 +7,70 @@ pub fn main() {
 
 /// # Panics
 #[must_use]
-pub fn solve(data: &str) -> (i32, isize) {
-    let data: Vec<_> = data.lines().collect();
-    (part1(&data), part2(&data))
+pub fn solve(data: &str) -> (u32, u32) {
+    let (bit_length, numbers) = parse_data(data);
+    (part1(bit_length, &numbers), part2(bit_length, &numbers))
+}
+
+enum RatingType {
+    Dioxygen,
+    CarbonDioxide,
+}
+
+fn filter_rating(bit_length: usize, numbers: &[u32], rating_type: &RatingType) -> u32 {
+    let mut remaining = numbers.to_vec();
+
+    for i in (0..bit_length).rev() {
+        if remaining.len() == 1 {
+            break;
+        }
+
+        let bit: u32 = 1 << i;
+
+        let zeros = remaining.iter().filter(|&&num| (num & bit) == 0).count();
+        let ones = remaining.len() - zeros;
+
+        let keep_bit = match rating_type {
+            RatingType::Dioxygen => {
+                // keep most common bit, tie: 1
+                if ones >= zeros { bit } else { 0 }
+            }
+            RatingType::CarbonDioxide => {
+                // keep least common bit, tie: 0
+                if zeros <= ones { 0 } else { bit }
+            }
+        };
+
+        remaining.retain(|&num| (num & bit) == keep_bit);
+    }
+
+    remaining[0]
 }
 
 /// step 2
-fn part2(data: &[&str]) -> isize {
-    let nb_bits = data[0].len();
-    // println!("nb_bits: {}", nb_bits);
-
-    // oxygen generator rating
-    let mut dioxygen_rate = 0;
-    let mut dioxygen_start = String::new();
-
-    for bit in 0..nb_bits {
-        let mut one = 0;
-        let mut nb = 0;
-
-        for value in data {
-            if value.starts_with(&dioxygen_start) {
-                let c = value.chars().nth(bit).unwrap();
-                if c == '1' {
-                    one += 1;
-                    dioxygen_rate = isize::from_str_radix(value, 2).unwrap();
-                }
-                nb += 1;
-            }
-        }
-
-        if one >= nb - one {
-            dioxygen_start.push('1');
-        } else {
-            dioxygen_start.push('0');
-        }
-    }
-
-    // CO2 scrubber rating
-    let mut co2_rate = 0;
-    let mut co2_start = String::new();
-
-    for bit in 0..nb_bits {
-        let mut one = 0;
-        let mut nb = 0;
-
-        for value in data {
-            if value.starts_with(&co2_start) {
-                let c = value.chars().nth(bit).unwrap();
-                if c == '1' {
-                    one += 1;
-                } else {
-                    co2_rate = isize::from_str_radix(value, 2).unwrap();
-                }
-                nb += 1;
-            }
-        }
-
-        if one >= nb - one {
-            co2_start.push('0');
-        } else {
-            co2_start.push('1');
-        }
-    }
-    dioxygen_rate * co2_rate
+fn part2(bit_length: usize, numbers: &[u32]) -> u32 {
+    filter_rating(bit_length, numbers, &RatingType::Dioxygen)
+        * filter_rating(bit_length, numbers, &RatingType::CarbonDioxide)
 }
 
 /// step 1: compute `gamma_rate` * `espilon_rate`
-fn part1(data: &[&str]) -> i32 {
+fn part1(bit_length: usize, data: &[u32]) -> u32 {
     let mut gamma_rate = 0;
-    let mut freq_list: [i32; 12] = [0; 12];
+    let mut freq_list: [u32; 12] = [0; 12];
     let mut nb = 0;
 
-    let width = data.first().unwrap().len();
-    let mask = (1 << width) - 1;
+    let mask = (1 << bit_length) - 1;
 
-    for bits in data {
-        for (i, bit) in bits.chars().enumerate() {
-            assert!(i < width);
-            if bit == '1' {
-                freq_list[i] += 1_i32;
+    for num in data {
+        for i in 0..bit_length {
+            if num & (1 << i) != 0 {
+                freq_list[bit_length - i - 1] += 1;
             }
         }
         nb += 1;
     }
 
-    for freq in freq_list.iter().take(width) {
+    for freq in freq_list.iter().take(bit_length) {
         gamma_rate *= 2;
         if *freq >= nb / 2 {
             gamma_rate += 1;
@@ -103,6 +82,16 @@ fn part1(data: &[&str]) -> i32 {
     gamma_rate * espilon_rate
 }
 
+fn parse_data(data: &str) -> (usize, Vec<u32>) {
+    let bit_length = data.find('\n').unwrap();
+    let numbers = data
+        .lines()
+        .filter_map(|line| u32::from_str_radix(line, 2).ok())
+        .collect();
+
+    (bit_length, numbers)
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -111,18 +100,13 @@ mod test {
 
     #[test]
     fn test_part1() {
-        let data = load_data();
-        assert_eq!(part1(&data), 198);
+        let (bit_length, numbers) = parse_data(TEST_INPUT);
+        assert_eq!(part1(bit_length, &numbers), 198);
     }
 
     #[test]
     fn test_part2() {
-        let data = load_data();
-        assert_eq!(part2(&data), 230);
-    }
-
-    /// load data from file
-    fn load_data<'a>() -> Vec<&'a str> {
-        TEST_INPUT.lines().collect()
+        let (bit_length, numbers) = parse_data(TEST_INPUT);
+        assert_eq!(part2(bit_length, &numbers), 230);
     }
 }
