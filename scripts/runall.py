@@ -44,7 +44,7 @@ TRANSIENT = f"{CLEAR_EOL}{CR}"
 
 
 @lru_cache(maxsize=None)
-def aoc_available_puzzles_dict(seconds: float | None = None) -> dict[int, list[int]]:
+def aoc_available_puzzles_dict(seconds: t.Optional[float] = None) -> dict[int, list[int]]:
     """
     Returns a dict of available puzzles by year.
     """
@@ -95,7 +95,7 @@ def aoc_nb_answers(year: int, day: int) -> int:
         return 0
 
 
-def aoc_available_years() -> t.Generator[int]:
+def aoc_available_years() -> t.Iterator[int]:
     """
     Generator over all available years.
     """
@@ -103,7 +103,7 @@ def aoc_available_years() -> t.Generator[int]:
         yield year
 
 
-def aoc_available_days(year: int) -> t.Generator[int]:
+def aoc_available_days(year: int) -> t.Iterator[int]:
     """
     Generator over all available days for the given year.
     """
@@ -111,7 +111,7 @@ def aoc_available_days(year: int) -> t.Generator[int]:
         yield day
 
 
-def aoc_available_puzzles(filter_year: int = 0) -> t.Generator[tuple[int, int]]:
+def aoc_available_puzzles(filter_year: int = 0) -> t.Iterator[tuple[int, int]]:
     for year, days in aoc_available_puzzles_dict().items():
         if filter_year is not None and filter_year != 0 and filter_year != year:
             continue
