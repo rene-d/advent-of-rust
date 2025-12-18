@@ -1,6 +1,6 @@
 //! [Day 14: One-Time Pad](https://adventofcode.com/2016/day/14)
 
-use rustc_hash::FxHashMap;
+use rayon::prelude::*;
 
 /// Solve the day 14 puzzle.
 pub fn main() {
@@ -10,7 +10,7 @@ pub fn main() {
 
 /// # Panics
 #[must_use]
-pub fn solve(data: &str) -> (u32, u32) {
+pub fn solve(data: &str) -> (usize, usize) {
     (find_key(data, 0), find_key(data, 2016))
 }
 
@@ -18,159 +18,120 @@ const HEX_DIGITS: [u8; 16] = [
     b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'a', b'b', b'c', b'd', b'e', b'f',
 ];
 
-/// Triplet for a given index.
-#[derive(Debug, Clone, Copy)]
-struct TripletHash {
-    index: u32,          // index that produces hash with triplet
-    triplet: u8,         // the first triplet of the hash
-    quintuplet: [u8; 6], // six quintuplets max in 32 digits
+#[derive(Clone, Copy)]
+struct HashData {
+    triplet: Option<u8>, // 0-15 value
+    quintuplets: u16,    // bitmask
 }
 
-impl TripletHash {
-    /// Find the next index that produces a hash that contains a triplet
-    /// and search for eventual quintuplets. As quintuplets are also triplets,
-    /// we cannot miss them.
-    fn next(index: u32, salt: &[u8], key_stretching: u32) -> Self {
-        let mut index = index;
+fn compute_hash(salt: &[u8], index: usize, stretching: usize) -> HashData {
+    // Construct the input string: salt + index
+    // We avoid allocations where reasonable, though MD5 dominates cost.
+    let mut engine = md5::Context::new();
+    engine.consume(salt);
+    engine.consume(index.to_string());
+    let mut digest = engine.finalize();
 
-        let salt_len = salt.len();
-        let mut hash = [0u8; 32];
+    for _ in 0..stretching {
+        let mut hex = [0u8; 32];
+        for (i, b) in digest.0.iter().enumerate() {
+            hex[i * 2] = HEX_DIGITS[usize::from(b >> 4)];
+            hex[i * 2 + 1] = HEX_DIGITS[usize::from(b & 0xf)];
+        }
+        digest = md5::compute(hex);
+    }
 
-        hash[..salt_len].copy_from_slice(salt);
+    // Convert final digest to hex for analysis
+    let mut hex = [0u8; 32];
+    for (i, b) in digest.0.iter().enumerate() {
+        hex[i * 2] = HEX_DIGITS[usize::from(b >> 4)];
+        hex[i * 2 + 1] = HEX_DIGITS[usize::from(b & 0xf)];
+    }
 
-        loop {
-            // number of digits of index
-            let mut hash_len = salt_len;
-            let mut tmp_index = index;
-            loop {
-                hash_len += 1;
-                tmp_index /= 10;
-                if tmp_index == 0 {
-                    break;
-                }
-            }
-            // write digits of index in hash
-            let mut tmp_index = index;
-            let mut i = hash_len;
-            loop {
-                i -= 1;
-                hash[i] = (tmp_index % 10) as u8 + b'0';
-                tmp_index /= 10;
-                if tmp_index == 0 {
-                    break;
-                }
-            }
+    let mut triplet = None;
+    let mut quintuplets = 0;
 
-            let mut digest = md5::compute(&hash[..hash_len]);
+    // Scan for triplets and quintuplets
+    // We need the *first* triplet for the index validity check.
+    // We need *any* quintuplet for the verification check.
 
-            // apply key stretching
-            for _ in 0..key_stretching {
-                let mut hex = [0u8; 32];
-                for (i, b) in digest.0.iter().enumerate() {
-                    hex[i * 2] = HEX_DIGITS[usize::from(b >> 4)];
-                    hex[i * 2 + 1] = HEX_DIGITS[usize::from(b & 0xf)];
-                }
+    // Optimization: Single pass?
+    // We need to look at windows of 3 and 5.
 
-                digest = md5::compute(hex);
-            }
-
-            // get the 32 hexadecimal digits
-            let mut digits = [0_u8; 32];
-            for (i, b) in digest.iter().enumerate() {
-                digits[i * 2] = b >> 4;
-                digits[i * 2 + 1] = b & 0xf;
-            }
-
-            let mut triplet = u8::MAX;
-            let mut quintuplet = [u8::MAX; 6];
-            let mut q_count = 0;
-            let mut i = 0;
-
-            // look only for the first triplet
-            while i < 32 - 2 {
-                if digits[i] == digits[i + 1] && digits[i] == digits[i + 2] {
-                    triplet = digits[i];
-                    break;
-                }
-                i += 1;
-            }
-            if triplet == u8::MAX {
-                // no triplet found (and no quintuplet!)
-                // we can safely ignore this index
-                index += 1;
-                continue;
-            }
-
-            // now search for quintuplets
-            // we can start at the first triplet at position i
-            while i < 32 - 4 {
-                i += if digits[i] == digits[i + 1]
-                    && digits[i] == digits[i + 2]
-                    && digits[i] == digits[i + 3]
-                    && digits[i] == digits[i + 4]
-                {
-                    quintuplet[q_count] = digits[i];
-                    q_count += 1;
-                    5 // increment by 5 the search position
+    // Find first triplet
+    for i in 0..32 - 2 {
+        if hex[i] == hex[i + 1] && hex[i] == hex[i + 2] {
+            if triplet.is_none() {
+                let val = if hex[i] <= b'9' {
+                    hex[i] - b'0'
                 } else {
-                    1 // skip one digit
-                }
+                    hex[i] - b'a' + 10
+                };
+                triplet = Some(val);
             }
 
-            return Self {
-                index,
-                triplet,
-                quintuplet,
-            };
+            // Check for quintuplet starting at i
+            if i < 32 - 4 && hex[i] == hex[i + 3] && hex[i] == hex[i + 4] {
+                let val = if hex[i] <= b'9' {
+                    hex[i] - b'0'
+                } else {
+                    hex[i] - b'a' + 10
+                };
+                quintuplets |= 1 << val;
+            }
         }
     }
+
+    HashData { triplet, quintuplets }
 }
 
-/// Find the 64th key with the given salt and key stretching.
-fn find_key(data: &str, key_stretching: u32) -> u32 {
-    let salt = data.trim_ascii().as_bytes();
+fn find_key(data: &str, stretching: usize) -> usize {
+    let salt = data.trim().as_bytes();
+    let batch_size = 5000;
 
-    let mut memoize = FxHashMap::default();
+    let mut hashes: Vec<HashData> = Vec::new();
+    let mut search_idx = 0;
+    let mut keys_found = 0;
 
-    let mut hasher = |index| {
-        *memoize
-            .entry(index)
-            .or_insert_with(|| TripletHash::next(index, salt, key_stretching))
-    };
+    loop {
+        // Ensure we have enough hashes to check the next 1000 items
+        let needed_len = search_idx + 1000 + 1;
+        if hashes.len() < needed_len {
+            let start = hashes.len();
+            let end = start + batch_size;
 
-    let mut found = 0;
-    let mut index = 0;
+            // Generate next batch in parallel
+            let new_hashes: Vec<HashData> = (start..end)
+                .into_par_iter()
+                .map(|i| compute_hash(salt, i, stretching))
+                .collect();
 
-    'a: loop {
-        let h = hasher(index);
-
-        index = h.index;
-
-        let mut q_index = index;
-
-        loop {
-            let q = hasher(q_index + 1);
-
-            q_index = q.index;
-
-            if q_index - index > 1000 {
-                // no matching quintuplet found
-                break;
-            }
-
-            if q.quintuplet.contains(&h.triplet) {
-                found += 1;
-                if found == 64 {
-                    break 'a;
-                }
-                break;
-            }
+            hashes.extend(new_hashes);
         }
 
-        index += 1;
-    }
+        while search_idx + 1000 < hashes.len() {
+            let h = hashes[search_idx];
+            if let Some(t) = h.triplet {
+                let mask = 1 << t;
+                // Check if any of the next 1000 hashes has the corresponding quintuplet
+                let mut found = false;
+                for k in 1..=1000 {
+                    if hashes[search_idx + k].quintuplets & mask != 0 {
+                        found = true;
+                        break;
+                    }
+                }
 
-    index
+                if found {
+                    keys_found += 1;
+                    if keys_found == 64 {
+                        return search_idx;
+                    }
+                }
+            }
+            search_idx += 1;
+        }
+    }
 }
 
 #[cfg(test)]
@@ -182,8 +143,8 @@ mod test {
         assert_eq!(find_key("abc", 0), 22728);
     }
 
-    #[cfg(not(debug_assertions))]
     #[test]
+    #[cfg_attr(debug_assertions, ignore)] // Slow in debug
     fn test_solve2() {
         assert_eq!(find_key("abc", 2016), 22551);
     }

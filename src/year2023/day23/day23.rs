@@ -1,7 +1,6 @@
 //! [Day 23: A Long Walk](https://adventofcode.com/2023/day/23)
 
 use rustc_hash::{FxHashMap, FxHashSet};
-use std::collections::VecDeque;
 
 use aoc::{Coord, Grid};
 
@@ -20,118 +19,162 @@ impl Puzzle {
     }
 
     /// Solve part one.
-    ///
-    /// Nota: should be rewritten to use the new introduced Grid class
     fn part1(&self) -> u32 {
-        // start posiiton
-        let sx = 1;
-        let sy = 0;
+        let start = Coord::new(1, 0);
+        let target = Coord::new(self.grid.width() - 2, self.grid.height() - 1);
 
-        // target position
-        let tx = self.grid.width() - 2;
-        let ty = self.grid.height() - 1;
+        let mut visited = FxHashSet::default();
+        // Since the path could be long, we might still hit stack limits on large inputs if we just recurse.
+        // But for Part 1 with slopes, usually the branching is small and it's fast.
+        // Let's see if simple DFS works.
+        self.dfs_part1(start, target, &mut visited)
+    }
 
-        // min steps hike
-        let mut m = 0;
+    fn dfs_part1(&self, cur: Coord, target: Coord, visited: &mut FxHashSet<Coord>) -> u32 {
+        if cur == target {
+            return 0;
+        }
 
-        let mut q = VecDeque::new();
-        let mut seen = FxHashSet::default();
+        visited.insert(cur);
+        let mut max_dist = 0;
+        let mut found = false;
 
-        q.push_back((0, sx, sy, 0, 0));
-        while let Some((c, x, y, px, py)) = q.pop_front() {
-            if seen.contains(&(c, x, y)) {
+        let neighbors = [
+            (Coord::new(cur.x + 1, cur.y), b'>'),
+            (Coord::new(cur.x.wrapping_sub(1), cur.y), b'<'),
+            (Coord::new(cur.x, cur.y + 1), b'v'),
+            (Coord::new(cur.x, cur.y.wrapping_sub(1)), b'^'),
+        ];
+
+        for (next, _) in neighbors {
+            if next.x >= self.grid.width() || next.y >= self.grid.height() {
                 continue;
             }
-            seen.insert((c, x, y));
-
-            if x == tx && y == ty {
-                m = m.max(c);
+            if visited.contains(&next) {
+                continue;
+            }
+            let tile = self.grid[next];
+            if tile == FOREST {
+                continue;
             }
 
-            // if x+1 is inside the grid,
-            // and the move is authorized (path or slop),
-            // and we're not going backwards,
-            // then queue the move
-            if x < self.grid.width() - 1 && px != x + 1 && b".>".contains(&self.grid[(x + 1, y)]) {
-                q.push_back((c + 1, x + 1, y, x, y));
-            }
+            let allowed = match (next.x - cur.x, next.y - cur.y) {
+                (1, 0) => tile == b'.' || tile == b'>',
+                (-1, 0) => tile == b'.' || tile == b'<',
+                (0, 1) => tile == b'.' || tile == b'v',
+                (0, -1) => tile == b'.' || tile == b'^',
+                _ => false,
+            };
 
-            if x > 0 && px != x - 1 && b".<".contains(&self.grid[(x - 1, y)]) {
-                q.push_back((c + 1, x - 1, y, x, y));
-            }
-
-            if y < self.grid.height() - 1 && py != y + 1 && b".v".contains(&self.grid[(x, y + 1)]) {
-                q.push_back((c + 1, x, y + 1, x, y));
-            }
-
-            if y > 0 && py != y - 1 && b".^".contains(&self.grid[(x, y - 1)]) {
-                q.push_back((c + 1, x, y - 1, x, y));
+            if allowed {
+                let d = self.dfs_part1(next, target, visited);
+                // If path found (or we are at target, handled by base case? No, if next==target, dfs returns 0)
+                // If dfs returns 0, it means it reached target (distance 0 remaining) OR failed?
+                // We need to distinguish.
+                // Let's change return type to Option<u32> to be safe?
+                // Or just use sentinel.
+                // If d == 0, it might be target.
+                // Valid path length >= 0.
+                // Let's check if next == target in loop or handle `Some`.
+                // If I change signature, I must update recursive calls.
+                // I'll stick to: if next==target, d=0. If result=0 and next!=target?
+                // If next != target and dfs returns 0, does it mean failure?
+                // My previous code: `if d > 0 || next == target`.
+                // This covers it.
+                if d > 0 || next == target {
+                    max_dist = max_dist.max(1 + d);
+                    found = true;
+                }
             }
         }
 
-        m
+        visited.remove(&cur);
+
+        if found { max_dist } else { 0 }
     }
 
     /// Solve part two.
     fn part2(&self) -> i32 {
-        // cf. https://stackoverflow.com/questions/16946888/is-it-possible-to-make-a-recursive-closure-in-rust
-        struct Dfs<'s> {
-            f: &'s dyn Fn(&Dfs, Coord, &mut FxHashSet<Coord>) -> i32,
+        let start = Coord::new(1, 0);
+        let target = Coord::new(self.grid.width() - 2, self.grid.height() - 1);
+
+        // 1. Build the graph of interesting nodes (nodes with > 2 neighbors, + start & end)
+        let mut nodes = vec![start, target];
+        for (pos, &c) in self.grid.iter_cells() {
+            if c == FOREST {
+                continue;
+            }
+            if pos == start || pos == target {
+                continue;
+            }
+
+            let mut neighbors_count = 0;
+            for (_, n) in self.grid.iter_directions(pos) {
+                if self.grid[n] != FOREST {
+                    neighbors_count += 1;
+                }
+            }
+            if neighbors_count > 2 {
+                nodes.push(pos);
+            }
         }
 
-        let grid = &self.grid;
-        let mut adj: FxHashMap<Coord, FxHashMap<Coord, i32>> = FxHashMap::default();
+        // Map Coord -> Index
+        let node_indices: FxHashMap<Coord, usize> =
+            nodes.iter().enumerate().map(|(i, &p)| (p, i)).collect();
 
-        for (pos, &c) in grid.iter_cells() {
-            if c != FOREST {
-                let e = adj.entry(pos).or_default();
-                for (_, neigh) in grid.iter_directions(pos) {
-                    if grid[neigh] != FOREST {
-                        e.insert(neigh, 1);
+        // 2. Build adjacency list with distances
+        let mut adj = vec![Vec::new(); nodes.len()];
+
+        for (idx, &u) in nodes.iter().enumerate() {
+            // BFS/DFS from u to find direct neighbors in the simplified graph
+            let mut stack = vec![(u, 0)];
+            let mut visited = FxHashSet::default();
+            visited.insert(u);
+
+            while let Some((curr, dist)) = stack.pop() {
+                if dist > 0 && node_indices.contains_key(&curr) {
+                    let v_idx = node_indices[&curr];
+                    adj[idx].push((v_idx, dist));
+                    continue;
+                }
+
+                for (_, next) in self.grid.iter_directions(curr) {
+                    if self.grid[next] != FOREST && !visited.contains(&next) {
+                        visited.insert(next);
+                        stack.push((next, dist + 1));
                     }
                 }
             }
         }
 
-        while let Some((p, qs)) = adj.iter().find(|(_, qs)| qs.len() == 2) {
-            let p = *p;
+        // 3. Longest Path using DFS with Bitmask
+        // Start is index 0, Target is index 1
+        let target_idx = node_indices[&target];
+        Self::dfs_part2(0, target_idx, 0, &adj, 0)
+    }
 
-            let mut it = qs.iter();
-            let &q1 = it.next().unwrap().0;
-            let &q2 = it.next().unwrap().0;
-
-            let n = adj[&q1][&p] + adj[&p][&q2];
-
-            adj.entry(q1).or_default().insert(q2, n);
-            adj.entry(q2).or_default().insert(q1, n);
-
-            adj.remove(&p);
-            adj.entry(q1).or_default().remove(&p);
-            adj.entry(q2).or_default().remove(&p);
+    fn dfs_part2(
+        curr: usize,
+        target: usize,
+        dist: i32,
+        adj: &[Vec<(usize, i32)>],
+        visited: u64,
+    ) -> i32 {
+        if curr == target {
+            return dist;
         }
 
-        let start_pos = Coord::new(1, 0);
-        let end_pos = Coord::new(grid.width() - 2, grid.width() - 1);
+        let mut max_dist = 0;
+        let new_visited = visited | (1 << curr);
 
-        let dfs = Dfs {
-            f: &|dfs, p, visited| {
-                if p == end_pos {
-                    return 0;
-                }
+        for &(next, d) in &adj[curr] {
+            if (new_visited & (1 << next)) == 0 {
+                max_dist = max_dist.max(Self::dfs_part2(next, target, dist + d, adj, new_visited));
+            }
+        }
 
-                visited.insert(p);
-                let mut steps = i32::MIN;
-                for (np, dist) in &adj[&p] {
-                    if !visited.contains(np) {
-                        steps = steps.max(dist + (dfs.f)(dfs, *np, visited));
-                    }
-                }
-                visited.remove(&p);
-                steps
-            },
-        };
-
-        (dfs.f)(&dfs, start_pos, &mut FxHashSet::default())
+        max_dist
     }
 }
 

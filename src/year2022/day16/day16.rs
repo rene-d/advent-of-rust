@@ -1,255 +1,200 @@
 //! [Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)
 
-use regex::Regex;
+use rayon::prelude::*;
 use rustc_hash::FxHashMap;
 
+struct Valve {
+    rate: u32,
+    tunnels: Vec<String>,
+}
+
 struct Puzzle {
-    valves: FxHashMap<String, usize>,
-    flow_rates: FxHashMap<usize, u32>,
-    tunnels: FxHashMap<usize, Vec<usize>>,
-    distances: Box<[[u32; 128]]>,
+    flows: Vec<u32>,
+    adj: Vec<Vec<u32>>,
+    start_dists: Vec<u32>,
+    num_important: usize,
 }
 
 impl Puzzle {
-    fn new(data: &str) -> Self {
-        let mut puzzle = Self {
-            valves: FxHashMap::default(),
-            flow_rates: FxHashMap::default(),
-            tunnels: FxHashMap::default(),
-            distances: vec![[0u32; 128]; 128].into_boxed_slice(),
-        };
+    fn from_data(data: &str) -> Self {
+        // 1. Parse Input
+        let mut name_to_id: FxHashMap<&str, usize> = FxHashMap::default();
+        let mut valves = Vec::new();
 
-        let re = Regex::new(
-            r"Valve (\w\w) has flow rate=(\d+); tunnels? leads? to valves? ((?:\w\w)(?:, \w\w)*)$",
-        )
-        .unwrap();
-
+        // Parse raw valves
         for line in data.lines() {
-            if let Some(m) = re.captures(line) {
-                let valve = puzzle.valve_id_new(&m[1]);
-
-                let rate = m[2].parse::<u32>().unwrap();
-                if rate != 0 {
-                    puzzle.flow_rates.insert(valve, rate);
-                }
-
-                let dest = m[3].split(", ").map(|x| puzzle.valve_id_new(x)).collect();
-                puzzle.tunnels.insert(valve, dest);
-            }
-        }
-
-        // since we use a u128 bitfield for list of valves, there can be no more than 64
-        // and valve ID are between 0 and127 included
-        assert!(puzzle.valves.len() <= 128);
-
-        // precompute distance between valves
-        let max_id = puzzle.valves.len();
-        for a in 0..max_id {
-            for b in 0..max_id {
-                let d = puzzle.calc_dist(a, b, 0);
-                puzzle.distances[a][b] = d;
-            }
-        }
-
-        puzzle
-    }
-
-    const fn distance(&self, a: usize, b: usize) -> u32 {
-        self.distances[a][b]
-    }
-
-    fn calc_dist(&self, a: usize, b: usize, visited: u128) -> u32 {
-        let d = self.distance(a, b);
-        if d != 0 {
-            d
-        } else if a == b {
-            0
-        } else if (1u128 << b) & visited != 0 {
-            u32::MAX - 1
-        } else {
-            let b_visited = visited + (1u128 << b);
-
-            self.tunnels[&b]
-                .iter()
-                .map(|x| self.calc_dist(a, *x, b_visited))
-                .min()
+            let (left, right) = line.split_once("; ").unwrap();
+            let name = &left[6..8];
+            let rate = left[23..].parse::<u32>().unwrap();
+            let tunnels = right
+                .strip_prefix("tunnels lead to valves ")
+                .or_else(|| right.strip_prefix("tunnel leads to valve "))
                 .unwrap()
-                + 1
+                .split(", ")
+                .map(std::string::ToString::to_string)
+                .collect();
+
+            name_to_id.insert(name, valves.len());
+            valves.push(Valve { rate, tunnels });
         }
-    }
 
-    /// Returns the valve ID with its name or create a new ID.
-    fn valve_id_new(&mut self, name: &str) -> usize {
-        let next_id = self.valves.len();
-        assert!(next_id <= 127);
-        *self.valves.entry(name.to_string()).or_insert(next_id)
-    }
+        let n = valves.len();
 
-    /// Returns the valve ID with its name. Valve must exist.
-    fn valve_id(&self, name: &str) -> usize {
-        *self.valves.get(name).unwrap()
-    }
+        // 2. Compute full distances (Floyd-Warshall)
+        let mut dist = vec![vec![u32::MAX / 2; n]; n];
 
-    /// Returns the valve name with its ID. Used only in `show()`.
-    fn valve_name(&self, valve_id: usize) -> &str {
-        self.valves.iter().find(|x| *x.1 == valve_id).unwrap().0
-    }
-
-    /// Show the network of pipes (puzzle input), up the order to the valves.
-    fn show(&self) {
-        for (name, id) in &self.valves {
-            let remotes = (self.tunnels[id]
-                .iter()
-                .map(|x| self.valve_name(*x))
-                .collect::<Vec<&str>>())
-            .join(", ");
-
-            if self.tunnels[id].len() == 1 {
-                println!(
-                    "Valve {} has flow rate={}; tunnel leads to valve {}",
-                    name,
-                    self.flow_rates.get(id).unwrap_or(&0),
-                    remotes
-                );
-            } else {
-                println!(
-                    "Valve {} has flow rate={}; tunnels lead to valves {}",
-                    name,
-                    self.flow_rates.get(id).unwrap_or(&0),
-                    remotes
-                );
+        for (i, v) in valves.iter().enumerate() {
+            dist[i][i] = 0;
+            for t in &v.tunnels {
+                let j = name_to_id[t.as_str()];
+                dist[i][j] = 1;
             }
         }
-    }
 
-    /// Recursively search for the best flow rate.
-    fn max_flow(
-        &self,
-        valve: usize,
-        opened: u128,
-        time_left: u32,
-        seen: &mut FxHashMap<(usize, u128, u32), u32>,
-    ) -> u32 {
-        if let Some(e) = seen.get(&(valve, opened, time_left)) {
-            return *e;
-        }
-
-        if time_left <= 1 {
-            return 0;
-        }
-
-        let mut best = if (opened & (1u128 << valve)) == 0
-            && let Some(flow) = self.flow_rates.get(&valve)
-        {
-            (time_left - 1) * flow
-                + self.max_flow(valve, opened | (1u128 << valve), time_left - 1, seen)
-        } else {
-            0
-        };
-
-        best = best.max(
-            self.tunnels[&valve]
-                .iter()
-                .map(|x| self.max_flow(*x, opened, time_left - 1, seen))
-                .max()
-                .unwrap(),
-        );
-
-        seen.insert((valve, opened, time_left), best);
-
-        best
-    }
-
-    // Solves part one
-    fn part1(&self) -> u32 {
-        let mut seen = FxHashMap::default();
-        self.max_flow(self.valve_id("AA"), 0, 30, &mut seen)
-    }
-
-    // Solve part two
-    fn part2(&self) -> u32 {
-        let start_valve = self.valve_id("AA");
-
-        let mut best = 0;
-
-        // make two lists of distinct valves to open by me or the elephant
-        // the lists are bitfields of valve ID actually
-        // (note: me and elephant are interchangeable, hence the -1: there are twice less partitions)
-        let partitions = 1u32 << (self.flow_rates.len() - 1);
-        for partition in 0..partitions {
-            // bit value 1 is for me
-            let me: u128 = self
-                .flow_rates
-                .iter()
-                .enumerate()
-                .filter(|(bit, _)| partition & (1 << bit) != 0)
-                .map(|(_, (valve, _))| 1u128 << *valve)
-                .sum();
-
-            // bit value 0 is for the elehant
-            let elephant: u128 = self
-                .flow_rates
-                .iter()
-                .enumerate()
-                .filter(|(bit, _)| partition & (1 << bit) == 0)
-                .map(|(_, (valve, _))| 1u128 << *valve)
-                .sum();
-
-            let best_me = self.max_flow_valves(start_valve, 26, me);
-            let best_elephant = self.max_flow_valves(start_valve, 26, elephant);
-
-            best = best.max(best_me + best_elephant);
-        }
-        best
-    }
-
-    fn max_flow_valves(&self, valve: usize, time_left: u32, nodes: u128) -> u32 {
-        if time_left <= 1 {
-            return 0;
-        }
-
-        let mut best = 0; // max flow for the set of nodes
-        let mut node = 0usize; // dest valve ID
-        let mut nodes_bitfield = nodes; // excessively complicated, I admit
-
-        while nodes_bitfield != 0 {
-            if nodes_bitfield & 1 == 1 {
-                // i.e. nodes has the bit 'node' set
-
-                let time_dist = self.distance(valve, node);
-                assert_ne!(time_dist, 0);
-
-                if time_left - 1 > time_dist {
-                    let time = time_left - 1 - time_dist;
-
-                    best = best.max(
-                        time * self.flow_rates[&node]
-                            + self.max_flow_valves(node, time, nodes & !(1u128 << node)),
-                    );
+        for k in 0..n {
+            for i in 0..n {
+                for j in 0..n {
+                    dist[i][j] = dist[i][j].min(dist[i][k] + dist[k][j]);
                 }
             }
-
-            nodes_bitfield /= 2;
-            node += 1;
         }
-        best
+
+        // 3. Compress Graph
+        let start_node = name_to_id["AA"];
+
+        let mut important_valves = Vec::new();
+        for (i, v) in valves.iter().enumerate() {
+            if v.rate > 0 {
+                important_valves.push(i);
+            }
+        }
+
+        let num_important = important_valves.len();
+
+        let mut flows = Vec::with_capacity(num_important);
+        for &idx in &important_valves {
+            flows.push(valves[idx].rate);
+        }
+
+        let mut adj = vec![vec![0; num_important]; num_important];
+        for i in 0..num_important {
+            for j in 0..num_important {
+                adj[i][j] = dist[important_valves[i]][important_valves[j]];
+            }
+        }
+
+        let mut start_dists = Vec::with_capacity(num_important);
+        for &idx in &important_valves {
+            start_dists.push(dist[start_node][idx]);
+        }
+
+        Self {
+            flows,
+            adj,
+            start_dists,
+            num_important,
+        }
+    }
+
+    // 4. Solve function
+    fn find_max_flows(&self, total_time: u32) -> Vec<u32> {
+        let num_valves = self.num_important;
+        let max_mask = 1 << num_valves;
+
+        (0..num_valves)
+            .into_par_iter()
+            .map(|i| {
+                let mut local_max_pressure = vec![0u32; max_mask];
+                let d = self.start_dists[i];
+
+                if d + 1 < total_time {
+                    // +1 to open
+                    let rem_time = total_time - d - 1;
+                    let pressure = self.flows[i] * rem_time;
+                    let mask = 1 << i;
+
+                    local_max_pressure[mask] = pressure;
+
+                    let mut stack = Vec::with_capacity(64);
+                    stack.push((i, rem_time, mask, pressure));
+
+                    while let Some((u, time, mask, pressure)) = stack.pop() {
+                        for v in 0..num_valves {
+                            if (mask >> v) & 1 == 0 {
+                                let d = self.adj[u][v];
+                                if d + 1 < time {
+                                    let rem_time = time - d - 1;
+                                    let new_pressure = pressure + self.flows[v] * rem_time;
+                                    let new_mask = mask | (1 << v);
+
+                                    if new_pressure > local_max_pressure[new_mask] {
+                                        local_max_pressure[new_mask] = new_pressure;
+                                    }
+
+                                    stack.push((v, rem_time, new_mask, new_pressure));
+                                }
+                            }
+                        }
+                    }
+                }
+                local_max_pressure
+            })
+            .reduce(
+                || vec![0u32; max_mask],
+                |mut a, b| {
+                    for (x, y) in a.iter_mut().zip(b.iter()) {
+                        *x = (*x).max(*y);
+                    }
+                    a
+                },
+            )
+    }
+
+    fn part1(&self) -> u32 {
+        let scores_30 = self.find_max_flows(30);
+        *scores_30.iter().max().unwrap()
+    }
+
+    fn part2(&self) -> u32 {
+        // Solve Part 2
+        let scores_26 = self.find_max_flows(26);
+
+        // Propagate subset maximums
+        let max_mask = 1 << self.num_important;
+        let mut best_subset = scores_26;
+
+        for i in 0..self.num_important {
+            let bit = 1 << i;
+            for mask in 0..max_mask {
+                if mask & bit != 0 {
+                    best_subset[mask] = best_subset[mask].max(best_subset[mask ^ bit]);
+                }
+            }
+        }
+
+        // Parallelize the final combination check as well
+        let all_mask = max_mask - 1;
+        (0..max_mask / 2)
+            .into_par_iter()
+            .map(|mask| {
+                let complement = all_mask ^ mask;
+                best_subset[mask] + best_subset[complement]
+            })
+            .max()
+            .unwrap_or(0)
     }
 }
 
-#[must_use]
+/// # Panics
 pub fn solve(data: &str) -> (u32, u32) {
-    let puzzle = Puzzle::new(data);
-    (puzzle.part1(), puzzle.part2())
+    let puzzle = Puzzle::from_data(data);
+    let part1 = puzzle.part1();
+    let part2 = puzzle.part2();
+    (part1, part2)
 }
 
 pub fn main() {
     let args = aoc::parse_args();
-
-    if args.is_verbose() {
-        Puzzle::new(args.input()).show();
-        return;
-    }
-
     args.run(solve);
 }
 
@@ -261,13 +206,13 @@ mod test {
 
     #[test]
     fn test_part1() {
-        let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part1(), 1651);
+        let (p1, _) = solve(TEST_INPUT);
+        assert_eq!(p1, 1651);
     }
 
     #[test]
     fn test_part2() {
-        let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part2(), 1707);
+        let (_, p2) = solve(TEST_INPUT);
+        assert_eq!(p2, 1707);
     }
 }

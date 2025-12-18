@@ -1325,10 +1325,8 @@ def set_auto_filter(args) -> set[tuple[int, int]]:
         if len(cwd.parts) >= 2 and cwd.parts[-2] == "src":
             year = cwd.parts[-1]
             if year.startswith("year") and year[4:].isdigit():
-                # args_n.append(int(year[4:]))
-
                 year_i = int(year[4:])
-                filter_yearday.update((year_i, day) for day in aoc_available_puzzles(year_i))
+                filter_yearday.update(aoc_available_puzzles(year_i))
 
         elif len(cwd.parts) >= 3 and cwd.parts[-3] == "src":
             year = cwd.parts[-2]
@@ -1353,7 +1351,10 @@ def set_auto_filter(args) -> set[tuple[int, int]]:
             s = args.n[i]
             i += 1
 
-            if s == "y":
+            if s == "all":
+                filter_yearday = set(aoc_available_puzzles())
+                break
+            elif s == "y":
                 s = max(aoc_available_years())
             elif not s.isdigit():
                 logging.error(f"bad year in filter: {s}")
