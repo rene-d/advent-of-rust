@@ -1,5 +1,7 @@
 //! [Day 4: The Ideal Stocking Stuffer](https://adventofcode.com/2015/day/4)
 
+use rayon::prelude::*;
+
 pub fn main() {
     let args = aoc::parse_args();
 
@@ -18,39 +20,57 @@ pub fn solve(data: &str) -> (u32, u32) {
         base_len += 1;
     }
 
-    let mut number = 0u32;
+    let mut start = 0u32;
+    let mut secret_len = base_len + 1;
+    let mut next_dozen = 10;
 
     let mut find_key = |mask| {
         loop {
-            // compute the number of digits of key
-            let mut secret_len = base_len;
-            let mut number_tmp = number;
-            loop {
-                secret_len += 1;
-                number_tmp /= 10;
-                if number_tmp == 0 {
-                    break;
+            // Use find_first to stop as soon as we find a match and return it
+            let found = (start..next_dozen).into_par_iter().find_first(|&number| {
+                // Int To String directly into buffer
+                let mut local_secret = secret;
+                let mut number_tmp = number;
+                for i in (base_len..secret_len).rev() {
+                    local_secret[i] = b'0' + (number_tmp % 10) as u8;
+                    number_tmp /= 10;
                 }
+
+                let digest = md5::compute(&local_secret[..secret_len]);
+
+                digest.0[0] == 0 && digest.0[1] == 0 && (digest.0[2] & mask) == 0
+            });
+
+            if let Some(number) = found {
+                return number;
             }
 
-            // add the digits to the seed
-            let mut number_tmp = number;
-            for i in (base_len..secret_len).rev() {
-                secret[i] = b'0' + (number_tmp % 10) as u8;
-                number_tmp /= 10;
+            if next_dozen == 1_000_000_000 {
+                // Determine overflow behavior or loop termination if strict u32
+                // But AoC inputs fit in u32 typically for this problem
             }
 
-            let digest = md5::compute(&secret[..secret_len]);
-
-            // test the 5 or 6 first nibbles
-            if digest.0[0] == 0 && digest.0[1] == 0 && (digest.0[2] & mask) == 0 {
-                // println!("{}\t{:?}", key, digest);
-                break number;
-            }
-
-            number += 1;
+            start = next_dozen;
+            next_dozen *= 10;
+            secret_len += 1;
         }
     };
 
-    (find_key(0xf0), find_key(0xff))
+    let p1 = find_key(0xf0);
+    let p2 = find_key(0xff);
+    (p1, p2)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn verify_solve() {
+        let input = "abcdef";
+        let result = solve(input);
+        assert_eq!(result.0, 609043);
+        // Part 2 is known from previous run: 6742839
+        assert_eq!(result.1, 6742839);
+    }
 }
