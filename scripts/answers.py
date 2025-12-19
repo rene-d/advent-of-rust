@@ -505,7 +505,7 @@ class AocSession:
         for day_dir in days:
             if day_dir.is_dir():
                 for f in day_dir.glob("day*.*"):
-                    if f.is_file() and not f.stem.endswith("_orig"):
+                    if f.is_file():  # and not f.stem.endswith("_orig"):
                         sols.append(f)
 
         # print(f"solution for {year} {day}: {sols}")

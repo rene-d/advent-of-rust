@@ -1,19 +1,90 @@
 //! [Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)
 
-use fraction::{GenericFraction, Zero};
+use num_bigint::BigInt;
+use num_rational::BigRational;
+use num_traits::{Signed, ToPrimitive, Zero};
+use rayon::prelude::*;
 
-// i64 is not enough... 👺
-// thus, it's quite useless to use rationals
-// (it works in f64 too 😳)
-type Q128 = GenericFraction<i128>;
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct Vec3 {
+    x: i64,
+    y: i64,
+    z: i64,
+}
 
+struct Vec2 {
+    x: i128,
+    y: i128,
+}
+
+impl Vec2 {
+    fn from(v: &Vec3) -> Self {
+        Self {
+            x: i128::from(v.x),
+            y: i128::from(v.y),
+        }
+    }
+}
+
+struct VecBR {
+    x: BigRational, // Nota: GenericFraction<i128> is not always sufficient
+    y: BigRational,
+    z: BigRational,
+}
+
+impl VecBR {
+    fn from(v: &Vec3) -> Self {
+        Self {
+            x: BigRational::from_integer(BigInt::from(v.x)),
+            y: BigRational::from_integer(BigInt::from(v.y)),
+            z: BigRational::from_integer(BigInt::from(v.z)),
+        }
+    }
+
+    /// Cross product
+    fn cross(self, other: &Self) -> Self {
+        Self {
+            x: (&self.y * &other.z) - (&self.z * &other.y),
+            y: (&self.z * &other.x) - (&self.x * &other.z),
+            z: (&self.x * &other.y) - (&self.y * &other.x),
+        }
+    }
+
+    /// Substraction
+    fn sub(&self, other: &Self) -> Self {
+        Self {
+            x: &self.x - &other.x,
+            y: &self.y - &other.y,
+            z: &self.z - &other.z,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 struct Hailstone {
-    x: Q128, // for use in part 1
-    y: Q128,
-    vx: Q128,
-    vy: Q128,
-    p: [i64; 3], // for use in part 2
-    v: [i64; 3],
+    p: Vec3,
+    v: Vec3,
+}
+
+impl Hailstone {
+    fn parse(line: &str) -> Option<Self> {
+        let mut parts = line
+            .split([',', '@', ' '])
+            .filter_map(|x| x.parse::<i64>().ok());
+
+        Some(Self {
+            p: Vec3 {
+                x: parts.next()?,
+                y: parts.next()?,
+                z: parts.next()?,
+            },
+            v: Vec3 {
+                x: parts.next()?,
+                y: parts.next()?,
+                z: parts.next()?,
+            },
+        })
+    }
 }
 
 struct Puzzle {
@@ -23,139 +94,164 @@ struct Puzzle {
 impl Puzzle {
     fn new(data: &str) -> Self {
         Self {
-            hailstones: data
-                .lines()
-                .map(|line| {
-                    let values: Vec<_> = line
-                        .split([',', '@', ' '])
-                        .filter_map(|x| x.parse::<i64>().ok())
-                        .collect();
-
-                    Hailstone {
-                        x: Q128::from(values[0]),
-                        y: Q128::from(values[1]),
-                        vx: Q128::from(values[3]),
-                        vy: Q128::from(values[4]),
-                        p: values[0..3].try_into().unwrap(),
-                        v: values[3..6].try_into().unwrap(),
-                    }
-                })
-                .collect(),
+            hailstones: data.lines().filter_map(Hailstone::parse).collect(),
         }
     }
 
-    fn collisions(&self, area_min: i64, area_max: i64) -> u32 {
-        let area_min = Q128::from(area_min);
-        let area_max = Q128::from(area_max);
+    fn collisions(&self, area_min: i64, area_max: i64) -> usize {
+        let area_min = i128::from(area_min);
+        let area_max = i128::from(area_max);
+        let n = self.hailstones.len();
 
-        let mut result = 0;
+        (0..(n - 1))
+            .par_bridge() // to gain a few microseconds 🥸
+            .map(|i| {
+                ((i + 1)..n)
+                    .filter(|&j| {
+                        let a = Vec2::from(&self.hailstones[i].p);
+                        let b = Vec2::from(&self.hailstones[j].p);
 
-        for i in 0..(self.hailstones.len() - 1) {
-            for j in (i + 1)..self.hailstones.len() {
-                let a = &self.hailstones[i];
-                let b = &self.hailstones[j];
+                        let av = Vec2::from(&self.hailstones[i].v);
+                        let bv = Vec2::from(&self.hailstones[j].v);
 
-                let determinant = b.vy * a.vx - b.vx * a.vy;
+                        let det = bv.y * av.x - bv.x * av.y;
 
-                if !determinant.is_zero() {
-                    // point of intersection
+                        if det.is_zero() {
+                            false
+                        } else {
+                            // point of intersection
 
-                    let x = (a.y * a.vx * b.vx - a.x * a.vy * b.vx - b.y * a.vx * b.vx
-                        + b.x * a.vx * b.vy)
-                        / determinant;
+                            // det * x
+                            let det_x = a.y * av.x * bv.x - a.x * av.y * bv.x - b.y * av.x * bv.x
+                                + b.x * av.x * bv.y;
 
-                    let y = (a.y * a.vx * b.vy - a.x * a.vy * b.vy - b.y * a.vy * b.vx
-                        + b.x * a.vy * b.vy)
-                        / determinant;
+                            // det * y
+                            let det_y = a.y * av.x * bv.y - a.x * av.y * bv.y - b.y * av.y * bv.x
+                                + b.x * av.y * bv.y;
 
-                    // oriented intersection
-                    let intersect_a = (x > a.x) == (a.vx > Q128::zero());
-                    let intersect_b = (x > b.x) == (b.vx > Q128::zero());
+                            // to simplify comparisons:
+                            //  min ≤ x÷det  ⇔  min•|det| ≤ x•sign(det)
+                            //  etc.
+                            let det_x = det_x * det.signum();
+                            let det_y = det_y * det.signum();
+                            let det = det.abs();
 
-                    if area_min <= x
-                        && x <= area_max
-                        && area_min <= y
-                        && y <= area_max
-                        && intersect_a
-                        && intersect_b
-                    {
-                        result += 1;
-                    }
-                }
-            }
-        }
+                            // oriented intersection
+                            let intersect_a = (det_x > det * a.x) == (av.x > 0);
+                            let intersect_b = (det_x > det * b.x) == (bv.x > 0);
 
-        result
+                            area_min * det <= det_x
+                                && det_x <= area_max * det
+                                && area_min * det <= det_y
+                                && det_y <= area_max * det
+                                && intersect_a
+                                && intersect_b
+                        }
+                    })
+                    .count()
+            })
+            .sum()
     }
 
     /// Solve part one.
-    fn part1(&self) -> u32 {
+    fn part1(&self) -> usize {
         self.collisions(200_000_000_000_000, 400_000_000_000_000)
     }
 
     /// Solve part two.
     fn part2(&self) -> i64 {
-        use z3::ast::{Int, Real};
-
-        let solver = z3::Solver::new();
-
-        let mut p = vec![];
-        let mut v = vec![];
-        let mut t = vec![];
-
-        // Nota: some inputs mess the solver if I use the z3::ast::Int datatype
-        for _ in 0..3 {
-            p.push(Real::fresh_const("p")); // positions
-            v.push(Real::fresh_const("v")); // velocity
+        if self.hailstones.len() < 3 {
+            return 0;
         }
 
-        for _ in 0..self.hailstones.len() {
-            t.push(Real::fresh_const("t")); // time
-        }
+        let mut matrix = vec![vec![BigRational::zero(); 7]; 6];
 
-        let zero = Int::from_i64(0);
-        let zero = Real::from_int(&zero);
+        let build_rows =
+            |h1: &Hailstone, h2: &Hailstone, row_offset: usize, m: &mut Vec<Vec<BigRational>>| {
+                let h1_p = VecBR::from(&h1.p);
+                let h2_p = VecBR::from(&h2.p);
 
-        // normally, 3*3 constraints are sufficient
-        // with 4, the model should still be satisfiable, except a problem...
-        for (i, hail) in self.hailstones.iter().take(4).enumerate() {
-            // constraint: t[i] >= 0
-            solver.assert(t[i].ge(&zero));
+                let h1_v = VecBR::from(&h1.v);
+                let h2_v = VecBR::from(&h2.v);
 
-            // constraint: hail.p[i] + t[i] * hail.v[i] == p[i] + t[i] * v[i]
-            for j in 0..3 {
-                let p_j = Real::from_int(&Int::from_i64(hail.p[j]));
-                let v_j = Real::from_int(&Int::from_i64(hail.v[j]));
+                let dv = h1_v.sub(&h2_v);
+                let dp = h1_p.sub(&h2_p);
 
-                let left = &p_j + &t[i] * &v_j;
-                let right = &p[j] + &t[i] * &v[j];
-                solver.assert(left.eq(&right));
-            }
-        }
+                let c1 = h1_p.cross(&h1_v);
+                let c2 = h2_p.cross(&h2_v);
+                let c = c1.sub(&c2);
 
-        match solver.check() {
-            z3::SatResult::Sat => {
-                if let Some(model) = solver.get_model() {
-                    let result: i64 = p
-                        .iter()
-                        .filter_map(|i| model.eval(i, true))
-                        .filter_map(|i| i.as_rational())
-                        .filter_map(|(num, den)| (den == 1).then_some(num))
-                        .sum();
+                // [  0,      dv.z,  -dv.y,      0,  -dp.z,   dp.y,   c.x ]
+                // [ -dv.z,      0,   dv.x,   dp.z,      0,  -dp.x,   c.y ]
+                // [  dv.y,  -dv.x,      0,  -dp.y,   dp.x,      0,   c.z ]
 
-                    return result;
-                }
-            }
-            z3::SatResult::Unsat => eprintln!("z3::SatResult::Unsat"),
-            z3::SatResult::Unknown => eprintln!("z3::SatResult::Unknown"),
-        }
-        0
+                m[row_offset][1] = dv.z.clone();
+                m[row_offset][2] = -dv.y.clone();
+                m[row_offset][4] = -dp.z.clone();
+                m[row_offset][5] = dp.y.clone();
+                m[row_offset][6] = c.x;
+
+                m[row_offset + 1][0] = -dv.z;
+                m[row_offset + 1][2] = dv.x.clone();
+                m[row_offset + 1][3] = dp.z;
+                m[row_offset + 1][5] = -dp.x.clone();
+                m[row_offset + 1][6] = c.y;
+
+                m[row_offset + 2][0] = dv.y;
+                m[row_offset + 2][1] = -dv.x;
+                m[row_offset + 2][3] = -dp.y;
+                m[row_offset + 2][4] = dp.x;
+                m[row_offset + 2][6] = c.z;
+            };
+
+        build_rows(&self.hailstones[0], &self.hailstones[1], 0, &mut matrix);
+        build_rows(&self.hailstones[0], &self.hailstones[2], 3, &mut matrix);
+
+        solve_gaussian(&mut matrix);
+
+        let px = &matrix[0][6];
+        let py = &matrix[1][6];
+        let pz = &matrix[2][6];
+
+        let sum = px + py + pz;
+        sum.to_integer().to_i64().expect("Result too large for i64")
     }
 }
 
-/// # Panics
-#[must_use]
-pub fn solve(data: &str) -> (u32, i64) {
+#[allow(clippy::needless_range_loop)]
+fn solve_gaussian(a: &mut [Vec<BigRational>]) {
+    let n = 6;
+    for i in 0..n {
+        let mut pivot = i;
+        for j in i + 1..n {
+            if a[j][i].abs() > a[pivot][i].abs() {
+                pivot = j;
+            }
+        }
+        a.swap(i, pivot);
+
+        for j in i + 1..n {
+            if a[j][i].is_zero() {
+                continue;
+            }
+            let factor = &a[j][i] / &a[i][i];
+            for k in i..=n {
+                let val = &factor * &a[i][k];
+                a[j][k] = &a[j][k] - val;
+            }
+        }
+    }
+
+    for i in (0..n).rev() {
+        let mut sum = BigRational::zero();
+        for j in i + 1..n {
+            sum += &a[i][j] * &a[j][6];
+        }
+        a[i][6] = (&a[i][6] - sum) / &a[i][i];
+    }
+}
+
+pub fn solve(data: &str) -> (usize, i64) {
     let puzzle = Puzzle::new(data);
     (puzzle.part1(), puzzle.part2())
 }

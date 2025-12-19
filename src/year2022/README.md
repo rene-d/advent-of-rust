@@ -2,7 +2,7 @@
 
 ![AoC2022](https://img.shields.io/badge/Advent_of_Code-2022-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 26](https://img.shields.io/badge/Rust-26-cyan?logo=Rust)
+![Rust: 27](https://img.shields.io/badge/Rust-27-cyan?logo=Rust)
 ![Python: 19](https://img.shields.io/badge/Python-19-cyan?logo=Python)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](./)) : 50⭐
@@ -24,7 +24,7 @@ Puzzle                                                                   | Stars
 [Day 13: Distress Signal](https://adventofcode.com/2022/day/13)          | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day13/day13.rs) [![Rust](../../scripts/assets/rust.png)](day13_pest/day13_pest.rs) [![Python](../../scripts/assets/python.png)](day13/day13.py)
 [Day 14: Regolith Reservoir](https://adventofcode.com/2022/day/14)       | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day14/day14.rs) [![Python](../../scripts/assets/python.png)](day14/day14.py)
 [Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)    | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day15/day15.rs) [![Python](../../scripts/assets/python.png)](day15/day15.py)
-[Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)    | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day16/day16.rs)
+[Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)    | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day16/day16.rs) [![Rust](../../scripts/assets/rust.png)](day16_orig/day16_orig.rs)
 [Day 17: Pyroclastic Flow](https://adventofcode.com/2022/day/17)         | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day17/day17.rs) [![Python](../../scripts/assets/python.png)](day17/day17.py) [🎁](day17/README.md)
 [Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)         | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day18/day18.rs)
 [Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)      | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day19/day19.rs)

@@ -1,14 +1,12 @@
 //! [Day 13: Claw Contraption](https://adventofcode.com/2024/day/13)
 
-type F = fraction::GenericFraction<i64>;
-
 struct ClawMachine {
-    a_x: F,
-    a_y: F,
-    b_x: F,
-    b_y: F,
-    p_x: F,
-    p_y: F,
+    a_x: i64,
+    a_y: i64,
+    b_x: i64,
+    b_y: i64,
+    p_x: i64,
+    p_y: i64,
 }
 
 impl ClawMachine {
@@ -32,30 +30,54 @@ impl ClawMachine {
         }
 
         Self {
-            a_x: F::from(values[0]),
-            a_y: F::from(values[1]),
-            b_x: F::from(values[2]),
-            b_y: F::from(values[3]),
-            p_x: F::from(values[4]),
-            p_y: F::from(values[5]),
+            a_x: values[0],
+            a_y: values[1],
+            b_x: values[2],
+            b_y: values[3],
+            p_x: values[4],
+            p_y: values[5],
         }
     }
 
-    fn price(&self, position_offset: i64) -> i64 {
+    const fn price(&self, position_offset: i64) -> i64 {
         let p_x = self.p_x + position_offset;
         let p_y = self.p_y + position_offset;
 
-        let a = (p_y - self.b_y * p_x / self.b_x) / (self.a_y - self.b_y * self.a_x / self.b_x);
-        let b = (p_x - a * self.a_x) / self.b_x;
+        // Cramer's rule:
+        // a * a_x + b * b_x = p_x
+        // a * a_y + b * b_y = p_y
+        //
+        // | a_x b_x | | a | = | p_x |
+        // | a_y b_y | | b | = | p_y |
+        //
+        // det = a_x * b_y - a_y * b_x
+        // a = (p_x * b_y - p_y * b_x) / det
+        // b = (a_x * p_y - a_y * p_x) / det
 
-        if a.denom() != Some(&1) || a.is_sign_negative() {
+        let det = self.a_x * self.b_y - self.a_y * self.b_x;
+
+        // If determinant is 0, lines are parallel.
+        // Logic assumes a unique solution is required, or at least one exists.
+        // Given problem constraints, usually unique structure is implied unless parallel.
+        if det == 0 {
             return 0;
         }
-        if b.denom() != Some(&1) || b.is_sign_negative() {
+
+        let num_a = p_x * self.b_y - p_y * self.b_x;
+        let num_b = self.a_x * p_y - self.a_y * p_x;
+
+        if num_a % det != 0 || num_b % det != 0 {
             return 0;
         }
 
-        *(a * 3 + b).numer().unwrap()
+        let a = num_a / det;
+        let b = num_b / det;
+
+        if a < 0 || b < 0 {
+            return 0;
+        }
+
+        a * 3 + b
     }
 }
 

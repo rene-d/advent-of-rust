@@ -2,7 +2,7 @@
 
 ![AoC2023](https://img.shields.io/badge/Advent_of_Code-2023-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 25](https://img.shields.io/badge/Rust-25-cyan?logo=Rust)
+![Rust: 27](https://img.shields.io/badge/Rust-27-cyan?logo=Rust)
 ![Python: 11](https://img.shields.io/badge/Python-11-cyan?logo=Python)
 
 ## 2023 ([Calendar](https://adventofcode.com/2023)) ([Solutions](./)) : 50⭐
@@ -31,6 +31,6 @@ Puzzle                                                                        | 
 [Day 20: Pulse Propagation](https://adventofcode.com/2023/day/20)             | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day20/day20.rs)
 [Day 21: Step Counter](https://adventofcode.com/2023/day/21)                  | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day21/day21.rs)
 [Day 22: Sand Slabs](https://adventofcode.com/2023/day/22)                    | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day22/day22.rs)
-[Day 23: A Long Walk](https://adventofcode.com/2023/day/23)                   | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day23/day23.rs)
-[Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day24/day24.rs) [![Python](../../scripts/assets/python.png)](day24/day24.py)
+[Day 23: A Long Walk](https://adventofcode.com/2023/day/23)                   | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day23/day23.rs) [![Rust](../../scripts/assets/rust.png)](day23_orig/day23_orig.rs)
+[Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day24/day24.rs) [![Rust](../../scripts/assets/rust.png)](day24_z3/day24_z3.rs) [![Python](../../scripts/assets/python.png)](day24/day24.py)
 [Day 25: Snowverload](https://adventofcode.com/2023/day/25)                   | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day25/day25.rs) [![Python](../../scripts/assets/python.png)](day25/day25.py)

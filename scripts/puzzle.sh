@@ -23,6 +23,7 @@ parse_args()
             -r|--rs|--rust) features+=("rust") ;;
             -p|--py|--python) features+=("python") ;;
             -t|--test) features+=("test_samples") ;;
+            -i|--input) features+=("input") ;;
             *) args+=$i ;;
         esac
     done
@@ -52,6 +53,8 @@ has_feature()
 
 fetch_input()
 {
+    has_feature input || return 0
+
     local session
     local now
     local opening
@@ -82,6 +85,8 @@ fetch_input()
 
 fetch_samples()
 {
+    has_feature test_samples || return 0
+
     local session
 
     [[ $available ]] || return 0
@@ -165,6 +170,7 @@ itertools = "*"
 name = "day$day"
 path = "day$day.rs"
 EOF
+        printf "\033[32mRust Cargo.toml created.\033[0m\n"
     fi
 
     if [ -f day$day.rs ]; then

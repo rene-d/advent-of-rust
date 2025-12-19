@@ -2,7 +2,7 @@
 
 ![AoC2016](https://img.shields.io/badge/Advent_of_Code-2016-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 25](https://img.shields.io/badge/Rust-25-cyan?logo=Rust)
+![Rust: 27](https://img.shields.io/badge/Rust-27-cyan?logo=Rust)
 
 ## 2016 ([Calendar](https://adventofcode.com/2016)) ([Solutions](./)) : 50⭐
 
@@ -12,7 +12,7 @@ Puzzle                                                                          
 [Day 2: Bathroom Security](https://adventofcode.com/2016/day/2)                        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day2/day2.rs)
 [Day 3: Squares With Three Sides](https://adventofcode.com/2016/day/3)                 | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day3/day3.rs)
 [Day 4: Security Through Obscurity](https://adventofcode.com/2016/day/4)               | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day4/day4.rs)
-[Day 5: How About a Nice Game of Chess?](https://adventofcode.com/2016/day/5)          | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day5/day5.rs)
+[Day 5: How About a Nice Game of Chess?](https://adventofcode.com/2016/day/5)          | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day5/day5.rs) [![Rust](../../scripts/assets/rust.png)](day5_orig/day5_orig.rs)
 [Day 6: Signals and Noise](https://adventofcode.com/2016/day/6)                        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day6/day6.rs)
 [Day 7: Internet Protocol Version 7](https://adventofcode.com/2016/day/7)              | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day7/day7.rs)
 [Day 8: Two-Factor Authentication](https://adventofcode.com/2016/day/8)                | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day8/day8.rs)
@@ -21,7 +21,7 @@ Puzzle                                                                          
 [Day 11: Radioisotope Thermoelectric Generators](https://adventofcode.com/2016/day/11) | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day11/day11.rs)
 [Day 12: Leonardo's Monorail](https://adventofcode.com/2016/day/12)                    | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day12/day12.rs)
 [Day 13: A Maze of Twisty Little Cubicles](https://adventofcode.com/2016/day/13)       | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day13/day13.rs)
-[Day 14: One-Time Pad](https://adventofcode.com/2016/day/14)                           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day14/day14.rs)
+[Day 14: One-Time Pad](https://adventofcode.com/2016/day/14)                           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day14/day14.rs) [![Rust](../../scripts/assets/rust.png)](day14_orig/day14_orig.rs)
 [Day 15: Timing is Everything](https://adventofcode.com/2016/day/15)                   | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day15/day15.rs)
 [Day 16: Dragon Checksum](https://adventofcode.com/2016/day/16)                        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day16/day16.rs)
 [Day 17: Two Steps Forward](https://adventofcode.com/2016/day/17)                      | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day17/day17.rs)
