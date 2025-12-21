@@ -71,9 +71,9 @@ impl Puzzle {
         let mut dir = 0;
         let mut seen = FxHashSet::default();
 
-        #[allow(clippy::cast_sign_loss)]
-        let visited_idx =
-            |x: i32, y: i32, dir: i32| -> usize { ((y * width + x) * 4 + dir) as usize };
+        let visited_idx = |x: i32, y: i32, dir: i32| -> usize {
+            usize::try_from((y * width + x) * 4 + dir).unwrap()
+        };
         let visited_size = visited_idx(0, height, 0);
 
         loop {
