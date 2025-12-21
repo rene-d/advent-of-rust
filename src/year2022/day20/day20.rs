@@ -1,7 +1,5 @@
 //! [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20)
 
-use std::collections::VecDeque;
-
 struct Puzzle {
     numbers: Vec<i64>,
 }
@@ -24,46 +22,29 @@ impl Puzzle {
     }
 
     fn decrypt(&self, key: i64, rounds: usize) -> i64 {
-        let mut q = VecDeque::new();
+        let mut mixed: Vec<(usize, i64)> =
+            self.numbers.iter().map(|&n| n * key).enumerate().collect();
 
-        q.extend(self.numbers.iter().map(|x| (*x) * key).zip(0..));
-
-        let nb = self.numbers.len();
+        let nb = mixed.len();
+        let nb_i64 = i64::try_from(nb).unwrap();
 
         for _ in 0..rounds {
             for i in 0..nb {
-                let mut shift = (0, 0);
+                let shift = mixed.iter().position(|&(idx, _)| idx == i).unwrap();
 
-                while let Some(e) = q.pop_front() {
-                    if e.1 == i {
-                        shift = e;
-                        break;
-                    }
-                    q.push_back(e);
-                }
+                let val = mixed.remove(shift).1;
 
-                match shift.0 {
-                    o if o > 0 => q.rotate_left(
-                        usize::try_from(o % i64::try_from(q.len()).unwrap()).unwrap() % (nb - 1),
-                    ),
-                    o if o < 0 => q.rotate_right(
-                        usize::try_from((-o) % i64::try_from(q.len()).unwrap()).unwrap() % (nb - 1),
-                    ),
-                    _ => (),
-                }
+                let new_i = (i64::try_from(shift).unwrap() + val).rem_euclid(nb_i64 - 1);
 
-                q.push_back(shift);
+                mixed.insert(usize::try_from(new_i).unwrap(), (i, val));
             }
         }
 
-        for (v, i) in q.iter().zip(0..) {
-            if v.0 == 0 {
-                return q.get((i + 1000) % nb).unwrap().0
-                    + q.get((i + 2000) % nb).unwrap().0
-                    + q.get((i + 3000) % nb).unwrap().0;
-            }
-        }
-        0
+        let zero_pos = mixed.iter().position(|&(_, val)| val == 0).unwrap();
+
+        mixed[(zero_pos + 1000) % nb].1
+            + mixed[(zero_pos + 2000) % nb].1
+            + mixed[(zero_pos + 3000) % nb].1
     }
 }
 
