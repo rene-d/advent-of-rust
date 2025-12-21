@@ -2,7 +2,7 @@
 
 ![AoC2024](https://img.shields.io/badge/Advent_of_Code-2024-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 26](https://img.shields.io/badge/Rust-26-cyan?logo=Rust)
+![Rust: 27](https://img.shields.io/badge/Rust-27-cyan?logo=Rust)
 ![Python: 11](https://img.shields.io/badge/Python-11-cyan?logo=Python)
 
 ## 2024 ([Calendar](https://adventofcode.com/2024)) ([Solutions](./)) : 50⭐
@@ -14,7 +14,7 @@ Puzzle                                                                 | Stars |
 [Day 3: Mull It Over](https://adventofcode.com/2024/day/3)             | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day3/day3.rs) [![Python](../../scripts/assets/python.png)](day3/day3.py) [![Go](../../scripts/assets/go.png)](day3/day3.go) [![Perl](../../scripts/assets/perl.png)](day3/day3.pl)
 [Day 4: Ceres Search](https://adventofcode.com/2024/day/4)             | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day4/day4.rs) [![Python](../../scripts/assets/python.png)](day4/day4.py) [![Go](../../scripts/assets/go.png)](day4/day4.go)
 [Day 5: Print Queue](https://adventofcode.com/2024/day/5)              | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day5/day5.rs) [![Go](../../scripts/assets/go.png)](day5/day5.go)
-[Day 6: Guard Gallivant](https://adventofcode.com/2024/day/6)          | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day6/day6.rs) [![Go](../../scripts/assets/go.png)](day6/day6.go)
+[Day 6: Guard Gallivant](https://adventofcode.com/2024/day/6)          | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day6/day6.rs) [![Rust](../../scripts/assets/rust.png)](day6_orig/day6_orig.rs) [![Go](../../scripts/assets/go.png)](day6/day6.go)
 [Day 7: Bridge Repair](https://adventofcode.com/2024/day/7)            | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day7/day7.rs) [![Python](../../scripts/assets/python.png)](day7/day7.py) [![Go](../../scripts/assets/go.png)](day7/day7.go)
 [Day 8: Resonant Collinearity](https://adventofcode.com/2024/day/8)    | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day8/day8.rs) [![Python](../../scripts/assets/python.png)](day8/day8.py) [![Go](../../scripts/assets/go.png)](day8/day8.go)
 [Day 9: Disk Fragmenter](https://adventofcode.com/2024/day/9)          | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day9/day9.rs) [![Go](../../scripts/assets/go.png)](day9/day9.go)
