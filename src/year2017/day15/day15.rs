@@ -1,8 +1,26 @@
 //! [Day 15: Dueling Generators](https://adventofcode.com/2017/day/15)
 
+use rayon::iter::{ParallelBridge, ParallelIterator};
+
+const CHUNK: usize = 1_000_000;
+const MODULUS: u64 = 0x7fff_ffff;
+
 struct Puzzle {
     a: u64,
     b: u64,
+}
+
+const fn mod_pow(mut base: u64, mut exp: u64) -> u64 {
+    let mut res = 1;
+    base %= MODULUS;
+    while exp > 0 {
+        if exp % 2 == 1 {
+            res = res * base % MODULUS;
+        }
+        exp >>= 1;
+        base = base * base % MODULUS;
+    }
+    res
 }
 
 impl Puzzle {
@@ -23,18 +41,26 @@ impl Puzzle {
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        let mut a: u64 = self.a;
-        let mut b: u64 = self.b;
-        let mut n = 0;
-        for _ in 0..40_000_000 {
-            a = a.wrapping_mul(16807) % 2_147_483_647;
-            b = b.wrapping_mul(48271) % 2_147_483_647;
+        (0..40_000_000)
+            .step_by(CHUNK)
+            .par_bridge()
+            .map(|start| {
+                let mut n = 0;
+                let mut a: u64 = self.a * mod_pow(16807, start);
+                let mut b: u64 = self.b * mod_pow(48271, start);
 
-            if a & 0xffff == b & 0xffff {
-                n += 1;
-            }
-        }
-        n
+                for _ in 0..CHUNK {
+                    a = a.wrapping_mul(16807) % MODULUS;
+                    b = b.wrapping_mul(48271) % MODULUS;
+
+                    if a & 0xffff == b & 0xffff {
+                        n += 1;
+                    }
+                }
+
+                n
+            })
+            .sum()
     }
 
     /// Solve part two.
@@ -44,13 +70,13 @@ impl Puzzle {
         let mut n = 0;
         for _ in 0..5_000_000 {
             loop {
-                a = a.wrapping_mul(16807) % 2_147_483_647;
+                a = a.wrapping_mul(16807) % MODULUS;
                 if a.is_multiple_of(4) {
                     break;
                 }
             }
             loop {
-                b = b.wrapping_mul(48271) % 2_147_483_647;
+                b = b.wrapping_mul(48271) % MODULUS;
                 if b.is_multiple_of(8) {
                     break;
                 }
