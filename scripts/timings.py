@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import re
 import sqlite3
 import sys
 import time
@@ -51,11 +52,6 @@ except ImportError:
         import curtsies
     except ImportError:
         curtsies = None
-
-
-T1 = 0.5
-T2 = 2
-T3 = 5
 
 
 # ---------
@@ -140,16 +136,46 @@ def aoc_available_puzzles(filter_year: int = 0):
 # ---------
 
 
-def fmt_elapsed(elapsed: float, _tablefmt) -> str:
+T1 = 0.5
+T2 = 1
+T3 = 5
+
+
+def fmt_elapsed(elapsed: float, unit: bool = True) -> str:
     """Format elapsed time with color-coded ANSI escape sequences based on duration thresholds."""
-    if elapsed < T1:
-        return f"\033[32m{elapsed:.3f}\033[0m"
+
+    if elapsed < 0.001:
+        color = "\033[32m"
+    elif elapsed < T1:
+        color = "\033[38;5;39m"
     elif elapsed < T2:
-        return f"\033[34m{elapsed:.3f}\033[0m"
+        color = "\033[34m"
     elif elapsed < T3:
-        return f"\033[33m{elapsed:.3f}\033[0m"
+        color = "\033[33m"
     else:
-        return f"\033[31m{elapsed:.3f}\033[0m"
+        color = "\033[31m"
+
+    if unit:
+        if elapsed < 0.001:
+            s = f"{color}{elapsed * 1000000:.0f} µs\033[0m"
+        elif elapsed < 1:
+            s = f"{color}{elapsed * 1000:.0f} ms\033[0m"
+        else:
+            s = f"{color}{elapsed * 1000:.0f} ms\033[0m"
+    else:
+        s = f"{color}{elapsed:.3f}\033[0m"
+
+    return s
+
+
+def fmt_col(s: str) -> str:
+    if not s:
+        return ""
+
+    s = str(s)
+
+    s = re.sub("(\033.+?m)", "", s)
+    return s.rjust(7)
 
 
 @dataclass
@@ -197,7 +223,7 @@ class Timings:
         return set(lang for sol in self.solutions.values() for lang in sol)
 
     @lru_cache(maxsize=None)
-    def get_stats(self, user: str, lang: str, tablefmt: str, _last_load: int) -> Stats:
+    def get_stats(self, user: str, lang: str, _last_load: int, filter_years=None) -> Stats:
         """
         Compute and return execution timing statistics for a given user and language.
 
@@ -209,13 +235,19 @@ class Timings:
         Returns:
             Stats object containing headers, data, and solutions timing information.
         """
+        if filter_years is None:
+            filter_years = tuple(range(self.year_begin, self.year_end + 1))
+
         stats = Stats(
-            headers=["day"] + [i for i in range(self.year_begin, self.year_end + 1)],
-            data=[[i] + [None] * (self.year_end - self.year_begin + 1) for i in range(1, 26)],
+            headers=["day"] + [i for i in filter_years],
+            data=[[i] + [None] * len(filter_years) for i in range(1, 26)],
             solutions={},
         )
 
         for (year, day), languages in self.solutions.items():
+            if year not in filter_years:
+                continue
+
             total_elapsed = 0
             min_elapsed = float("inf")
             max_elapsed = 0
@@ -240,23 +272,53 @@ class Timings:
                     stats.solutions[year, day] = elapsed
 
                 if user == "minmax":
-                    s = f"{fmt_elapsed(min_elapsed, tablefmt)} - {fmt_elapsed(max_elapsed, tablefmt)}"
+                    s = f"{fmt_elapsed(min_elapsed, False)}•{fmt_elapsed(max_elapsed, False)}"
                 elif user == "min":
-                    s = fmt_elapsed(min_elapsed, tablefmt)
+                    s = fmt_elapsed(min_elapsed)
                 elif user == "max":
-                    s = fmt_elapsed(max_elapsed, tablefmt)
+                    s = fmt_elapsed(max_elapsed)
                 else:
-                    s = fmt_elapsed(elapsed, tablefmt)
+                    s = fmt_elapsed(elapsed)
 
-                stats.data[day - 1][year - self.year_begin + 1] = s
+                stats.data[day - 1][year - min(filter_years) + 1] = s
 
         return stats
 
+    def export_md(self, user: str, lang: str, file: Path, step=100):
+        """TODO"""
+
+        def prt(fd, r):
+            stats = self.get_stats(user, lang, self._last_load, tuple(r))
+
+            print(" | ".join(map(fmt_col, stats.headers)), file=fd)
+            sep = ["-" * len(fmt_col(col)) for col in stats.headers]
+            print(" | ".join(sep), file=fd)
+            for row in stats.data:
+                print(" | ".join(map(fmt_col, row)), file=fd)
+            print(file=fd)
+
+            return sum(stats.solutions.values())
+
+        if file == Path("-"):
+            file = Path("/dev/stdout")
+        elif file == Path("+"):
+            step = 6
+            file = Path("/dev/stdout")
+
+        with file.open("wt") as fd:
+            max_year = max(aoc_available_years())
+            total = 0
+            year = min(aoc_available_years())
+            while year <= max_year:
+                total += prt(fd, range(year, min(year + step, max_year + 1)))
+                year += step
+            print(f"Total : {total:.3f} s", file=fd)
+
     def print_stats(self, user: str, lang: str, tablefmt: str = "rounded_outline"):
         """Print timing statistics in a formatted table with performance breakdown."""
-        stats = self.get_stats(user, lang, tablefmt, self._last_load)
+        stats = self.get_stats(user, lang, self._last_load)
 
-        print(tabulate.tabulate(stats.data, stats.headers, tablefmt, floatfmt=".3f"))
+        print(tabulate.tabulate(stats.data, stats.headers, tablefmt, stralign="right", floatfmt=".3f"))
 
         def timing(a, b):
             return sum(1 for _ in filter(lambda x: a <= x < b, stats.solutions.values()))
@@ -296,6 +358,7 @@ def main():
     parser.add_argument("-a", "--all", action="store_true", help="Show unverified solutions too")
     parser.add_argument("-l", "--lang", default="Rust", help="Language")
     parser.add_argument("-b", "--browse", action="store_true", help="Browse all users/languages")
+    parser.add_argument("-x", "--export", type=Path, help="Export markdown")
     args = parser.parse_args()
 
     if "AOC_TARGET_DIR" in os.environ:
@@ -320,6 +383,9 @@ def main():
 
     args.lang = args.lang.lower()
     args.user = args.user.rstrip("/")
+
+    if args.export:
+        return timings.export_md(args.user, args.lang.casefold(), file=args.export)
 
     try:
         if not args.browse:
@@ -372,8 +438,12 @@ def main():
 
                 with curtsies.Input(keynames="curses") as input_generator:
                     for e in input_generator:
-                        if e in ("q", "Q", "x", "X", "\033"):
+                        if e in ("q", "Q", "\033"):
                             done = True
+                        elif e in "xX":
+                            f = Path("timings.md")
+                            timings.export_md(users[current_user], languages[current_language].casefold(), f)
+                            print(f"{f} written")
                         elif e == "KEY_LEFT":
                             if current_user > 0:
                                 current_user = (current_user - 1) % len(users)

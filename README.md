@@ -55,6 +55,66 @@ Year | Count | Days
 2018 |     1 | [18](src/year2018/day18/README.md)
 2015 |     1 | [18](src/year2015/day18/README.md)
 
+## Timings
+
+day |    2015 |    2016 |    2017 |    2018 |    2019 |    2020
+------- | ------- | ------- | ------- | ------- | ------- | -------
+1 |    7 µs |   30 µs |  715 µs |    4 ms |    6 µs |  242 µs
+2 |   87 µs |   32 µs |   16 µs |    4 ms |  712 µs |  262 µs
+3 |  278 µs |  122 µs |  906 µs |   13 ms |   12 ms |   16 µs
+4 |   99 ms |    2 ms |  734 µs |   95 µs |   27 ms |  240 µs
+5 |    1 ms |  818 ms |   50 ms |    5 ms |   22 µs |   59 µs
+6 |    5 ms |   13 µs |  865 µs |  265 ms |    4 ms |  831 µs
+7 |    2 ms |   27 ms |  704 µs |   92 µs |  485 µs |    3 ms
+8 |   28 µs |  417 µs |  819 µs |  154 µs |   35 µs |  414 µs
+9 |   16 ms |  378 µs |   57 µs |   93 ms |    3 ms |  118 µs
+10 |   26 ms |  545 µs |   48 µs |  510 µs |    5 ms |   10 µs
+11 |    6 ms |   18 ms |    7 ms |  119 ms |    1 ms |  213 ms
+12 |  829 µs |  108 ms |    2 ms |  277 µs |    8 ms |   29 µs
+13 |  102 ms |   26 µs |   84 ms |    4 ms |    9 ms |    8 µs
+14 |  841 µs | 1154 ms |    5 ms |  136 ms |    4 ms |    4 ms
+15 |    6 ms |    3 ms |  320 ms |   94 ms |    4 ms | 1335 ms
+16 |  126 µs |   88 ms |   12 ms |  756 µs |  180 ms |  877 µs
+17 |   31 ms |   21 ms |  138 µs |    2 ms |    2 ms |   27 ms
+18 |   20 ms |  162 ms |    5 ms |   24 ms |   85 ms |  212 µs
+19 |  503 µs |    1 µs |   86 µs |    7 ms |   21 ms |  112 ms
+20 |  396 ms |  100 µs |   29 ms |    1 ms |   40 ms |  823 µs
+21 |   61 µs |    2 ms |   33 ms |  213 µs |    5 ms |  300 µs
+22 |    2 ms |  698 µs |  144 ms |   41 ms |   11 µs |   95 ms
+23 |   25 µs |  184 µs |    2 ms |  952 µs |    2 ms |  142 ms
+24 |   17 ms |    3 ms |   65 ms |   17 ms |   32 ms |   46 ms
+25 |   74 ms |   20 ms |  196 ms |    1 ms |   16 ms |  113 µs
+
+day |    2021 |    2022 |    2023 |    2024 |    2025
+------- | ------- | ------- | ------- | ------- | -------
+1 |   27 µs |   48 µs |  168 µs |  104 µs |   62 µs
+2 |   42 µs |  103 µs |  158 µs |  292 µs |  931 µs
+3 |   80 µs |   65 µs |  132 µs |  686 µs |  387 µs
+4 |  155 µs |  300 µs |  242 µs |  322 µs |    3 ms
+5 |  753 µs |  401 µs |   48 µs |    4 ms |   54 µs
+6 |    5 µs |  877 µs |    3 µs |   10 ms |   31 µs
+7 |  285 µs |  251 µs |   18 ms |   53 ms |  371 µs
+8 |  751 µs |  558 µs |    2 ms |   98 µs |   15 ms
+9 |  495 µs |  639 µs |  419 µs |  244 ms |    4 ms
+10 |   64 µs |   13 µs |   24 ms |  430 µs |    5 ms
+11 |  223 µs |    5 ms |    1 ms |    9 ms |  209 µs
+12 |   34 ms |  820 µs |   51 ms |    4 ms |   47 ms
+13 |    1 ms |  776 µs |  252 µs |   56 µs |
+14 |  609 µs |   10 ms |   49 ms |   20 ms |
+15 |   37 ms |  490 ms |  350 µs |    1 ms |
+16 |   26 µs |    3 ms |   24 ms |  258 ms |
+17 |   94 ms |    1 ms |  155 ms |    7 µs |
+18 |    6 ms |    2 ms |   53 µs |  435 µs |
+19 |    4 ms | 1094 ms |    2 ms |   65 ms |
+20 |   97 ms |  100 ms |    3 ms |   28 ms |
+21 |    3 ms |  610 µs |    4 ms |  843 µs |
+22 |   78 ms |    6 ms |    7 ms |  141 ms |
+23 |  228 ms |  151 ms |  200 ms |  129 ms |
+24 |   70 ms |   92 ms |  635 µs |  224 µs |
+25 |   68 ms |   14 µs |  209 ms |  499 µs |
+
+Total : 11.953 s
+
 ## Under the hood 🎄
 
 All solutions are *tested* and *verified* with a lot of puzzle inputs and answers (personal accounts, family accounts, friends' accounts and those found on GitHub). Thus, they can be considered totally generic.
@@ -65,4 +125,4 @@ Rust solutions respect `cargo clippy -- -D clippy::all -F clippy::pedantic -F cl
 
 They also include, for the most part, unit tests taken from the examples of puzzle statements.
 
-On average, with all the inputs I have, 80% of them run in less than 100ms on my Apple Silicon M1, and 95% in less than half a second.
+Timings are measured for the Rust solutions with my puzzle inputs, on a Macbook Pro M1 (2020).

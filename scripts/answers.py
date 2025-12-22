@@ -710,6 +710,21 @@ def make_readme_main(args):
             else:
                 continue
 
+        if line == "## Timings":
+            skip = True
+            md.append(line)
+            md.append("")
+
+            try:
+                timings = subprocess.check_output([Path(__file__).parent / "timings.py", "-x", "+"])
+            except Exception:
+                timings = "n/a"
+
+            md.extend(map(str.strip, timings.decode().splitlines()))
+            md.append("")
+
+            continue
+
         if line == "## Bonus 🎁":
             skip = True
             md.append(line)
