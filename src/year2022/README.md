@@ -2,7 +2,7 @@
 
 ![AoC2022](https://img.shields.io/badge/Advent_of_Code-2022-8A2BE2)
 ![Stars: 50](https://img.shields.io/badge/Stars-50⭐-blue)
-![Rust: 27](https://img.shields.io/badge/Rust-27-cyan?logo=Rust)
+![Rust: 28](https://img.shields.io/badge/Rust-28-cyan?logo=Rust)
 ![Python: 19](https://img.shields.io/badge/Python-19-cyan?logo=Python)
 
 ## 2022 ([Calendar](https://adventofcode.com/2022)) ([Solutions](./)) : 50⭐
@@ -27,7 +27,7 @@ Puzzle                                                                   | Stars
 [Day 16: Proboscidea Volcanium](https://adventofcode.com/2022/day/16)    | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day16/day16.rs) [![Rust](../../scripts/assets/rust.png)](day16_orig/day16_orig.rs)
 [Day 17: Pyroclastic Flow](https://adventofcode.com/2022/day/17)         | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day17/day17.rs) [![Python](../../scripts/assets/python.png)](day17/day17.py) [🎁](day17/README.md)
 [Day 18: Boiling Boulders](https://adventofcode.com/2022/day/18)         | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day18/day18.rs)
-[Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)      | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day19/day19.rs)
+[Day 19: Not Enough Minerals](https://adventofcode.com/2022/day/19)      | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day19/day19.rs) [![Rust](../../scripts/assets/rust.png)](day19_orig/day19_orig.rs)
 [Day 20: Grove Positioning System](https://adventofcode.com/2022/day/20) | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day20/day20.rs)
 [Day 21: Monkey Math](https://adventofcode.com/2022/day/21)              | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day21/day21.rs) [![Python](../../scripts/assets/python.png)](day21/day21.py)
 [Day 22: Monkey Map](https://adventofcode.com/2022/day/22)               | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day22/day22.rs)
