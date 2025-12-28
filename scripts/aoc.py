@@ -116,7 +116,9 @@ class AocProject:
 
         cmd = [self.scripts_dir / tool]
         cmd.extend(args)
-        subprocess.call(cmd, cwd=cwd)
+        env = os.environ.copy()
+        env["AOC_CWD"] = Path.cwd()
+        subprocess.call(cmd, cwd=cwd, env=env)
 
 
 @click.group(

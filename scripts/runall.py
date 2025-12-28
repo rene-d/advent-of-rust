@@ -1477,7 +1477,8 @@ def main():
         terminal_columns = 132
         pass
 
-    curdir = Path.cwd()
+    curdir = Path(os.environ.get("AOC_CWD", Path.cwd()))
+    print(curdir)
 
     if args.working_dir and args.working_dir.is_dir():
         logging.debug(f"set working directory to: {args.working_dir}")
@@ -1698,9 +1699,13 @@ def main():
         if args.quiet < 2:
             for i, f in enumerate(Path(Env.AOC_TARGET_DIR).glob("resolve_*.sh")):
                 if i == 0:
-                    print("\nFix problems then run:")
+                    print("\nFix problems, then run:")
 
-                print(f"  {RED}{f.absolute().relative_to(curdir, walk_up=True)}{RESET}")
+                f = f.absolute()
+                ff = f.relative_to(curdir, walk_up=True)
+                if ff.is_file():
+                    ff = f
+                print(f"  {RED}{ff}{RESET}")
 
 
 if __name__ == "__main__":
