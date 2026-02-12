@@ -10,7 +10,7 @@
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2025 (current event) ([Calendar](https://adventofcode.com/2025)) ([Solutions](src/year2025/)) : 24⭐
+## 2025 (last event) ([Calendar](https://adventofcode.com/2025)) ([Solutions](src/year2025/)) : 24⭐
 
 Puzzle                                                              | Stars | Languages
 ------------------------------------------------------------------- | ----- | -----------
