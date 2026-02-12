@@ -4,13 +4,13 @@
 ![Rust: 262](https://img.shields.io/badge/Rust-262-cyan?logo=Rust)
 ![Python: 127](https://img.shields.io/badge/Python-127-cyan?logo=Python)
 
-![calendars](./scripts/assets/calendars.gif) <img src="./scripts/assets/christmas_ferris_2015_2024.png" alt="Christmas Ferris" width="164" />
+![calendars](./scripts/assets/calendars.gif) <img src="./scripts/assets/ferris.png" alt="Christmas Ferris" width="400" />
 
 *Complete* solutions of [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org), and sometimes in [Python](https://www.python.org/) 3.10+ and other languages 🎄✨.
 
 Made for fun 😎 and to practice Rust. Many thanks to [Eric Wastl](https://twitter.com/ericwastl).
 
-## 2025 (current event) ([Calendar](https://adventofcode.com/2025)) ([Solutions](src/year2025/)) : 24⭐
+## 2025 (last event) ([Calendar](https://adventofcode.com/2025)) ([Solutions](src/year2025/)) : 24⭐
 
 Puzzle                                                              | Stars | Languages
 ------------------------------------------------------------------- | ----- | -----------
@@ -66,14 +66,14 @@ day |    2015 |    2016 |    2017 |    2018 |    2019 |    2020
 5 |    1 ms |  818 ms |   50 ms |    5 ms |   22 µs |   59 µs
 6 |    5 ms |   13 µs |  865 µs |  265 ms |    4 ms |  825 µs
 7 |    2 ms |   27 ms |  704 µs |   92 µs |  485 µs |    3 ms
-8 |   28 µs |  417 µs |  819 µs |  154 µs |   35 µs |  414 µs
+8 |   28 µs |  408 µs |  819 µs |  154 µs |   35 µs |  414 µs
 9 |   16 ms |  371 µs |   57 µs |   92 ms |    3 ms |  118 µs
 10 |   26 ms |  532 µs |   48 µs |  510 µs |    5 ms |   10 µs
 11 |    6 ms |   18 ms |    7 ms |  119 ms |    1 ms |  213 ms
 12 |  829 µs |  108 ms |    2 ms |  277 µs |    8 ms |   29 µs
 13 |  102 ms |   26 µs |   84 ms |    4 ms |    9 ms |    8 µs
 14 |  841 µs | 1154 ms |    5 ms |  136 ms |    4 ms |    4 ms
-15 |    6 ms |    3 ms |  319 ms |   93 ms |    4 ms | 1309 ms
+15 |    6 ms |    3 ms |  318 ms |   93 ms |    4 ms | 1309 ms
 16 |  126 µs |   88 ms |   12 ms |  756 µs |  180 ms |  863 µs
 17 |   31 ms |   21 ms |  138 µs |    2 ms |    2 ms |   27 ms
 18 |   20 ms |  162 ms |    5 ms |   24 ms |   85 ms |  212 µs
@@ -83,7 +83,7 @@ day |    2015 |    2016 |    2017 |    2018 |    2019 |    2020
 22 |    2 ms |  698 µs |  144 ms |   41 ms |   11 µs |   95 ms
 23 |   24 µs |  184 µs |    2 ms |  948 µs |    2 ms |  142 ms
 24 |   17 ms |    3 ms |   65 ms |   17 ms |   32 ms |   46 ms
-25 |   74 ms |   20 ms |  196 ms |    1 ms |   16 ms |  113 µs
+25 |   74 ms |   20 ms |  196 ms |    1 ms |   15 ms |  113 µs
 
 day |    2021 |    2022 |    2023 |    2024 |    2025
 ------- | ------- | ------- | ------- | ------- | -------
@@ -113,7 +113,7 @@ day |    2021 |    2022 |    2023 |    2024 |    2025
 24 |   70 ms |   92 ms |  599 µs |  224 µs |
 25 |   68 ms |   14 µs |  209 ms |  499 µs |
 
-Total : 10.837 s
+Total : 10.835 s
 
 ## Under the hood 🎄
 

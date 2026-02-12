@@ -120,13 +120,11 @@ class AocSession:
 
         self.always_submit = False
 
-        self.db.executescript(
-            """
+        self.db.executescript("""
             create table if not exists cache (url text,user text,last_modified date,content text);
             create table if not exists answers (user text,year integer,day integer,language text, st_mtime float,part1 text,part2 text);
             create unique index if not exists answers_idx on answers (user,year,day,language);
-            """
-        )
+            """)
 
         name = None
         self.user_id = ""
@@ -751,10 +749,16 @@ def make_readme_main(args):
             md.append("")
             continue
 
-        if line.startswith("## Current year") or "current event" in line:
+        if line.startswith("## ") and ("(current event)" in line or "(last event)" in line):
             skip = True
+
+            if datetime.now(UTC).year > current_calendar:
+                current_last = "last"
+            else:
+                current_last = "current"
+
             line = (
-                f"## {current_calendar} (current event)"
+                f"## {current_calendar} ({current_last} event)"
                 f" ([Calendar](https://adventofcode.com/{current_calendar}))"
                 f" ([Solutions]({session.year_dir(current_calendar).relative_to(session.rootdir)}/)) :"
                 f" {all_stars[current_calendar]}⭐"
