@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#   "click",
+# ]
+# ///
 
 # I finally wrote the CLI as a wrapper of my own scripts and [aoc-cli](https://github.com/scarvalhojr/aoc-cli) 😎
 
 import os
+import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -50,7 +57,7 @@ class AliasedGroup(click.Group):
     file and with a bit of magic.
     """
 
-    _aliases = {}
+    _aliases: dict[str, str] = {}
 
     @classmethod
     def aliases(cls, a):
@@ -107,6 +114,8 @@ class AocProject:
     aoc_root: Path
 
     def pass_thru(self, tool: str, args: list, cwd=None):
+        """Pass through a command to a script in the scripts directory."""
+
         if not Path(os.getcwd()).is_relative_to(self.aoc_root):
             if Path(__file__).is_symlink():
                 cwd = Path(__file__).resolve().parent.parent
@@ -114,10 +123,22 @@ class AocProject:
             else:
                 raise click.ClickException("not in AoC project")
 
-        cmd = [self.scripts_dir / tool]
+        tool_path = self.scripts_dir / tool
+        if not tool_path.is_file():
+            raise click.ClickException(f"Tool {tool} not found.")
+
+        cmd = []
+
+        if tool_path.suffix == ".py":
+            if shutil.which("uv"):
+                cmd.extend(["uv", "run", "--active"])
+            else:
+                cmd.append("python3")
+
+        cmd.append(tool_path.as_posix())
         cmd.extend(args)
         env = os.environ.copy()
-        env["AOC_CWD"] = Path.cwd()
+        env["AOC_CWD"] = Path.cwd().as_posix()
         subprocess.call(cmd, cwd=cwd, env=env)
 
 
@@ -152,17 +173,24 @@ def aoc_install(ctx: click.Context):
     Install the CLI into ~/.local/bin .
     """
 
-    f = Path(__file__)
-    if f.is_symlink():
-        raise click.ClickException("Launch command with the real file, not the symlink.")
-
     cli_path = get_cli_path()
     cli = cli_path.expanduser()
+
+    f = Path(__file__)
+    if f.is_symlink() or f.parent == cli:
+        raise click.ClickException("Launch command with the real file, not the symlink.")
+
     if cli.exists():
         cli.unlink()
     cli.parent.mkdir(parents=True, exist_ok=True)
-    cli.symlink_to(f)
-    click.echo(f"Command aoc has been installed in {cli_path} .")
+
+    if shutil.which("uv"):
+        cli.write_text(f'#!/bin/sh\nexec uv run --active {f.resolve()} "$@"\n')
+        os.chmod(cli, 0o755)
+    else:
+        cli.symlink_to(f)
+
+    click.echo(f"Command aoc has been installed in « {cli_path} ».")
 
 
 @aoc.command(name="private-leaderboard")

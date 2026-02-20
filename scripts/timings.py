@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#   "tabulate",
+#   "curtsies",
+# ]
+# ///
 
 import argparse
 import os
@@ -51,7 +58,7 @@ except ImportError:
     try:
         import curtsies
     except ImportError:
-        curtsies = None
+        curtsies = None  # type: ignore
 
 
 # ---------
