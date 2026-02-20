@@ -169,6 +169,8 @@ def fmt_elapsed(elapsed: float, unit: bool = True) -> str:
 
 
 def fmt_col(s: str) -> str:
+    """Format a column value."""
+
     if not s:
         return ""
 
@@ -197,6 +199,7 @@ class Timings:
         self.load()
 
     def load(self):
+        """Load puzzle and solution data from the database."""
         self._last_load += 1  # to refresh the lru_cache
         self.year_begin = min(aoc_available_years())
         self.year_end = max(aoc_available_years())
@@ -285,7 +288,7 @@ class Timings:
         return stats
 
     def export_md(self, user: str, lang: str, file: Path, step=100):
-        """TODO"""
+        """Export statistics in markdown format."""
 
         def prt(fd, r):
             stats = self.get_stats(user, lang, self._last_load, tuple(r))
@@ -333,10 +336,12 @@ class Timings:
         def ids(a, b):
             return " ".join(f"{y}:{d:<2}" for (y, d), v in sorted(stats.solutions.items()) if a <= v < b)
 
+        puzzle_count = sum(1 for _ in aoc_available_puzzles())
+
         inf = float("inf")
         print()
         print(f"Solutions in \033[95m{lang.capitalize():<7}\033[0m : {len(stats.solutions):3}")
-        print(f"Number missing       : {25 * (self.year_end - self.year_begin + 1) - len(stats.solutions):3}")
+        print(f"Number missing       : {puzzle_count - len(stats.solutions):3}")
         print(f"Fast        (< {T1:3.1g}s) : \033[32m{timing(0, T1):3}\033[0m")
         print(f"Quite fast  (< {T2:3.1g}s) : \033[34m{timing(T1, T2):3}\033[0m")
         print(f"Fast enough (< {T3:3.1g}s) : \033[33m{timing(T2, T3):3}\033[0m   [ {ids(T2, T3)} ]")
