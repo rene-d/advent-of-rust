@@ -45,7 +45,6 @@ image = { version = "*", optional = true }
 geo = "*"
 geo-types = "*"
 bytecount = "*"
-divisors = "*"
 rayon = "*"
 good_lp = { version = "*", features = ["microlp"], default-features = false }
 # sha2 = "0.10.8"

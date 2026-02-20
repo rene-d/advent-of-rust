@@ -314,6 +314,13 @@ class Timings:
                 year += step
             print(f"Total : {total:.3f} s", file=fd)
 
+    def export_csv(self, user: str, lang: str):
+        """Print raw statistics in CSV format."""
+        print("year,day,elapsed")
+        stats = self.get_stats(user, lang, self._last_load)
+        for (year, day), elapsed in sorted(stats.solutions.items()):
+            print(f"{year},{day},{elapsed:.6f}")
+
     def print_stats(self, user: str, lang: str, tablefmt: str = "rounded_outline"):
         """Print timing statistics in a formatted table with performance breakdown."""
         stats = self.get_stats(user, lang, self._last_load)
@@ -359,6 +366,7 @@ def main():
     parser.add_argument("-l", "--lang", default="Rust", help="Language")
     parser.add_argument("-b", "--browse", action="store_true", help="Browse all users/languages")
     parser.add_argument("-x", "--export", type=Path, help="Export markdown")
+    parser.add_argument("--csv", action="store_true", help="Export CSV")
     args = parser.parse_args()
 
     if "AOC_TARGET_DIR" in os.environ:
@@ -386,6 +394,9 @@ def main():
 
     if args.export:
         return timings.export_md(args.user, args.lang.casefold(), file=args.export)
+
+    if args.csv:
+        return timings.export_csv(args.user, args.lang.casefold())
 
     try:
         if not args.browse:

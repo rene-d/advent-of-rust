@@ -1,6 +1,5 @@
 //! [Day 15: Beacon Exclusion Zone](https://adventofcode.com/2022/day/15)
 
-use regex::Regex;
 use rustc_hash::FxHashSet;
 
 /// Computes the [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) between two points
@@ -8,10 +7,16 @@ const fn manhattan(ax: i64, ay: i64, bx: i64, by: i64) -> i64 {
     (ax - bx).abs() + (ay - by).abs()
 }
 
+/// Extracts all integers from a string, including negative ones.
+fn extract_i64(s: &str) -> impl Iterator<Item = i64> + '_ {
+    s.split(|c: char| !(c.is_ascii_digit() || c == '-'))
+        .filter(|s| !s.is_empty())
+        .map(|s| s.parse::<i64>().unwrap())
+}
+
 struct Puzzle {
     sensors: Vec<(i64, i64, i64)>, // list of (x,y,distance from nearest beacon)
     beacons: FxHashSet<(i64, i64)>, // set of beacons
-    max_d: i64,                    // max distance sensor-beacon
     field_size: i64,               // 20 or 4000000 depends on test or puzzle
 }
 
@@ -19,30 +24,15 @@ impl Puzzle {
     fn new(data: &str, is_test: bool) -> Self {
         let field_size = if is_test { 20 } else { 4_000_000 };
 
-        let re = Regex::new(
-            r"Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)",
-        )
-        .unwrap();
-
-        let lines = data.split('\n').collect::<Vec<_>>();
-
         let mut sensors = Vec::new();
         let mut beacons = FxHashSet::default();
-        let mut max_d = 0;
 
-        for line in lines {
-            if let Some(m) = re.captures(line) {
-                let sx = m[1].parse::<i64>().unwrap();
-                let sy = m[2].parse::<i64>().unwrap();
-                let bx = m[3].parse::<i64>().unwrap();
-                let by = m[4].parse::<i64>().unwrap();
-
+        for line in data.lines() {
+            let mut iter = extract_i64(line);
+            if let (Some(sx), Some(sy), Some(bx), Some(by)) =
+                (iter.next(), iter.next(), iter.next(), iter.next())
+            {
                 let d = manhattan(sx, sy, bx, by);
-
-                if d > max_d {
-                    max_d = d;
-                }
-
                 sensors.push((sx, sy, d));
                 beacons.insert((bx, by));
             }
@@ -51,92 +41,123 @@ impl Puzzle {
         Self {
             sensors,
             beacons,
-            max_d,
             field_size,
         }
     }
 
     // Solves part one
-    fn part1(&self) -> u32 {
-        let bx_min = self.beacons.iter().map(|x| x.0).min().unwrap() - self.max_d;
-        let bx_max = self.beacons.iter().map(|x| x.0).max().unwrap() + self.max_d;
-
+    fn part1(&self) -> i64 {
         let y = self.field_size / 2;
+        let mut intervals: Vec<(i64, i64)> = Vec::with_capacity(self.sensors.len());
 
-        let mut part1 = 0;
-
-        for x in bx_min..=bx_max {
-            if self.beacons.contains(&(x, y)) {
-                continue;
+        for (sx, sy, d) in &self.sensors {
+            let dy = (sy - y).abs();
+            if dy <= *d {
+                let dx = d - dy;
+                intervals.push((sx - dx, sx + dx));
             }
+        }
 
-            for (sx, sy, nearest_beacon) in &self.sensors {
-                let d = manhattan(x, y, *sx, *sy);
-                if d <= *nearest_beacon {
-                    // the sensors always report the nearest beacon
-                    // if the distance is less than the distance measured by the sensor,
-                    // there cannot be a beacon at this position
+        intervals.sort_unstable_by(|a, b| a.0.cmp(&b.0));
 
-                    part1 += 1;
-                    break;
+        let mut merged: Vec<(i64, i64)> = Vec::with_capacity(intervals.len());
+        for interval in intervals {
+            if merged.is_empty() {
+                merged.push(interval);
+            } else {
+                let last = merged.last_mut().unwrap();
+                // Merge if overlapping or adjacent
+                if interval.0 <= last.1 + 1 {
+                    last.1 = std::cmp::max(last.1, interval.1);
+                } else {
+                    merged.push(interval);
                 }
             }
         }
-        part1
+
+        let mut count: i64 = 0;
+        for (start, end) in &merged {
+            count += end - start + 1;
+        }
+
+        // Subtract beacons that are in the coverage area
+        for (bx, by) in &self.beacons {
+            if *by == y {
+                for (start, end) in &merged {
+                    if *bx >= *start && *bx <= *end {
+                        count -= 1;
+                        break;
+                    }
+                }
+            }
+        }
+
+        count
     }
 
     // Solve part two
     fn part2(&self) -> i64 {
-        for y in 0..=self.field_size {
-            // each sensor defines a zone where there is only one beacon
-            // this zone is all points at a distance less than or equal to the Manhattan distance to its beacon
-            // (i.e. a disk for this distance, not the Euclidian one)
+        // The idea is to find the distress beacon which is the only point not covered by any sensor.
+        // The beacon must be at distance `d + 1` from at least one sensor (where `d` is the sensor's range).
+        // For each sensor, the boundary at distance `d + 1` consists of 4 line segments:
+        //   y = x + a (positive slope)
+        //   y = -x + b (negative slope)
+        // Since the beacon is unique, it's likely (or guaranteed) to be at the intersection of such lines from different sensors.
+        // Or at least, the intersection points are very few candidates compared to scanning the whole grid.
 
-            // computes the intersection of the blank zone of each sensor and the row y => a 'segment'
-            // example: intersection with the blank zone of 'radius' 3 of sensor S with column 3
-            //          the segment with three X
-            //   01234567
-            //   ........
-            //   ....#...
-            //   ...X##..
-            //   ..#XS##.
-            //   ...X##,.
-            //   ....#...
-            //
-            let mut segments = vec![];
-            for (sx, sy, sd) in &self.sensors {
-                let delta = sd - (sy - y).abs();
-                if delta >= 0 {
-                    segments.push((*sx - delta, *sx + delta + 1));
+        let mut acoeffs = Vec::with_capacity(self.sensors.len() * 2); // coefficients for y = x + a
+        let mut bcoeffs = Vec::with_capacity(self.sensors.len() * 2); // coefficients for y = -x + b
+
+        for (sx, sy, d) in &self.sensors {
+            // y = x + (sy - sx) +/- (d + 1)
+            acoeffs.push(sy - sx - d - 1);
+            acoeffs.push(sy - sx + d + 1);
+
+            // y = -x + (sy + sx) +/- (d + 1)
+            bcoeffs.push(sy + sx - d - 1);
+            bcoeffs.push(sy + sx + d + 1);
+        }
+
+        acoeffs.sort_unstable();
+        bcoeffs.sort_unstable();
+        acoeffs.dedup();
+        bcoeffs.dedup();
+
+        for &a in &acoeffs {
+            for &b in &bcoeffs {
+                // Intersection of y = x + a and y = -x + b
+                // x + a = -x + b => 2x = b - a
+                // 2y = a + b
+
+                let p = b - a;
+                let q = a + b;
+
+                // Coordinates must be integers
+                if p % 2 != 0 || q % 2 != 0 {
+                    continue;
                 }
-            }
 
-            // the union of all intersecions: it should overlap the entire row [0, 4000000]
-            // except for only one row: a point should be not covered and this is the solution
-            // in this case, the intersection is two disjointed segments
-            segments.sort_by_key(|a| a.0);
+                let x = p / 2;
+                let y = q / 2;
 
-            let mut column: Vec<(i64, i64)> = vec![];
-            let mut it = segments.iter();
-
-            column.push(*it.next().unwrap());
-            for curr in it {
-                let tail = column.last_mut().unwrap();
-                if tail.1 < curr.0 {
-                    column.push(*curr);
-                } else if tail.1 < curr.1 {
-                    *tail = (tail.0, curr.1);
+                // Check bounds [0, field_size]
+                if x < 0 || x > self.field_size || y < 0 || y > self.field_size {
+                    continue;
                 }
-            }
 
-            // we eventually can verify that
-            //  - column[0].0 <= 0 && column[-1].1 >= self.field_size
-            //  - column.len() == 1 or 2
-            //  - if 2, column[0].1 + 1 == column[1].0
+                // Check if this point is covered by ANY sensor
+                // If not covered, we found the distress beacon!
+                let mut covered = false;
+                for (sx, sy, d) in &self.sensors {
+                    if manhattan(x, y, *sx, *sy) <= *d {
+                        covered = true;
+                        break;
+                    }
+                }
 
-            if column.len() > 1 {
-                let x = column.first().unwrap().1;
-                return x * 4_000_000 + y;
+                if !covered {
+                    return x * 4_000_000 + y;
+                }
             }
         }
 
@@ -145,7 +166,7 @@ impl Puzzle {
 }
 
 #[must_use]
-pub fn solve(data: &str) -> (u32, i64) {
+pub fn solve(data: &str) -> (i64, i64) {
     let puzzle = Puzzle::new(data, false);
     (puzzle.part1(), puzzle.part2())
 }

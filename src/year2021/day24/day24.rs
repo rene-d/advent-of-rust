@@ -212,7 +212,7 @@ pub fn solve(data: &str) -> (i64, i64) {
     // verify the boxes vs. the assembly-like program
     #[cfg(test)]
     {
-        use rand::Rng;
+        use rand::RngExt;
 
         for _ in 0..10 {
             let z_init: i64 = rand::rng().random_range(0..1_000_000_000);

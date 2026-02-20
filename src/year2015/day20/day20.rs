@@ -1,5 +1,7 @@
 //! [Day 20: Infinite Elves and Infinite Houses](https://adventofcode.com/2015/day/20)
 
+use rayon::prelude::*;
+
 struct Puzzle {
     house_present: usize,
 }
@@ -12,58 +14,81 @@ impl Puzzle {
     }
 
     fn part1(&self) -> usize {
-        let mut house_number: usize = 0;
-        let mut present_count: usize = 0;
-        while present_count < self.house_present {
-            house_number += 1;
+        const CHUNK_SIZE: usize = 65_536;
 
-            present_count = 10 * divisors::get_divisors(house_number).iter().sum::<usize>();
+        // Estimate upper bound for chunks
+        let max_chunks = (self.house_present / 10) / CHUNK_SIZE + 2;
 
-            // The crate `divisors` forgot to include 1 as a divisor. It also forgot to include
-            // the number itself, except for 2. For instance:
-            // - `divisors::get_divisors(1)` returns { }
-            // - `divisors::get_divisors(2)` returns { 2 }
-            // - `divisors::get_divisors(3)` returns { }
-            // - `divisors::get_divisors(10)` returns { 2, 5 }
-            if house_number == 1 || house_number == 2 {
-                present_count += 10;
-            } else {
-                present_count += 10 * (1 + house_number);
+        let result = (0..max_chunks).into_par_iter().find_map_first(|chunk_idx| {
+            let start_idx = chunk_idx * CHUNK_SIZE + 1;
+            let end_idx = start_idx + CHUNK_SIZE;
+            let mut houses = vec![0; CHUNK_SIZE];
+
+            for elf in 1..end_idx {
+                let mut house = if elf >= start_idx {
+                    elf
+                } else {
+                    start_idx.div_ceil(elf) * elf
+                };
+
+                while house < end_idx {
+                    houses[house - start_idx] += elf * 10;
+                    house += elf;
+                }
             }
-        }
 
-        house_number
+            for (i, &presents) in houses.iter().enumerate() {
+                if presents >= self.house_present {
+                    return Some(start_idx + i);
+                }
+            }
+            None
+        });
+
+        result.unwrap_or(0)
     }
 
     fn part2(&self) -> usize {
-        let mut house_number: usize = 0;
-        let mut present_count: usize = 0;
-        while present_count < self.house_present {
-            house_number += 1;
+        const CHUNK_SIZE: usize = 262_144; // 2^18
+        let mut houses = vec![0; CHUNK_SIZE];
+        let mut start_idx = 1;
 
-            present_count = 11
-                * divisors::get_divisors(house_number)
-                    .iter()
-                    .filter(|x| 50 * **x >= house_number)
-                    .sum::<usize>();
+        loop {
+            houses.fill(0);
+            let end_idx = start_idx + CHUNK_SIZE;
 
-            // The crate `divisors` forgot to include 1 as a divisor. It also forgot to include
-            // the number itself, except for 2. For instance:
-            // - `divisors::get_divisors(1)` returns { }
-            // - `divisors::get_divisors(2)` returns { 2 }
-            // - `divisors::get_divisors(3)` returns { }
-            // - `divisors::get_divisors(10)` returns { 2, 5 }
-            if house_number == 1 || house_number == 2 {
-                present_count += 11;
-            } else {
-                if house_number <= 50 {
-                    present_count += 11;
+            // Iterate elves that can contribute
+            // The constraint is 50 * elf >= house, so elf >= house / 50
+            // Since house >= start_idx, we need elf >= start_idx / 50 roughly.
+            // But strict lower bound is just 1..end_idx, and we filter by condition.
+            for elf in 1..end_idx {
+                // Constraint: house <= 50 * elf
+                let max_house = elf * 50;
+                if max_house < start_idx {
+                    continue;
                 }
-                present_count += 11 * house_number;
-            }
-        }
 
-        house_number
+                let mut house = if elf >= start_idx {
+                    elf
+                } else {
+                    start_idx.div_ceil(elf) * elf
+                };
+
+                while house < end_idx && house <= max_house {
+                    houses[house - start_idx] += elf * 11;
+                    house += elf;
+                }
+            }
+
+            for (i, &presents) in houses.iter().enumerate() {
+                if presents >= self.house_present {
+                    let house_number = start_idx + i;
+                    return house_number;
+                }
+            }
+
+            start_idx += CHUNK_SIZE;
+        }
     }
 }
 

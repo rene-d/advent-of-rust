@@ -1,21 +1,57 @@
 //! [Day 16: Reindeer Maze](https://adventofcode.com/2024/day/16)
 
-use rustc_hash::{FxHashMap, FxHashSet};
+use rustc_hash::FxHashSet;
 use std::collections::BinaryHeap;
 
-use aoc::Coord;
+const EAST: usize = 0;
+const SOUTH: usize = 1;
+const WEST: usize = 2;
+const NORTH: usize = 3;
 
-const ZERO: Coord = Coord { x: 0, y: 0 };
-const EAST: Coord = Coord { x: 1, y: 0 }; // starting direction
+#[derive(Clone, Copy, Eq, PartialEq, Hash)]
+struct Coord {
+    x: usize,
+    y: usize,
+}
+
+impl Coord {
+    const ZERO: Self = Self { x: 0, y: 0 };
+
+    const fn new(x: usize, y: usize) -> Self {
+        Self { x, y }
+    }
+
+    fn add(&self, dir: usize) -> Self {
+        match dir {
+            EAST => Self {
+                x: self.x + 1,
+                y: self.y,
+            },
+            SOUTH => Self {
+                x: self.x,
+                y: self.y + 1,
+            },
+            WEST => Self {
+                x: self.x - 1,
+                y: self.y,
+            },
+            NORTH => Self {
+                x: self.x,
+                y: self.y - 1,
+            },
+            _ => unreachable!(),
+        }
+    }
+}
 
 struct Cost1 {
     cost: u32,
     pos: Coord,
-    dir: Coord,
+    dir: usize,
 }
 
 impl Cost1 {
-    const fn new(cost: u32, pos: Coord, dir: Coord) -> Self {
+    const fn new(cost: u32, pos: Coord, dir: usize) -> Self {
         Self { cost, pos, dir }
     }
 }
@@ -40,64 +76,24 @@ impl PartialEq for Cost1 {
 
 impl Eq for Cost1 {}
 
-struct Cost2 {
-    cost: u32,
-    pos: Coord,
-    dir: Coord,
-    path: Vec<Coord>,
-}
-
-impl Cost2 {
-    const fn new(cost: u32, pos: Coord, dir: Coord, path: Vec<Coord>) -> Self {
-        Self {
-            cost,
-            pos,
-            dir,
-            path,
-        }
-    }
-}
-
-impl Ord for Cost2 {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-        other.cost.cmp(&self.cost)
-    }
-}
-
-impl PartialOrd for Cost2 {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl PartialEq for Cost2 {
-    fn eq(&self, other: &Self) -> bool {
-        self.cost == other.cost
-    }
-}
-
-impl Eq for Cost2 {}
-
 struct Puzzle {
     start: Coord,
     end: Coord,
     maze: FxHashSet<Coord>,
-    size: Coord,
+    width: usize,
+    height: usize,
 }
 
 impl Puzzle {
     fn new(data: &str) -> Self {
-        let mut start = ZERO;
-        let mut end = ZERO;
+        let mut start = Coord::ZERO;
+        let mut end = Coord::ZERO;
         let mut maze = FxHashSet::default();
-        let mut size = ZERO;
+        let mut height = 0;
+        let mut width = 0;
 
-        for (y, line) in data.lines().enumerate() {
-            let y = i32::try_from(y).unwrap();
-
-            for (x, c) in line.chars().enumerate() {
-                let x = i32::try_from(x).unwrap();
-
+        for (line, y) in data.lines().zip(0..) {
+            for (c, x) in line.chars().zip(0..) {
                 if c == '#' {
                     continue;
                 }
@@ -109,110 +105,60 @@ impl Puzzle {
                 }
 
                 maze.insert(Coord { x, y });
-                size.x = x;
+                width = x + 1;
             }
 
-            size.y = y;
+            height = y + 1;
         }
 
         Self {
             start,
             end,
             maze,
-            size,
-        }
-    }
-
-    #[cfg(feature = "anim")]
-    fn show_maze(&self, path: &[Coord], n: u32) {
-        const SCALE: u32 = 2;
-
-        let width = self.size.x as u32 + 1;
-        let height = self.size.y as u32 + 1;
-
-        let mut imgbuf = image::ImageBuffer::new(width * SCALE, height * SCALE);
-
-        // Iterate over the coordinates and pixels of the image
-        for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
-            let r = (0.3 * x as f32) as u8;
-            let b = (0.3 * y as f32) as u8;
-            *pixel = image::Rgb([r, 0, b]);
-        }
-        for y in 0..=self.size.y {
-            for x in 0..=self.size.x {
-                let pos = Coord { x, y };
-
-                let c = image::Rgb(if pos == self.start {
-                    [0, 255, 0]
-                } else if pos == self.end {
-                    [255, 255, 0]
-                } else if path.contains(&pos) {
-                    [0, 0, 255]
-                } else if self.maze.contains(&pos) {
-                    continue;
-                } else {
-                    [0, 0, 0]
-                });
-
-                let x = x as u32 * SCALE;
-                let y = y as u32 * SCALE;
-
-                for k in 0..(SCALE * SCALE) {
-                    let pixel = imgbuf.get_pixel_mut(x + k % SCALE, y + k / SCALE);
-                    *pixel = c
-                }
-            }
-
-            imgbuf.save(format!("frame{n:05}.png")).unwrap();
-        }
-    }
-
-    #[allow(dead_code)]
-    fn show_maze_ascii(&self, path: &[Coord]) {
-        for y in 0..=self.size.y {
-            for x in 0..=self.size.x {
-                let pos = Coord { x, y };
-                let c = if pos == self.start {
-                    'S'
-                } else if pos == self.end {
-                    'E'
-                } else if path.contains(&pos) {
-                    'O'
-                } else if self.maze.contains(&pos) {
-                    '.'
-                } else {
-                    '#'
-                };
-
-                print!("{c}");
-            }
-            println!();
+            width,
+            height,
         }
     }
 
     /// Solve part one.
     fn part1(&self) -> u32 {
-        let mut seen = FxHashSet::default();
+        let num_states = self.width * self.height * 4;
+        let mut dist = vec![u32::MAX; num_states];
         let mut heap = BinaryHeap::new();
 
+        let start_idx = (self.start.y * self.width + self.start.x) * 4 + EAST;
+        dist[start_idx] = 0;
         heap.push(Cost1::new(0, self.start, EAST));
 
         while let Some(Cost1 { cost, pos, dir }) = heap.pop() {
-            seen.insert((pos, dir));
+            let current_idx = (pos.y * self.width + pos.x) * 4 + dir;
+            if cost > dist[current_idx] {
+                continue;
+            }
 
-            let counterclockwise = Coord::new(dir.y, -dir.x);
-            let clockwise = Coord::new(-dir.y, dir.x);
+            if pos == self.end {
+                return cost;
+            }
 
-            for (new_cost, new_pos, new_dir) in [
-                (cost + 1, pos + dir, dir), // advance in same direction
-                (cost + 1001, pos + counterclockwise, counterclockwise), // turn then move
-                (cost + 1001, pos + clockwise, clockwise), // turn then move
-            ] {
-                if new_pos == self.end {
-                    return new_cost;
-                }
-                if self.maze.contains(&new_pos) && !seen.contains(&(new_pos, dir)) {
-                    heap.push(Cost1::new(new_cost, new_pos, new_dir));
+            // Left turn (counter-clockwise): (idx + 3) % 4
+            // Right turn (clockwise): (idx + 1) % 4
+            // Straight: idx
+
+            let moves = [
+                (cost + 1, dir),              // Straight
+                (cost + 1001, (dir + 3) % 4), // Left turn + move
+                (cost + 1001, (dir + 1) % 4), // Right turn + move
+            ];
+
+            for (new_cost, new_dir) in moves {
+                let new_pos = pos.add(new_dir);
+
+                if self.maze.contains(&new_pos) {
+                    let new_idx = (new_pos.y * self.width + new_pos.x) * 4 + new_dir;
+                    if new_cost < dist[new_idx] {
+                        dist[new_idx] = new_cost;
+                        heap.push(Cost1::new(new_cost, new_pos, new_dir));
+                    }
                 }
             }
         }
@@ -222,56 +168,95 @@ impl Puzzle {
 
     /// Solve part two.
     fn part2(&self) -> usize {
+        let num_states = self.width * self.height * 4;
+
+        let mut dist = vec![u32::MAX; num_states];
+        let mut preds: Vec<Vec<_>> = vec![Vec::new(); num_states];
         let mut heap = BinaryHeap::new();
-        let mut costs = FxHashMap::default();
-        let mut best_path_tiles: FxHashSet<Coord> = FxHashSet::default();
+
+        let start_idx = (self.start.y * self.width + self.start.x) * 4 + EAST;
+        dist[start_idx] = 0;
+        heap.push(Cost1::new(0, self.start, EAST));
 
         let mut best_cost = u32::MAX;
+        let mut end_states = Vec::new();
 
-        #[cfg(feature = "anim")]
-        let mut frames = 0;
+        while let Some(Cost1 { cost, pos, dir }) = heap.pop() {
+            let current_idx = (pos.y * self.width + pos.x) * 4 + dir;
 
-        heap.push(Cost2::new(0, self.start, EAST, [self.start].to_vec()));
-        while let Some(Cost2 {
-            cost,
-            pos,
-            dir,
-            path: tiles,
-        }) = heap.pop()
-        {
-            if pos == self.end {
-                best_cost = best_cost.min(cost);
-                if best_cost == cost {
-                    best_path_tiles.extend(&tiles);
-
-                    #[cfg(feature = "anim")]
-                    {
-                        self.show_maze(&tiles, frames);
-                        frames += 1;
-                    }
-                }
+            if cost > dist[current_idx] {
+                continue;
             }
 
-            let counterclockwise = Coord::new(dir.y, -dir.x);
-            let clockwise = Coord::new(-dir.y, dir.x);
+            // Optimization: if we exceeded the best cost found so far, we can stop
+            // But we need to be careful to find ALL paths.
+            // Actually, Dijkstra guarantees we visit in order.
+            // If we found an end state, that cost is the best cost (first time).
+            // Any subsequent pop with cost > best_cost means we are done effectively for finding *optimal* paths.
+            if cost > best_cost {
+                break;
+            }
 
-            for (new_cost, new_pos, new_dir) in [
-                (cost + 1, pos + dir, dir),
-                (cost + 1001, pos + counterclockwise, counterclockwise),
-                (cost + 1001, pos + clockwise, clockwise),
-            ] {
-                if self.maze.contains(&new_pos)
-                    && costs.get(&(new_pos, new_dir)).copied().unwrap_or(u32::MAX) >= new_cost
-                {
-                    costs.insert((new_pos, new_dir), new_cost);
-                    let mut tiles = tiles.clone();
-                    tiles.push(new_pos);
-                    heap.push(Cost2::new(new_cost, new_pos, new_dir, tiles));
+            if pos == self.end {
+                if cost < best_cost {
+                    best_cost = cost;
+                    end_states.clear();
+                    end_states.push(current_idx);
+                } else if cost == best_cost {
+                    end_states.push(current_idx);
+                }
+                continue;
+            }
+
+            let moves = [
+                (cost + 1, dir),              // Straight
+                (cost + 1001, (dir + 3) % 4), // Left turn + move
+                (cost + 1001, (dir + 1) % 4), // Right turn + move
+            ];
+
+            for (new_cost, new_dir) in moves {
+                let new_pos = pos.add(new_dir);
+
+                if self.maze.contains(&new_pos) {
+                    let new_idx = (new_pos.y * self.width + new_pos.x) * 4 + new_dir;
+
+                    if new_cost < dist[new_idx] {
+                        dist[new_idx] = new_cost;
+                        preds[new_idx].clear();
+                        preds[new_idx].push(current_idx);
+                        heap.push(Cost1::new(new_cost, new_pos, new_dir));
+                    } else if new_cost == dist[new_idx] {
+                        preds[new_idx].push(current_idx);
+                    }
                 }
             }
         }
 
-        best_path_tiles.len()
+        // Backtracking BFS
+        let mut seen_idx = FxHashSet::default();
+        let mut queue = std::collections::VecDeque::new();
+        let mut unique_tiles = FxHashSet::default();
+
+        for &idx in &end_states {
+            if seen_idx.insert(idx) {
+                queue.push_back(idx);
+            }
+        }
+
+        while let Some(idx) = queue.pop_front() {
+            // Recover coord from idx
+            let y = (idx / 4) / self.width;
+            let x = (idx / 4) % self.width;
+            unique_tiles.insert(Coord { x, y });
+
+            for &pred_idx in &preds[idx] {
+                if seen_idx.insert(pred_idx) {
+                    queue.push_back(pred_idx);
+                }
+            }
+        }
+
+        unique_tiles.len()
     }
 }
 

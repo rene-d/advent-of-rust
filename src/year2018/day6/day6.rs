@@ -3,6 +3,7 @@
 use rayon::prelude::*;
 
 const N: usize = 512;
+const N_I32: i32 = 512;
 
 struct Puzzle {
     points: Vec<(i32, i32)>,
@@ -44,36 +45,35 @@ impl Puzzle {
     // }
 
     /// Solve part one.
-    #[allow(clippy::needless_range_loop)] // much comprehensive (according to me...)
     fn part1(&self) -> u32 {
         let mut grid = vec![[0u8; N]; N].into_boxed_slice();
 
         // find the areas of coordinates
-        for y in 0..N {
-            for x in 0..N {
-                // find the nearest points
-                let mut manhattan = vec![];
+        grid.par_iter_mut().zip(0..N_I32).for_each(|(row, y)| {
+            for (cell, x) in row.iter_mut().zip(0i32..N_I32) {
+                let mut min_dist = u32::MAX;
+                let mut closest = 255;
 
-                for (i, &(px, py)) in (0..).zip(self.points.iter()) {
-                    let x = i32::try_from(x).unwrap();
-                    let y = i32::try_from(y).unwrap();
-
+                for (&(px, py), i) in self.points.iter().zip(0..) {
                     let d = px.abs_diff(x) + py.abs_diff(y);
-                    manhattan.push((d, i));
-                }
 
-                manhattan.sort_unstable();
-
-                if manhattan[0].0 == manhattan[1].0 {
-                    grid[y][x] = 255;
-                } else {
-                    grid[y][x] = manhattan[0].1;
+                    match d.cmp(&min_dist) {
+                        std::cmp::Ordering::Less => {
+                            min_dist = d;
+                            closest = i;
+                        }
+                        std::cmp::Ordering::Equal => {
+                            closest = 255;
+                        }
+                        std::cmp::Ordering::Greater => {}
+                    }
                 }
+                *cell = closest;
             }
-        }
+        });
 
         // start the count at 1 to use 0 as value for infinite
-        let mut counts = [1; 50];
+        let mut counts = vec![1; self.points.len()];
 
         for y in 0..N {
             for x in 0..N {
@@ -85,11 +85,12 @@ impl Puzzle {
                     continue;
                 }
 
+                let idx = c as usize;
                 if x == 0 || y == 0 || x == N - 1 || y == N - 1 {
                     // points on the edge of the map are considered as infinite areas
-                    counts[c as usize] = 0;
-                } else if c != 255 && counts[c as usize] != 0 {
-                    counts[c as usize] += 1;
+                    counts[idx] = 0;
+                } else if counts[idx] != 0 {
+                    counts[idx] += 1;
                 }
             }
         }
@@ -100,32 +101,63 @@ impl Puzzle {
     }
 
     /// Solve part two.
-    fn part2(&self, limit: i32) -> u32 {
-        (-limit..(limit + 400))
-            .par_bridge()
-            .map(|y| {
-                (-limit..(limit + 400))
-                    .map(|x| {
-                        let mut d = 0;
+    fn part2(&self, limit: i32) -> usize {
+        let (mut xs, mut ys): (Vec<i32>, Vec<i32>) = self.points.iter().copied().unzip();
+        xs.sort_unstable();
+        ys.sort_unstable();
 
-                        for &(px, py) in &self.points {
-                            d += (x - px).abs() + (y - py).abs();
-                            if d >= limit {
-                                break;
-                            }
-                        }
+        let safe_costs = |coords: &[i32]| -> Vec<i32> {
+            let min_val = *coords.first().unwrap();
+            let max_val = *coords.last().unwrap();
+            let mut costs = Vec::new();
 
-                        u32::from(d < limit)
-                    })
-                    .sum::<u32>()
-            })
-            .sum()
+            // center
+            for t in min_val..=max_val {
+                let cost: i32 = coords.iter().map(|c| (t - c).abs()).sum();
+                if cost < limit {
+                    costs.push(cost);
+                }
+            }
+
+            // left
+            for t in (min_val - limit..min_val).rev() {
+                let cost: i32 = coords.iter().map(|c| (t - c).abs()).sum();
+                if cost >= limit {
+                    break;
+                }
+                costs.push(cost);
+            }
+
+            // right
+            for t in (max_val + 1)..(max_val + limit) {
+                let cost: i32 = coords.iter().map(|c| (t - c).abs()).sum();
+                if cost >= limit {
+                    break;
+                }
+                costs.push(cost);
+            }
+            costs
+        };
+
+        let x_costs = safe_costs(&xs);
+        let mut y_costs = safe_costs(&ys);
+        y_costs.sort_unstable();
+
+        let mut count = 0;
+        for cx in x_costs {
+            let rem = limit - cx;
+            if rem > 0 {
+                let idx = y_costs.partition_point(|&cy| cy < rem);
+                count += idx;
+            }
+        }
+        count
     }
 }
 
 /// # Panics
 #[must_use]
-pub fn solve(data: &str) -> (u32, u32) {
+pub fn solve(data: &str) -> (u32, usize) {
     let puzzle = Puzzle::new(data);
     (puzzle.part1(), puzzle.part2(10_000))
 }

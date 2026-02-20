@@ -1,9 +1,12 @@
 //! [Day 15: Rambunctious Recitation](https://adventofcode.com/2020/day/15)
 
-use rustc_hash::FxHashMap;
+#[cfg(target_pointer_width = "16")]
+fn usize32(_n: u32) -> usize {
+    compile_error!("16-bit architecture not supported");
+}
 
 struct Puzzle {
-    nums: Vec<usize>,
+    nums: Vec<u32>,
 }
 
 impl Puzzle {
@@ -12,58 +15,60 @@ impl Puzzle {
             nums: data
                 .trim()
                 .split(',')
-                .map(|s| s.parse::<usize>().unwrap())
+                .map(|s| s.parse::<u32>().unwrap())
                 .collect(),
         }
     }
 
-    fn solve(&self, number_spoken: usize) -> usize {
-        let mut last_spoken = FxHashMap::default();
-        let mut last_last_spoken = FxHashMap::default();
-        let mut first_spoken = false;
-        let mut last = 0;
-        let mut n = 0;
+    fn solve(&self, limit: u32) -> u32 {
+        let max_start = *self.nums.iter().max().unwrap_or(&0);
+        let length = self.nums.iter().map(|_| 1u32).sum();
+        let cap = limit.max(max_start + 1);
+        let mut last_seen = vec![0u32; cap as usize];
 
-        for turn in 1.. {
-            if turn <= self.nums.len() {
-                n = self.nums[turn - 1];
-            } else if first_spoken {
-                n = 0;
-            } else {
-                n = last_spoken[&last] - last_last_spoken[&n];
-            }
-
-            if turn == number_spoken {
-                break;
-            }
-
-            if last_spoken.contains_key(&n) {
-                first_spoken = false;
-                last_last_spoken.insert(n, last_spoken[&n]);
-            } else {
-                first_spoken = true;
-            }
-            last_spoken.insert(n, turn);
-            last = n;
+        for (&n, i) in self.nums.iter().zip(1u32..).take(self.nums.len() - 1) {
+            last_seen[n as usize] = i;
         }
 
-        n
+        let mut last_val = *self.nums.last().unwrap();
+        let mut turn = length;
+
+        let mut last_zero = last_seen[0];
+
+        while turn < limit {
+            // The assertion below helps LLVM prove that last_val < cap,
+            // which removes unnecessary bounds checking and makes the code safe
+            assert!(last_val < cap);
+
+            if last_val == 0 {
+                // reduce cache pressure by avoiding reading last_seen[0]
+                last_val = if last_zero != 0 { turn - last_zero } else { 0 };
+                last_zero = turn;
+            } else {
+                let seen_at = last_seen[last_val as usize];
+                last_seen[last_val as usize] = turn;
+                last_val = if seen_at != 0 { turn - seen_at } else { 0 };
+            }
+            turn += 1;
+        }
+
+        last_val
     }
 
     /// Solve part one.
-    fn part1(&self) -> usize {
+    fn part1(&self) -> u32 {
         self.solve(2020)
     }
 
     /// Solve part two.
-    fn part2(&self) -> usize {
+    fn part2(&self) -> u32 {
         self.solve(30_000_000)
     }
 }
 
 /// # Panics
 #[must_use]
-pub fn solve(data: &str) -> (usize, usize) {
+pub fn solve(data: &str) -> (u32, u32) {
     let puzzle = Puzzle::new(data);
     (puzzle.part1(), puzzle.part2())
 }
