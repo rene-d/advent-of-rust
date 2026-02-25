@@ -30,7 +30,7 @@ Puzzle                                                                          
 [Day 19: A Series of Tubes](https://adventofcode.com/2017/day/19)                     | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day19/day19.rs) [![Python](../../scripts/assets/python.png)](day19/day19.py)
 [Day 20: Particle Swarm](https://adventofcode.com/2017/day/20)                        | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day20/day20.rs) [![Python](../../scripts/assets/python.png)](day20/day20.py)
 [Day 21: Fractal Art](https://adventofcode.com/2017/day/21)                           | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day21/day21.rs) [![Python](../../scripts/assets/python.png)](day21/day21.py)
-[Day 22: Sporifica Virus](https://adventofcode.com/2017/day/22)                       | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day22/day22.rs) [![Python](../../scripts/assets/python.png)](day22/day22.py)
+[Day 22: Sporifica Virus](https://adventofcode.com/2017/day/22)                       | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day22/day22.rs) [![Python](../../scripts/assets/python.png)](day22/day22.py) [🎁](day22/README.md)
 [Day 23: Coprocessor Conflagration](https://adventofcode.com/2017/day/23)             | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day23/day23.rs)
 [Day 24: Electromagnetic Moat](https://adventofcode.com/2017/day/24)                  | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day24/day24.rs) [![Python](../../scripts/assets/python.png)](day24/day24.py)
 [Day 25: The Halting Problem](https://adventofcode.com/2017/day/25)                   | ⭐⭐  | [![Rust](../../scripts/assets/rust.png)](day25/day25.rs) [![Python](../../scripts/assets/python.png)](day25/day25.py)

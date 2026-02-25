@@ -1,11 +1,19 @@
 //! [Day 22: Monkey Market](https://adventofcode.com/2024/day/22)
 
-use rustc_hash::{FxHashMap, FxHashSet};
+use rayon::prelude::*;
 
-const fn next_secret(secret: i64) -> i64 {
+const fn next_secret(mut secret: i64) -> i64 {
+    /*
     let secret = (secret ^ (secret * 64)) % 16_777_216;
     let secret = (secret ^ (secret / 32)) % 16_777_216;
     (secret ^ (secret * 2048)) % 16_777_216
+    */
+    secret ^= secret << 6;
+    secret &= 0xFF_FFFF;
+    secret ^= secret >> 5;
+    secret ^= secret << 11;
+    secret &= 0xFF_FFFF;
+    secret
 }
 
 struct Puzzle {
@@ -22,36 +30,54 @@ impl Puzzle {
     /// Solve part one.
     fn part1(&self) -> i64 {
         self.initial_secrets
-            .iter()
+            .par_iter()
             .map(|&initial_secret| (0..2000).fold(initial_secret, |secret, _| next_secret(secret)))
             .sum()
     }
 
     /// Solve part two.
     fn part2(&self) -> i64 {
-        let mut bananas = FxHashMap::default();
+        const RANGE: usize = 19;
+        const SIZE: usize = RANGE * RANGE * RANGE * RANGE;
 
-        for &initial_secret in &self.initial_secrets {
-            let mut prices = Vec::new();
+        let total_bananas: Vec<i32> = self
+            .initial_secrets
+            .par_iter()
+            .fold(
+                || vec![0; SIZE],
+                |mut acc, &initial_secret| {
+                    let mut seen = vec![false; SIZE];
+                    let mut secret = initial_secret;
+                    let mut idx = 0;
 
-            let mut secret = initial_secret;
-            prices.push(secret % 10);
-            for _ in 0..2000 {
-                secret = next_secret(secret);
-                prices.push(secret % 10);
-            }
+                    for i in 0..2000 {
+                        let next = next_secret(secret);
+                        let p_prev = (secret % 10) as i8;
+                        let p_curr = (next % 10) as i8;
+                        let diff = p_prev.abs_diff(p_curr + 9) as usize;
 
-            let mut seen = FxHashSet::default();
-            for p in prices.windows(5) {
-                let sequence = [p[1] - p[0], p[2] - p[1], p[3] - p[2], p[4] - p[3]];
+                        idx = (idx % 6859) * 19 + diff;
 
-                if seen.insert(sequence) {
-                    *bananas.entry(sequence).or_default() += p[4];
-                }
-            }
-        }
+                        if i >= 3 && !seen[idx] {
+                            acc[idx] += i32::from(p_curr);
+                            seen[idx] = true;
+                        }
+                        secret = next;
+                    }
+                    acc
+                },
+            )
+            .reduce(
+                || vec![0; SIZE],
+                |mut a, b| {
+                    for (x, y) in a.iter_mut().zip(b.iter()) {
+                        *x += *y;
+                    }
+                    a
+                },
+            );
 
-        *bananas.values().max().unwrap()
+        i64::from(*total_bananas.iter().max().unwrap_or(&0))
     }
 }
 
