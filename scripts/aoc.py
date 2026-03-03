@@ -9,6 +9,7 @@
 # I finally wrote the CLI as a wrapper of my own scripts and [aoc-cli](https://github.com/scarvalhojr/aoc-cli) 😎
 
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -19,11 +20,9 @@ try:
     import click
 except ImportError:
     print("This script requires the « click » module.")
-
+    print(f"Install it or use « uv run {sys.argv[0]} »")
     if "VIRTUAL_ENV" in os.environ:
-        print("VirtualEnv detected: try to install from PyPi...")
-        if os.system(f"{sys.executable} -mpip install click") != 0:
-            sys.exit(1)
+        print(f"{sys.executable} -mpip install click")
     elif sys.platform == "linux":
         distro = "unknown"
         r = Path("/etc/os-release")
@@ -33,23 +32,12 @@ except ImportError:
                     distro = line[3:].strip().strip('"').strip("'")
                     break
         if distro == "debian" or distro == "ubuntu":
-            print("Debian/Ubuntu detected: try to install packages...")
-            if os.system("sudo apt-get install -y python3-click") != 0:
-                sys.exit(1)
+            print("sudo apt-get install -y python3-click")
         elif distro == "alpine":
-            print("Alpine detected: try to install packages...")
-            if os.system("sudo apk add --no-cache py3-click") != 0:
-                sys.exit(1)
+            print("sudo apk add --no-cache py3-click")
         elif distro == "fedora":
-            print("Fedora detected: try to install packages...")
-            if os.system("sudo dnf install -y python3-click") != 0:
-                sys.exit(1)
-        else:
-            sys.exit(0)
-    else:
-        sys.exit(1)
-
-    import click
+            print("sudo dnf install -y python3-click")
+    sys.exit(1)
 
 
 class AliasedGroup(click.Group):
@@ -100,7 +88,9 @@ class AliasedGroup(click.Group):
 
 
 def get_cli_path():
-    if os.getuid() == 0:
+    if platform.system() == "Windows":
+        cli = Path("~/.local/bin/aoc.cmd")
+    elif os.getuid() == 0:
         # probably into a container
         cli = Path("/usr/local/bin/aoc")
     else:
@@ -185,7 +175,10 @@ def aoc_install(ctx: click.Context):
     cli.parent.mkdir(parents=True, exist_ok=True)
 
     if shutil.which("uv"):
-        cli.write_text(f'#!/bin/sh\nexec uv run --active {f.resolve()} "$@"\n')
+        if platform.system() == "Windows":
+            cli.write_text(f"@uv run --active {f.resolve()} %1 %2 %3 %4 %5 %6 %7 %8 %9\n")
+        else:
+            cli.write_text(f'#!/bin/sh\nexec uv run --active {f.resolve()} "$@"\n')
         os.chmod(cli, 0o755)
     else:
         cli.symlink_to(f)

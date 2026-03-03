@@ -9,6 +9,7 @@
 
 import argparse
 import os
+import platform
 import re
 import sqlite3
 import sys
@@ -19,46 +20,15 @@ from functools import lru_cache
 from pathlib import Path
 
 try:
-    import curtsies
+    if platform.system() == "Windows":
+        curtsies = None  # type: ignore
+    else:
+        import curtsies
     import tabulate
 except ImportError:
-    print("This script requires the « tabulate » and « curtsies » modules.")
-
-    if "VIRTUAL_ENV" in os.environ:
-        print("VirtualEnv detected: try to install from PyPi...")
-        if os.system(f"{sys.executable} -mpip install tabulate curtsies") != 0:
-            sys.exit(1)
-    elif sys.platform == "linux":
-        distro = "unknown"
-        r = Path("/etc/os-release")
-        if r.is_file():
-            for line in r.read_text(encoding="utf-8").splitlines():
-                if line.startswith("ID="):
-                    distro = line[3:].strip().strip('"').strip("'")
-                    break
-        if distro == "debian" or distro == "ubuntu":
-            print("Debian/Ubuntu detected: try to install packages...")
-            if os.system("sudo apt-get install -y python3-tabulate python3-curtsies") != 0:
-                sys.exit(1)
-        elif distro == "alpine":
-            print("Alpine detected: try to install packages...")
-            if os.system("sudo apk add --no-cache py3-tabulate") != 0:
-                sys.exit(1)
-        elif distro == "fedora":
-            print("Fedora detected: try to install packages...")
-            if os.system("sudo dnf install -y python3-tabulate python3-curtsies") != 0:
-                sys.exit(1)
-        else:
-            sys.exit(0)
-    else:
-        sys.exit(1)
-
-    import tabulate
-
-    try:
-        import curtsies
-    except ImportError:
-        curtsies = None  # type: ignore
+    print("This script requires the external packages (« tabulate », and « curtsies » on macOS/Linux).")
+    print(f"Install them or use « uv run {sys.argv[0]} »")
+    sys.exit(1)
 
 
 # ---------

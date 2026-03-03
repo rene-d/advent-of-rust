@@ -2,7 +2,6 @@ use aor::{Solution, solutions};
 use colored::Colorize;
 use itertools::Itertools;
 use std::error::Error;
-use std::os::unix::ffi::OsStrExt;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
@@ -328,7 +327,12 @@ fn find_input_path(sol: &Solution, input_txt: bool) -> (PathBuf, PathBuf) {
             let user_sol = data_dir
                 .filter_map(std::result::Result::ok)
                 .filter(|f| f.path().is_dir())
-                .filter(|f| f.file_name().as_bytes().iter().all(u8::is_ascii_digit))
+                .filter(|f| {
+                    f.file_name()
+                        .as_encoded_bytes()
+                        .iter()
+                        .all(u8::is_ascii_digit)
+                })
                 .sorted_by_key(std::fs::DirEntry::file_name)
                 .next();
 
