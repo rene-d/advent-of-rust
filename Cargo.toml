@@ -27,6 +27,7 @@ regex = "*"
 rustworkx-core = "*"
 scan_fmt = "*"
 serde_json = "*"
+toml = "0.8"
 strum = { version = "*", features = ["strum_macros", "derive"] }
 strum_macros = "*"
 text_io = "*"

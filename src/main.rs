@@ -1,6 +1,7 @@
 use aor::{Solution, solutions};
 use colored::Colorize;
 use itertools::Itertools;
+use std::collections::HashMap;
 use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
@@ -143,7 +144,7 @@ fn run_day_directory() -> Result<bool, Box<dyn Error>> {
 
                 if let Some(sol) = solutions(year, day, &alt).first() {
                     if std::env::args().len() == 1 {
-                        run_day(sol, true);
+                        run_solution_from_file(sol, true);
                     } else {
                         (sol.main)();
                     }
@@ -157,8 +158,8 @@ fn run_day_directory() -> Result<bool, Box<dyn Error>> {
     Ok(false)
 }
 
-fn print_part_result(part: u8, answer: &str, ok: &str, day: u8) {
-    if part == 2 && day == 25 {
+fn print_part_result(part: u8, answer: &str, ok: &str, year: u16, day: u8) {
+    if part == 2 && (day == 25 || (year >= 2025 && day == 12)) {
         println!(
             "  {}  : {}",
             "Part 2".yellow(),
@@ -177,6 +178,34 @@ fn print_part_result(part: u8, answer: &str, ok: &str, day: u8) {
 }
 
 fn run_all(args: &aoc::Args) {
+    // load data from TOML if any
+    let toml_data = args.params().iter().find_map(|path| {
+        if std::path::Path::new(path)
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("toml"))
+        {
+            let content = std::fs::read_to_string(path).expect("failed to read TOML file");
+
+            Some((load_toml(&content), path))
+        } else {
+            None
+        }
+    });
+
+    // set the runner, either from TOML or from default input files
+    let runner = |sol: &Solution| -> Option<(Duration, bool, bool)> {
+        if let Some((data, file)) = &toml_data {
+            if let Some((input, part1, part2)) = data.get(&(sol.year, sol.day)) {
+                let source = format!("({file} [{}.{}])", sol.year, sol.day);
+                Some(run_solution(sol, input, part1, part2, &source))
+            } else {
+                None
+            }
+        } else {
+            run_solution_from_file(sol, false)
+        }
+    };
+
     // get the year or year/day filter
     let mut year: Option<u16> = None;
     let mut day: Option<u8> = None;
@@ -194,6 +223,7 @@ fn run_all(args: &aoc::Args) {
         }
     }
 
+    // get the alternative filter
     let alt = if args.has_option("-a") {
         Some("*".to_string())
     } else {
@@ -203,7 +233,9 @@ fn run_all(args: &aoc::Args) {
     // and apply it to the solution inventory
     let sols = solutions(year, day, &alt);
 
+    // run solutions
     println!("💫 {} 🎄✨ 💫", "Advent of Code".green());
+    println!();
 
     let mut total_elapsed = Duration::ZERO;
     let mut puzzles = 0;
@@ -211,15 +243,7 @@ fn run_all(args: &aoc::Args) {
     let mut failed = 0;
 
     for sol in sols {
-        // if sol.alt.is_some() && !alt {
-        //     continue;
-        // }
-
-        // if sol.alt.is_none() {
-        //     continue;
-        // }
-
-        if let Some((elapsed, ok, ko)) = run_day(&sol, false) {
+        if let Some((elapsed, ok, ko)) = runner(&sol) {
             puzzles += 1;
             total_elapsed += elapsed;
             success += i32::from(ok);
@@ -230,66 +254,61 @@ fn run_all(args: &aoc::Args) {
     if puzzles > 1 {
         println!();
         println!(
-            "Elapsed: {total_elapsed:#?} for {puzzles} puzzle(s) - success: {success}, failed: {failed}"
+            "Elapsed: {:.6}s for {puzzles} puzzle(s) - success: {success}, failed: {failed}",
+            total_elapsed.as_secs_f64()
         );
     }
 }
 
-fn run_day(sol: &Solution, input_txt: bool) -> Option<(Duration, bool, bool)> {
-    let (path_input, path_answer) = find_input_path(sol, input_txt);
+fn load_toml(content: &str) -> HashMap<(u16, u8), (String, String, String)> {
+    let config: toml::Value = toml::from_str(content).expect("failed to parse TOML");
+    let config = config.as_table().expect("TOML must be a table");
 
-    if let Some(alt) = &sol.alt {
-        println!(
-            "{} day {} ({}): {}",
-            sol.year,
-            sol.day,
-            alt.magenta(),
-            path_input.as_os_str().to_str().unwrap().dimmed()
-        );
-    } else {
-        println!(
-            "{} day {}: {}",
-            sol.year,
-            sol.day,
-            path_input.as_os_str().to_str().unwrap().dimmed()
-        );
+    let mut map = HashMap::new();
+
+    for (year_s, days) in config {
+        let year: u16 = year_s.parse().expect("invalid year in TOML");
+        let days = days.as_table().expect("year entry must be a table");
+
+        for (day_s, entry) in days {
+            let day: u8 = day_s.parse().expect("invalid day in TOML");
+            let entry = entry.as_table().expect("day entry must be a table");
+
+            let data = entry
+                .get("data")
+                .and_then(toml::Value::as_str)
+                .unwrap_or_default();
+            let part1 = entry
+                .get("part1")
+                .and_then(toml::Value::as_str)
+                .unwrap_or_default();
+            let part2 = entry
+                .get("part2")
+                .and_then(toml::Value::as_str)
+                .unwrap_or_default();
+
+            map.insert(
+                (year, day),
+                (data.to_string(), part1.to_string(), part2.to_string()),
+            );
+        }
     }
+    map
+}
+
+fn run_solution_from_file(sol: &Solution, input_txt: bool) -> Option<(Duration, bool, bool)> {
+    let (path_input, path_answer) = find_input_path(sol, input_txt);
 
     if path_input.is_file()
         && let Ok(data) = std::fs::read_to_string(&path_input)
     {
-        // run the solution
-        let instant = Instant::now();
-        let (part1, part2) = (sol.solve)(&data);
-        let elapsed = instant.elapsed();
-
-        let mut success = false;
-        let mut failed = false;
-
-        let micros = Duration::new(elapsed.as_secs(), elapsed.subsec_micros() * 1000);
+        let source = path_input.as_os_str().to_str().unwrap();
 
         if let Ok(ok) = std::fs::read_to_string(path_answer) {
             let (ok1, ok2) = ok.trim_ascii().split_once('\n').unwrap_or((&ok, ""));
-
-            print_part_result(1, &part1, ok1, sol.day);
-            print_part_result(2, &part2, ok2, sol.day);
-
-            if ok1.trim_ascii() == part1 && ok2.trim_ascii() == part2 {
-                success = true;
-            } else {
-                failed = true;
-            }
-        } else {
-            print_part_result(1, &part1, "", sol.day);
-            print_part_result(2, &part2, "", sol.day);
+            return Some(run_solution(sol, &data, ok1, ok2, source));
         }
-
-        println!("{}", format!("  Elapsed : {micros:#?}").italic());
-        println!();
-
-        // let _ = aor::rundb::update_db(sol.year, sol.day, &data, elapsed);
-
-        return Some((elapsed, success, failed));
+        return Some(run_solution(sol, &data, "", "", source));
     }
 
     println!("  missing file: {}", path_input.to_str().unwrap().red());
@@ -354,5 +373,88 @@ fn find_input_path(sol: &Solution, input_txt: bool) -> (PathBuf, PathBuf) {
         (path.clone(), path.with_file_name("answer.txt"))
     } else {
         (path.clone(), path.with_extension("ok"))
+    }
+}
+
+fn run_solution(
+    sol: &Solution,
+    input_txt: &str,
+    answer1: &str,
+    answer2: &str,
+    source: &str,
+) -> (Duration, bool, bool) {
+    if let Some(alt) = &sol.alt {
+        println!(
+            "{} day {} ({}): {}",
+            sol.year,
+            sol.day,
+            alt.magenta(),
+            source.italic().dimmed()
+        );
+    } else {
+        println!("{} day {}: {}", sol.year, sol.day, source.italic().dimmed());
+    }
+
+    // run the solution
+    let instant = Instant::now();
+    let (part1, part2) = (sol.solve)(input_txt);
+    let elapsed = instant.elapsed();
+
+    let mut success = false;
+    let mut failed = false;
+
+    let micros = Duration::new(elapsed.as_secs(), elapsed.subsec_micros() * 1000);
+
+    if answer1.is_empty() {
+        print_part_result(1, &part1, "", sol.year, sol.day);
+        print_part_result(2, &part2, "", sol.year, sol.day);
+    } else {
+        print_part_result(1, &part1, answer1, sol.year, sol.day);
+        print_part_result(2, &part2, answer2, sol.year, sol.day);
+
+        if answer1.trim_ascii() == part1 && answer2.trim_ascii() == part2 {
+            success = true;
+        } else {
+            failed = true;
+        }
+    }
+
+    println!("{}", format!("  Elapsed : {micros:#?}").italic());
+    println!();
+
+    // let _ = aor::rundb::update_db(sol.year, sol.day, &data, elapsed);
+
+    (elapsed, success, failed)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_load_toml() {
+        let toml_content = r#"
+[2015.1]
+data = "abc"
+part1 = "123"
+part2 = "456"
+
+[2023.25]
+data = "xyz"
+part1 = "789"
+"#;
+        let map = load_toml(toml_content);
+
+        assert_eq!(map.len(), 2);
+
+        let (data, p1, p2) = map.get(&(2015, 1)).unwrap();
+        assert_eq!(data, "abc");
+        assert_eq!(p1, "123");
+        assert_eq!(p2, "456");
+
+        let (data, p1, p2) = map.get(&(2023, 25)).unwrap();
+        assert_eq!(data, "xyz");
+        assert_eq!(p1, "789");
+        assert_eq!(p2, ""); // Default value
     }
 }
