@@ -1,6 +1,6 @@
 use std::{error::Error, path::PathBuf, time::Duration};
 
-use rusqlite::{Connection, Result};
+use libsql::{Builder, Connection};
 use sha2::{Digest, Sha256};
 
 /// Trait for database backends that store puzzle execution timings.
@@ -21,9 +21,10 @@ pub trait TimingsDb {
     ) -> Result<Duration, Box<dyn Error>>;
 }
 
-/// SQLite-based implementation of execution timings database.
+/// SQLite-based implementation of execution timings database using Turso (libsql).
 pub struct RunDb {
     conn: Connection,
+    rt: tokio::runtime::Runtime,
 }
 
 impl RunDb {
@@ -36,11 +37,16 @@ impl RunDb {
             .ok()
             .unwrap_or_else(|| ".".to_string());
 
-        let path = PathBuf::from(manifest_dir).join("cache.db");
+        let path = PathBuf::from(manifest_dir).join(".timings.db");
 
-        let conn = Connection::open(path)?;
+        let rt = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()?;
 
-        conn.execute_batch(
+        let db = rt.block_on(Builder::new_local(path).build())?;
+        let conn = db.connect()?;
+
+        rt.block_on(conn.execute_batch(
             "create table if not exists timings (
                 year integer not null,
                 day integer not null,
@@ -49,9 +55,9 @@ impl RunDb {
             );
             create unique index if not exists idx_timings on timings (year,day,sha256);
             ",
-        )?;
+        ))?;
 
-        Ok(Self { conn })
+        Ok(Self { conn, rt })
     }
 }
 
@@ -70,30 +76,43 @@ impl TimingsDb for RunDb {
 
         let elapsed_micros = i64::try_from(elapsed.as_micros())?;
 
-        let mut stmt = self
-            .conn
-            .prepare("select elapsed from timings where year=?1 and day=?2 and sha256=?3")?;
+        let best_micros = self.rt.block_on(async {
+            let mut rows = self
+                .conn
+                .query(
+                    "select elapsed from timings where year=?1 and day=?2 and sha256=?3",
+                    (i64::from(year), i64::from(day), digest.clone()),
+                )
+                .await?;
 
-        let best_micros = if let Ok(previous_micros) = stmt
-            .query_row((&year, &(u16::from(day)), &digest), |row| {
-                row.get::<usize, i64>(0)
-            }) {
-            if elapsed_micros < previous_micros {
-                self.conn.execute(
-                    "update timings set elapsed=?4 where year=?1 and day=?2 and sha256=?3",
-                    (&year, &(u16::from(day)), &digest, &elapsed_micros),
-                )?;
-                elapsed_micros
+            if let Some(row) = rows.next().await? {
+                let previous_micros: i64 = row.get(0)?;
+                if elapsed_micros < previous_micros {
+                    self.conn
+                        .execute(
+                            "update timings set elapsed=?4 where year=?1 and day=?2 and sha256=?3",
+                            (
+                                i64::from(year),
+                                i64::from(day),
+                                digest.clone(),
+                                elapsed_micros,
+                            ),
+                        )
+                        .await?;
+                    Ok::<i64, Box<dyn Error>>(elapsed_micros)
+                } else {
+                    Ok(previous_micros)
+                }
             } else {
-                previous_micros
+                self.conn
+                    .execute(
+                        "insert into timings (year,day,sha256,elapsed) values (?1, ?2, ?3, ?4)",
+                        (i64::from(year), i64::from(day), digest, elapsed_micros),
+                    )
+                    .await?;
+                Ok(elapsed_micros)
             }
-        } else {
-            self.conn.execute(
-                "insert into timings (year,day,sha256,elapsed) values (?1, ?2, ?3, ?4)",
-                (&year, &(u16::from(day)), &digest, &elapsed_micros),
-            )?;
-            elapsed_micros
-        };
+        })?;
 
         Ok(Duration::from_micros(u64::try_from(best_micros)?))
     }

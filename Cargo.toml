@@ -8,7 +8,7 @@ repository = "https://github.com/rene-d/advent-of-rust"
 [features]
 ascii = []
 anim = ["image"]
-timingsdb = ["sha2", "rusqlite"]
+timingsdb = ["sha2", "libsql", "tokio"]
 
 [build-dependencies]
 cc = "*"
@@ -50,8 +50,8 @@ bytecount = "*"
 rayon = "*"
 good_lp = { version = "*", features = ["microlp"], default-features = false }
 sha2 = { version = "*", optional = true }
-rusqlite = { version = "*", optional = true }
-
+libsql = { version = "*", optional = true }
+tokio = { version = "1", features = ["rt"], optional = true }
 
 [lints.clippy]
 pedantic = "forbid"

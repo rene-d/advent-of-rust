@@ -276,10 +276,18 @@ fn run_all(args: &aoc::Args) {
 
     if puzzles > 1 {
         println!();
+
+        #[cfg(feature = "timingsdb")]
         println!(
             "Elapsed: {:.6}s for {puzzles} puzzle(s) - {} - success: {success}, failed: {failed}",
             total_elapsed.as_secs_f64(),
             format!("best: {:.6}s", total_best.as_secs_f64()).bold(),
+        );
+
+        #[cfg(not(feature = "timingsdb"))]
+        println!(
+            "Elapsed: {:.6}s for {puzzles} puzzle(s) - success: {success}, failed: {failed}",
+            total_elapsed.as_secs_f64(),
         );
     }
 }
