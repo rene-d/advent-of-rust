@@ -144,7 +144,12 @@ fn run_day_directory() -> Result<bool, Box<dyn Error>> {
 
                 if let Some(sol) = solutions(year, day, &alt).first() {
                     if std::env::args().len() == 1 {
-                        run_solution_from_file(sol, true);
+                        run_solution_from_file(
+                            sol,
+                            true,
+                            #[cfg(feature = "timingsdb")]
+                            None,
+                        );
                     } else {
                         (sol.main)();
                     }
@@ -178,6 +183,9 @@ fn print_part_result(part: u8, answer: &str, ok: &str, year: u16, day: u8) {
 }
 
 fn run_all(args: &aoc::Args) {
+    #[cfg(feature = "timingsdb")]
+    let db = aor::rundb::RunDb::new().expect("failed to open database");
+
     // load data from TOML if any
     let toml_data = args.params().iter().find_map(|path| {
         if std::path::Path::new(path)
@@ -193,16 +201,29 @@ fn run_all(args: &aoc::Args) {
     });
 
     // set the runner, either from TOML or from default input files
-    let runner = |sol: &Solution| -> Option<(Duration, bool, bool)> {
+    let runner = |sol: &Solution| -> Option<(Duration, Duration, bool, bool)> {
         if let Some((data, file)) = &toml_data {
             if let Some((input, part1, part2)) = data.get(&(sol.year, sol.day)) {
                 let source = format!("({file} [{}.{}])", sol.year, sol.day);
-                Some(run_solution(sol, input, part1, part2, &source))
+                Some(run_solution(
+                    sol,
+                    input,
+                    part1,
+                    part2,
+                    &source,
+                    #[cfg(feature = "timingsdb")]
+                    Some(&db as &dyn aor::rundb::TimingsDb),
+                ))
             } else {
                 None
             }
         } else {
-            run_solution_from_file(sol, false)
+            run_solution_from_file(
+                sol,
+                false,
+                #[cfg(feature = "timingsdb")]
+                Some(&db as &dyn aor::rundb::TimingsDb),
+            )
         }
     };
 
@@ -238,14 +259,16 @@ fn run_all(args: &aoc::Args) {
     println!();
 
     let mut total_elapsed = Duration::ZERO;
+    let mut total_best = Duration::ZERO;
     let mut puzzles = 0;
     let mut success = 0;
     let mut failed = 0;
 
     for sol in sols {
-        if let Some((elapsed, ok, ko)) = runner(&sol) {
+        if let Some((elapsed, best, ok, ko)) = runner(&sol) {
             puzzles += 1;
             total_elapsed += elapsed;
+            total_best += best;
             success += i32::from(ok);
             failed += i32::from(ko);
         }
@@ -254,8 +277,9 @@ fn run_all(args: &aoc::Args) {
     if puzzles > 1 {
         println!();
         println!(
-            "Elapsed: {:.6}s for {puzzles} puzzle(s) - success: {success}, failed: {failed}",
-            total_elapsed.as_secs_f64()
+            "Elapsed: {:.6}s for {puzzles} puzzle(s) - {} - success: {success}, failed: {failed}",
+            total_elapsed.as_secs_f64(),
+            format!("best: {:.6}s", total_best.as_secs_f64()).bold(),
         );
     }
 }
@@ -296,7 +320,11 @@ fn load_toml(content: &str) -> HashMap<(u16, u8), (String, String, String)> {
     map
 }
 
-fn run_solution_from_file(sol: &Solution, input_txt: bool) -> Option<(Duration, bool, bool)> {
+fn run_solution_from_file(
+    sol: &Solution,
+    input_txt: bool,
+    #[cfg(feature = "timingsdb")] db: Option<&dyn aor::rundb::TimingsDb>,
+) -> Option<(Duration, Duration, bool, bool)> {
     let (path_input, path_answer) = find_input_path(sol, input_txt);
 
     if path_input.is_file()
@@ -306,9 +334,25 @@ fn run_solution_from_file(sol: &Solution, input_txt: bool) -> Option<(Duration, 
 
         if let Ok(ok) = std::fs::read_to_string(path_answer) {
             let (ok1, ok2) = ok.trim_ascii().split_once('\n').unwrap_or((&ok, ""));
-            return Some(run_solution(sol, &data, ok1, ok2, source));
+            return Some(run_solution(
+                sol,
+                &data,
+                ok1,
+                ok2,
+                source,
+                #[cfg(feature = "timingsdb")]
+                db,
+            ));
         }
-        return Some(run_solution(sol, &data, "", "", source));
+        return Some(run_solution(
+            sol,
+            &data,
+            "",
+            "",
+            source,
+            #[cfg(feature = "timingsdb")]
+            db,
+        ));
     }
 
     println!("  missing file: {}", path_input.to_str().unwrap().red());
@@ -376,13 +420,21 @@ fn find_input_path(sol: &Solution, input_txt: bool) -> (PathBuf, PathBuf) {
     }
 }
 
+/// Executes a solution and records its timing in the database.
+///
+/// Returns a tuple containing:
+/// - The elapsed time of this execution.
+/// - The best elapsed time recorded in the database so far.
+/// - A boolean indicating if the solution was correct.
+/// - A boolean indicating if the solution failed.
 fn run_solution(
     sol: &Solution,
     input_txt: &str,
     answer1: &str,
     answer2: &str,
     source: &str,
-) -> (Duration, bool, bool) {
+    #[cfg(feature = "timingsdb")] db: Option<&dyn aor::rundb::TimingsDb>,
+) -> (Duration, Duration, bool, bool) {
     if let Some(alt) = &sol.alt {
         println!(
             "{} day {} ({}): {}",
@@ -419,12 +471,29 @@ fn run_solution(
         }
     }
 
-    println!("{}", format!("  Elapsed : {micros:#?}").italic());
+    #[cfg(feature = "timingsdb")]
+    let best_elapsed = if let Some(db) = db {
+        db.update(sol.year, sol.day, input_txt, elapsed)
+            .unwrap_or(elapsed)
+    } else {
+        elapsed
+    };
+    #[cfg(not(feature = "timingsdb"))]
+    let best_elapsed = elapsed;
+
+    if best_elapsed < elapsed {
+        println!(
+            "{}",
+            format!("  Elapsed : {micros:#?} (best: {best_elapsed:#?})")
+                .italic()
+                .dimmed()
+        );
+    } else {
+        println!("{}", format!("  Elapsed : {micros:#?}").italic());
+    }
     println!();
 
-    // let _ = aor::rundb::update_db(sol.year, sol.day, &data, elapsed);
-
-    (elapsed, success, failed)
+    (elapsed, best_elapsed, success, failed)
 }
 
 #[cfg(test)]

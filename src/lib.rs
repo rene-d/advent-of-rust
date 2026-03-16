@@ -1,4 +1,5 @@
-// pub mod rundb;
+#[cfg(feature = "timingsdb")]
+pub mod rundb;
 
 use itertools::Itertools;
 use std::iter::empty;
