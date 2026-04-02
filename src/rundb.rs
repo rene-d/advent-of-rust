@@ -72,7 +72,11 @@ impl TimingsDb for RunDb {
     ) -> Result<Duration, Box<dyn Error>> {
         let mut hasher = Sha256::new();
         hasher.update(data.trim_ascii());
-        let digest = format!("{:x}", hasher.finalize());
+        let digest = hasher
+            .finalize()
+            .iter()
+            .map(|b| format!("{:02x}", b))
+            .collect::<String>();
 
         let elapsed_micros = i64::try_from(elapsed.as_micros())?;
 
