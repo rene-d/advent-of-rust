@@ -148,7 +148,7 @@ impl Machine {
             .collect();
 
         for v in &vars {
-            solver.assert(&v.ge(Int::from_u64(0)));
+            solver.assert(v.ge(Int::from_u64(0)));
         }
 
         for (i, &target) in self.joltages.iter().enumerate() {
@@ -164,7 +164,7 @@ impl Machine {
             } else {
                 Int::add(&terms.iter().collect::<Vec<_>>())
             };
-            solver.assert(&sum.eq(Int::from_u64(target.into())));
+            solver.assert(sum.eq(Int::from_u64(target.into())));
         }
 
         let sum_vars = z3::ast::Int::add(&vars.iter().collect::<Vec<_>>());
