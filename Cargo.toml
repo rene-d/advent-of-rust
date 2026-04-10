@@ -1,6 +1,6 @@
 [package]
 name = "aor"
-version = "1.2.0"
+version = "1.2.1"
 edition = "2024"
 license = "Unlicense"
 repository = "https://github.com/rene-d/advent-of-rust"
@@ -23,7 +23,7 @@ colored = "*"
 pest = { version = "*", default-features = false }
 pest_derive = { version = "*", default-features = true }
 petgraph = "*"
-rand = "*"
+rand = "0.10"
 regex = "*"
 rustworkx-core = "*"
 scan_fmt = "*"

@@ -3,7 +3,13 @@ set shell := ["bash", "-uc"]
 alias r := run
 
 run:
-    ./scripts/runall.py --working-dir {{invocation_directory()}} -lrust --verified
+    ./scripts/runall.py --working-dir {{invocation_directory()}} -lrust --me
+
+rrun:
+    ./scripts/runall.py --working-dir {{invocation_directory()}} -lrust --me -L3
+
+t *ARGS:
+    cargo run --release --quiet -F timingsdb -- {{ ARGS }}
 
 # make
 
@@ -59,6 +65,7 @@ gh-test:
     done
 
 gh: gh-fmt gh-clippy gh-test
+github: gh-fmt gh-clippy gh-test
 
 # Docker stuff
 

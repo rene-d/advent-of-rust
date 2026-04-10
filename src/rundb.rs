@@ -28,7 +28,7 @@ pub struct RunDb {
 }
 
 impl RunDb {
-    /// Creates a new `RunDb` instance and ensures the `timings` table exists in `cache.db`.
+    /// Creates a new `RunDb` instance and ensures the `timings` table exists in `.timings.db`.
     ///
     /// # Errors
     /// Returns an error if the database file cannot be opened or the schema cannot be initialized.
@@ -50,10 +50,10 @@ impl RunDb {
             "create table if not exists timings (
                 year integer not null,
                 day integer not null,
-                sha256 text not null,
-                elapsed integer not null
+                crc text not null,
+                elapsed_ns integer not null
             );
-            create unique index if not exists idx_timings on timings (year,day,sha256);
+            create unique index if not exists idx_timings on timings (year,day,crc);
             ",
         ))?;
 
@@ -78,46 +78,46 @@ impl TimingsDb for RunDb {
             .map(|b| format!("{:02x}", b))
             .collect::<String>();
 
-        let elapsed_micros = i64::try_from(elapsed.as_micros())?;
+        let elapsed_nanos = i64::try_from(elapsed.as_nanos())?;
 
-        let best_micros = self.rt.block_on(async {
+        let best_nanos = self.rt.block_on(async {
             let mut rows = self
                 .conn
                 .query(
-                    "select elapsed from timings where year=?1 and day=?2 and sha256=?3",
+                    "select elapsed_ns from timings where year=?1 and day=?2 and crc=?3",
                     (i64::from(year), i64::from(day), digest.clone()),
                 )
                 .await?;
 
             if let Some(row) = rows.next().await? {
                 let previous_micros: i64 = row.get(0)?;
-                if elapsed_micros < previous_micros {
+                if elapsed_nanos < previous_micros {
                     self.conn
                         .execute(
-                            "update timings set elapsed=?4 where year=?1 and day=?2 and sha256=?3",
+                            "update timings set elapsed_ns=?4 where year=?1 and day=?2 and crc=?3",
                             (
                                 i64::from(year),
                                 i64::from(day),
                                 digest.clone(),
-                                elapsed_micros,
+                                elapsed_nanos,
                             ),
                         )
                         .await?;
-                    Ok::<i64, Box<dyn Error>>(elapsed_micros)
+                    Ok::<i64, Box<dyn Error>>(elapsed_nanos)
                 } else {
                     Ok(previous_micros)
                 }
             } else {
                 self.conn
                     .execute(
-                        "insert into timings (year,day,sha256,elapsed) values (?1, ?2, ?3, ?4)",
-                        (i64::from(year), i64::from(day), digest, elapsed_micros),
+                        "insert into timings (year,day,crc,elapsed_ns) values (?1, ?2, ?3, ?4)",
+                        (i64::from(year), i64::from(day), digest, elapsed_nanos),
                     )
                     .await?;
-                Ok(elapsed_micros)
+                Ok(elapsed_nanos)
             }
         })?;
 
-        Ok(Duration::from_micros(u64::try_from(best_micros)?))
+        Ok(Duration::from_nanos(u64::try_from(best_nanos)?))
     }
 }
