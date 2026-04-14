@@ -20,7 +20,7 @@ WORKDIR /aoc
 FROM toolchain AS builder
 
 COPY . .
-RUN cargo build --release --target-dir /build
+RUN cargo build --release --target-dir /build -F timingsdb
 RUN apt-get install -y patchelf
 RUN ./scripts/from_scratch.py /build/release/aor /scratch
 

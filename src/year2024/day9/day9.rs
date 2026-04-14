@@ -1,6 +1,7 @@
 //! [Day 9: Disk Fragmenter](https://adventofcode.com/2024/day/9)
 
-const FREE_SPACE: u32 = u32::MAX;
+use std::cmp::Reverse;
+use std::collections::BinaryHeap;
 
 struct Puzzle<'a> {
     data: &'a str,
@@ -13,118 +14,117 @@ impl<'a> Puzzle<'a> {
         }
     }
 
-    fn load_disk(&self) -> Vec<u32> {
-        let mut disk = Vec::new();
-
-        for (i, c) in self.data.chars().enumerate() {
-            for _ in 0..c.to_digit(10).unwrap() {
-                disk.push(if i % 2 == 1 {
-                    FREE_SPACE
-                } else {
-                    u32::try_from(i).unwrap() / 2
-                });
-            }
+    /// Solve part one.
+    fn part1(&self) -> u64 {
+        let bytes = self.data.as_bytes();
+        let n = bytes.len();
+        if n == 0 {
+            return 0;
         }
 
-        disk
-    }
+        let mut checksum: u64 = 0;
+        let mut pos: u64 = 0;
+        let mut left: usize = 0;
+        let mut right: usize = if n.is_multiple_of(2) { n - 2 } else { n - 1 };
+        let mut remaining_right = u64::from(bytes[right] - b'0');
 
-    fn compute_checksum(disk: &[u32]) -> u64 {
-        let mut checksum = 0;
-
-        for (i, c) in disk.iter().enumerate() {
-            if c != &FREE_SPACE {
-                checksum += u64::from(*c) * (i as u64);
+        while left < right {
+            if left.is_multiple_of(2) {
+                let size = u64::from(bytes[left] - b'0');
+                let id = (left / 2) as u64;
+                checksum += id * (size * pos + size * (size - 1) / 2);
+                pos += size;
+            } else {
+                let mut free = u64::from(bytes[left] - b'0');
+                while free > 0 {
+                    if remaining_right == 0 {
+                        if right < 2 {
+                            break;
+                        }
+                        right -= 2;
+                        if right <= left {
+                            break;
+                        }
+                        remaining_right = u64::from(bytes[right] - b'0');
+                        continue;
+                    }
+                    let take = free.min(remaining_right);
+                    let rid = (right / 2) as u64;
+                    checksum += rid * (take * pos + take * (take - 1) / 2);
+                    pos += take;
+                    free -= take;
+                    remaining_right -= take;
+                }
             }
+            left += 1;
+        }
+
+        if left == right && remaining_right > 0 {
+            let rid = (right / 2) as u64;
+            checksum += rid * (remaining_right * pos + remaining_right * (remaining_right - 1) / 2);
         }
 
         checksum
     }
 
-    /// Solve part one.
-    fn part1(&self) -> u64 {
-        let mut disk = self.load_disk();
-
-        let mut i = 0;
-        let mut j = disk.len() - 1;
-        while i < j {
-            if disk[i] == FREE_SPACE {
-                while disk[j] == FREE_SPACE && i < j {
-                    j -= 1;
-                }
-                disk.swap(i, j);
-                j -= 1;
-            }
-            i += 1;
-        }
-
-        Self::compute_checksum(&disk)
-    }
-
     /// Solve part two.
     fn part2(&self) -> u64 {
-        let mut disk = self.load_disk();
+        let bytes = self.data.as_bytes();
+        let n_files = bytes.len().div_ceil(2);
 
-        let mut j: usize = disk.len() - 1;
-        let mut moved = vec![false; disk.len()];
+        let mut file_sizes: Vec<u8> = Vec::with_capacity(n_files);
+        let mut file_positions: Vec<u64> = Vec::with_capacity(n_files);
+        let mut free_heaps: [BinaryHeap<Reverse<u64>>; 10] =
+            std::array::from_fn(|_| BinaryHeap::new());
 
-        'outer: loop {
-            // get file size
-            while disk[j] == FREE_SPACE {
-                if j == 0 {
-                    break 'outer;
-                }
-                j -= 1;
+        let mut pos: u64 = 0;
+        for (i, &b) in bytes.iter().enumerate() {
+            let size = b - b'0';
+            if i.is_multiple_of(2) {
+                file_sizes.push(size);
+                file_positions.push(pos);
+            } else if size > 0 {
+                free_heaps[usize::from(size)].push(Reverse(pos));
             }
-
-            let mut k = j;
-            while disk[k] == disk[j] {
-                if k == 0 {
-                    break 'outer;
-                }
-                k -= 1;
-            }
-
-            let file_size = j - k;
-            let next_j = k;
-
-            if moved[j] {
-                j = next_j;
-                continue;
-            }
-
-            // find free space
-            let mut i = 0;
-            loop {
-                while disk[i] != FREE_SPACE {
-                    i += 1;
-                }
-                k = i;
-                while k < disk.len() && disk[k] == FREE_SPACE {
-                    k += 1;
-                }
-                let free_space = k - i;
-
-                if free_space >= file_size && i < j {
-                    for _ in 0..file_size {
-                        disk.swap(i, j);
-                        moved[i] = true;
-                        i += 1;
-                        j -= 1;
-                    }
-                    break;
-                }
-
-                i = k;
-                if i >= disk.len() {
-                    break;
-                }
-            }
-
-            j = next_j;
+            pos += u64::from(size);
         }
 
-        Self::compute_checksum(&disk)
+        let mut checksum: u64 = 0;
+
+        for id in (0..n_files).rev() {
+            let size = usize::from(file_sizes[id]);
+            if size == 0 {
+                continue;
+            }
+            let orig_pos = file_positions[id];
+
+            let mut best_size = 0usize;
+            let mut best_pos = u64::MAX;
+            for (s, heap) in free_heaps.iter().enumerate().skip(size) {
+                if let Some(&Reverse(p)) = heap.peek()
+                    && p < best_pos
+                {
+                    best_pos = p;
+                    best_size = s;
+                }
+            }
+
+            let final_pos = if best_pos < orig_pos {
+                free_heaps[best_size].pop();
+                let remainder = best_size - size;
+                if remainder > 0 {
+                    free_heaps[remainder].push(Reverse(best_pos + size as u64));
+                }
+                best_pos
+            } else {
+                orig_pos
+            };
+
+            let s = size as u64;
+            checksum += (id as u64) * (s * final_pos + s * (s - 1) / 2);
+        }
+
+        checksum
     }
 }
 
