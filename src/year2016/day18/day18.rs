@@ -1,42 +1,38 @@
 //! [Day 18: Like a Rogue](https://adventofcode.com/2016/day/18)
 
 struct Puzzle {
-    tiles: Vec<u32>,
+    trap_bits: u128,
+    width: u32,
 }
 
 impl Puzzle {
     fn new(data: &str) -> Self {
-        Self {
-            tiles: data.trim_ascii().chars().map(|c| u32::from(c == '.')).collect(),
-        }
-    }
-
-    fn guess(tiles: &mut [u32]) {
-        let prev = tiles.to_vec();
-
-        for i in 0..prev.len() {
-            let left = if i == 0 { 1 } else { prev[i - 1] };
-            let center = prev[i];
-            let right = if i == prev.len() - 1 { 1 } else { prev[i + 1] };
-
-            tiles[i] = match (left, center, right) {
-                // (0, 0, 1) | (1, 0, 0) | (0, 1, 1) | (1, 1, 0) => 0,
-                (0, 0 | 1, 1) | (1, 0 | 1, 0) => 0,
-                _ => 1,
-            };
-        }
+        let s = data.trim_ascii();
+        let width = u32::try_from(s.len()).unwrap();
+        assert!(width <= 128, "input too wide for u128 bitset");
+        let trap_bits =
+            s.bytes()
+                .enumerate()
+                .fold(0u128, |acc, (i, b)| if b == b'^' { acc | (1u128 << i) } else { acc });
+        Self { trap_bits, width }
     }
 
     fn solve(&self, rows: usize) -> u32 {
-        let mut result = self.tiles.iter().sum::<u32>();
-
-        let mut tiles = self.tiles.clone();
+        // A tile is a trap iff left != right  =>  next = (row << 1) ^ (row >> 1)
+        // Borders are safe (0), so the natural shift gives the right padding.
+        let mask = if self.width == 128 {
+            u128::MAX
+        } else {
+            (1u128 << self.width) - 1
+        };
+        let mut row = self.trap_bits;
+        let mut safe = self.width - row.count_ones();
 
         for _ in 1..rows {
-            Self::guess(&mut tiles);
-            result += tiles.iter().sum::<u32>();
+            row = ((row << 1) ^ (row >> 1)) & mask;
+            safe += self.width - row.count_ones();
         }
-        result
+        safe
     }
 
     /// Solve part one.

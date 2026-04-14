@@ -722,7 +722,7 @@ def make_readme_main(args):
             try:
                 timings = subprocess.check_output([Path(__file__).parent / "timings.py", "-x", "+"])
             except Exception:
-                timings = "n/a"
+                timings = b"n/a"
 
             md.extend(map(str.strip, timings.decode().splitlines()))
             md.append("")
