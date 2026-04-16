@@ -25,7 +25,7 @@ impl Puzzle {
     fn new(data: &str) -> Self {
         let width = data.lines().next().map_or(0, str::len);
         let grid: Vec<u8> = data.lines().flat_map(str::bytes).collect();
-        let height = if width == 0 { 0 } else { grid.len() / width };
+        let height = grid.len().checked_div(width).unwrap_or(0);
         Self {
             grid,
             width,

@@ -50,15 +50,14 @@ impl Puzzle {
             let c = self.maze[pos];
 
             match c {
-                b'A'..=b'Z' => {
+                b'A'..=b'Z'
                     // it's a door
 
                     // have we the key ?
-                    if keys & (1 << u32::from(c - b'A')) == 0 {
+                    if keys & (1 << u32::from(c - b'A')) == 0 => {
                         // no: we can't pass
                         continue;
                     }
-                }
 
                 b'a'..=b'z' => {
                     // it's a key

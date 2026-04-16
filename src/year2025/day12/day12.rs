@@ -192,7 +192,7 @@ impl Puzzle {
             return false;
         }
 
-        pieces.sort_by(|a, b| b.0.cmp(&a.0));
+        pieces.sort_by_key(|b| std::cmp::Reverse(b.0));
         let pieces_orientations: Vec<Vec<Shape>> = pieces.into_iter().map(|(_, o)| o).collect();
 
         let mut grid = Grid::new(width, height);

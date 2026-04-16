@@ -66,15 +66,11 @@ impl Puzzle {
             "jmp" => {
                 return op[1].parse().unwrap();
             }
-            "jie" => {
-                if regs[&op[1]].is_multiple_of(2) {
-                    return op[2].parse().unwrap();
-                }
+            "jie" if regs[&op[1]].is_multiple_of(2) => {
+                return op[2].parse().unwrap();
             }
-            "jio" => {
-                if regs[&op[1]] == 1 {
-                    return op[2].parse().unwrap();
-                }
+            "jio" if regs[&op[1]] == 1 => {
+                return op[2].parse().unwrap();
             }
             _ => (),
         }

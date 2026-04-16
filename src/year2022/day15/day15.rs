@@ -58,7 +58,7 @@ impl Puzzle {
             }
         }
 
-        intervals.sort_unstable_by(|a, b| a.0.cmp(&b.0));
+        intervals.sort_unstable_by_key(|a| a.0);
 
         let mut merged: Vec<(i64, i64)> = Vec::with_capacity(intervals.len());
         for interval in intervals {

@@ -568,7 +568,9 @@ def build_all(filter_yearday: set[tuple[int, int]], filter_lang: t.Iterable[str]
                 env_copy = os.environ.copy()
                 # env_copy["RUSTFLAGS"] = "-C target-cpu=native"
                 print_log(f"{FEINT}{ITALIC}cargo build {m}{RESET}", end=TRANSIENT)
-                subprocess.check_call(["cargo", "build", "--manifest-path", m, "--release", "--quiet"], env=env_copy)
+                subprocess.check_call(
+                    ["cargo", "build", "--manifest-path", m, "--release", "--quiet", "-F", "timingsdb"], env=env_copy
+                )
 
         except FileNotFoundError:
             print_log(

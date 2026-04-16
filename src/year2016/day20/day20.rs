@@ -18,7 +18,7 @@ pub fn solve(data: &str) -> (u32, u32) {
 
         blacklist.push((min_max[0], min_max[1]));
     }
-    blacklist.sort_by(|a, b| a.0.cmp(&b.0));
+    blacklist.sort_by_key(|a| a.0);
 
     // find the min value outside a range
     let mut not_blocked = 0;

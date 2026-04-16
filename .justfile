@@ -11,7 +11,8 @@ run:
 
 # Run all Rust solutions using personal puzzle inputs over 3 iterations for timing accuracy
 rrun:
-    ./scripts/runall.py --working-dir {{ invocation_directory() }} -lrust --me -L3
+    ./scripts/runall.py --working-dir {{ invocation_directory() }} -lrust --me -q -s -L3
+    ./scripts/answers.py --readme -w
 
 # Run Rust binary with timing database recording enabled
 t *ARGS:

@@ -1,7 +1,8 @@
 [package]
 name = "aor"
-version = "1.2.1"
+version = "1.2.2"
 edition = "2024"
+rust-version = "1.94.1"
 license = "Unlicense"
 repository = "https://github.com/rene-d/advent-of-rust"
 

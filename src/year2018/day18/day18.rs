@@ -30,20 +30,14 @@ fn collect(area: &Area) -> Area {
         let mut acre = *acre;
 
         match acre {
-            OPEN_ACRE => {
-                if trees >= 3 {
-                    acre = TREE;
-                }
+            OPEN_ACRE if trees >= 3 => {
+                acre = TREE;
             }
-            TREE => {
-                if lumberyards >= 3 {
-                    acre = LUMBERYARD;
-                }
+            TREE if lumberyards >= 3 => {
+                acre = LUMBERYARD;
             }
-            LUMBERYARD => {
-                if trees == 0 || lumberyards == 0 {
-                    acre = OPEN_ACRE;
-                }
+            LUMBERYARD if (trees == 0 || lumberyards == 0) => {
+                acre = OPEN_ACRE;
             }
             _ => (),
         }
@@ -128,9 +122,9 @@ impl Puzzle {
                 let cycle_start = *seen.get(&hashable(&area)).unwrap();
                 let cycle_end = i;
 
-                let n = 1_000_000_000;
+                let n: usize = 1_000_000_000;
                 let cycle = cycle_end - cycle_start;
-                return values[cycle_start + (n - cycle_end) % cycle as usize];
+                return values[cycle_start + (n - cycle_end) % cycle];
             }
 
             seen.insert(hashable(&area), i);
