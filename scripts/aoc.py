@@ -10,6 +10,7 @@
 
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -379,6 +380,114 @@ def aoc_timings(ctx: click.Context):
     Show or browse elapsed time for each puzzle.
     """
     ctx.obj.pass_thru("timings.py", ctx.args)
+
+
+@aoc.command(name="mea")
+@click.argument("source", type=Path, required=False)
+@click.pass_context
+def aoc_mea(ctx: click.Context, source: Path | None):
+    """
+    Export puzzle inputs and answers into "input/year{year}/day{day:02}.txt".
+    """
+    if source is None:
+        try:
+            source = next(
+                f for f in sorted((ctx.obj.aoc_root / "data").glob("*")) if f.is_dir() and f.name[0].isdigit()
+            )
+        except StopIteration:
+            ctx.fail("Cannot find default puzzle inputs.")
+
+    if source.is_dir():
+        for input in source.rglob("*.in"):
+            try:
+                year = int(input.parent.name)
+                day = int(input.stem)
+
+                dest = Path(f"input/year{year}/day{day:02}.txt")
+                dest.parent.mkdir(exist_ok=True, parents=True)
+                dest.write_bytes(input.read_bytes())
+
+                answer = input.with_suffix(".ok")
+                if answer.is_file():
+                    dest = Path(f"input/year{year}/answer{day:02}.txt")
+                    dest.write_bytes(answer.read_bytes())
+            except ValueError:
+                pass
+
+    elif source.is_file() and source.suffix == ".toml":
+        # TOML v1.0 basic string escape sequences (spec §2.4)
+        _ESCAPE_MAP: dict[str, str] = {
+            "b": "\x08",  # backspace
+            "t": "\x09",  # tab
+            "n": "\x0a",  # linefeed
+            "r": "\x0d",  # carriage return
+            '"': "\x22",  # quote
+            "\\": "\x5c",  # backslash
+        }
+
+        # Matches \uXXXX, \UXXXXXXXX, single-char escapes, or any invalid trailing char.
+        # DOTALL ensures '.' catches '\n' in the error fallback (e.g. bare '\\' at EOL).
+        _ESCAPE_RE = re.compile(r'\\(u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8}|[btnr"\\]|.)', re.DOTALL)
+
+        def toml_unescape(s: str) -> str:
+            """
+            Decode escape sequences from a TOML v1.0 basic string.
+
+            Raises ValueError on any unrecognised escape sequence, per spec.
+            Does not handle multiline basic strings (line-ending backslash trimming
+            must be applied by the caller before invoking this function).
+            Must not be called on literal strings ('...' or '''...'''), which have
+            no escape processing.
+            """
+
+            def replace(m: re.Match) -> str:
+                seq = m.group(1)
+
+                if seq in _ESCAPE_MAP:
+                    return _ESCAPE_MAP[seq]
+
+                if seq[0] == "u":  # \uXXXX — Unicode BMP
+                    return chr(int(seq[1:], 16))
+
+                if seq[0] == "U":  # \UXXXXXXXX — full Unicode range
+                    cp = int(seq[1:], 16)
+                    if cp > 0x10FFFF:
+                        raise ValueError(f"Invalid Unicode codepoint: U+{cp:08X}")
+                    return chr(cp)
+
+                raise ValueError(f"Invalid TOML escape sequence: \\{seq}")
+
+            return _ESCAPE_RE.sub(replace, s)
+
+        year = day = part1 = None
+        for line in source.open():
+            m = re.match(r"^\[(\d+)\.(\d+)]$", line)
+            if m:
+                year = int(m[1])
+                day = int(m[2])
+                part1 = None
+                continue
+            m = re.match(r'^(data|part1|part2) = "(.*)"$', line)
+            if m and year and day:
+                k = m[1]
+                v = toml_unescape(m[2])
+                if k == "data":
+                    dest = Path(f"input/year{year}/day{day:02}.txt")
+                    dest.parent.mkdir(exist_ok=True, parents=True)
+                    dest.write_text(v)
+                    continue
+                elif k == "part1":
+                    part1 = v
+                    continue
+                elif k == "part2" and part1:
+                    dest = Path(f"input/year{year}/answer{day:02}.txt")
+                    dest.parent.mkdir(exist_ok=True, parents=True)
+                    if v:
+                        dest.write_text(f"{part1}\n{v}\n")
+                    else:
+                        dest.write_text(f"{part1}\n")
+
+            year = day = part1 = None
 
 
 if __name__ == "__main__":
