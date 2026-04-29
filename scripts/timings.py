@@ -20,15 +20,13 @@ from functools import lru_cache
 from pathlib import Path
 
 try:
-    if platform.system() == "Windows":
-        curtsies = None  # type: ignore
-    else:
+    tabulate = None  # type: ignore
+    curtsies = None  # type: ignore
+    if platform.system() != "Windows":
         import curtsies
     import tabulate
 except ImportError:
-    print("This script requires the external packages (« tabulate », and « curtsies » on macOS/Linux).")
-    print(f"Install them or use « uv run {sys.argv[0]} »")
-    sys.exit(1)
+    pass
 
 
 # ---------
@@ -381,6 +379,11 @@ def main():
 
     if args.csv:
         return timings.export_csv(args.user, args.lang.casefold(), args.order)
+
+    if tabulate is None:
+        print("This script requires the external packages (« tabulate », and « curtsies » on macOS/Linux).")
+        print(f"Install them or use « uv run {sys.argv[0]} »")
+        sys.exit(1)
 
     try:
         if not args.browse:

@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.11"
-# dependencies = [
-#   "requests",
-# ]
+# dependencies = []
 # ///
 
 import argparse
@@ -14,13 +12,52 @@ import sqlite3
 import subprocess
 import time
 import typing as t
+import urllib.error
+import urllib.parse
+import urllib.request
 import zlib
 from collections import defaultdict
 from datetime import UTC, datetime
 from functools import lru_cache
 from pathlib import Path
 
-import requests
+
+class _Response:
+    def __init__(self, content: bytes, status: int):
+        self.content = content
+        self.status_code = status
+
+    @property
+    def text(self):
+        return self.content.decode()
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise urllib.error.HTTPError(None, self.status_code, "HTTP Error", {}, None)
+
+    def __repr__(self):
+        return f"<Response [{self.status_code}]>"
+
+
+class _Session:
+    def __init__(self):
+        self.cookies = {}
+
+    def _request(self, url, data=None):
+        headers = {"Cookie": "; ".join(f"{k}={v}" for k, v in self.cookies.items())} if self.cookies else {}
+        payload = urllib.parse.urlencode(data).encode() if data else None
+        req = urllib.request.Request(url, data=payload, headers=headers)
+        try:
+            with urllib.request.urlopen(req) as resp:
+                return _Response(resp.read(), resp.status)
+        except urllib.error.HTTPError as e:
+            return _Response(e.read(), e.code)
+
+    def get(self, url):
+        return self._request(url)
+
+    def post(self, url, data=None):
+        return self._request(url, data)
 
 # ---------
 
@@ -135,7 +172,7 @@ class AocSession:
         name = None
         self.user_id = ""
 
-        self.sess = requests.Session()
+        self.sess = _Session()
         self.sess.cookies["session"] = cookie_session
 
         r_text = self.get("https://adventofcode.com/settings").decode()

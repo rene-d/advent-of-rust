@@ -60,70 +60,70 @@ Year | Count | Days
 
 day |    2015 |    2016 |    2017 |    2018 |    2019 |    2020
 ------- | ------- | ------- | ------- | ------- | ------- | -------
-1 |    7 µs |   30 µs |  715 µs |    4 ms |    6 µs |  233 µs
-2 |   87 µs |   31 µs |   15 µs |    4 ms |  706 µs |  261 µs
-3 |  268 µs |  119 µs |  904 µs |   13 ms |   12 ms |   15 µs
-4 |   87 ms |    2 ms |  730 µs |   93 µs |   26 ms |  237 µs
-5 |    1 ms |  736 ms |   50 ms |    5 ms |   20 µs |   59 µs
-6 |    5 ms |   12 µs |  865 µs |    3 ms |    4 ms |  823 µs
-7 |    2 ms |   27 ms |  683 µs |   89 µs |  475 µs |    3 ms
-8 |   27 µs |  397 µs |  808 µs |  153 µs |   34 µs |  414 µs
-9 |   16 ms |  369 µs |   57 µs |   92 ms |    3 ms |  118 µs
-10 |   26 ms |  505 µs |   46 µs |  504 µs |    5 ms |   10 µs
-11 |    6 ms |   18 ms |    7 ms |  108 ms |    1 ms |    8 ms
-12 |  829 µs |  106 ms |    2 ms |  269 µs |    8 ms |   29 µs
-13 |  100 ms |   24 µs |   51 ms |    4 ms |    9 ms |    8 µs
-14 |  824 µs | 1131 ms |    5 ms |  136 ms |    4 ms |    4 ms
-15 |    6 ms |    3 ms |  150 ms |   93 ms |    4 ms |  255 ms
-16 |  120 µs |   88 ms |   12 ms |  756 µs |  180 ms |  837 µs
-17 |   30 ms |   21 ms |  136 µs |    2 ms |    2 ms |   27 ms
-18 |   20 ms |  796 µs |    5 ms |   24 ms |   83 ms |  208 µs
-19 |  487 µs |    1 µs |   86 µs |    7 ms |   21 ms |  112 ms
-20 |    8 ms |  100 µs |   28 ms |    1 ms |   35 ms |  805 µs
-21 |   61 µs |    2 ms |   31 ms |  207 µs |    5 ms |  297 µs
-22 |    2 ms |  692 µs |  139 ms |   40 ms |   11 µs |   92 ms
-23 |   24 µs |  182 µs |    2 ms |  935 µs |    2 ms |  142 ms
-24 |   17 ms |    3 ms |   65 ms |   16 ms |   27 ms |   38 ms
-25 |   74 ms |   20 ms |  192 ms |    1 ms |   15 ms |  110 µs
+1 |    6 µs |   21 µs |  403 µs |    2 ms |    6 µs |  167 µs
+2 |   56 µs |   22 µs |   13 µs |    2 ms |  467 µs |  169 µs
+3 |  186 µs |   76 µs |  572 µs |    9 ms |    8 ms |   11 µs
+4 |   24 ms |    1 ms |  478 µs |   68 µs |   14 ms |  156 µs
+5 |  650 µs |  468 ms |   33 ms |    3 ms |   15 µs |   44 µs
+6 |    3 ms |    9 µs |  485 µs |    1 ms |    3 ms |  557 µs
+7 |    1 ms |    8 ms |  434 µs |   61 µs |  281 µs |    2 ms
+8 |   19 µs |  259 µs |  492 µs |  101 µs |   25 µs |  265 µs
+9 |    9 ms |  225 µs |   35 µs |   55 ms |    2 ms |   77 µs
+10 |   17 ms |  337 µs |   32 µs |  339 µs |    4 ms |   10 µs
+11 |    3 ms |   11 ms |    5 ms |   64 ms |  675 µs |    5 ms
+12 |  539 µs |   40 ms |    1 ms |  176 µs |    5 ms |   22 µs
+13 |   63 ms |   19 µs |   51 ms |    2 ms |    5 ms |    8 µs
+14 |  542 µs |  282 ms |    3 ms |   97 ms |    3 ms |    3 ms
+15 |    4 ms |    2 ms |   80 ms |   57 ms |    2 ms |  187 ms
+16 |   78 µs |   51 ms |    8 ms |  474 µs |  134 ms |  554 µs
+17 |   19 ms |   13 ms |  102 µs |    2 ms |  900 µs |   18 ms
+18 |   12 ms |  451 µs |    3 ms |   13 ms |   53 ms |  147 µs
+19 |  333 µs |    1 µs |   58 µs |    5 ms |   12 ms |   25 ms
+20 |    6 ms |   65 µs |   17 ms |  652 µs |   23 ms |  522 µs
+21 |   43 µs |  993 µs |   16 ms |  146 µs |    3 ms |  203 µs
+22 |  912 µs |  372 µs |   86 ms |   26 ms |   10 µs |   60 ms
+23 |   15 µs |   93 µs |    1 ms |  627 µs |    1 ms |  108 ms
+24 |   10 ms |    2 ms |   36 ms |   10 ms |   21 ms |   30 ms
+25 |   56 ms |   10 ms |  127 ms |  783 µs |    8 ms |   79 µs
 
 day |    2021 |    2022 |    2023 |    2024 |    2025
 ------- | ------- | ------- | ------- | ------- | -------
-1 |   25 µs |   48 µs |  163 µs |  101 µs |   62 µs
-2 |   42 µs |  103 µs |  157 µs |  291 µs |  931 µs
-3 |   77 µs |   64 µs |  132 µs |  674 µs |  377 µs
-4 |  155 µs |  290 µs |  237 µs |  317 µs |    3 ms
-5 |  723 µs |  383 µs |   46 µs |    4 ms |   54 µs
-6 |    4 µs |  867 µs |    3 µs |    9 ms |   30 µs
-7 |  282 µs |  245 µs |   18 ms |   52 ms |  327 µs
-8 |  731 µs |  553 µs |    2 ms |   96 µs |   15 ms
-9 |  472 µs |  630 µs |  401 µs |  291 µs |    4 ms
-10 |   63 µs |   13 µs |   23 ms |  411 µs |    4 ms
-11 |  220 µs |    4 ms |    1 ms |    9 ms |  201 µs
-12 |   34 ms |  802 µs |   48 ms |    3 ms |   45 ms
-13 |    1 ms |  776 µs |  251 µs |   56 µs |
-14 |  603 µs |   10 ms |   49 ms |   19 ms |
-15 |   37 ms |   20 µs |  344 µs |    1 ms |
-16 |   25 µs |    3 ms |   24 ms |    3 ms |
-17 |   94 ms |    1 ms |  152 ms |    6 µs |
-18 |    6 ms |    1 ms |   50 µs |  379 µs |
-19 |    4 ms |    8 ms |    2 ms |   63 ms |
-20 |   97 ms |  100 ms |    3 ms |   27 ms |
-21 |    3 ms |  610 µs |    4 ms |  834 µs |
-22 |   77 ms |    6 ms |    7 ms |   10 ms |
-23 |  220 ms |  138 ms |  199 ms |  354 µs |
-24 |   68 ms |   92 ms |  558 µs |  211 µs |
-25 |   66 ms |   13 µs |  209 ms |  472 µs |
+1 |   16 µs |   35 µs |  109 µs |   71 µs |   40 µs
+2 |   29 µs |   83 µs |   99 µs |  184 µs |  475 µs
+3 |   56 µs |   49 µs |   86 µs |  427 µs |  241 µs
+4 |  117 µs |  186 µs |  169 µs |  217 µs |    2 ms
+5 |  478 µs |  248 µs |   33 µs |    3 ms |   41 µs
+6 |    4 µs |  574 µs |    3 µs |    3 ms |   19 µs
+7 |  223 µs |  163 µs |   11 ms |   16 ms |  246 µs
+8 |  471 µs |  394 µs |  735 µs |   64 µs |   11 ms
+9 |  302 µs |  417 µs |  246 µs |  201 µs |    2 ms
+10 |   48 µs |   10 µs |   13 ms |  292 µs |    4 ms
+11 |  142 µs |    3 ms |  702 µs |    5 ms |  131 µs
+12 |   21 ms |  512 µs |   32 ms |    2 ms |   13 ms
+13 |  915 µs |  529 µs |  164 µs |   38 µs |
+14 |  376 µs |    6 ms |   23 ms |   13 ms |
+15 |   22 ms |   15 µs |  221 µs |  888 µs |
+16 |   19 µs |    2 ms |   14 ms |    2 ms |
+17 |   53 ms |  676 µs |   97 ms |    6 µs |
+18 |    4 ms |    1 ms |   33 µs |  277 µs |
+19 |    4 ms |    6 ms |  960 µs |   36 ms |
+20 |   61 ms |   62 ms |    2 ms |    6 ms |
+21 |    2 ms |  394 µs |    3 ms |  481 µs |
+22 |   51 ms |    2 ms |    4 ms |    7 ms |
+23 |  134 ms |   99 ms |  113 ms |  228 µs |
+24 |   45 ms |   60 ms |  558 µs |  143 µs |
+25 |   46 ms |   12 µs |  149 ms |  307 µs |
 
-Total : 7.097 s
+Total : 3.977 s
 
 ## Under the hood 🎄
 
-All solutions are *tested* and *verified* with a lot of puzzle inputs and answers (personal accounts, family accounts, friends' accounts and those found on GitHub). Thus, they can be considered totally generic.
+All solutions are *tested* and *verified* using a large number of inputs and answers (personal, family, and friends' accounts, as well as those found on GitHub). They are therefore perfectly generic.
 
-By choice, I use the most recent versions of the languages, and therefore sometimes new paradigms and functionalities, since AoC is an excellent way to practice, explore and learn (while having fun!).
+I intentionally use the latest versions of the languages, and consequently sometimes new paradigms and features, because AoC is an excellent way to practice, explore, and learn (while having fun!).
 
 Rust solutions respect `cargo clippy -- -D clippy::all -F clippy::pedantic -F clippy::nursery`, which is a pretty strong hardening.
 
-They also include, for the most part, unit tests taken from the examples of puzzle statements.
+They also mostly include unit tests taken from the example puzzle statements.
 
-Timings are measured for the Rust solutions with my puzzle inputs, on a Macbook Pro M1 (2020).
+The execution times of the Rust solutions, using the inputs from my puzzle, are measured on a MacBook Pro M5 Pro (2026).
