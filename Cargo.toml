@@ -2,7 +2,7 @@
 name = "aor"
 version = "1.2.2"
 edition = "2024"
-rust-version = "1.94.1"
+# rust-version = "1.96"
 license = "Unlicense"
 repository = "https://github.com/rene-d/advent-of-rust"
 
@@ -51,7 +51,7 @@ bytecount = "*"
 rayon = "*"
 good_lp = { version = "*", features = ["microlp"], default-features = false }
 sha2 = { version = "*", optional = true }
-libsql = { version = "*", optional = true }
+libsql = { version = "*", optional = true, default-features = false, features = ["core"] }
 tokio = { version = "1", features = ["rt"], optional = true }
 
 [lints.clippy]
