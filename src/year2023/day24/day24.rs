@@ -1,8 +1,8 @@
 //! [Day 24: Never Tell Me The Odds](https://adventofcode.com/2023/day/24)
 
-use num_bigint::BigInt;
-use num_rational::BigRational;
-use num_traits::{Signed, ToPrimitive, Zero};
+use num::BigInt;
+use num::BigRational;
+use num::{Signed, ToPrimitive, Zero};
 use rayon::prelude::*;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
