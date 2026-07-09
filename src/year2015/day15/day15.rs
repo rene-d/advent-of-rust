@@ -120,6 +120,6 @@ mod test {
 
     #[test]
     fn test_solve() {
-        assert_eq!(solve(TEST_INPUT), (62842880, 57600000));
+        assert_eq!(solve(TEST_INPUT), (62_842_880, 57_600_000));
     }
 }

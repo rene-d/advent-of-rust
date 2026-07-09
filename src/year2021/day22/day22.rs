@@ -149,12 +149,12 @@ mod test {
 
     #[test]
     fn test2() {
-        assert_eq!(part1(SAMPLE_2), 590784);
+        assert_eq!(part1(SAMPLE_2), 590_784);
     }
 
     #[test]
     fn test3() {
-        assert_eq!(part1(SAMPLE_3), 474140);
-        assert_eq!(part2(SAMPLE_3), 2758514936282235);
+        assert_eq!(part1(SAMPLE_3), 474_140);
+        assert_eq!(part2(SAMPLE_3), 2_758_514_936_282_235);
     }
 }

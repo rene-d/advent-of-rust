@@ -116,6 +116,6 @@ mod test {
     fn test02() {
         let mut puzzle = Puzzle::new(TEST_INPUT);
         puzzle.parse();
-        assert_eq!(puzzle.part2(), 467835);
+        assert_eq!(puzzle.part2(), 467_835);
     }
 }

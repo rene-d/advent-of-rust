@@ -83,7 +83,7 @@ mod test {
     #[test]
     fn parts() {
         let (part1, part2) = solve(TEST_INPUT);
-        assert_eq!(part1, 4277556);
-        assert_eq!(part2, 3263827);
+        assert_eq!(part1, 4_277_556);
+        assert_eq!(part2, 3_263_827);
     }
 }

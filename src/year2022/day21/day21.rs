@@ -128,20 +128,6 @@ pub fn main() {
     args.run(solve);
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    const TEST_INPUT: &str = include_str!("test.txt");
-
-    #[test]
-    fn test01() {
-        let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part1(), 152);
-        assert_eq!(puzzle.part2(), 301);
-    }
-}
-
 impl Affine {
     fn from(n: i64) -> Self {
         Self {
@@ -219,5 +205,19 @@ impl ops::Div<Self> for Affine {
 impl std::fmt::Display for Affine {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}x + {}", self.a, self.b)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const TEST_INPUT: &str = include_str!("test.txt");
+
+    #[test]
+    fn test01() {
+        let puzzle = Puzzle::new(TEST_INPUT);
+        assert_eq!(puzzle.part1(), 152);
+        assert_eq!(puzzle.part2(), 301);
     }
 }

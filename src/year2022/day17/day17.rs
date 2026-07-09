@@ -193,6 +193,6 @@ mod test {
     #[test]
     fn part2() {
         let puzzle = solve(TEST_INPUT);
-        assert_eq!(puzzle.1, 1514285714288);
+        assert_eq!(puzzle.1, 1_514_285_714_288);
     }
 }

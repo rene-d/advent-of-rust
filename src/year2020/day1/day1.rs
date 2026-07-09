@@ -59,12 +59,12 @@ mod test {
     #[test]
     fn test01() {
         let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part1(), 514579);
+        assert_eq!(puzzle.part1(), 514_579);
     }
 
     #[test]
     fn test02() {
         let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part2(), 241861950);
+        assert_eq!(puzzle.part2(), 241_861_950);
     }
 }

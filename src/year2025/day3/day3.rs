@@ -65,9 +65,9 @@ mod test {
 
     #[test]
     fn parts() {
-        let (p1, p2) = solve(&TEST_INPUT);
+        let (p1, p2) = solve(TEST_INPUT);
         assert_eq!(p1, 357);
-        assert_eq!(p2, 3121910778619);
+        assert_eq!(p2, 3_121_910_778_619);
     }
 
     #[test]
@@ -85,9 +85,9 @@ mod test {
 
     #[test]
     fn part2() {
-        assert_eq!(largest_joltage_n("987654321111111", 12), 987654321111);
-        assert_eq!(largest_joltage_n("811111111111119", 12), 811111111119);
-        assert_eq!(largest_joltage_n("234234234234278", 12), 434234234278);
-        assert_eq!(largest_joltage_n("818181911112111", 12), 888911112111);
+        assert_eq!(largest_joltage_n("987654321111111", 12), 987_654_321_111);
+        assert_eq!(largest_joltage_n("811111111111119", 12), 811_111_111_119);
+        assert_eq!(largest_joltage_n("234234234234278", 12), 434_234_234_278);
+        assert_eq!(largest_joltage_n("818181911112111", 12), 888_911_112_111);
     }
 }

@@ -93,15 +93,15 @@ mod test {
         // values given as examples in the puzzle
         assert_eq!(
             part1(&parse_data("80871224585914546619083218645595")),
-            24176176
+            24_176_176
         );
         assert_eq!(
             part1(&parse_data("19617804207202209144916044189917")),
-            73745418
+            73_745_418
         );
         assert_eq!(
             part1(&parse_data("69317163492948606335995924319873")),
-            52432133
+            52_432_133
         );
     }
 
@@ -110,15 +110,15 @@ mod test {
         // values given as examples in the puzzle
         assert_eq!(
             part2(&parse_data("03036732577212944063491565474664")),
-            84462026
+            84_462_026
         );
         assert_eq!(
             part2(&parse_data("02935109699940807407585447034323")),
-            78725270
+            78_725_270
         );
         assert_eq!(
             part2(&parse_data("03081770884921959731165446850517")),
-            53553731
+            53_553_731
         );
     }
 
@@ -135,9 +135,9 @@ mod test {
             parse_data("01029498"),
         ];
 
-        for i in 0..3 {
+        for phase in &phases {
             fft(&mut signal);
-            assert_eq!(signal, phases[i]);
+            assert_eq!(&signal, phase);
         }
     }
 }

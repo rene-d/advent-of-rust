@@ -72,6 +72,6 @@ mod test {
 
     #[test]
     fn test_solve() {
-        assert_eq!(solve(TEST_INPUT), (26397, 288957));
+        assert_eq!(solve(TEST_INPUT), (26397, 288_957));
     }
 }

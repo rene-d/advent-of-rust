@@ -159,7 +159,7 @@ mod test {
 
         let a = Expr::parse("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))");
         assert_eq!(a.eval(0).0, 12240);
-        assert_eq!(a.eval_mul(0).0, 669060);
+        assert_eq!(a.eval_mul(0).0, 669_060);
 
         let a = Expr::parse("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2");
         assert_eq!(a.eval(0).0, 13632);

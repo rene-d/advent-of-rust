@@ -121,12 +121,12 @@ mod test {
     #[test]
     fn part1() {
         let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part1(), 1227775554);
+        assert_eq!(puzzle.part1(), 1_227_775_554);
     }
 
     #[test]
     fn part2() {
         let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part2(), 4174379265);
+        assert_eq!(puzzle.part2(), 4_174_379_265);
     }
 }

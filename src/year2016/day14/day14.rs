@@ -14,9 +14,7 @@ pub fn solve(data: &str) -> (usize, usize) {
     (find_key(data, 0), find_key(data, 2016))
 }
 
-const HEX_DIGITS: [u8; 16] = [
-    b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9', b'a', b'b', b'c', b'd', b'e', b'f',
-];
+const HEX_DIGITS: [u8; 16] = *b"0123456789abcdef";
 
 #[derive(Clone, Copy)]
 struct HashData {
@@ -144,7 +142,7 @@ mod test {
     }
 
     #[test]
-    #[cfg_attr(debug_assertions, ignore)] // Slow in debug
+    #[cfg_attr(debug_assertions, ignore = "slow in debug")]
     fn test_solve2() {
         assert_eq!(find_key("abc", 2016), 22551);
     }

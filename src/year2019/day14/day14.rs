@@ -145,19 +145,19 @@ mod test {
     fn test3() {
         let puzzle = Puzzle::new(SAMPLE_3);
         assert_eq!(puzzle.part1(), 13312);
-        assert_eq!(puzzle.part2(), 82892753);
+        assert_eq!(puzzle.part2(), 82_892_753);
     }
 
     #[test]
     fn test4() {
         let puzzle = Puzzle::new(SAMPLE_4);
-        assert_eq!(puzzle.part1(), 180697);
-        assert_eq!(puzzle.part2(), 5586022);
+        assert_eq!(puzzle.part1(), 180_697);
+        assert_eq!(puzzle.part2(), 5_586_022);
     }
     #[test]
     fn test5() {
         let puzzle = Puzzle::new(SAMPLE_5);
-        assert_eq!(puzzle.part1(), 2210736);
-        assert_eq!(puzzle.part2(), 460664);
+        assert_eq!(puzzle.part1(), 2_210_736);
+        assert_eq!(puzzle.part2(), 460_664);
     }
 }

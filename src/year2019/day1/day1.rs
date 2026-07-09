@@ -62,7 +62,7 @@ mod test {
         puzzle.data = [1969].to_vec();
         assert_eq!(puzzle.part1(), 654);
 
-        puzzle.data = [100756].to_vec();
+        puzzle.data = [100_756].to_vec();
         assert_eq!(puzzle.part1(), 33583);
     }
 
@@ -76,7 +76,7 @@ mod test {
         puzzle.data = [1969].to_vec();
         assert_eq!(puzzle.part2(), 966);
 
-        puzzle.data = [100756].to_vec();
+        puzzle.data = [100_756].to_vec();
         assert_eq!(puzzle.part2(), 50346);
     }
 }

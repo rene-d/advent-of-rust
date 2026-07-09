@@ -228,7 +228,7 @@ mod test {
     #[test]
     fn test02() {
         let mut puzzle = Puzzle::new(SAMPLE_2);
-        puzzle.reg_a = 117440;
+        puzzle.reg_a = 117_440;
         assert_eq!(puzzle.part1(), "0,3,5,4,3,0");
     }
 }

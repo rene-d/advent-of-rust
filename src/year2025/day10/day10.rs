@@ -19,7 +19,7 @@ pub fn f64_to_u64(f: f64) -> Option<u64> {
 
     match (sign, exponent, fraction) {
         (_, 0, 0) => {
-            debug_assert!(f == 0.0);
+            debug_assert_eq!(f.abs().to_bits(), 0);
             Some(0)
         }
         (true, _, _) => {

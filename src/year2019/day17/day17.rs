@@ -11,10 +11,10 @@ use std::fmt::Write as _; // import without risk of name clashing
 fn pathfinder(grid: &Grid<u8>) -> String {
     let (position, direction_symbol) = grid
         .iter()
-        .find(|(_, c)| [b'^', b'>', b'v', b'<'].contains(c))
+        .find(|(_, c)| b"^>v<".contains(c))
         .unwrap();
 
-    let mut direction = [b'^', b'>', b'v', b'<']
+    let mut direction = b"^>v<"
         .iter()
         .position(|d| d == direction_symbol)
         .unwrap();
@@ -83,7 +83,7 @@ impl<'a> PathCompressor<'a> {
             return true;
         }
 
-        for (i, name) in [b'A', b'B', b'C'].iter().enumerate() {
+        for (i, name) in b"ABC".iter().enumerate() {
             self.routines.push(*name);
 
             let needle = self.functions[i];

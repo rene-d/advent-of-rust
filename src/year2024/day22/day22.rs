@@ -102,7 +102,7 @@ mod test {
     #[test]
     fn test_part1() {
         let puzzle = Puzzle::new(TEST_INPUT);
-        assert_eq!(puzzle.part1(), 37327623);
+        assert_eq!(puzzle.part1(), 37_327_623);
     }
 
     #[test]

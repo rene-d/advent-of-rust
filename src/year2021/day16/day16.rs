@@ -125,7 +125,7 @@ mod test {
         assert_eq!(int_value("01"), 1);
         assert_eq!(int_value("11"), 3);
         assert_eq!(int_value("10000"), 16);
-        assert_eq!(int_value("10101010101010101010101010101010"), 0xAAAAAAAA);
+        assert_eq!(int_value("10101010101010101010101010101010"), 0xAAAA_AAAA);
     }
 
     #[test]

@@ -17,14 +17,14 @@ impl Operation {
     fn perform_str(&self, password: &str) -> String {
         let mut p: Vec<_> = password.chars().collect();
         self.perform(&mut p);
-        String::from_iter(p.iter())
+        p.iter().collect::<String>()
     }
 
     #[cfg(test)]
     fn reverse_str(&self, password: &str) -> String {
         let mut p: Vec<_> = password.chars().collect();
         self.reverse(&mut p);
-        String::from_iter(p.iter())
+        p.iter().collect::<String>()
     }
 
     fn perform(&self, password: &mut [char]) {

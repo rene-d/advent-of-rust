@@ -185,7 +185,7 @@ mod test {
 
     #[test]
     fn test01() {
-        assert_eq!(modular_inverse(213, 1000000007), 32863850);
+        assert_eq!(modular_inverse(213, 1_000_000_007), 32_863_850);
     }
 
     #[test]

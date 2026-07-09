@@ -69,8 +69,8 @@ mod tests {
     fn verify_solve() {
         let input = "abcdef";
         let result = solve(input);
-        assert_eq!(result.0, 609043);
+        assert_eq!(result.0, 609_043);
         // Part 2 is known from previous run: 6742839
-        assert_eq!(result.1, 6742839);
+        assert_eq!(result.1, 6_742_839);
     }
 }

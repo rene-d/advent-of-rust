@@ -6,8 +6,8 @@ use std::collections::VecDeque;
 
 type Portal = [u8; 2];
 
-const AA: Portal = [b'A', b'A'];
-const ZZ: Portal = [b'Z', b'Z'];
+const AA: Portal = *b"AA";
+const ZZ: Portal = *b"ZZ";
 
 struct Puzzle {
     maze: FxHashSet<Coord>,
