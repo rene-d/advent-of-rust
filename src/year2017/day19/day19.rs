@@ -16,7 +16,7 @@ impl Puzzle {
         // find start
         let start = (0..grid.width())
             .find(|&x| grid[(x, 0)] == '|')
-            .map_or(0, |x| x);
+            .unwrap_or(0);
 
         let mut path = String::new();
         let mut steps = 0;
